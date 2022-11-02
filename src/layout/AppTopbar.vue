@@ -1,11 +1,11 @@
 <template>
     <div class="layout-topbar">
         <a class="layout-topbar-logo">
-            <img src="assets/layout/images/.svg" alt="logo" />
+            <img :src="logoUrl()" alt="logo" />
             <span>SAKAI</span>
         </a>
 
-        <button class="p-link layout-menu-button layout-topbar-button">
+        <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
             <i class="pi pi-bars"></i>
         </button>
 
@@ -30,6 +30,14 @@
     </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useThemeService } from '@/composables/theme';
+
+const { appConfig, onMenuToggle } = useThemeService();
+
+const logoUrl = () => {
+    return new URL(`/src/assets/layout/images/${appConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
+};
+</script>
 
 <style lang="scss" scoped></style>

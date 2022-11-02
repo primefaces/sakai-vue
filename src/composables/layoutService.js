@@ -1,6 +1,6 @@
-import { toRefs, reactive } from 'vue';
+import { toRefs, reactive, watch, ref, computed } from 'vue';
 
-const appConfig = reactive({
+const layoutConfig = reactive({
     ripple: false,
     darkTheme: false,
     inputStyle: 'outlined',
@@ -18,35 +18,29 @@ const layoutState = reactive({
     menuHoverActive: false
 });
 
-export function useThemeService () {
+export function useLayoutService () {
     const changeThemeSettings = (theme, darkTheme) => {
-        appConfig.theme = theme;
-        appConfig.darkTheme = darkTheme;
+        layoutConfig.theme = theme;
+        layoutConfig.darkTheme = darkTheme;
     };
 
     const setScale = scale => {
-        appConfig.scale = scale;
+        layoutConfig.scale = scale;
     };
 
     const onMenuToggle = () => {
-        debugger;
-        if (appConfig.menuMode === 'overlay') {
+        if (layoutConfig.menuMode === 'overlay') {
             layoutState.overlayMenuActive = !layoutState.overlayMenuActive;
-            /*  if (layoutState.overlayMenuActive) {
-                this.overlayOpen.next(null);
-            } */
         }
 
         if (window.innerWidth > 991) {
             layoutState.staticMenuDesktopInactive = !layoutState.staticMenuDesktopInactive;
         } else {
             layoutState.staticMenuMobileActive = !layoutState.staticMenuMobileActive;
-
-            /*  if (this.state.staticMenuMobileActive) {
-                this.overlayOpen.next(null);
-            } */
         }
     };
 
-    return { appConfig: toRefs(appConfig), layoutState: toRefs(layoutState), changeThemeSettings, setScale, onMenuToggle };
+    const isSidebarActive = computed(() => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive);
+
+    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), changeThemeSettings, setScale, onMenuToggle, isSidebarActive };
 }

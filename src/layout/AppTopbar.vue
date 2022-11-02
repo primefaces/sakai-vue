@@ -31,12 +31,12 @@
 </template>
 
 <script setup>
-import { useThemeService } from '@/composables/theme';
+import { useLayoutService } from '@/composables/layoutService';
 
-const { appConfig, onMenuToggle } = useThemeService();
+const { layoutConfig, onMenuToggle } = useLayoutService();
 
 const logoUrl = () => {
-    return new URL(`/src/assets/layout/images/${appConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
+    return new URL(`/src/assets/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
 };
 </script>
 

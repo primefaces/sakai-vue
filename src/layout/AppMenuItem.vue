@@ -32,9 +32,11 @@ defineProps({
             <span class="layout-menuitem-text">{{ item.label }}</span>
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
         </a>
-        <ul v-if="item.items && item.visible !== false">
-            <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :root="false"></app-menu-item>
-        </ul>
+        <Transition class="layout-submenu">
+            <ul v-if="item.items && item.visible !== false">
+                <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :root="false"></app-menu-item>
+            </ul>
+        </Transition>
     </li>
 </template>
 

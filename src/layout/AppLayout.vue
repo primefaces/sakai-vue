@@ -16,17 +16,16 @@
 </template>
 
 <script setup>
-import { computed, watch, ref, onMounted } from 'vue';
+import { computed, watch, ref } from 'vue';
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
 import { useLayoutService } from '@/composables/layoutService';
 
-const { onMenuToggle, layoutConfig, layoutState, isSidebarActive } = useLayoutService();
+const { layoutConfig, layoutState, isSidebarActive } = useLayoutService();
 
 const outsideClickListener = ref(null);
-const sidebarActive = ref(false);
 
 watch(isSidebarActive, (newVal) => {
     if (newVal) {

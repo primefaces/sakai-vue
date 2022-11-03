@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { useLayoutService } from '@/composables/layoutService';
+import { useLayoutService } from '@/layout/composables/layoutService';
 
 const { layoutConfig } = useLayoutService();
 

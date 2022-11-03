@@ -244,7 +244,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useLayoutService } from '@/composables/layoutService';
+import { useLayoutService } from '@/layout/composables/layoutService';
 
 const scales = ref([12, 13, 14, 15, 16]);
 const visible = ref(false);

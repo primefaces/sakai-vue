@@ -21,7 +21,7 @@ import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
-import { useLayoutService } from '@/composables/layoutService';
+import { useLayoutService } from '@/layout/composables/layoutService';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayoutService();
 

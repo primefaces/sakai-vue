@@ -9,65 +9,85 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
-                    path: '',
+                    path: '/',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
-                    path: '/formlayout',
+                    path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/demo/FormLayout.vue')
                 },
                 {
-                    path: '/input',
+                    path: '/uikit/input',
                     name: 'input',
                     component: () => import('@/views/demo/Input.vue')
                 },
                 {
-                    path: '/floatlabel',
+                    path: '/uikit/floatlabel',
                     name: 'floatlabel',
                     component: () => import('@/views/demo/FloatLabel.vue')
                 },
                 {
-                    path: '/invalidstate',
+                    path: '/uikit/invalidstate',
                     name: 'invalidstate',
                     component: () => import('@/views/demo/InvalidState.vue')
                 },
                 {
-                    path: '/button',
+                    path: '/uikit/button',
                     name: 'button',
                     component: () => import('@/views/demo/Button.vue')
                 },
                 {
-                    path: '/table',
+                    path: '/uikit/table',
                     name: 'table',
                     component: () => import('@/views/demo/Table.vue')
                 },
                 {
-                    path: '/list',
+                    path: '/uikit/list',
                     name: 'list',
                     component: () => import('@/views/demo/List.vue')
                 },
                 {
-                    path: '/tree',
+                    path: '/uikit/tree',
                     name: 'tree',
                     component: () => import('@/views/demo/Tree.vue')
                 },
                 {
-                    path: '/panel',
+                    path: '/uikit/panel',
                     name: 'panel',
                     component: () => import('@/views/demo/Panels.vue')
                 },
 
                 {
-                    path: '/overlay',
+                    path: '/uikit/overlay',
                     name: 'overlay',
                     component: () => import('@/views/demo/Overlay.vue')
                 },
                 {
-                    path: '/media',
+                    path: '/uikit/media',
                     name: 'media',
                     component: () => import('@/views/demo/Media.vue')
+                },
+                {
+                    path: '/uikit/menu',
+                    name: 'menu',
+                    component: () => import('@/views/demo/Menu.vue')
+                },
+                {
+                    path: '/uikit/message',
+                    name: 'message',
+                    component: () => import('@/views/demo/Messages.vue')
+                },
+                {
+                    path: '/uikit/file',
+                    name: 'file',
+                    component: () => import('@/views/demo/File.vue')
+                },
+                {
+                    path: '/uikit/misc',
+                    name: 'misc',
+                    component: () => import('@/views/demo/Misc.vue')
                 }
                 /*
                
@@ -75,12 +95,12 @@ const router = createRouter({
            
                
                 {
-                    path: '/overlay',
+                    path: '/uikit/overlay',
                     name: 'overlay',
                     component: () => import('./components/OverlayDemo.vue')
                 },
                 {
-                    path: '/media',
+                    path: '/uikit/media',
                     name: 'media',
                     component: () => import('./components/MediaDemo.vue')
                 } */

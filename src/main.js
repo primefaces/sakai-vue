@@ -100,6 +100,8 @@ import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
+import CodeHighlight from '@/layout/AppCodeHighlight';
+
 import '@/assets/styles.scss';
 
 const app = createApp(App);
@@ -114,6 +116,7 @@ app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
+app.directive('code', CodeHighlight);
 
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);

@@ -41,7 +41,7 @@
                 <p class="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Sed blandit libero volutpat sed cras. Fames ac turpis egestas integer. Placerat in egestas erat...</p>
                 <Button label="Get Started" class="p-button-rounded text-xl border-none mt-5 bg-blue-500 font-normal text-white line-height-3 px-3"></Button>
             </div>
-            <img src="layout/images/screen-1.png" class="bottom-0" alt="hero screen" style="right: 10%" />
+            <img src="@/assets/demo/images/landing/screen-1.png" class="bottom-0" alt="hero screen" style="right: 10%" />
         </div>
 
         <div class="py-4 px-4 lg:px-8 mt-5 mx-0 lg:mx-8" id="features">
@@ -166,7 +166,7 @@
                         <p class="text-gray-900 sm:line-height-2 md:line-height-4 text-2xl mt-4" style="max-width: 800px">
                             “Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”
                         </p>
-                        <img src="layout/images/peak-logo.svg" class="mt-4" alt="" />
+                        <img src="@/assets/demo/images/landing/peak-logo.svg" class="mt-4" alt="" />
                     </div>
                 </div>
             </div>
@@ -180,7 +180,7 @@
 
             <div class="grid mt-8 pb-2 md:pb-8">
                 <div class="flex justify-content-center col-12 lg:col-6 bg-purple-100 p-0 flex-order-1 lg:flex-order-0" style="border-radius: 8px">
-                    <img src="layout/images/mockup.png" class="w-11" alt="mockup mobile" />
+                    <img src="@/assets/demo/images/landing/mockup.svg" class="w-11" alt="mockup mobile" />
                 </div>
 
                 <div class="col-12 lg:col-6 my-auto flex flex-column lg:align-items-end lg:text-right align-items-center text-center">
@@ -206,7 +206,7 @@
                 </div>
 
                 <div class="flex justify-content-end flex-order-1 sm:flex-order-2 col-12 lg:col-6 bg-yellow-100 p-0" style="border-radius: 8px">
-                    <img src="layout/images/mockup-desktop.png" class="w-11 pt-4" alt="mockup" />
+                    <img src="@/assets/demo/images/landing/mockup-desktop.svg" class="w-11 pt-4" alt="mockup" />
                 </div>
             </div>
         </div>
@@ -221,7 +221,7 @@
                 <div class="col-12 lg:col-4 p-0 md:p-3">
                     <div class="p-3 flex flex-column border-200 hover:border-cyan-200" style="border: 2px solid; border-radius: 10px">
                         <h3 class="text-900 text-center">Free</h3>
-                        <img src="layout/images/asset-tier-1.svg" class="w-10 h-10 mx-auto" alt="" />
+                        <img src="@/assets/demo/images/landing/asset-tier-1.svg" class="w-10 h-10 mx-auto" alt="" />
                         <div class="my-5 text-center">
                             <span class="text-5xl font-bold mr-2 text-900">$0</span>
                             <span class="text-600">per month</span>
@@ -252,7 +252,7 @@
                 <div class="col-12 lg:col-4 p-0 md:p-3 mt-4 md:mt-0">
                     <div class="p-3 flex flex-column border-200 hover:border-cyan-200" style="border: 2px solid; border-radius: 10px">
                         <h3 class="text-900 text-center">Startup</h3>
-                        <img src="layout/images/asset-tier-2.svg" class="w-10 h-10 mx-auto" alt="" />
+                        <img src="@/assets/demo/images/landing/asset-tier-2.svg" class="w-10 h-10 mx-auto" alt="" />
                         <div class="my-5 text-center">
                             <span class="text-5xl font-bold mr-2 text-900">$1</span>
                             <span class="text-600">per month</span>
@@ -283,7 +283,7 @@
                 <div class="col-12 lg:col-4 p-0 md:p-3 mt-4 md:mt-0">
                     <div class="p-3 flex flex-column border-200 hover:border-cyan-200" style="border: 2px solid; border-radius: 10px">
                         <h3 class="text-900 text-center">Enterprice</h3>
-                        <img src="layout/images/asset-tier-3.svg" class="w-10 h-10 mx-auto" alt="" />
+                        <img src="@/assets/demo/images/landing/asset-tier-3.svg" class="w-10 h-10 mx-auto" alt="" />
                         <div class="my-5 text-center">
                             <span class="text-5xl font-bold mr-2 text-900">$999</span>
                             <span class="text-600">per month</span>
@@ -317,7 +317,7 @@
             <div class="grid justify-content-between">
                 <div class="col-12 md:col-2" style="margin-top: -1.5rem">
                     <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start md:mb-0 mb-3">
-                        <img :src="'layout/images/logo-' + logoColor + '.svg'" alt="footer sections" width="50" height="50" class="mr-2" />
+                        <img :src="logoUrl()" alt="footer sections" width="50" height="50" class="mr-2" />
                         <h4 class="font-medium text-3xl text-900">SAKAI</h4>
                     </div>
                 </div>
@@ -343,7 +343,7 @@
                         <div class="col-12 md:col-3 mt-4 md:mt-0">
                             <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Community</h4>
                             <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Discord</a>
-                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Events<img src="layout/images/new-badge.svg" class="ml-2" /></a>
+                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Events<img src="@/assets/demo/images/landing/new-badge.svg" class="ml-2" /></a>
                             <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">FAQ</a>
                             <a class="line-height-3 text-xl block cursor-pointer text-700">Blog</a>
                         </div>

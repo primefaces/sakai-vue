@@ -101,6 +101,7 @@ import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
 import CodeHighlight from '@/layout/AppCodeHighlight';
+import BlockViewer from '@/layout/BlockViewer.vue';
 
 import '@/assets/styles.scss';
 
@@ -207,5 +208,7 @@ app.component('TreeSelect', TreeSelect);
 app.component('TreeTable', TreeTable);
 app.component('TriStateCheckbox', TriStateCheckbox);
 app.component('VirtualScroller', VirtualScroller);
+
+app.component('BlockViewer', BlockViewer);
 
 app.mount('#app');

@@ -8,7 +8,7 @@
                         <div class="product-item">
                             <div class="product-item-content">
                                 <div class="mb-3">
-                                    <img :src="'images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
+                                    <img :src="'/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
                                 </div>
                                 <div>
                                     <h4 class="mb-1">
@@ -34,10 +34,10 @@
                 <h5>Galleria</h5>
                 <Galleria :value="images" :responsiveOptions="galleriaResponsiveOptions" :numVisible="7" :circular="true" containerStyle="max-width: 800px; margin: auto">
                     <template #item="slotProps">
-                        <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" />
+                        <img :src="'/' + slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" />
                     </template>
                     <template #thumbnail="slotProps">
-                        <img :src="slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt" tyle="width: 100%; display: block;" />
+                        <img :src="'/' + slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt" tyle="width: 100%; display: block;" />
                     </template>
                 </Galleria>
             </div>
@@ -47,7 +47,7 @@
             <div class="card">
                 <h5>Image</h5>
                 <div class="flex justify-content-center">
-                    <Image src="images/galleria/galleria11.jpg" alt="Image" width="250" preview />
+                    <Image src="/images/galleria/galleria11.jpg" alt="Image" width="250" preview />
                 </div>
             </div>
         </div>

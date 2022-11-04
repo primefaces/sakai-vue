@@ -56,7 +56,7 @@
                     <Column header="Image" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <span class="p-column-title">Image</span>
-                            <img :src="'images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
+                            <img :src="'/images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
                         </template>
                     </Column>
                     <Column field="price" header="Price" :sortable="true" headerStyle="width:14%; min-width:8rem;">
@@ -92,7 +92,7 @@
                 </DataTable>
 
                 <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Product Details" :modal="true" class="p-fluid">
-                    <img :src="'images/product/' + product.image" :alt="product.image" v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" />
+                    <img :src="'/images/product/' + product.image" :alt="product.image" v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" />
                     <div class="field">
                         <label for="name">Name</label>
                         <InputText id="name" v-model.trim="product.name" required="true" autofocus :class="{ 'p-invalid': submitted && !product.name }" />
@@ -187,122 +187,131 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import { FilterMatchMode } from 'primevue/api';
-import ProductService from '../service/ProductService';
+import { ref, onMounted, onBeforeMount } from 'vue';
+import ProductService from '@/layout/service/ProductService';
+import { useToast } from 'primevue/usetoast';
 
-export default {
-    data() {
-        return {
-            products: null,
-            productDialog: false,
-            deleteProductDialog: false,
-            deleteProductsDialog: false,
-            product: {},
-            selectedProducts: null,
-            filters: {},
-            submitted: false,
-            statuses: [
-                { label: 'INSTOCK', value: 'instock' },
-                { label: 'LOWSTOCK', value: 'lowstock' },
-                { label: 'OUTOFSTOCK', value: 'outofstock' }
-            ]
-        };
-    },
-    productService: null,
-    created() {
-        this.productService = new ProductService();
-        this.initFilters();
-    },
-    mounted() {
-        this.productService.getProducts().then((data) => (this.products = data));
-    },
-    methods: {
-        formatCurrency(value) {
-            if (value) return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-            return;
-        },
-        openNew() {
-            this.product = {};
-            this.submitted = false;
-            this.productDialog = true;
-        },
-        hideDialog() {
-            this.productDialog = false;
-            this.submitted = false;
-        },
-        saveProduct() {
-            this.submitted = true;
-            if (this.product.name.trim()) {
-                if (this.product.id) {
-                    this.product.inventoryStatus = this.product.inventoryStatus.value ? this.product.inventoryStatus.value : this.product.inventoryStatus;
-                    this.products[this.findIndexById(this.product.id)] = this.product;
-                    this.$toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-                } else {
-                    this.product.id = this.createId();
-                    this.product.code = this.createId();
-                    this.product.image = 'product-placeholder.svg';
-                    this.product.inventoryStatus = this.product.inventoryStatus ? this.product.inventoryStatus.value : 'INSTOCK';
-                    this.products.push(this.product);
-                    this.$toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
-                }
-                this.productDialog = false;
-                this.product = {};
-            }
-        },
-        editProduct(product) {
-            this.product = { ...product };
-            this.productDialog = true;
-        },
-        confirmDeleteProduct(product) {
-            this.product = product;
-            this.deleteProductDialog = true;
-        },
-        deleteProduct() {
-            this.products = this.products.filter((val) => val.id !== this.product.id);
-            this.deleteProductDialog = false;
-            this.product = {};
-            this.$toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-        },
-        findIndexById(id) {
-            let index = -1;
-            for (let i = 0; i < this.products.length; i++) {
-                if (this.products[i].id === id) {
-                    index = i;
-                    break;
-                }
-            }
-            return index;
-        },
-        createId() {
-            let id = '';
-            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            for (var i = 0; i < 5; i++) {
-                id += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return id;
-        },
-        exportCSV() {
-            this.$refs.dt.exportCSV();
-        },
-        confirmDeleteSelected() {
-            this.deleteProductsDialog = true;
-        },
-        deleteSelectedProducts() {
-            this.products = this.products.filter((val) => !this.selectedProducts.includes(val));
-            this.deleteProductsDialog = false;
-            this.selectedProducts = null;
-            this.$toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-        },
-        initFilters() {
-            this.filters = {
-                global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-            };
+const toast = useToast();
+
+const products = ref(null);
+const productDialog = ref(false);
+const deleteProductDialog = ref(false);
+const deleteProductsDialog = ref(false);
+const product = ref({});
+const selectedProducts = ref(null);
+const dt = ref(null);
+const filters = ref({});
+const submitted = ref(false);
+const statuses = ref([
+    { label: 'INSTOCK', value: 'instock' },
+    { label: 'LOWSTOCK', value: 'lowstock' },
+    { label: 'OUTOFSTOCK', value: 'outofstock' }
+]);
+
+const productService = new ProductService();
+
+onBeforeMount(() => {
+    initFilters();
+});
+onMounted(() => {
+    productService.getProducts().then((data) => (products.value = data));
+});
+const formatCurrency = (value) => {
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+};
+
+const openNew = () => {
+    product.value = {};
+    submitted.value = false;
+    productDialog.value = true;
+};
+
+const hideDialog = () => {
+    productDialog.value = false;
+    submitted.value = false;
+};
+
+const saveProduct = () => {
+    submitted.value = true;
+    if (product.value.name.trim()) {
+        if (product.value.id) {
+            product.value.inventoryStatus = product.value.inventoryStatus.value ? product.value.inventoryStatus.value : product.value.inventoryStatus;
+            product.value[findIndexById(product.value.id)] = product.value;
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+        } else {
+            product.value.id = createId();
+            product.value.code = createId();
+            product.value.image = 'product-placeholder.svg';
+            product.value.inventoryStatus = product.value.inventoryStatus ? product.value.inventoryStatus.value : 'INSTOCK';
+            products.value.push(product);
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
+        }
+        productDialog.value = false;
+        product.value = {};
+    }
+};
+
+const editProduct = (editProduct) => {
+    product.value = { ...editProduct };
+    console.log(product);
+    productDialog.value = true;
+};
+
+const confirmDeleteProduct = (editProduct) => {
+    product.value = editProduct;
+    deleteProductDialog.value = true;
+};
+
+const deleteProduct = () => {
+    products.value = products.value.filter((val) => val.id !== product.value.id);
+    deleteProductDialog.value = false;
+    product.value = {};
+    toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+};
+
+const findIndexById = (id) => {
+    let index = -1;
+    for (let i = 0; i < products.value.length; i++) {
+        if (products.value[i].id === id) {
+            index = i;
+            break;
         }
     }
+    return index;
+};
+
+const createId = () => {
+    let id = '';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 5; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
+};
+
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
+
+const confirmDeleteSelected = () => {
+    deleteProductsDialog.value = true;
+};
+const deleteSelectedProducts = () => {
+    products.value = products.value.filter((val) => !selectedProducts.value.includes(val));
+    deleteProductsDialog.value = false;
+    selectedProducts.value = null;
+    toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+};
+
+const initFilters = () => {
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    };
 };
 </script>
 
 <style scoped lang="scss">
-@import '../assets/demo/badges.scss';
+@import '@/assets/demo/styles/badges.scss';
 </style>

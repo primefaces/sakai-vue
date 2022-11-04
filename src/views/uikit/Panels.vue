@@ -162,34 +162,22 @@
         <div class="col-12">
             <div class="card">
                 <h5>Splitter</h5>
-                <div class="grid">
-                    <Splitter style="height: 300px" class="mb-5">
-                        <SplitterPanel :size="40" :minSize="10" style="overflow: scroll">
-                            <p class="col m-3">
-                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequatur pariatur recusandae rerum atque nisi ipsum fuga numquam distinctio obcaecati quibusdam repellat, est assumenda quam perferendis reprehenderit,
-                                blanditiis, excepturi facilis! Voluptatem.
-                            </p>
-                        </SplitterPanel>
-                        <SplitterPanel :size="60" style="overflow: scroll">
-                            <Splitter layout="vertical">
-                                <SplitterPanel :size="15">
-                                    <p class="col m-3">
-                                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident,
-                                        similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio
-                                        cumque nihil impedit quo minus.
-                                    </p>
-                                </SplitterPanel>
-                                <SplitterPanel :size="85">
-                                    <p class="col m-3">
-                                        Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut
-                                        aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Donec vel volutpat ipsum. Integer nunc magna, posuere ut tincidunt eget, egestas vitae sapien. Morbi dapibus
-                                        luctus odio.
-                                    </p>
-                                </SplitterPanel>
-                            </Splitter>
-                        </SplitterPanel>
-                    </Splitter>
-                </div>
+
+                <Splitter style="height: 300px" class="mb-5">
+                    <SplitterPanel :size="30" :minSize="10" style="overflow: scroll">
+                        <div className="h-full flex align-items-center justify-content-center">Panel 1</div>
+                    </SplitterPanel>
+                    <SplitterPanel :size="70" style="overflow: scroll">
+                        <Splitter layout="vertical">
+                            <SplitterPanel :size="15">
+                                <div className="h-full flex align-items-center justify-content-center">Panel 2</div>
+                            </SplitterPanel>
+                            <SplitterPanel :size="50">
+                                <div className="h-full flex align-items-center justify-content-center">Panel 3</div>
+                            </SplitterPanel>
+                        </Splitter>
+                    </SplitterPanel>
+                </Splitter>
             </div>
         </div>
     </div>

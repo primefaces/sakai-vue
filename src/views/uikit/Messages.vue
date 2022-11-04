@@ -68,16 +68,17 @@ const toast = useToast();
 const message = ref([]);
 const username = ref(null);
 const email = ref(null);
+const count = ref(0);
 
 const addMessage = (type) => {
     if (type === 'success') {
-        this.message = [{ severity: 'success', detail: 'Success Message', content: 'Message sent', id: this.count++ }];
+        message.value = [{ severity: 'success', detail: 'Success Message', content: 'Message sent', id: count.value++ }];
     } else if (type === 'info') {
-        this.message = [{ severity: 'info', detail: 'Info Message', content: 'PrimeVue rocks', id: this.count++ }];
+        message.value = [{ severity: 'info', detail: 'Info Message', content: 'PrimeVue rocks', id: count.value++ }];
     } else if (type === 'warn') {
-        this.message = [{ severity: 'warn', detail: 'Warn Message', content: 'There are unsaved changes', id: this.count++ }];
+        message.value = [{ severity: 'warn', detail: 'Warn Message', content: 'There are unsaved changes', id: count.value++ }];
     } else if (type === 'error') {
-        this.message = [{ severity: 'error', detail: 'Error Message', content: 'Validation failed', id: this.count++ }];
+        message.value = [{ severity: 'error', detail: 'Error Message', content: 'Validation failed', id: count.value++ }];
     }
 };
 

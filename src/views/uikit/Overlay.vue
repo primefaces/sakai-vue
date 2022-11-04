@@ -16,21 +16,21 @@
             </div>
             <div class="card p-fluid">
                 <h5>Overlay Panel</h5>
-                <div class="grid formgrid">
-                    <div class="col-6">
+                <div class="flex flex-wrap gap-2">
+                    <div>
                         <Button type="button" label="Image" @click="toggle" class="p-button-success" />
                         <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true">
-                            <img src="images/nature/nature9.jpg" alt="Nature 9" />
+                            <img src="/images/nature/nature9.jpg" alt="Nature 9" />
                         </OverlayPanel>
                     </div>
-                    <div class="col-6">
+                    <div>
                         <Button type="button" label="DataTable" @click="toggleDataTable" class="p-button-success" />
                         <OverlayPanel ref="op2" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px">
                             <DataTable :value="products" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @row-select="onProductSelect" responsiveLayout="scroll">
                                 <Column field="name" header="Name" :sortable="true" headerStyle="min-width:10rem;"></Column>
                                 <Column header="Image" headerStyle="min-width:10rem;">
                                     <template #body="slotProps">
-                                        <img :src="'images/product/' + slotProps.data.image" :alt="slotProps.data.image" width="100" class="shadow-2" />
+                                        <img :src="'/images/product/' + slotProps.data.image" :alt="slotProps.data.image" width="100" class="shadow-2" />
                                     </template>
                                 </Column>
                                 <Column field="price" header="Price" :sortable="true" headerStyle="min-width:8rem;">

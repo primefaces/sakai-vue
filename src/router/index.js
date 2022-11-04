@@ -95,7 +95,7 @@ const router = createRouter({
                     component: () => import('@/views/uikit/Misc.vue')
                 },
                 {
-                    path: '/utilities/blocks',
+                    path: '/blocks',
                     name: 'blocks',
                     component: () => import('@/views/utilities/Blocks.vue')
                 },
@@ -113,6 +113,11 @@ const router = createRouter({
                     path: '/pages/empty',
                     name: 'empty',
                     component: () => import('@/views/pages/Empty.vue')
+                },
+                {
+                    path: '/pages/crud',
+                    name: 'crud',
+                    component: () => import('@/views/pages/Crud.vue')
                 },
                 {
                     path: '/documentation',
@@ -135,7 +140,7 @@ const router = createRouter({
         {
             path: '/auth/login',
             name: 'login',
-            component: () => import('@/views/pages/Landing.vue')
+            component: () => import('@/views/pages/Login.vue')
         },
         {
             path: '/auth/access',

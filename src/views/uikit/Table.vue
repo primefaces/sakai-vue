@@ -53,7 +53,7 @@
                     </Column>
                     <Column header="Agent" filterField="representative" :showFilterMatchModes="false" :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
                         <template #body="{ data }">
-                            <img :alt="data.representative.name" :src="'images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
+                            <img :alt="data.representative.name" :src="'/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
                             <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.representative.name }}</span>
                         </template>
                         <template #filter="{ filterModel }">
@@ -132,7 +132,6 @@
                 <DataTable :value="customer2" :scrollable="true" scrollHeight="400px" :loading="loading2" scrollDirection="both" class="mt-3">
                     <Column field="name" header="Name" :style="{ width: '150px' }" frozen></Column>
                     <Column field="id" header="Id" :style="{ width: '100px' }" :frozen="idFrozen"></Column>
-                    <Column field="name" header="Name" :style="{ width: '200px' }"></Column>
                     <Column field="country.name" header="Country" :style="{ width: '200px' }">
                         <template #body="{ data }">
                             <img src="@/assets/demo/images/flag/flag_placeholder.png" :class="'flag flag-' + data.country.code" width="30" />
@@ -180,7 +179,7 @@
                     </Column>
                     <Column header="Image">
                         <template #body="slotProps">
-                            <img :src="'images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
+                            <img :src="'/images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
                         </template>
                     </Column>
                     <Column field="price" header="Price" :sortable="true">
@@ -264,7 +263,7 @@
                     </Column>
                     <Column field="date" header="Date" style="min-width: 200px"></Column>
                     <template #groupheader="slotProps">
-                        <img :alt="slotProps.data.representative.name" :src="'images/avatar/' + slotProps.data.representative.image" width="32" style="vertical-align: middle" />
+                        <img :alt="slotProps.data.representative.name" :src="'/images/avatar/' + slotProps.data.representative.image" width="32" style="vertical-align: middle" />
                         <span class="image-text font-bold ml-2">{{ slotProps.data.representative.name }}</span>
                     </template>
                     <template #groupfooter="slotProps">

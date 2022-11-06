@@ -174,19 +174,19 @@ const breadcrumbItems = ref([{ label: 'Computer' }, { label: 'Notebook' }, { lab
 const nestedRouteItems = ref([
     {
         label: 'Personal',
-        to: '/menu'
+        to: '/uikit/menu'
     },
     {
         label: 'Seat',
-        to: '/menu/seat'
+        to: '/uikit/menu/seat'
     },
     {
         label: 'Payment',
-        to: '/menu/payment'
+        to: '/uikit/menu/payment'
     },
     {
         label: 'Confirmation',
-        to: '/menu/confirmation'
+        to: '/uikit/menu/confirmation'
     }
 ]);
 const tieredMenuItems = ref([

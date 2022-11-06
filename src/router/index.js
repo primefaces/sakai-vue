@@ -71,8 +71,25 @@ const router = createRouter({
                 },
                 {
                     path: '/uikit/menu',
-                    name: 'menu',
-                    component: () => import('@/views/uikit/Menu.vue')
+                    component: () => import('@/views/uikit/Menu.vue'),
+                    children: [
+                        {
+                            path: '/uikit/menu',
+                            component: () => import('@/components/menu/PersonalDemo.vue')
+                        },
+                        {
+                            path: '/uikit/menu/seat',
+                            component: () => import('@/components/menu/SeatDemo.vue')
+                        },
+                        {
+                            path: '/uikit/menu/payment',
+                            component: () => import('@/components/menu/PaymentDemo.vue')
+                        },
+                        {
+                            path: '/uikit/menu/confirmation',
+                            component: () => import('@/components/menu/ConfirmationDemo.vue')
+                        }
+                    ]
                 },
                 {
                     path: '/uikit/message',

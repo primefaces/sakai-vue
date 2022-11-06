@@ -100,9 +100,10 @@ import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
-import CodeHighlight from '@/layout/AppCodeHighlight';
+import CodeHighlight from '@/layout/CodeHighlight';
 import BlockViewer from '@/layout/BlockViewer.vue';
 
+import 'prismjs/themes/prism-coy.css';
 import '@/assets/styles.scss';
 
 const app = createApp(App);

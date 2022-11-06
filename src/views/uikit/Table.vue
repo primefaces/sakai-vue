@@ -148,7 +148,7 @@
                     <Column field="activity" header="Activity" :style="{ width: '200px' }"></Column>
                     <Column field="representative.name" header="Representative" :style="{ width: '200px' }">
                         <template #body="{ data }">
-                            <img :alt="data.representative.name" :src="'images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
+                            <img :alt="data.representative.name" :src="'/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
                             <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.representative.name }}</span>
                         </template>
                     </Column>

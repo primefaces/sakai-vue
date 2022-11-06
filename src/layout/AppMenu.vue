@@ -157,17 +157,22 @@ const model = ref([
         ]
     }
 ]);
+
+function test(e) {
+    console.log('test');
+    console.log(e);
+}
 </script>
 
 <template>
     <ul class="layout-menu">
         <template v-for="(item, i) in model" :key="item">
-            <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
+            <app-menu-item @submenu:opened="test" v-if="!item.separator" :item="item" :index="i"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
         <li>
             <a href="https://www.primefaces.org/primeblocks-ng/#/">
-                <img src="assets/layout/images/.png" alt="Prime Blocks" class="w-full mt-3" />
+                <img src="@/assets/layout/images/banner-primeblocks.png" alt="Prime Blocks" class="w-full mt-3" />
             </a>
         </li>
     </ul>

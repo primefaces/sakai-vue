@@ -13,7 +13,7 @@
             <Button icon="pi pi-plus" type="button" pButton @click="incrementScale()" class="p-button-text p-button-rounded w-2rem h-2rem ml-2" :disabled="layoutConfig.scale.value === scales[scales.length - 1]"></Button>
         </div>
 
-        <template v-if="!minimal">
+        <template v-if="true">
             <h5>Menu Type</h5>
             <div class="field-radiobutton">
                 <RadioButton name="menuMode" value="static" v-model="layoutConfig.menuMode.value" inputId="mode1"></RadioButton>
@@ -25,7 +25,7 @@
             </div>
         </template>
 
-        <template v-if="!minimal">
+        <template v-if="true">
             <h5>Input Style</h5>
             <div class="flex">
                 <div class="field-radiobutton flex-1">

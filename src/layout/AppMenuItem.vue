@@ -7,7 +7,6 @@ const route = useRoute();
 
 const { layoutConfig, setActiveMenuItem } = useLayoutService();
 
-const show = ref(true);
 const props = defineProps({
     item: {
         type: Object,
@@ -30,13 +29,8 @@ const props = defineProps({
 const isActiveMenu = ref(false);
 const itemKey = ref(null);
 onBeforeMount(() => {
-    if (!props.root) {
-        show.value = false;
-    }
-
     itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
 
-    console.log();
     isActiveMenu.value = layoutConfig.activeMenuItem.value === itemKey.value || layoutConfig.activeMenuItem?.value?.startsWith(itemKey.value + '-');
 });
 watch(
@@ -50,12 +44,7 @@ const itemClick = (event, item) => {
         event.preventDefault();
         return;
     }
-    if (!item.to && !item.url) {
-        if (item.items) {
-            show.value = !show.value;
-        }
-        event.preventDefault();
-    }
+
     //execute command
     if (item.command) {
         item.command({ originalEvent: event, item: item });

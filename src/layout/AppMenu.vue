@@ -33,7 +33,7 @@ const model = ref([
         label: 'Prime Blocks',
         items: [
             { label: 'Free Blocks', icon: 'pi pi-fw pi-eye', to: '/blocks', badge: 'NEW' },
-            { label: 'All Blocks', icon: 'pi pi-fw pi-globe', url: 'https://www.primefaces.org/primeblocks-react', target: '_blank' }
+            { label: 'All Blocks', icon: 'pi pi-fw pi-globe', url: 'https://www.primefaces.org/primeblocks-vue', target: '_blank' }
         ]
     },
     {
@@ -151,7 +151,7 @@ const model = ref([
             {
                 label: 'View Source',
                 icon: 'pi pi-fw pi-search',
-                url: 'https://github.com/primefaces/sakai-react',
+                url: 'https://github.com/primefaces/sakai-vue',
                 target: '_blank'
             }
         ]

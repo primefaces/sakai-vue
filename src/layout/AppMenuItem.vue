@@ -1,9 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onBeforeMount, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { useLayoutService } from '@/layout/composables/layoutService';
 
-const emit = defineEmits(['submenu:opened']);
 const route = useRoute();
+
+const { layoutConfig, setActiveMenuItem } = useLayoutService();
+
 const show = ref(true);
 const props = defineProps({
     item: {
@@ -18,19 +21,31 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
-    active: {
-        type: Boolean,
-        default: false
+    parentItemKey: {
+        type: String,
+        default: null
     }
 });
-const activeSubmenu = ref(null);
-onMounted(() => {
+
+const isActiveMenu = ref(false);
+const itemKey = ref(null);
+onBeforeMount(() => {
     if (!props.root) {
         show.value = false;
     }
-    console.log(props.item);
+
+    itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
+
+    console.log();
+    isActiveMenu.value = layoutConfig.activeMenuItem.value === itemKey.value || layoutConfig.activeMenuItem?.value?.startsWith(itemKey.value + '-');
 });
-const itemClick = (event, item, index) => {
+watch(
+    () => layoutConfig.activeMenuItem.value,
+    (newVal) => {
+        isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
+    }
+);
+const itemClick = (event, item) => {
     if (item.disabled) {
         event.preventDefault();
         return;
@@ -38,9 +53,6 @@ const itemClick = (event, item, index) => {
     if (!item.to && !item.url) {
         if (item.items) {
             show.value = !show.value;
-
-            activeSubmenu.value = show.value ? index : null;
-            emit('submenu:opened');
         }
         event.preventDefault();
     }
@@ -49,7 +61,10 @@ const itemClick = (event, item, index) => {
         item.command({ originalEvent: event, item: item });
     }
 
-    /*     activeIndex.value = index === activeIndex.value ? null : index; 
+    if (item.items) setActiveMenuItem(isActiveMenu.value ? props.parentItemKey : itemKey);
+    else setActiveMenuItem(itemKey.value);
+
+    /*     activeIndex.value = index === activeIndex.value ? null : index;
 
     /*     emit('menuitem-click', {
         originalEvent: event,
@@ -63,7 +78,7 @@ const checkActiveRoute = (item) => {
 </script>
 
 <template>
-    <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': checkActiveRoute(item, root) }">
+    <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
         <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
         <a v-if="(!item.to || item.items) && item.visible !== false" :href="item.url" @click="itemClick($event, item, index)" :class="item.class" :target="item.target" tabindex="0">
             <i :class="item.icon" class="layout-menuitem-icon"></i>
@@ -76,8 +91,8 @@ const checkActiveRoute = (item) => {
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
         </router-link>
         <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
-            <ul v-show="show" class="layout-submenu">
-                <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :root="false"></app-menu-item>
+            <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
+                <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false"></app-menu-item>
             </ul>
         </Transition>
     </li>

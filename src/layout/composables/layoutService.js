@@ -6,7 +6,8 @@ const layoutConfig = reactive({
     inputStyle: 'outlined',
     menuMode: 'static',
     theme: 'lara-light-indigo',
-    scale: 14
+    scale: 14,
+    activeMenuItem: null
 });
 
 const layoutState = reactive({
@@ -28,6 +29,10 @@ export function useLayoutService () {
         layoutConfig.scale = scale;
     };
 
+    const setActiveMenuItem = item => {
+        layoutConfig.activeMenuItem = item.value || item;
+    };
+
     const onMenuToggle = () => {
         if (layoutConfig.menuMode === 'overlay') {
             layoutState.overlayMenuActive = !layoutState.overlayMenuActive;
@@ -44,5 +49,5 @@ export function useLayoutService () {
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
-    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), changeThemeSettings, setScale, onMenuToggle, isSidebarActive, isDarkTheme };
+    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), changeThemeSettings, setScale, onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem };
 }

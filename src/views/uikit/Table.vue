@@ -2,22 +2,12 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import CustomerService from '@/layout/service/CustomerService';
 import ProductService from '@/layout/service/ProductService';
-import { ref, onMounted } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 
 const customer1 = ref(null);
 const customer2 = ref(null);
 const customer3 = ref(null);
-const filters1 = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    representative: { value: null, matchMode: FilterMatchMode.IN },
-    date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-    balance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-    activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
-    verified: { value: null, matchMode: FilterMatchMode.EQUALS }
-});
+const filters1 = ref(null);
 const loading1 = ref(null);
 const loading2 = ref(null);
 const idFrozen = ref(false);
@@ -40,7 +30,7 @@ const representatives = ref([
 const customerService = new CustomerService();
 const productService = new ProductService();
 
-onMounted(() => {
+onBeforeMount(() => {
     productService.getProductsWithOrdersSmall().then((data) => (products.value = data));
     customerService.getCustomersLarge().then((data) => {
         customer1.value = data;
@@ -50,6 +40,8 @@ onMounted(() => {
     customerService.getCustomersLarge().then((data) => (customer2.value = data));
     customerService.getCustomersMedium().then((data) => (customer3.value = data));
     loading2.value = false;
+
+    initFilters1();
 });
 
 const initFilters1 = () => {
@@ -61,10 +53,9 @@ const initFilters1 = () => {
         date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
         balance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
         status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-        activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
+        activity: { value: [0, 50], matchMode: FilterMatchMode.BETWEEN },
         verified: { value: null, matchMode: FilterMatchMode.EQUALS }
     };
-    console.log(filters1);
 };
 
 const clearFilter1 = () => {
@@ -208,7 +199,7 @@ const calculateCustomerTotal = (name) => {
                             <ProgressBar :value="data.activity" :showValue="false" style="height: 0.5rem"></ProgressBar>
                         </template>
                         <template #filter="{ filterModel }">
-                            <Slider v-model="filterModel.value" range class="m-3"></Slider>
+                            <Slider v-model="filterModel.value" :range="true" class="m-3"></Slider>
                             <div class="flex align-items-center justify-content-between px-2">
                                 <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>
                                 <span>{{ filterModel.value ? filterModel.value[1] : 100 }}</span>

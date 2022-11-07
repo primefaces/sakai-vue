@@ -19,17 +19,17 @@ const layoutState = reactive({
     menuHoverActive: false
 });
 
-export function useLayoutService() {
+export function useLayoutService () {
     const changeThemeSettings = (theme, darkTheme) => {
         layoutConfig.theme = theme;
         layoutConfig.darkTheme = darkTheme;
     };
 
-    const setScale = (scale) => {
+    const setScale = scale => {
         layoutConfig.scale = scale;
     };
 
-    const setActiveMenuItem = (item) => {
+    const setActiveMenuItem = item => {
         layoutConfig.activeMenuItem = item.value || item;
     };
 

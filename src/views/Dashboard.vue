@@ -7,10 +7,10 @@ const { isDarkTheme } = useLayoutService();
 
 const products = ref(null);
 const lineData = reactive({
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
         {
-            label: 'Revenue',
+            label: 'First Dataset',
             data: [65, 59, 80, 81, 56, 55, 40],
             fill: false,
             backgroundColor: '#2f4860',
@@ -18,7 +18,7 @@ const lineData = reactive({
             tension: 0.4
         },
         {
-            label: 'Sales',
+            label: 'Second Dataset',
             data: [28, 48, 40, 19, 86, 27, 90],
             fill: false,
             backgroundColor: '#00bb7e',
@@ -76,25 +76,25 @@ const applyDarkTheme = () => {
         plugins: {
             legend: {
                 labels: {
-                    color: '#495057'
+                    color: '#ebedef'
                 }
             }
         },
         scales: {
             x: {
                 ticks: {
-                    color: '#495057'
+                    color: '#ebedef'
                 },
                 grid: {
-                    color: '#ebedef'
+                    color: 'rgba(160, 167, 181, .3)'
                 }
             },
             y: {
                 ticks: {
-                    color: '#495057'
+                    color: '#ebedef'
                 },
                 grid: {
-                    color: '#ebedef'
+                    color: 'rgba(160, 167, 181, .3)'
                 }
             }
         }

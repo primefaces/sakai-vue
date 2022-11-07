@@ -66,9 +66,9 @@ onMounted(() => {
 const searchCountry = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
-            this.autoFilteredValue = [...this.autoValue];
+            autoFilteredValue.value = [...autoValue.value];
         } else {
-            this.autoFilteredValue = this.autoValue.filter((country) => {
+            autoFilteredValue.value = autoValue.value.filter((country) => {
                 return country.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }

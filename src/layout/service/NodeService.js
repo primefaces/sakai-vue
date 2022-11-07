@@ -1,13 +1,13 @@
 export default class NodeService {
-    getTreeTableNodes () {
+    getTreeTableNodes() {
         return fetch('/data/treetablenodes.json')
-            .then(res => res.json())
-            .then(d => d.root);
+            .then((res) => res.json())
+            .then((d) => d.root);
     }
 
-    getTreeNodes () {
+    getTreeNodes() {
         return fetch('/data/treenodes.json')
-            .then(res => res.json())
-            .then(d => d.root);
+            .then((res) => res.json())
+            .then((d) => d.root);
     }
 }

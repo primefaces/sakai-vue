@@ -1,3 +1,25 @@
+<script setup>
+import { ref, computed } from 'vue';
+import { useLayoutService } from '@/layout/composables/layoutService';
+
+const { layoutConfig, onMenuToggle } = useLayoutService();
+
+const topbarMenuActive = ref(false);
+const logoUrl = () => {
+    return new URL(`/src/assets/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
+};
+
+const onTopBarMenuButton = () => {
+    topbarMenuActive.value = !topbarMenuActive.value;
+};
+
+const topbarMenuClasses = computed(() => {
+    return {
+        'layout-topbar-menu-mobile-active': topbarMenuActive.value
+    };
+});
+</script>
+
 <template>
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
@@ -29,27 +51,5 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref, computed } from 'vue';
-import { useLayoutService } from '@/layout/composables/layoutService';
-
-const { layoutConfig, onMenuToggle } = useLayoutService();
-
-const topbarMenuActive = ref(false);
-const logoUrl = () => {
-    return new URL(`/src/assets/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
-};
-
-const onTopBarMenuButton = () => {
-    topbarMenuActive.value = !topbarMenuActive.value;
-};
-
-const topbarMenuClasses = computed(() => {
-    return {
-        'layout-topbar-menu-mobile-active': topbarMenuActive.value
-    };
-});
-</script>
 
 <style lang="scss" scoped></style>

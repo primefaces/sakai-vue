@@ -1,3 +1,47 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import CountryService from '@/layout/service/CountryService';
+
+const countries = ref(null);
+const filteredCountries = ref(null);
+const value1 = ref(null);
+const value2 = ref(null);
+const value3 = ref(null);
+const value4 = ref(null);
+const value5 = ref(null);
+const value6 = ref(null);
+const value7 = ref(null);
+const value8 = ref(null);
+const value9 = ref(null);
+const value10 = ref(null);
+const cities = ref([
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Paris', code: 'PRS' }
+]);
+const countryService = new CountryService();
+
+onMounted(() => {
+    countryService.getCountries().then((data) => {
+        countries.value = data;
+    });
+});
+
+const searchCountry = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            filteredCountries.value = [...countries];
+        } else {
+            filteredCountries.value = countries.value.filter((country) => {
+                return country.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 250);
+};
+</script>
+
 <template>
     <div class="grid p-fluid">
         <div class="col">
@@ -54,47 +98,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import CountryService from '@/layout/service/CountryService';
-
-const countries = ref(null);
-const filteredCountries = ref(null);
-const value1 = ref(null);
-const value2 = ref(null);
-const value3 = ref(null);
-const value4 = ref(null);
-const value5 = ref(null);
-const value6 = ref(null);
-const value7 = ref(null);
-const value8 = ref(null);
-const value9 = ref(null);
-const value10 = ref(null);
-const cities = ref([
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
-]);
-const countryService = new CountryService();
-
-onMounted(() => {
-    countryService.getCountries().then((data) => {
-        countries.value = data;
-    });
-});
-
-const searchCountry = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            filteredCountries.value = [...countries];
-        } else {
-            filteredCountries.value = countries.value.filter((country) => {
-                return country.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 250);
-};
-</script>

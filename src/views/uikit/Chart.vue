@@ -1,40 +1,3 @@
-<template>
-    <div class="grid p-fluid">
-        <div class="col-12 lg:col-6">
-            <div class="card">
-                <h5>Linear Chart</h5>
-                <Chart type="line" :data="lineData" :options="lineOptions" />
-            </div>
-
-            <div class="card flex flex-column align-items-center">
-                <h5 class="align-self-start">Pie Chart</h5>
-                <Chart type="pie" :data="pieData" :options="pieOptions" style="width: 50%" />
-            </div>
-
-            <div class="card flex flex-column align-items-center">
-                <h5 class="align-self-start">Polar Area Chart</h5>
-                <Chart type="polarArea" :data="polarData" :options="polarOptions" style="width: 50%" />
-            </div>
-        </div>
-        <div class="col-12 lg:col-6">
-            <div class="card">
-                <h5>Bar Chart</h5>
-                <Chart type="bar" :data="barData" :options="barOptions" />
-            </div>
-
-            <div class="card flex flex-column align-items-center">
-                <h5 class="align-self-start">Doughnut Chart</h5>
-                <Chart type="doughnut" :data="pieData" :options="pieOptions" style="width: 50%" />
-            </div>
-
-            <div class="card flex flex-column align-items-center">
-                <h5 class="align-self-start">Radar Chart</h5>
-                <Chart type="radar" :data="radarData" :options="radarOptions" style="width: 50%" />
-            </div>
-        </div>
-    </div>
-</template>
-
 <script setup>
 import { ref, watch } from 'vue';
 import { useLayoutService } from '@/layout/composables/layoutService';
@@ -347,3 +310,40 @@ watch(
     { immediate: true }
 );
 </script>
+
+<template>
+    <div class="grid p-fluid">
+        <div class="col-12 lg:col-6">
+            <div class="card">
+                <h5>Linear Chart</h5>
+                <Chart type="line" :data="lineData" :options="lineOptions" />
+            </div>
+
+            <div class="card flex flex-column align-items-center">
+                <h5 class="align-self-start">Pie Chart</h5>
+                <Chart type="pie" :data="pieData" :options="pieOptions" style="width: 50%" />
+            </div>
+
+            <div class="card flex flex-column align-items-center">
+                <h5 class="align-self-start">Polar Area Chart</h5>
+                <Chart type="polarArea" :data="polarData" :options="polarOptions" style="width: 50%" />
+            </div>
+        </div>
+        <div class="col-12 lg:col-6">
+            <div class="card">
+                <h5>Bar Chart</h5>
+                <Chart type="bar" :data="barData" :options="barOptions" />
+            </div>
+
+            <div class="card flex flex-column align-items-center">
+                <h5 class="align-self-start">Doughnut Chart</h5>
+                <Chart type="doughnut" :data="pieData" :options="pieOptions" style="width: 50%" />
+            </div>
+
+            <div class="card flex flex-column align-items-center">
+                <h5 class="align-self-start">Radar Chart</h5>
+                <Chart type="radar" :data="radarData" :options="radarOptions" style="width: 50%" />
+            </div>
+        </div>
+    </div>
+</template>

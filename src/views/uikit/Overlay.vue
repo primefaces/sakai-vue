@@ -1,3 +1,78 @@
+<script setup>
+import ProductService from '@/layout/service/ProductService';
+import { ref, onMounted } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
+
+const display = ref(false);
+const displayConfirmation = ref(false);
+const visibleLeft = ref(false);
+const visibleRight = ref(false);
+const visibleTop = ref(false);
+const visibleBottom = ref(false);
+const visibleFull = ref(false);
+const products = ref(null);
+const selectedProduct = ref(null);
+const op = ref(null);
+const op2 = ref(null);
+const popup = ref(null);
+
+const productService = new ProductService();
+const toast = useToast();
+const confirmPopup = useConfirm();
+
+onMounted(() => {
+    productService.getProductsSmall().then((data) => (products.value = data));
+});
+
+const open = () => {
+    display.value = true;
+};
+
+const close = () => {
+    display.value = false;
+};
+
+const openConfirmation = () => {
+    displayConfirmation.value = true;
+};
+
+const closeConfirmation = () => {
+    displayConfirmation.value = false;
+};
+
+const toggle = (event) => {
+    op.value.toggle(event);
+};
+
+const toggleDataTable = (event) => {
+    op2.value.toggle(event);
+};
+
+const formatCurrency = (value) => {
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+};
+
+const onProductSelect = (event) => {
+    op.value.hide();
+    toast.add({ severity: 'info', summary: 'Product Selected', detail: event.data.name, life: 3000 });
+};
+
+const confirm = (event) => {
+    confirmPopup.require({
+        target: event.target,
+        message: 'Are you sure you want to proceed?',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+        },
+        reject: () => {
+            toast.add({ severity: 'info', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+};
+</script>
+
 <template>
     <div class="grid">
         <div class="col-12 lg:col-6">
@@ -110,78 +185,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import ProductService from '@/layout/service/ProductService';
-import { ref, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useConfirm } from 'primevue/useconfirm';
-
-const display = ref(false);
-const displayConfirmation = ref(false);
-const visibleLeft = ref(false);
-const visibleRight = ref(false);
-const visibleTop = ref(false);
-const visibleBottom = ref(false);
-const visibleFull = ref(false);
-const products = ref(null);
-const selectedProduct = ref(null);
-const op = ref(null);
-const op2 = ref(null);
-const popup = ref(null);
-
-const productService = new ProductService();
-const toast = useToast();
-const confirmPopup = useConfirm();
-
-onMounted(() => {
-    productService.getProductsSmall().then((data) => (products.value = data));
-});
-
-const open = () => {
-    display.value = true;
-};
-
-const close = () => {
-    display.value = false;
-};
-
-const openConfirmation = () => {
-    displayConfirmation.value = true;
-};
-
-const closeConfirmation = () => {
-    displayConfirmation.value = false;
-};
-
-const toggle = (event) => {
-    op.value.toggle(event);
-};
-
-const toggleDataTable = (event) => {
-    op2.value.toggle(event);
-};
-
-const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-};
-
-const onProductSelect = (event) => {
-    op.value.hide();
-    toast.add({ severity: 'info', summary: 'Product Selected', detail: event.data.name, life: 3000 });
-};
-
-const confirm = (event) => {
-    confirmPopup.require({
-        target: event.target,
-        message: 'Are you sure you want to proceed?',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-        },
-        reject: () => {
-            toast.add({ severity: 'info', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-        }
-    });
-};
-</script>

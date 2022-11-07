@@ -1,3 +1,15 @@
+<script setup>
+import { ref } from 'vue';
+
+const dropdownItems = ref([
+    { name: 'Option 1', code: 'Option 1' },
+    { name: 'Option 2', code: 'Option 2' },
+    { name: 'Option 3', code: 'Option 3' }
+]);
+
+const dropdownItem = ref(null);
+</script>
+
 <template>
     <div class="grid">
         <div class="col-12 md:col-6">
@@ -107,15 +119,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-
-const dropdownItems = ref([
-    { name: 'Option 1', code: 'Option 1' },
-    { name: 'Option 2', code: 'Option 2' },
-    { name: 'Option 3', code: 'Option 3' }
-]);
-
-const dropdownItem = ref(null);
-</script>

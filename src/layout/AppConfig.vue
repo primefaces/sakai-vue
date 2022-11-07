@@ -1,3 +1,47 @@
+<script setup>
+import { ref } from 'vue';
+import { useLayoutService } from '@/layout/composables/layoutService';
+
+const scales = ref([12, 13, 14, 15, 16]);
+const visible = ref(false);
+
+const { changeThemeSettings, setScale, layoutConfig } = useLayoutService();
+
+const onConfigButtonClick = () => {
+    visible.value = !visible.value;
+};
+
+const onChangeTheme = (theme, mode) => {
+    const elementId = 'theme-css';
+    const linkElement = document.getElementById(elementId);
+    const cloneLinkElement = linkElement.cloneNode(true);
+    const newThemeUrl = linkElement.getAttribute('href').replace(layoutConfig.theme.value, theme);
+    cloneLinkElement.setAttribute('id', elementId + '-clone');
+    cloneLinkElement.setAttribute('href', newThemeUrl);
+    cloneLinkElement.addEventListener('load', () => {
+        linkElement.remove();
+        cloneLinkElement.setAttribute('id', elementId);
+    });
+    linkElement.parentNode.insertBefore(cloneLinkElement, linkElement.nextSibling);
+
+    changeThemeSettings(theme, mode === 'dark');
+};
+
+const decrementScale = () => {
+    setScale(layoutConfig.scale.value - 1);
+    applyScale();
+};
+
+const incrementScale = () => {
+    setScale(layoutConfig.scale.value + 1);
+    console.log(layoutConfig.scale);
+    applyScale();
+};
+const applyScale = () => {
+    document.documentElement.style.fontSize = layoutConfig.scale.value + 'px';
+};
+</script>
+
 <template>
     <button class="layout-config-button p-link" type="button" @click="onConfigButtonClick()">
         <i class="pi pi-cog"></i>
@@ -241,49 +285,5 @@
         </div>
     </Sidebar>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-import { useLayoutService } from '@/layout/composables/layoutService';
-
-const scales = ref([12, 13, 14, 15, 16]);
-const visible = ref(false);
-
-const { changeThemeSettings, setScale, layoutConfig } = useLayoutService();
-
-const onConfigButtonClick = () => {
-    visible.value = !visible.value;
-};
-
-const onChangeTheme = (theme, mode) => {
-    const elementId = 'theme-css';
-    const linkElement = document.getElementById(elementId);
-    const cloneLinkElement = linkElement.cloneNode(true);
-    const newThemeUrl = linkElement.getAttribute('href').replace(layoutConfig.theme.value, theme);
-    cloneLinkElement.setAttribute('id', elementId + '-clone');
-    cloneLinkElement.setAttribute('href', newThemeUrl);
-    cloneLinkElement.addEventListener('load', () => {
-        linkElement.remove();
-        cloneLinkElement.setAttribute('id', elementId);
-    });
-    linkElement.parentNode.insertBefore(cloneLinkElement, linkElement.nextSibling);
-
-    changeThemeSettings(theme, mode === 'dark');
-};
-
-const decrementScale = () => {
-    setScale(layoutConfig.scale.value - 1);
-    applyScale();
-};
-
-const incrementScale = () => {
-    setScale(layoutConfig.scale.value + 1);
-    console.log(layoutConfig.scale);
-    applyScale();
-};
-const applyScale = () => {
-    document.documentElement.style.fontSize = layoutConfig.scale.value + 'px';
-};
-</script>
 
 <style lang="scss" scoped></style>

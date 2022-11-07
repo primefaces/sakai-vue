@@ -1,3 +1,62 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import ProductService from '@/layout/service/ProductService';
+
+const picklistValue = ref([
+    [
+        { name: 'San Francisco', code: 'SF' },
+        { name: 'London', code: 'LDN' },
+        { name: 'Paris', code: 'PRS' },
+        { name: 'Istanbul', code: 'IST' },
+        { name: 'Berlin', code: 'BRL' },
+        { name: 'Barcelona', code: 'BRC' },
+        { name: 'Rome', code: 'RM' }
+    ],
+    []
+]);
+
+const orderlistValue = ref([
+    { name: 'San Francisco', code: 'SF' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Paris', code: 'PRS' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Berlin', code: 'BRL' },
+    { name: 'Barcelona', code: 'BRC' },
+    { name: 'Rome', code: 'RM' }
+]);
+
+const dataviewValue = ref(null);
+const layout = ref('grid');
+const sortKey = ref(null);
+const sortOrder = ref(null);
+const sortField = ref(null);
+const sortOptions = ref([
+    { label: 'Price High to Low', value: '!price' },
+    { label: 'Price Low to High', value: 'price' }
+]);
+
+const productService = new ProductService();
+
+onMounted(() => {
+    productService.getProductsSmall().then((data) => (dataviewValue.value = data));
+});
+
+const onSortChange = (event) => {
+    const value = event.value.value;
+    const sortValue = event.value;
+
+    if (value.indexOf('!') === 0) {
+        sortOrder.value = -1;
+        sortField.value = value.substring(1, value.length);
+        sortKey.value = sortValue;
+    } else {
+        sortOrder.value = 1;
+        sortField.value = value;
+        sortKey.value = sortValue;
+    }
+};
+</script>
+
 <template>
     <div class="grid">
         <div class="col-12">
@@ -89,65 +148,6 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import ProductService from '@/layout/service/ProductService';
-
-const picklistValue = ref([
-    [
-        { name: 'San Francisco', code: 'SF' },
-        { name: 'London', code: 'LDN' },
-        { name: 'Paris', code: 'PRS' },
-        { name: 'Istanbul', code: 'IST' },
-        { name: 'Berlin', code: 'BRL' },
-        { name: 'Barcelona', code: 'BRC' },
-        { name: 'Rome', code: 'RM' }
-    ],
-    []
-]);
-
-const orderlistValue = ref([
-    { name: 'San Francisco', code: 'SF' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Paris', code: 'PRS' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Berlin', code: 'BRL' },
-    { name: 'Barcelona', code: 'BRC' },
-    { name: 'Rome', code: 'RM' }
-]);
-
-const dataviewValue = ref(null);
-const layout = ref('grid');
-const sortKey = ref(null);
-const sortOrder = ref(null);
-const sortField = ref(null);
-const sortOptions = ref([
-    { label: 'Price High to Low', value: '!price' },
-    { label: 'Price Low to High', value: 'price' }
-]);
-
-const productService = new ProductService();
-
-onMounted(() => {
-    productService.getProductsSmall().then((data) => (dataviewValue.value = data));
-});
-
-const onSortChange = (event) => {
-    const value = event.value.value;
-    const sortValue = event.value;
-
-    if (value.indexOf('!') === 0) {
-        sortOrder.value = -1;
-        sortField.value = value.substring(1, value.length);
-        sortKey.value = sortValue;
-    } else {
-        sortOrder.value = 1;
-        sortField.value = value;
-        sortKey.value = sortValue;
-    }
-};
-</script>
 
 <style scoped lang="scss">
 @import '@/assets/demo/styles/badges.scss';

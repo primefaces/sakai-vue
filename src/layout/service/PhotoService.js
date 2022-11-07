@@ -1,7 +1,7 @@
 export default class PhotoService {
-    getImages () {
+    getImages() {
         return fetch('/data/photos.json')
-            .then(res => res.json())
-            .then(d => d.data);
+            .then((res) => res.json())
+            .then((d) => d.data);
     }
 }

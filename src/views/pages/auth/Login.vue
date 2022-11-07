@@ -1,3 +1,18 @@
+<script setup>
+import { useLayoutService } from '@/layout/composables/layoutService';
+import { ref } from 'vue';
+
+const { isDarkTheme } = useLayoutService();
+
+const email = ref('');
+const password = ref('');
+const checked = ref(false);
+
+const logoUrl = () => {
+    return new URL(`/src/assets/layout/images/${isDarkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
+};
+</script>
+
 <template>
     <div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <div class="grid justify-content-center p-2 lg:p-0" style="min-width: 80%">
@@ -33,21 +48,6 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { useLayoutService } from '@/layout/composables/layoutService';
-import { ref } from 'vue';
-
-const { isDarkTheme } = useLayoutService();
-
-const email = ref('');
-const password = ref('');
-const checked = ref(false);
-
-const logoUrl = () => {
-    return new URL(`/src/assets/layout/images/${isDarkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
-};
-</script>
 
 <style scoped>
 .pi-eye {

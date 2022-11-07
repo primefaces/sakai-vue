@@ -1,3 +1,33 @@
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+
+const icons = ref(null);
+const filter = ref(null);
+
+const filteredIcons = computed(() => {
+    if (filter.value) return icons.value.filter((icon) => icon.properties.name.indexOf(filter.value.toLowerCase()) > -1);
+    else return icons.value;
+});
+
+onMounted(() => {
+    fetch('data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
+        .then((res) => res.json())
+        .then((d) => {
+            let icons = d.icons;
+            let data = icons.filter((value) => {
+                return value.icon.tags.indexOf('deprecate') === -1;
+            });
+            data.sort((icon1, icon2) => {
+                if (icon1.properties.name < icon2.properties.name) return -1;
+                else if (icon1.properties.name > icon2.properties.name) return 1;
+                else return 0;
+            });
+
+            icons.value = data;
+        });
+});
+</script>
+
 <template>
     <div>
         <div class="card">
@@ -95,36 +125,6 @@ data() {
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref, onMounted, computed } from 'vue';
-
-const icons = ref(null);
-const filter = ref(null);
-
-const filteredIcons = computed(() => {
-    if (filter.value) return icons.value.filter((icon) => icon.properties.name.indexOf(filter.value.toLowerCase()) > -1);
-    else return icons.value;
-});
-
-onMounted(() => {
-    fetch('data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
-        .then((res) => res.json())
-        .then((d) => {
-            let icons = d.icons;
-            let data = icons.filter((value) => {
-                return value.icon.tags.indexOf('deprecate') === -1;
-            });
-            data.sort((icon1, icon2) => {
-                if (icon1.properties.name < icon2.properties.name) return -1;
-                else if (icon1.properties.name > icon2.properties.name) return 1;
-                else return 0;
-            });
-
-            icons.value = data;
-        });
-});
-</script>
 
 <style lang="scss" scoped>
 @import '@/assets/demo/styles/documentation.scss';

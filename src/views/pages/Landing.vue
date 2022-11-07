@@ -1,3 +1,19 @@
+<script setup>
+import { useLayoutService } from '@/layout/composables/layoutService';
+
+const { isDarkTheme } = useLayoutService();
+
+const smoothScroll = (id) => {
+    document.querySelector(id).scrollIntoView({
+        behavior: 'smooth'
+    });
+};
+
+const logoUrl = () => {
+    return new URL(`/src/assets/layout/images/${isDarkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
+};
+</script>
+
 <template>
     <div class="surface-0 overflow-hidden">
         <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static">
@@ -360,22 +376,6 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { useLayoutService } from '@/layout/composables/layoutService';
-
-const { isDarkTheme } = useLayoutService();
-
-const smoothScroll = (id) => {
-    document.querySelector(id).scrollIntoView({
-        behavior: 'smooth'
-    });
-};
-
-const logoUrl = () => {
-    return new URL(`/src/assets/layout/images/${isDarkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
-};
-</script>
 
 <style scoped>
 #hero {

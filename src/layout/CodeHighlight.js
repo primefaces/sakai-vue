@@ -1,7 +1,7 @@
 import Prism from 'prismjs';
 
 const CodeHighlight = {
-    beforeMount (el, binding) {
+    beforeMount(el, binding) {
         const modifiers = binding.modifiers;
         const value = binding.value;
 

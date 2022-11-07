@@ -1,3 +1,13 @@
+<script setup>
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
+
+const onUpload = () => {
+    toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+};
+</script>
+
 <template>
     <div class="grid">
         <div class="col-12">
@@ -11,13 +21,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { useToast } from 'primevue/usetoast';
-
-const toast = useToast();
-
-const onUpload = () => {
-    toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
-};
-</script>

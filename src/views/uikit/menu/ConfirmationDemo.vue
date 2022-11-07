@@ -4,9 +4,3 @@
         <p class="m-0 text-lg">Confirmation Component Content via Child Route</p>
     </div>
 </template>
-
-<script>
-export default {
-
-}
-</script>

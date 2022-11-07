@@ -1,3 +1,32 @@
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+
+const value = ref(0);
+let interval = null;
+
+const startProgress = () => {
+    interval = setInterval(() => {
+        let newValue = value.value + Math.floor(Math.random() * 10) + 1;
+        if (newValue >= 100) {
+            newValue = 100;
+        }
+        value.value = newValue;
+    }, 2000);
+};
+const endProgress = () => {
+    clearInterval(interval);
+    interval = null;
+};
+
+onMounted(() => {
+    startProgress();
+});
+
+onBeforeUnmount(() => {
+    endProgress();
+});
+</script>
+
 <template>
     <div class="grid">
         <div class="col-12">
@@ -149,32 +178,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-
-const value = ref(0);
-let interval = null;
-
-const startProgress = () => {
-    interval = setInterval(() => {
-        let newValue = value.value + Math.floor(Math.random() * 10) + 1;
-        if (newValue >= 100) {
-            newValue = 100;
-        }
-        value.value = newValue;
-    }, 2000);
-};
-const endProgress = () => {
-    clearInterval(interval);
-    interval = null;
-};
-
-onMounted(() => {
-    startProgress();
-});
-
-onBeforeUnmount(() => {
-    endProgress();
-});
-</script>

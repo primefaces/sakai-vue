@@ -1,3 +1,55 @@
+<script setup>
+import ProductService from '@/layout/service/ProductService';
+import PhotoService from '@/layout/service/PhotoService';
+import { ref, onMounted } from 'vue';
+
+const products = ref([]);
+const images = ref([]);
+const galleriaResponsiveOptions = ref([
+    {
+        breakpoint: '1024px',
+        numVisible: 5
+    },
+    {
+        breakpoint: '960px',
+        numVisible: 4
+    },
+    {
+        breakpoint: '768px',
+        numVisible: 3
+    },
+    {
+        breakpoint: '560px',
+        numVisible: 1
+    }
+]);
+const carouselResponsiveOptions = ref([
+    {
+        breakpoint: '1024px',
+        numVisible: 3,
+        numScroll: 3
+    },
+    {
+        breakpoint: '768px',
+        numVisible: 2,
+        numScroll: 2
+    },
+    {
+        breakpoint: '560px',
+        numVisible: 1,
+        numScroll: 1
+    }
+]);
+
+const productService = new ProductService();
+const photoService = new PhotoService();
+
+onMounted(() => {
+    productService.getProductsSmall().then((data) => (products.value = data));
+    photoService.getImages().then((data) => (images.value = data));
+});
+</script>
+
 <template>
     <div class="grid p-fluid">
         <div class="col-12">
@@ -53,58 +105,6 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import ProductService from '@/layout/service/ProductService';
-import PhotoService from '@/layout/service/PhotoService';
-import { ref, onMounted } from 'vue';
-
-const products = ref([]);
-const images = ref([]);
-const galleriaResponsiveOptions = ref([
-    {
-        breakpoint: '1024px',
-        numVisible: 5
-    },
-    {
-        breakpoint: '960px',
-        numVisible: 4
-    },
-    {
-        breakpoint: '768px',
-        numVisible: 3
-    },
-    {
-        breakpoint: '560px',
-        numVisible: 1
-    }
-]);
-const carouselResponsiveOptions = ref([
-    {
-        breakpoint: '1024px',
-        numVisible: 3,
-        numScroll: 3
-    },
-    {
-        breakpoint: '768px',
-        numVisible: 2,
-        numScroll: 2
-    },
-    {
-        breakpoint: '560px',
-        numVisible: 1,
-        numScroll: 1
-    }
-]);
-
-const productService = new ProductService();
-const photoService = new PhotoService();
-
-onMounted(() => {
-    productService.getProductsSmall().then((data) => (products.value = data));
-    photoService.getImages().then((data) => (images.value = data));
-});
-</script>
 
 <style lang="scss" scoped>
 @import '@/assets/demo/styles/badges.scss';

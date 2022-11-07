@@ -1,3 +1,37 @@
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+const icons = ref(null);
+const filter = ref(null);
+
+onMounted(() => {
+    fetch('/data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
+        .then((res) => res.json())
+        .then((d) => {
+            let icons = d.icons;
+            let data = icons.filter((value) => {
+                return value.icon.tags.indexOf('deprecate') === -1;
+            });
+            data.sort((icon1, icon2) => {
+                if (icon1.properties.name < icon2.properties.name) return -1;
+                else if (icon1.properties.name > icon2.properties.name) return 1;
+                else return 0;
+            });
+
+            icons.value = data;
+        });
+});
+
+const filteredIcons = computed(() => {
+    if (filter.value) {
+        return icons.value.filter((icon) => {
+            return icon.properties.name.toLowerCase().indexOf(filter.value.toLowerCase()) > -1;
+        });
+    } else {
+        return icons.value;
+    }
+});
+</script>
+
 <template>
     <div>
         <div class="card">
@@ -95,40 +129,6 @@ export default {
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref, onMounted, computed } from 'vue';
-const icons = ref(null);
-const filter = ref(null);
-
-onMounted(() => {
-    fetch('/data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
-        .then((res) => res.json())
-        .then((d) => {
-            let icons = d.icons;
-            let data = icons.filter((value) => {
-                return value.icon.tags.indexOf('deprecate') === -1;
-            });
-            data.sort((icon1, icon2) => {
-                if (icon1.properties.name < icon2.properties.name) return -1;
-                else if (icon1.properties.name > icon2.properties.name) return 1;
-                else return 0;
-            });
-
-            icons.value = data;
-        });
-});
-
-const filteredIcons = computed(() => {
-    if (filter.value) {
-        return icons.value.filter((icon) => {
-            return icon.properties.name.toLowerCase().indexOf(filter.value.toLowerCase()) > -1;
-        });
-    } else {
-        return icons.value;
-    }
-});
-</script>
 
 <style lang="scss" scoped>
 @import '@/assets/demo/documentation.scss';

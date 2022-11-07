@@ -1,9 +1,9 @@
 <template>
     <div class="layout-topbar">
-        <a class="layout-topbar-logo">
+        <router-link to="/" class="layout-topbar-logo">
             <img :src="logoUrl()" alt="logo" />
             <span>SAKAI</span>
-        </a>
+        </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
             <i class="pi pi-bars"></i>

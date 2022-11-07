@@ -34,7 +34,6 @@ const decrementScale = () => {
 
 const incrementScale = () => {
     setScale(layoutConfig.scale.value + 1);
-    console.log(layoutConfig.scale);
     applyScale();
 };
 const applyScale = () => {

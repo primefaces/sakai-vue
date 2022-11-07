@@ -5,7 +5,7 @@ import { useLayoutService } from '@/layout/composables/layoutService';
 
 const route = useRoute();
 
-const { layoutConfig, setActiveMenuItem } = useLayoutService();
+const { layoutConfig, layoutState, setActiveMenuItem, onMenuToggle } = useLayoutService();
 
 const props = defineProps({
     item: {
@@ -45,6 +45,9 @@ const itemClick = (event, item) => {
         return;
     }
 
+    if ((item.to || item.url) && (layoutState.staticMenuMobileActive.value || layoutState.overlayMenuActive.value)) {
+        onMenuToggle();
+    }
     //execute command
     if (item.command) {
         item.command({ originalEvent: event, item: item });
@@ -52,13 +55,6 @@ const itemClick = (event, item) => {
 
     if (item.items) setActiveMenuItem(isActiveMenu.value ? props.parentItemKey : itemKey);
     else setActiveMenuItem(itemKey.value);
-
-    /*     activeIndex.value = index === activeIndex.value ? null : index;
-
-    /*     emit('menuitem-click', {
-        originalEvent: event,
-        item: item
-    }); */
 };
 
 const checkActiveRoute = (item) => {

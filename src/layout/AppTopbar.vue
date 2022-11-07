@@ -9,11 +9,11 @@
             <i class="pi pi-bars"></i>
         </button>
 
-        <button class="p-link layout-topbar-menu-button layout-topbar-button">
+        <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
             <i class="pi pi-ellipsis-v"></i>
         </button>
 
-        <div class="layout-topbar-menu">
+        <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <button class="p-link layout-topbar-button">
                 <i class="pi pi-calendar"></i>
                 <span>Calendar</span>
@@ -31,13 +31,25 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
 import { useLayoutService } from '@/layout/composables/layoutService';
 
 const { layoutConfig, onMenuToggle } = useLayoutService();
 
+const topbarMenuActive = ref(false);
 const logoUrl = () => {
     return new URL(`/src/assets/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
 };
+
+const onTopBarMenuButton = () => {
+    topbarMenuActive.value = !topbarMenuActive.value;
+};
+
+const topbarMenuClasses = computed(() => {
+    return {
+        'layout-topbar-menu-mobile-active': topbarMenuActive.value
+    };
+});
 </script>
 
 <style lang="scss" scoped></style>

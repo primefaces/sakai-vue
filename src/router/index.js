@@ -75,19 +75,19 @@ const router = createRouter({
                     children: [
                         {
                             path: '/uikit/menu',
-                            component: () => import('@/components/menu/PersonalDemo.vue')
+                            component: () => import('@/views/uikit/menu/PersonalDemo.vue')
                         },
                         {
                             path: '/uikit/menu/seat',
-                            component: () => import('@/components/menu/SeatDemo.vue')
+                            component: () => import('@/views/uikit/menu/SeatDemo.vue')
                         },
                         {
                             path: '/uikit/menu/payment',
-                            component: () => import('@/components/menu/PaymentDemo.vue')
+                            component: () => import('@/views/uikit/menu/PaymentDemo.vue')
                         },
                         {
                             path: '/uikit/menu/confirmation',
-                            component: () => import('@/components/menu/ConfirmationDemo.vue')
+                            component: () => import('@/views/uikit/menu/ConfirmationDemo.vue')
                         }
                     ]
                 },

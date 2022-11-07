@@ -10,7 +10,6 @@ const { changeThemeSettings, setScale, layoutConfig } = useLayoutService();
 const onConfigButtonClick = () => {
     visible.value = !visible.value;
 };
-
 const onChangeTheme = (theme, mode) => {
     const elementId = 'theme-css';
     const linkElement = document.getElementById(elementId);
@@ -26,12 +25,10 @@ const onChangeTheme = (theme, mode) => {
 
     changeThemeSettings(theme, mode === 'dark');
 };
-
 const decrementScale = () => {
     setScale(layoutConfig.scale.value - 1);
     applyScale();
 };
-
 const incrementScale = () => {
     setScale(layoutConfig.scale.value + 1);
     applyScale();

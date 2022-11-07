@@ -28,11 +28,15 @@ const props = defineProps({
 
 const isActiveMenu = ref(false);
 const itemKey = ref(null);
+
 onBeforeMount(() => {
     itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
 
-    isActiveMenu.value = layoutConfig.activeMenuItem.value === itemKey.value || layoutConfig.activeMenuItem?.value?.startsWith(itemKey.value + '-');
+    const activeItem = layoutState.activeMenuItem;
+
+    isActiveMenu.value = activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
 });
+
 watch(
     () => layoutConfig.activeMenuItem.value,
     (newVal) => {
@@ -45,16 +49,19 @@ const itemClick = (event, item) => {
         return;
     }
 
-    if ((item.to || item.url) && (layoutState.staticMenuMobileActive.value || layoutState.overlayMenuActive.value)) {
+    const { overlayMenuActive, staticMenuMobileActive } = layoutState;
+
+    if ((item.to || item.url) && (staticMenuMobileActive.value || overlayMenuActive.value)) {
         onMenuToggle();
     }
-    //execute command
+
     if (item.command) {
         item.command({ originalEvent: event, item: item });
     }
 
-    if (item.items) setActiveMenuItem(isActiveMenu.value ? props.parentItemKey : itemKey);
-    else setActiveMenuItem(itemKey.value);
+    const foundItemKey = item.items ? (isActiveMenu.value ? props.parentItemKey : itemKey) : itemKey.value;
+
+    setActiveMenuItem(foundItemKey);
 };
 
 const checkActiveRoute = (item) => {

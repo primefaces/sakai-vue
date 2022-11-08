@@ -1,10 +1,19 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayoutService } from '@/layout/composables/layoutService';
 
 const { layoutConfig, onMenuToggle } = useLayoutService();
 
+const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
+
+onMounted(() => {
+    bindOutsideClickListener();
+});
+
+onBeforeUnmount(() => {
+    unbindOutsideClickListener();
+});
 const logoUrl = () => {
     return new URL(`/src/assets/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
 };
@@ -18,6 +27,31 @@ const topbarMenuClasses = computed(() => {
         'layout-topbar-menu-mobile-active': topbarMenuActive.value
     };
 });
+
+const bindOutsideClickListener = () => {
+    if (!outsideClickListener.value) {
+        outsideClickListener.value = (event) => {
+            if (isOutsideClicked(event)) {
+                topbarMenuActive.value = false;
+            }
+        };
+        document.addEventListener('click', outsideClickListener.value);
+    }
+};
+const unbindOutsideClickListener = () => {
+    if (outsideClickListener.value) {
+        document.removeEventListener('click', outsideClickListener);
+        outsideClickListener.value = null;
+    }
+};
+const isOutsideClicked = (event) => {
+    if (!topbarMenuActive.value) return;
+
+    const sidebarEl = document.querySelector('.layout-topbar-menu');
+    const topbarEl = document.querySelector('.layout-topbar-menu-button');
+
+    return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
+};
 </script>
 
 <template>

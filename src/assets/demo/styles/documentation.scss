@@ -1,14 +1,16 @@
 pre[class*='language-'] {
+    background-color: var(--surface-ground) !important;
+    border-radius: var(--border-radius);
+
     &:before,
     &:after {
         display: none !important;
     }
 
     code {
-        border-left: 6px solid var(--surface-border) !important;
+        border-left: 0px solid var(--surface-border) !important;
         box-shadow: none !important;
         background: var(--surface-ground) !important;
-        margin: 1em 0;
         color: var(--text-color);
         font-size: 14px;
     }
@@ -40,7 +42,7 @@ pre[class*='language-'] {
 }
 
 i:not([class~='pi']) {
-    background-color: transparent;
+    /* background-color: transparent; */
     color: #2196f3;
     font-family: Monaco, courier, monospace;
     font-style: normal;

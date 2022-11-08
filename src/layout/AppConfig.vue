@@ -55,13 +55,16 @@ const applyScale = () => {
 
         <template v-if="true">
             <h5>Menu Type</h5>
-            <div class="field-radiobutton">
-                <RadioButton name="menuMode" value="static" v-model="layoutConfig.menuMode.value" inputId="mode1"></RadioButton>
-                <label for="mode1">Static</label>
-            </div>
-            <div class="field-radiobutton">
-                <RadioButton name="menuMode" value="overlay" v-model="layoutConfig.menuMode.value" inputId="mode2"></RadioButton>
-                <label for="mode2">Overlay</label>
+            <div class="flex">
+                <div class="field-radiobutton flex-1">
+                    <RadioButton name="menuMode" value="static" v-model="layoutConfig.menuMode.value" inputId="mode1"></RadioButton>
+                    <label for="mode1">Static</label>
+                </div>
+
+                <div class="field-radiobutton flex-1">
+                    <RadioButton name="menuMode" value="overlay" v-model="layoutConfig.menuMode.value" inputId="mode2"></RadioButton>
+                    <label for="mode2">Overlay</label>
+                </div>
             </div>
         </template>
 

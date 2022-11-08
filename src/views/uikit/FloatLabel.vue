@@ -31,8 +31,8 @@ const searchCountry = (event) => {
     //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
     const filtered = [];
     const query = event.query;
-    for (let i = 0; i < this.countries.length; i++) {
-        const country = this.countries[i];
+    for (let i = 0; i < countries.value.length; i++) {
+        const country = countries.value[i];
         if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
             filtered.push(country);
         }

@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useLayoutService } from '@/layout/composables/layoutService';
 
 const { layoutConfig } = useLayoutService();
-const documentStyle = getComputedStyle(document.documentElement);
+let documentStyle = getComputedStyle(document.documentElement);
 let textColor = documentStyle.getPropertyValue('--text-color');
 let textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
 let surfaceBorder = documentStyle.getPropertyValue('--surface-border');
@@ -21,13 +21,13 @@ const barOptions = ref(null);
 const radarOptions = ref(null);
 
 const setColorOptions = () => {
+    documentStyle = getComputedStyle(document.documentElement);
     textColor = documentStyle.getPropertyValue('--text-color');
     textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
     surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 };
 
 const setChart = () => {
-    setColorOptions();
     barData.value = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [
@@ -226,8 +226,9 @@ watch(
     layoutConfig.theme,
     () => {
         setTimeout(() => {
+            setColorOptions();
             setChart();
-        }, 100);
+        }, 200);
     },
     { immediate: true }
 );

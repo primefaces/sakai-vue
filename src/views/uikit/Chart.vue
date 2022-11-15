@@ -225,10 +225,8 @@ const setChart = () => {
 watch(
     layoutConfig.theme,
     () => {
-        setTimeout(() => {
-            setColorOptions();
-            setChart();
-        }, 200);
+        setColorOptions();
+        setChart();
     },
     { immediate: true }
 );

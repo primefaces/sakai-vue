@@ -20,10 +20,9 @@ const onChangeTheme = (theme, mode) => {
     cloneLinkElement.addEventListener('load', () => {
         linkElement.remove();
         cloneLinkElement.setAttribute('id', elementId);
+        changeThemeSettings(theme, mode === 'dark');
     });
     linkElement.parentNode.insertBefore(cloneLinkElement, linkElement.nextSibling);
-
-    changeThemeSettings(theme, mode === 'dark');
 };
 const decrementScale = () => {
     setScale(layoutConfig.scale.value - 1);

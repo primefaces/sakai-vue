@@ -1,4 +1,9 @@
 <script setup>
+import RadioButton from 'primevue/radiobutton';
+import Button from 'primevue/button';
+import InputSwitch from 'primevue/inputswitch';
+import Sidebar from 'primevue/sidebar';
+
 import { ref } from 'vue';
 import { useLayoutService } from '@/layout/composables/layoutService';
 

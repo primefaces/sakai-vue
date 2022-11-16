@@ -103,7 +103,6 @@ import VirtualScroller from 'primevue/virtualscroller';
 import CodeHighlight from '@/components/CodeHighlight';
 import BlockViewer from '@/components/BlockViewer.vue';
 
-import 'prismjs/themes/prism-coy.css';
 import '@/assets/styles.scss';
 
 const app = createApp(App);

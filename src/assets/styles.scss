@@ -8,6 +8,9 @@ $gutter: 1rem; //for primeflex grid system
 @import 'primeflex/primeflex.scss';
 @import 'primeicons/primeicons.css';
 
+/* Prismjs */
+@import 'prismjs/themes/prism-coy.css';
+
 /* Demos */
 @import '@/assets/demo/styles/flags/flags.css';
 @import '@/assets/demo/styles/badges.scss';

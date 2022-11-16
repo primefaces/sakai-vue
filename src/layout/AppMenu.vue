@@ -167,7 +167,7 @@ const model = ref([
         </template>
         <li>
             <a href="https://www.primefaces.org/primeblocks-ng/#/">
-                <img src="@/assets/layout/images/banner-primeblocks.png" alt="Prime Blocks" class="w-full mt-3" />
+                <img src="/layout/images/banner-primeblocks.png" alt="Prime Blocks" class="w-full mt-3" />
             </a>
         </li>
     </ul>

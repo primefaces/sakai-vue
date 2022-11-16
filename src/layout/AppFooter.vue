@@ -4,7 +4,7 @@ import { useLayoutService } from '@/layout/composables/layoutService';
 const { layoutConfig } = useLayoutService();
 
 const logoUrl = () => {
-    return new URL(`/src/assets/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
+    return new URL(`/public/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
 };
 </script>
 

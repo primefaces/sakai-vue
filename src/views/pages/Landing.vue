@@ -10,7 +10,7 @@ const smoothScroll = (id) => {
 };
 
 const logoUrl = () => {
-    return new URL(`/src/assets/layout/images/${isDarkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
+    return new URL(`/public/layout/images/${isDarkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;
 };
 </script>
 

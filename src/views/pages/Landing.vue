@@ -404,7 +404,7 @@ const logoUrl = () => {
             </div>
         </div>
     </div>
-    <AppConfig />
+    <AppConfig simple />
 </template>
 
 <style scoped>

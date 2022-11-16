@@ -2,6 +2,12 @@
 import { ref } from 'vue';
 import { useLayoutService } from '@/layout/composables/layoutService';
 
+defineProps({
+    simple: {
+        type: Boolean,
+        default: false
+    }
+});
 const scales = ref([12, 13, 14, 15, 16]);
 const visible = ref(false);
 
@@ -52,7 +58,7 @@ const applyScale = () => {
             <Button icon="pi pi-plus" type="button" pButton @click="incrementScale()" class="p-button-text p-button-rounded w-2rem h-2rem ml-2" :disabled="layoutConfig.scale.value === scales[scales.length - 1]"></Button>
         </div>
 
-        <template v-if="true">
+        <template v-if="!simple">
             <h5>Menu Type</h5>
             <div class="flex">
                 <div class="field-radiobutton flex-1">
@@ -67,7 +73,7 @@ const applyScale = () => {
             </div>
         </template>
 
-        <template v-if="true">
+        <template v-if="!simple">
             <h5>Input Style</h5>
             <div class="flex">
                 <div class="field-radiobutton flex-1">

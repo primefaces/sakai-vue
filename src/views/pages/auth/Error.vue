@@ -24,5 +24,5 @@ import AppConfig from '@/layout/AppConfig.vue';
             </div>
         </div>
     </div>
-    <AppConfig />
+    <AppConfig simple />
 </template>

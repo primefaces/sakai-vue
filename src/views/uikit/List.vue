@@ -76,7 +76,7 @@ const onSortChange = (event) => {
                     <template #list="slotProps">
                         <div class="col-12">
                             <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
-                                <img :src="'/images/product/' + slotProps.data.image" :alt="slotProps.data.name" class="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-5" />
+                                <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.name" class="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-5" />
                                 <div class="flex-1 text-center md:text-left">
                                     <div class="font-bold text-2xl">{{ slotProps.data.name }}</div>
                                     <div class="mb-3">{{ slotProps.data.description }}</div>
@@ -106,7 +106,7 @@ const onSortChange = (event) => {
                                     <span :class="'product-badge status-' + slotProps.data.inventoryStatus.toLowerCase()">{{ slotProps.data.inventoryStatus }}</span>
                                 </div>
                                 <div class="text-center">
-                                    <img :src="'/images/product/' + slotProps.data.image" :alt="slotProps.data.name" class="w-9 shadow-2 my-3 mx-0" />
+                                    <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.name" class="w-9 shadow-2 my-3 mx-0" />
                                     <div class="text-2xl font-bold">{{ slotProps.data.name }}</div>
                                     <div class="mb-3">{{ slotProps.data.description }}</div>
                                     <Rating :modelValue="slotProps.data.rating" :readonly="true" :cancel="false"></Rating>

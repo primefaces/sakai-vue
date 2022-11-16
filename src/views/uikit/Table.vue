@@ -132,7 +132,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column header="Country" filterField="country.name" style="min-width: 12rem">
                         <template #body="{ data }">
-                            <img src="@/assets/demo/images/flag/flag_placeholder.png" :alt="data.country.name" :class="'flag flag-' + data.country.code" width="30" />
+                            <img src="/demo/images/flag/flag_placeholder.png" :alt="data.country.name" :class="'flag flag-' + data.country.code" width="30" />
                             <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.country.name }}</span>
                         </template>
                         <template #filter="{ filterModel }">
@@ -147,7 +147,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column header="Agent" filterField="representative" :showFilterMatchModes="false" :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
                         <template #body="{ data }">
-                            <img :alt="data.representative.name" :src="'/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
+                            <img :alt="data.representative.name" :src="'/demo/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
                             <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.representative.name }}</span>
                         </template>
                         <template #filter="{ filterModel }">
@@ -155,7 +155,7 @@ const calculateCustomerTotal = (name) => {
                             <MultiSelect v-model="filterModel.value" :options="representatives" optionLabel="name" placeholder="Any" class="p-column-filter">
                                 <template #option="slotProps">
                                     <div class="p-multiselect-representative-option">
-                                        <img :alt="slotProps.option.name" :src="'/images/avatar/' + slotProps.option.image" width="32" style="vertical-align: middle" />
+                                        <img :alt="slotProps.option.name" :src="'/demo/images/avatar/' + slotProps.option.image" width="32" style="vertical-align: middle" />
                                         <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ slotProps.option.name }}</span>
                                     </div>
                                 </template>
@@ -228,7 +228,7 @@ const calculateCustomerTotal = (name) => {
                     <Column field="id" header="Id" :style="{ width: '100px' }" :frozen="idFrozen"></Column>
                     <Column field="country.name" header="Country" :style="{ width: '200px' }">
                         <template #body="{ data }">
-                            <img src="@/assets/demo/images/flag/flag_placeholder.png" :class="'flag flag-' + data.country.code" width="30" />
+                            <img src="/demo/images/flag/flag_placeholder.png" :class="'flag flag-' + data.country.code" width="30" />
                             <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.country.name }}</span>
                         </template>
                     </Column>
@@ -242,7 +242,7 @@ const calculateCustomerTotal = (name) => {
                     <Column field="activity" header="Activity" :style="{ width: '200px' }"></Column>
                     <Column field="representative.name" header="Representative" :style="{ width: '200px' }">
                         <template #body="{ data }">
-                            <img :alt="data.representative.name" :src="'/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
+                            <img :alt="data.representative.name" :src="'/demo/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
                             <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.representative.name }}</span>
                         </template>
                     </Column>
@@ -273,7 +273,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column header="Image">
                         <template #body="slotProps">
-                            <img :src="'/images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
+                            <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
                         </template>
                     </Column>
                     <Column field="price" header="Price" :sortable="true">
@@ -345,7 +345,7 @@ const calculateCustomerTotal = (name) => {
                     <Column field="name" header="Name" style="min-width: 200px"></Column>
                     <Column field="country" header="Country" style="min-width: 200px">
                         <template #body="slotProps">
-                            <img src="@/assets/demo/images/flag/flag_placeholder.png" :class="'flag flag-' + slotProps.data.country.code" width="30" />
+                            <img src="/demo/images/flag/flag_placeholder.png" :class="'flag flag-' + slotProps.data.country.code" width="30" />
                             <span class="image-text ml-2">{{ slotProps.data.country.name }}</span>
                         </template>
                     </Column>
@@ -357,7 +357,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column field="date" header="Date" style="min-width: 200px"></Column>
                     <template #groupheader="slotProps">
-                        <img :alt="slotProps.data.representative.name" :src="'/images/avatar/' + slotProps.data.representative.image" width="32" style="vertical-align: middle" />
+                        <img :alt="slotProps.data.representative.name" :src="'/demo/images/avatar/' + slotProps.data.representative.image" width="32" style="vertical-align: middle" />
                         <span class="image-text font-bold ml-2">{{ slotProps.data.representative.name }}</span>
                     </template>
                     <template #groupfooter="slotProps">

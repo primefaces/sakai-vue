@@ -4,7 +4,7 @@ const icons = ref(null);
 const filter = ref(null);
 
 onMounted(() => {
-    fetch('/data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
+    fetch('/demo/data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
         .then((res) => res.json())
         .then((d) => {
             let icons = d.icons;
@@ -131,7 +131,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-@import '@/assets/demo/documentation.scss';
+@import '@/assets/demo/styles/documentation.scss';
 
 .icons-list {
     i {

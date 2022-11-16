@@ -60,7 +60,7 @@ onMounted(() => {
                         <div class="product-item">
                             <div class="product-item-content">
                                 <div class="mb-3">
-                                    <img :src="'/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
+                                    <img :src="'/demo/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
                                 </div>
                                 <div>
                                     <h4 class="mb-1">
@@ -99,7 +99,7 @@ onMounted(() => {
             <div class="card">
                 <h5>Image</h5>
                 <div class="flex justify-content-center">
-                    <Image src="/images/galleria/galleria11.jpg" alt="Image" width="250" preview />
+                    <Image src="/demo/images/galleria/galleria11.jpg" alt="Image" width="250" preview />
                 </div>
             </div>
         </div>

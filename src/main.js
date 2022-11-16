@@ -100,8 +100,8 @@ import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
-import CodeHighlight from '@/layout/CodeHighlight';
-import BlockViewer from '@/layout/BlockViewer.vue';
+import CodeHighlight from '@/components/CodeHighlight';
+import BlockViewer from '@/components/BlockViewer.vue';
 
 import 'prismjs/themes/prism-coy.css';
 import '@/assets/styles.scss';

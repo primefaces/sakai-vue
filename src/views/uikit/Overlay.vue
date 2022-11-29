@@ -95,7 +95,7 @@ const confirm = (event) => {
                     <div>
                         <Button type="button" label="Image" @click="toggle" class="p-button-success" />
                         <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true">
-                            <img src="/images/nature/nature9.jpg" alt="Nature 9" />
+                            <img src="/demo/images/nature/nature9.jpg" alt="Nature 9" />
                         </OverlayPanel>
                     </div>
                     <div>

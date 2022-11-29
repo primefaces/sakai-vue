@@ -13,7 +13,7 @@ const filteredIcons = computed(() => {
 });
 
 onMounted(() => {
-    fetch(contextPath + 'data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
+    fetch(contextPath + 'demo/data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
         .then((res) => res.json())
         .then((d) => {
             let icons = d.icons;

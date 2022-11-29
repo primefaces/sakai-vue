@@ -5,7 +5,7 @@ import InputSwitch from 'primevue/inputswitch';
 import Sidebar from 'primevue/sidebar';
 
 import { ref } from 'vue';
-import { useLayoutService } from '@/layout/composables/layoutService';
+import { useLayout } from '@/layout/composables/layout';
 
 defineProps({
     simple: {
@@ -16,7 +16,7 @@ defineProps({
 const scales = ref([12, 13, 14, 15, 16]);
 const visible = ref(false);
 
-const { changeThemeSettings, setScale, layoutConfig } = useLayoutService();
+const { changeThemeSettings, setScale, layoutConfig } = useLayout();
 
 const onConfigButtonClick = () => {
     visible.value = !visible.value;

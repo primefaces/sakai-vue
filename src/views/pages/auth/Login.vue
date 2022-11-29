@@ -1,9 +1,9 @@
 <script setup>
-import { useLayoutService } from '@/layout/composables/layoutService';
+import { useLayout } from '@/layout/composables/layout';
 import { ref } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
 
-const { isDarkTheme } = useLayoutService();
+const { isDarkTheme } = useLayout();
 
 const email = ref('');
 const password = ref('');

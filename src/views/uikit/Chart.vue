@@ -1,8 +1,8 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { useLayoutService } from '@/layout/composables/layoutService';
+import { useLayout } from '@/layout/composables/layout';
 
-const { layoutConfig } = useLayoutService();
+const { layoutConfig } = useLayout();
 let documentStyle = getComputedStyle(document.documentElement);
 let textColor = documentStyle.getPropertyValue('--text-color');
 let textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');

@@ -4,9 +4,9 @@ import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
-import { useLayoutService } from '@/layout/composables/layoutService';
+import { useLayout } from '@/layout/composables/layout';
 
-const { layoutConfig, layoutState, isSidebarActive } = useLayoutService();
+const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
 

@@ -19,7 +19,7 @@ const layoutState = reactive({
     menuHoverActive: false
 });
 
-export function useLayoutService () {
+export function useLayout () {
     const changeThemeSettings = (theme, darkTheme) => {
         layoutConfig.darkTheme = darkTheme;
         layoutConfig.theme = theme;

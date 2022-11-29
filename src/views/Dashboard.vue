@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue';
 import ProductService from '@/layout/service/ProductService';
-import { useLayoutService } from '@/layout/composables/layoutService';
+import { useLayout } from '@/layout/composables/layout';
 
-const { isDarkTheme } = useLayoutService();
+const { isDarkTheme } = useLayout();
 
 const products = ref(null);
 const lineData = reactive({

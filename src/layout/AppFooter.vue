@@ -1,7 +1,7 @@
 <script setup>
-import { useLayoutService } from '@/layout/composables/layoutService';
+import { useLayout } from '@/layout/composables/layout';
 
-const { layoutConfig } = useLayoutService();
+const { layoutConfig } = useLayout();
 
 const logoUrl = () => {
     return new URL(`/public/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`, import.meta.url).href;

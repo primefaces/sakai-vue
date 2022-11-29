@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onBeforeMount, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { useLayoutService } from '@/layout/composables/layoutService';
+import { useLayout } from '@/layout/composables/layout';
 
 const route = useRoute();
 
-const { layoutConfig, layoutState, setActiveMenuItem, onMenuToggle } = useLayoutService();
+const { layoutConfig, layoutState, setActiveMenuItem, onMenuToggle } = useLayout();
 
 const props = defineProps({
     item: {

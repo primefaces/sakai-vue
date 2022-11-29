@@ -1,7 +1,7 @@
 <script setup>
-import { useLayoutService } from '@/layout/composables/layoutService';
+import { useLayout } from '@/layout/composables/layout';
 import AppConfig from '@/layout/AppConfig.vue';
-const { isDarkTheme } = useLayoutService();
+const { isDarkTheme } = useLayout();
 
 const smoothScroll = (id) => {
     document.querySelector(id).scrollIntoView({

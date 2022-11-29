@@ -3,6 +3,9 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import CustomerService from '@/layout/service/CustomerService';
 import ProductService from '@/layout/service/ProductService';
 import { ref, onBeforeMount } from 'vue';
+import { useLayout } from '@/layout/composables/layout';
+
+const { contextPath } = useLayout();
 
 const customer1 = ref(null);
 const customer2 = ref(null);
@@ -147,7 +150,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column header="Agent" filterField="representative" :showFilterMatchModes="false" :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
                         <template #body="{ data }">
-                            <img :alt="data.representative.name" :src="'/demo/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
+                            <img :alt="data.representative.name" :src="contextPath + 'demo/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
                             <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.representative.name }}</span>
                         </template>
                         <template #filter="{ filterModel }">
@@ -155,7 +158,7 @@ const calculateCustomerTotal = (name) => {
                             <MultiSelect v-model="filterModel.value" :options="representatives" optionLabel="name" placeholder="Any" class="p-column-filter">
                                 <template #option="slotProps">
                                     <div class="p-multiselect-representative-option">
-                                        <img :alt="slotProps.option.name" :src="'/demo/images/avatar/' + slotProps.option.image" width="32" style="vertical-align: middle" />
+                                        <img :alt="slotProps.option.name" :src="contextPath + 'demo/images/avatar/' + slotProps.option.image" width="32" style="vertical-align: middle" />
                                         <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ slotProps.option.name }}</span>
                                     </div>
                                 </template>
@@ -242,7 +245,7 @@ const calculateCustomerTotal = (name) => {
                     <Column field="activity" header="Activity" :style="{ width: '200px' }"></Column>
                     <Column field="representative.name" header="Representative" :style="{ width: '200px' }">
                         <template #body="{ data }">
-                            <img :alt="data.representative.name" :src="'/demo/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
+                            <img :alt="data.representative.name" :src="contextPath + 'demo/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
                             <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.representative.name }}</span>
                         </template>
                     </Column>
@@ -273,7 +276,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column header="Image">
                         <template #body="slotProps">
-                            <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
+                            <img :src="contextPath + 'demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
                         </template>
                     </Column>
                     <Column field="price" header="Price" :sortable="true">
@@ -357,7 +360,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column field="date" header="Date" style="min-width: 200px"></Column>
                     <template #groupheader="slotProps">
-                        <img :alt="slotProps.data.representative.name" :src="'/demo/images/avatar/' + slotProps.data.representative.image" width="32" style="vertical-align: middle" />
+                        <img :alt="slotProps.data.representative.name" :src="contextPath + 'demo/images/avatar/' + slotProps.data.representative.image" width="32" style="vertical-align: middle" />
                         <span class="image-text font-bold ml-2">{{ slotProps.data.representative.name }}</span>
                     </template>
                     <template #groupfooter="slotProps">

@@ -1,5 +1,7 @@
 import { toRefs, reactive, computed } from 'vue';
 
+const contextPath = import.meta.env.BASE_URL;
+
 const layoutConfig = reactive({
     ripple: false,
     darkTheme: false,
@@ -19,17 +21,17 @@ const layoutState = reactive({
     menuHoverActive: false
 });
 
-export function useLayout () {
+export function useLayout() {
     const changeThemeSettings = (theme, darkTheme) => {
         layoutConfig.darkTheme = darkTheme;
         layoutConfig.theme = theme;
     };
 
-    const setScale = scale => {
+    const setScale = (scale) => {
         layoutConfig.scale = scale;
     };
 
-    const setActiveMenuItem = item => {
+    const setActiveMenuItem = (item) => {
         layoutConfig.activeMenuItem = item.value || item;
     };
 
@@ -49,5 +51,5 @@ export function useLayout () {
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
-    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), changeThemeSettings, setScale, onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem };
+    return { contextPath, layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), changeThemeSettings, setScale, onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem };
 }

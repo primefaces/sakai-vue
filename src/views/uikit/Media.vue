@@ -2,6 +2,9 @@
 import ProductService from '@/layout/service/ProductService';
 import PhotoService from '@/layout/service/PhotoService';
 import { ref, onMounted } from 'vue';
+import { useLayout } from '@/layout/composables/layout';
+
+const { contextPath } = useLayout();
 
 const products = ref([]);
 const images = ref([]);
@@ -60,7 +63,7 @@ onMounted(() => {
                         <div class="product-item">
                             <div class="product-item-content">
                                 <div class="mb-3">
-                                    <img :src="'/demo/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
+                                    <img :src="contextPath + 'demo/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
                                 </div>
                                 <div>
                                     <h4 class="mb-1">
@@ -86,10 +89,10 @@ onMounted(() => {
                 <h5>Galleria</h5>
                 <Galleria :value="images" :responsiveOptions="galleriaResponsiveOptions" :numVisible="7" :circular="true" containerStyle="max-width: 800px; margin: auto">
                     <template #item="slotProps">
-                        <img :src="'/' + slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" />
+                        <img :src="contextPath + slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" />
                     </template>
                     <template #thumbnail="slotProps">
-                        <img :src="'/' + slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt" tyle="width: 100%; display: block;" />
+                        <img :src="contextPath + slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt" tyle="width: 100%; display: block;" />
                     </template>
                 </Galleria>
             </div>

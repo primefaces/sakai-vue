@@ -3,6 +3,9 @@ import ProductService from '@/layout/service/ProductService';
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
+import { useLayout } from '@/layout/composables/layout';
+
+const { contextPath } = useLayout();
 
 const display = ref(false);
 const displayConfirmation = ref(false);
@@ -105,7 +108,7 @@ const confirm = (event) => {
                                 <Column field="name" header="Name" :sortable="true" headerStyle="min-width:10rem;"></Column>
                                 <Column header="Image" headerStyle="min-width:10rem;">
                                     <template #body="slotProps">
-                                        <img :src="'/images/product/' + slotProps.data.image" :alt="slotProps.data.image" width="100" class="shadow-2" />
+                                        <img :src="contextPath + 'demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image" width="100" class="shadow-2" />
                                     </template>
                                 </Column>
                                 <Column field="price" header="Price" :sortable="true" headerStyle="min-width:8rem;">

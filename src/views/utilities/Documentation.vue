@@ -7,88 +7,86 @@
 
                 <h5>Getting Started</h5>
                 <p>
-                    Sakai is an application template for Vue based on the <a href="https://cli.vuejs.org/" class="font-medium">Vue CLI</a> that provides out-of-the-box standard tooling for Vue projects. To get started, clone the
+                    Sakai is an application template for Vue based on the <a href="https://github.com/vuejs/create-vue" class="font-medium text-primary hover:underline">create-vue</a>, the recommended way to start a <strong>Vite-powered</strong> Vue projects. To get started, clone the
                     <a href="https://github.com/primefaces/sakai-vue" class="font-medium">repository</a> from GitHub and install the dependencies with npm or yarn.
                 </p>
-                <pre v-code.script><code>
+<CodeHighlight>
 npm install
-
-</code></pre>
+</CodeHighlight>
 
                 or
 
-                <pre v-code.script><code>
+<CodeHighlight>
 yarn
+</CodeHighlight>
 
-</code></pre>
+                <p>Next step is running the application using the serve script and navigate to <i>http://localhost:5173/</i> to view the application. That is it, you may now start with the development of your application using the Sakai template.</p>
 
-                <p>Next step is running the application using the serve script and navigate to <i>http://localhost:8080/</i> to view the application. That is it, you may now start with the development of your application using the Sakai template.</p>
-
-                <pre v-code.script><code>
-npm run serve
-
-</code></pre>
-
-                <h5>Vue CLI Scripts</h5>
-                <p>Following commands are derived from create-app-app.</p>
-                <pre v-code.script><code>
-"npm run serve": Starts the development server
-"npm run build": Builds the application for deployment.
-"npm run lint": Executes the lint checks.
-"npm run test:unit": Runs the tests.
-
-</code></pre>
+<CodeHighlight>
+npm run dev
+</CodeHighlight>
 
                 <h5>Structure</h5>
-                <p>
-                    Sakai consists of 2 main parts; the application layout and the resources. <i>App.vue</i> inside src folder is the main component containing the template for the base layout whereas required resources such as SASS structure for the
-                    layout are placed inside the <b>src/assets/</b> folder.
-                </p>
-
-                <h5>Layout Components</h5>
-                <p>
-                    Main layout is the template of the <i>App.vue</i>, it is divided into a couple of child components such as topbar, menu and footer. Here is template of the <i>App.vue</i> component that implements the logic such as menu state,
-                    layout modes and so on.
-                </p>
+                <p>Sakai consists of a couple folders, demos and layout have been separated so that you can easily remove what is not necessary for your application.</p>
+                <ul class="line-height-3">
+                    <li><span class="text-primary font-medium">src/layout</span>: Main layout files, needs to be present</li>
+                    <li><span class="text-primary font-medium">src/views</span>: Demo pages</li>
+                    <li><span class="text-primary font-medium">public/demo</span>: Assets used in demos</li>
+                    <li><span class="text-primary font-medium">public/layout</span>: Assets used in layout</li>
+                    <li><span class="text-primary font-medium">src/assets/demo</span>: Styles used in demos</li>
+                    <li><span class="text-primary font-medium">src/assets/layout</span>: SCSS files of the main layout</li>
+                </ul>
 
                 <h5>Menu</h5>
-                <p>
-                    Menu is a separate component defined in <i>AppMenu.vue</i> file based on PrimeVue MenuModel API. In order to define the menuitems, navigate to data section of <i>App.vue</i> file and define your own model as a nested structure
-                    using the <i>menu</i> property.
-                </p>
+                <p>Main menu is defined at <span class="text-primary font-medium">src/layout/AppMenu.vue</span> file.</p>
 
-                <h5>Dependencies</h5>
-                <p>Dependencies of Sakai are listed below and needs to be added to package.json.</p>
-
-                <pre v-code.script>
-<code>
-{
-    "primevue": "~3.11.0",
-    "primeicons": "~5.0.0",
-    "primeflex": "~3.1.2",
-}
-
-</code></pre>
+                <h5>Integration with Existing Vite Applications</h5>
+                <p>Only the folders that are related to the layout needs to move in to your project. We've created a short tutorial with details.</p>
+                
+                <div class="video-container">
+                    <iframe className="video" width="560" height="315" src="https://www.youtube.com/embed/AHeSjJFR3ZE" frameborder="0" allowfullscreen></iframe>
+                </div>
 
                 <h5>PrimeVue Theme</h5>
-                <p>Sakai uses the free Saga, Arya and Vela themes which are distributed within PrimeVue, however it can be used with any PrimeVue theme as well such as material, tailwind and bootstrap.</p>
+                <p>
+                    Sakai theming is based on the PrimeVue theme being used. Default theme is <b>lara-light-indigo</b>.
+                </p>
 
                 <h5>SASS Variables</h5>
-                <p>In case you'd like to customize the layout variables, open <i>_variables.scss</i> file under src/layout folder. Saving the changes will be reflected instantly at your browser.</p>
+                <p>
+                    In case you&apos;d like to customize the main layout variables, open <b>_variables.scss</b> file under src/layout folder. Saving the changes will be reflected instantly at your browser.
+                </p>
 
-                <h6>src/assets/_variables.scss</h6>
-                <pre v-code.css>
-<code>
-$fontSize:1rem;
-$borderRadius:12px;
-$transitionDuration:.2s;
-
-</code></pre>
+                <h6>src/layout/_variables.scss</h6>
+<CodeHighlight>
+/* General */
+<br>
+$scale:14px;                    /* main font size */ 
+<br>
+$borderRadius:12px;             /* border radius of layout element e.g. card, sidebar */ 
+<br>
+$transitionDuration:.2s;        /* transition duration of layout elements e.g. sidebar, overlay menus */ 
+</CodeHighlight>
             </div>
         </div>
     </div>
 </template>
 
-<style scoped lang="scss">
-@import '@/assets/demo/styles/documentation.scss';
+<style lang="scss" scoped>
+@media screen and (max-width: 991px) {
+    .video-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+    
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
 </style>

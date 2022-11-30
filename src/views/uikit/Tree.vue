@@ -1,5 +1,5 @@
 <script setup>
-import NodeService from '@/layout/service/NodeService';
+import NodeService from '@/service/NodeService';
 import { onMounted, ref } from 'vue';
 
 const treeValue = ref(null);

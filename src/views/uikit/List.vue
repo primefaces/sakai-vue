@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import ProductService from '@/layout/service/ProductService';
+import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
 
 const { contextPath } = useLayout();

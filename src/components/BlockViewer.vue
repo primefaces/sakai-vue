@@ -1,4 +1,6 @@
 <script>
+import CodeHighlight from './CodeHighlight.vue';
+
 export default {
     props: {
         header: {
@@ -31,7 +33,8 @@ export default {
             await navigator.clipboard.writeText(this.code);
             event.preventDefault();
         }
-    }
+    },
+    components: { CodeHighlight }
 };
 </script>
 
@@ -55,9 +58,7 @@ export default {
                 <slot></slot>
             </div>
             <div v-if="blockView === BlockView.CODE">
-                <pre v-code><code>{{code}}
-
-</code></pre>
+<CodeHighlight class="surface-card m-0">{{code}}</CodeHighlight>
             </div>
         </div>
     </div>

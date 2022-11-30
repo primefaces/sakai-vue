@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-const block1 = ref(`
-<div class="grid grid-nogutter surface-section text-800">
+const block1 = ref(`<div class="grid grid-nogutter surface-section text-800">
     <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
         <section>
             <span class="block text-6xl font-bold mb-1">Create the screens your</span>
@@ -16,8 +15,7 @@ const block1 = ref(`
         <img src="/demo/images/blocks/hero/hero-1.png" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
     </div>
 </div>`);
-const block2 = ref(`
-<div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
+const block2 = ref(`<div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
     <div class="mb-3 font-bold text-2xl">
         <span class="text-900">One Product, </span>
         <span class="text-blue-600">Many Solutions</span>
@@ -68,8 +66,8 @@ const block2 = ref(`
         </div>
     </div>
 </div>`);
-const block3 = ref(`
-<div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
+
+const block3 = ref(`<div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
     <div class="text-900 font-bold text-6xl mb-4 text-center">Pricing Plans</div>
     <div class="text-700 text-xl mb-6 text-center line-height-3">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit numquam eligendi quos.</div>
 
@@ -184,8 +182,8 @@ const block3 = ref(`
         </div>
     </div>
 </div>`);
-const block4 = ref(`
-<div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+
+const block4 = ref(`<div class="surface-section px-4 py-8 md:px-6 lg:px-8">
     <div class="text-700 text-center">
         <div class="text-blue-600 font-bold mb-3"><i class="pi pi-discord"></i>&nbsp;POWERED BY DISCORD</div>
         <div class="text-900 font-bold text-5xl mb-3">Join Our Design Community</div>
@@ -193,8 +191,8 @@ const block4 = ref(`
         <Button label="Join Now" icon="pi pi-discord" class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></Button>
     </div>
 </div>`);
-const block5 = ref(`
-<div class="bg-bluegray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap">
+
+const block5 = ref(`<div class="bg-bluegray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap">
     <div class="font-bold mr-8">🔥 Hot Deals!</div>
     <div class="align-items-center hidden lg:flex">
         <span class="line-height-3">Libero voluptatum atque exercitationem praesentium provident odit.</span>
@@ -206,8 +204,8 @@ const block5 = ref(`
         <i class="pi pi-times"></i>
     </a>
 </div>`);
-const block6 = ref(`
-<div class="surface-section px-4 py-5 md:px-6 lg:px-8">
+
+const block6 = ref(`<div class="surface-section px-4 py-5 md:px-6 lg:px-8">
     <ul class="list-none p-0 m-0 flex align-items-center font-medium mb-3">
         <li>
             <a class="text-500 no-underline line-height-3 cursor-pointer">Application</a>
@@ -243,8 +241,8 @@ const block6 = ref(`
         </div>
     </div>
 </div>`);
-const block7 = ref(`
-<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+
+const block7 = ref(`<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
     <div class="grid">
         <div class="col-12 md:col-6 lg:col-3">
             <div class="surface-card shadow-2 p-3 border-round">
@@ -308,8 +306,8 @@ const block7 = ref(`
         </div>
     </div>
 </div>`);
-const block8 = ref(`
-<div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+
+const block8 = ref(`<div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
     <div class="text-center mb-5">
         <img src="/demo/images/blocks/logos/hyper.svg" alt="Image" height="50" class="mb-3">
         <div class="text-900 text-3xl font-medium mb-3">Welcome Back</div>
@@ -335,8 +333,8 @@ const block8 = ref(`
         <Button label="Sign In" icon="pi pi-user" class="w-full"></Button>
     </div>
 </div>`);
-const block9 = ref(`
-<div class="surface-section">
+
+const block9 = ref(`<div class="surface-section">
     <div class="font-medium text-3xl text-900 mb-3">Movie Information</div>
     <div class="text-500 mb-5">Morbi tristique blandit turpis. In viverra ligula id nulla hendrerit rutrum.</div>
     <ul class="list-none p-0 m-0">
@@ -383,12 +381,13 @@ const block9 = ref(`
         </li>
     </ul>
 </div>`);
-const block10 = ref(`
-<div class="surface-card p-4 shadow-2 border-round">
+
+const block10 = ref(`<div class="surface-card p-4 shadow-2 border-round">
     <div class="text-3xl font-medium text-900 mb-3">Card Title</div>
     <div class="font-medium text-500 mb-3">Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.</div>
     <div style="height: 150px" class="border-2 border-dashed surface-border"></div>
 </div>`);
+
 const checked = ref(false);
 </script>
 

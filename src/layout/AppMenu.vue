@@ -166,7 +166,7 @@ const model = ref([
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
         <li>
-            <a href="https://www.primefaces.org/primeblocks-ng/#/">
+            <a href="https://www.primefaces.org/primeblocks-vue/#/" target="_blank">
                 <img src="/layout/images/banner-primeblocks.png" alt="Prime Blocks" class="w-full mt-3" />
             </a>
         </li>

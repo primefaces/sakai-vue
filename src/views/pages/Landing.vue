@@ -57,7 +57,7 @@ const logoUrl = computed(() => {
             <div
                 id="hero"
                 class="flex flex-column pt-4 px-4 lg:px-8 overflow-hidden"
-                style="background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #eeefaf 0%, #c3e3fa 100%); clip-path: ellipse(150% 87% at 93% 13%)"
+                style="background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, rgb(238, 239, 175) 0%, rgb(195, 227, 250) 100%); clip-path: ellipse(150% 87% at 93% 13%)"
             >
                 <div class="mx-4 md:mx-8 mt-0 md:mt-4">
                     <h1 class="text-6xl font-bold text-gray-900 line-height-2"><span class="font-light block">Eu sem integer</span>eget magna fermentum</h1>
@@ -271,7 +271,7 @@ const logoUrl = computed(() => {
                             <div class="my-5 text-center">
                                 <span class="text-5xl font-bold mr-2 text-900">$0</span>
                                 <span class="text-600">per month</span>
-                                <button pButton pRipple label="Get Started" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-blue-500 text-white"></button>
+                                <Button label="Get Started" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-blue-500 text-white"></Button>
                             </div>
                             <Divider class="w-full bg-surface-200"></Divider>
                             <ul class="my-5 list-none p-0 flex text-900 flex-column">
@@ -302,7 +302,7 @@ const logoUrl = computed(() => {
                             <div class="my-5 text-center">
                                 <span class="text-5xl font-bold mr-2 text-900">$1</span>
                                 <span class="text-600">per month</span>
-                                <button pButton pRipple label="Try Free" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-blue-500 text-white"></button>
+                                <Button label="Try Free" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-blue-500 text-white"></Button>
                             </div>
                             <Divider class="w-full bg-surface-200"></Divider>
                             <ul class="my-5 list-none p-0 flex text-900 flex-column">
@@ -333,7 +333,7 @@ const logoUrl = computed(() => {
                             <div class="my-5 text-center">
                                 <span class="text-5xl font-bold mr-2 text-900">$999</span>
                                 <span class="text-600">per month</span>
-                                <button pButton pRipple label="Get a Quote" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-blue-500 text-white"></button>
+                                <Button label="Get a Quote" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-blue-500 text-white"></Button>
                             </div>
                             <Divider class="w-full bg-surface-200"></Divider>
                             <ul class="my-5 list-none p-0 flex text-900 flex-column">
@@ -409,7 +409,7 @@ const logoUrl = computed(() => {
     <AppConfig simple />
 </template>
 
-<style scoped>
+<!-- <style scoped>
 #hero {
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #eeefaf 0%, #c3e3fa 100%);
     height: 700px;
@@ -454,4 +454,4 @@ const logoUrl = computed(() => {
         max-width: 100%;
     }
 }
-</style>
+</style> -->

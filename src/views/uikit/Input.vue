@@ -146,7 +146,7 @@ const searchCountry = (event) => {
                     </div>
                     <div class="col-12 md:col-6">
                         <h5>Rating</h5>
-                        <Rating v-model="ratingValue" style="position: relative" />
+                        <Rating v-model="ratingValue" />
                     </div>
                     <div class="col-12 md:col-6">
                         <h5>ColorPicker</h5>

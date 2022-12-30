@@ -110,7 +110,6 @@ const calculateCustomerTotal = (name) => {
                     v-model:filters="filters1"
                     filterDisplay="menu"
                     :loading="loading1"
-                    :filters="filters1"
                     responsiveLayout="scroll"
                     :globalFilterFields="['name', 'country.name', 'representative.name', 'balance', 'status']"
                 >

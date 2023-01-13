@@ -268,7 +268,7 @@ const calculateCustomerTotal = (name) => {
                             <Button icon="pi pi-minus" label="Collapse All" @click="collapseAll" class="mb-2" />
                         </div>
                     </template>
-                    <Column :expander="true" headerStyle="width: 3rem" />
+                    <Column :expander="true" headerStyle="min-width: 3rem" />
                     <Column field="name" header="Name" :sortable="true">
                         <template #body="slotProps">
                             {{ slotProps.data.name }}

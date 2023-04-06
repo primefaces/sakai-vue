@@ -1,8 +1,5 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { useLayout } from '@/layout/composables/layout';
-
-const { contextPath } = useLayout();
 
 const icons = ref(null);
 const filter = ref(null);
@@ -13,7 +10,7 @@ const filteredIcons = computed(() => {
 });
 
 onMounted(() => {
-    fetch(contextPath + 'demo/data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
+    fetch('demo/data/icons.json', { headers: { 'Cache-Control': 'no-cache' } })
         .then((res) => res.json())
         .then((d) => {
             let data = d.icons.filter((value) => {

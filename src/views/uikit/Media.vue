@@ -2,9 +2,6 @@
 import ProductService from '@/service/ProductService';
 import PhotoService from '@/service/PhotoService';
 import { ref, onMounted } from 'vue';
-import { useLayout } from '@/layout/composables/layout';
-
-const { contextPath } = useLayout();
 
 const products = ref([]);
 const images = ref([]);
@@ -63,7 +60,7 @@ onMounted(() => {
                         <div class="product-item">
                             <div class="product-item-content">
                                 <div class="mb-3">
-                                    <img :src="contextPath + 'demo/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
+                                    <img :src="'demo/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
                                 </div>
                                 <div>
                                     <h4 class="mb-1">
@@ -89,10 +86,10 @@ onMounted(() => {
                 <h5>Galleria</h5>
                 <Galleria :value="images" :responsiveOptions="galleriaResponsiveOptions" :numVisible="7" :circular="true" containerStyle="max-width: 800px; margin: auto">
                     <template #item="slotProps">
-                        <img :src="contextPath + slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" />
+                        <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" />
                     </template>
                     <template #thumbnail="slotProps">
-                        <img :src="contextPath + slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt" tyle="width: 100%; display: block;" />
+                        <img :src="slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt" tyle="width: 100%; display: block;" />
                     </template>
                 </Galleria>
             </div>
@@ -102,7 +99,7 @@ onMounted(() => {
             <div class="card">
                 <h5>Image</h5>
                 <div class="flex justify-content-center">
-                    <Image :src="contextPath + 'demo/images/galleria/galleria11.jpg'" alt="Image" width="250" preview />
+                    <Image :src="'demo/images/galleria/galleria11.jpg'" alt="Image" width="250" preview />
                 </div>
             </div>
         </div>

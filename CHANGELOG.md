@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.6.0 (2023-04-06)
+## 3.6.0 (2023-04-10)
 
 **Implemented New Features and Enhancements**
 

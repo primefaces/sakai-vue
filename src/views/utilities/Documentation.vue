@@ -4,7 +4,7 @@
             <div class="card docs">
                 <h3>Current Version</h3>
                 <p>Vue 3 and PrimeVue 3</p>
-
+                <p>Click <a href="https://github.com/primefaces/sakai-nuxt" target="_blank" class="font-medium text-primary hover:underline">here</a> to visit the version of Nuxt</p>
                 <h5>Getting Started</h5>
                 <p>
                     Sakai is an application template for Vue based on the <a href="https://github.com/vuejs/create-vue" class="font-medium text-primary hover:underline">create-vue</a>, the recommended way to start a <strong>Vite-powered</strong> Vue

@@ -247,16 +247,16 @@
   --red-700:#ab2f26;
   --red-800:#86251e;
   --red-900:#621b16;
-  --primary-50:#fdfafa;
-  --primary-100:#f6e8e8;
-  --primary-200:#efd6d6;
-  --primary-300:#e8c3c3;
-  --primary-400:#e1b1b1;
-  --primary-500:#da9f9f;
-  --primary-600:#b98787;
-  --primary-700:#996f6f;
-  --primary-800:#785757;
-  --primary-900:#574040;
+  --primary-50:#fbf5f5;
+  --primary-100:#eed0d0;
+  --primary-200:#e0aaaa;
+  --primary-300:#d28585;
+  --primary-400:#c55f5f;
+  --primary-500:#b73a3a;
+  --primary-600:#9c3131;
+  --primary-700:#802929;
+  --primary-800:#652020;
+  --primary-900:#491717;
 }
 
 .p-autocomplete .p-autocomplete-loader {

@@ -34,11 +34,11 @@
   --content-padding:1rem;
   --inline-spacing:0.5rem;
   --border-radius:4px;
-  --surface-ground:#fafafa;
+  --surface-ground:#f9f8f8;
   --surface-section:#ffffff;
   --surface-card:#ffffff;
   --surface-overlay:#ffffff;
-  --surface-border:rgba(0,0,0,.12);
+  --surface-border:rgba(0, 0, 0, 0.12);
   --surface-hover:rgba(0,0,0,.04);
   --maskbg: rgba(0, 0, 0, 0.32);
   --focus-ring: none;
@@ -290,7 +290,7 @@
 .p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-token {
   padding: 0.375rem 0.75rem;
   margin-right: 0.5rem;
-  background: rgba(63, 81, 181, 0.12);
+  background: rgba(181, 63, 63, 0.12);
   color: #b53f3f;
   border-radius: 4px;
 }
@@ -327,7 +327,7 @@ p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
 }
 .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item.p-highlight {
   color: #b53f3f;
-  background: rgba(63, 81, 181, 0.12);
+  background: rgba(181, 63, 63, 0.12);
 }
 .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-empty-message {
   padding: 0.75rem 0.75rem;
@@ -1151,13 +1151,13 @@ p-inputnumber.p-inputnumber-clearable .p-inputnumber-buttons-horizontal .p-input
   background: rgba(0, 0, 0, 0.38);
 }
 .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
-  background: rgba(63, 81, 181, 0.5);
+  background: rgba(181, 63, 63, 0.5);
 }
 .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
   background: #b53f3f;
 }
 .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
-  background: rgba(63, 81, 181, 0.5);
+  background: rgba(181, 63, 63, 0.5);
 }
 
 p-inputswitch.ng-dirty.ng-invalid > .p-inputswitch {

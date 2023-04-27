@@ -5,7 +5,11 @@
 import { onMounted, reactive, ref, watch } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
+let documentStyle = getComputedStyle(document.documentElement);
 
+let textColor = documentStyle.getPropertyValue('--text-color');
+let textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+let surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 const { isDarkTheme } = useLayout();
 
 const products = ref(null);
@@ -37,12 +41,16 @@ const lineData = reactive({
         }
     ]
 });
+
+const barData = ref(null);
+
 const items = ref([
     { label: 'Agregar', icon: 'pi pi-fw pi-plus' },
     { label: 'Quitar', icon: 'pi pi-fw pi-minus' }
 ]);
 const lineOptions = ref(null);
 const productService = new ProductService();
+const barOptions = ref(null);
 
 onMounted(() => {
     productService.getProductsSmall().then((data) => (products.value = data));
@@ -79,6 +87,58 @@ const applyLightTheme = () => {
             }
         }
     };
+};
+const setChart = () => {
+    barData.value = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+            {
+                label: 'My First dataset',
+                backgroundColor: documentStyle.getPropertyValue('--red-500'),
+                borderColor: documentStyle.getPropertyValue('--red-500'),
+                data: [65, 59, 80, 81, 56, 55, 40]
+            },
+            {
+                label: 'My Second dataset',
+                backgroundColor: documentStyle.getPropertyValue('--red-200'),
+                borderColor: documentStyle.getPropertyValue('--red-200'),
+                data: [28, 48, 40, 19, 86, 27, 90]
+            }
+        ]
+    };
+    barOptions.value = {
+        plugins: {
+            legend: {
+                labels: {
+                    fontColor: textColor
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: textColorSecondary,
+                    font: {
+                        weight: 500
+                    }
+                },
+                grid: {
+                    display: false,
+                    drawBorder: false
+                }
+            },
+            y: {
+                ticks: {
+                    color: textColorSecondary
+                },
+                grid: {
+                    color: surfaceBorder,
+                    drawBorder: false
+                }
+            }
+        }
+    };
+
 };
 
 const applyDarkTheme = () => {
@@ -119,6 +179,7 @@ watch(
         } else {
             applyLightTheme();
         }
+        setChart()
     },
     { immediate: true }
 );
@@ -133,8 +194,8 @@ watch(
                         <span class="block text-500 font-medium mb-3">Litros vendidos</span>
                         <div class="text-900 font-medium text-xl">30000</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center bg-red-300 border-round" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-shopping-cart text-red-500 text-xl"></i>
                     </div>
                 </div>
                 <span class="text-green-500 font-medium">4000 más</span>
@@ -148,8 +209,8 @@ watch(
                         <span class="block text-500 font-medium mb-3">Ventas</span>
                         <div class="text-900 font-medium text-xl">$2.600.100.00</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-map-marker text-orange-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center bg-indigo-300 border-round" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-map-marker text-indigo-500 text-xl"></i>
                     </div>
                 </div>
                 <span class="text-green-500 font-medium">%.12+ </span>
@@ -163,8 +224,8 @@ watch(
                         <span class="block text-500 font-medium mb-3">Utilidad</span>
                         <div class="text-900 font-medium text-xl">$400,000.00</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-comment text-purple-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center bg-cyan-300 border-round" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-comment text-cyan-500 text-xl"></i>
                     </div>
                 </div>
                 <span class="text-green-500 font-medium">%10+ </span>
@@ -178,15 +239,39 @@ watch(
                         <span class="block text-500 font-medium mb-3">Clientes</span>
                         <div class="text-900 font-medium text-xl">166</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-inbox text-cyan-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center bg-teal-300 border-round" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-inbox text-teal-500 text-xl"></i>
                     </div>
                 </div>
                 <span class="text-green-500 font-medium">19 </span>
                 <span class="text-500">registrados</span>
             </div>
         </div>
-
+        <div class="col-12 xl:col-6">
+            <div class="card">
+                <h5>Ventas</h5>
+                <Chart type="line" :data="lineData" :options="lineOptions" />
+            </div>
+            
+            <!-- <div
+                class="px-4 py-5 shadow-2 flex flex-column md:flex-row md:align-items-center justify-content-between mb-3"
+                style="border-radius: 1rem; background: linear-gradient(0deg, rgba(0, 123, 255, 0.5), rgba(0, 123, 255, 0.5)), linear-gradient(92.54deg, #1c80cf 47.88%, #ffffff 100.01%)"
+            >
+                <div>
+                    <div class="text-blue-100 font-medium text-xl mt-2 mb-3">TAKE THE NEXT STEP</div>
+                    <div class="text-white font-medium text-5xl">Try PrimeBlocks</div>
+                </div>
+                <div class="mt-4 mr-auto md:mt-0 md:mr-0">
+                    <a href="https://www.primefaces.org/primeblocks-vue" class="p-button font-bold px-5 py-3 p-button-warning p-button-rounded p-button-raised"> Get Started </a>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-12 xl:col-6">
+            <div class="card">
+                <h5>Bar Chart</h5>
+                <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+            </div>
+        </div>
 
         <div class="col-12 xl:col-6">
             <!-- <div class="card">
@@ -286,10 +371,6 @@ watch(
         </div>
         <div class="col-12 xl:col-6">
             <div class="card">
-                <h5>Ventas</h5>
-                <Chart type="line" :data="lineData" :options="lineOptions" />
-            </div>
-            <div class="card">
                 <div class="flex align-items-center justify-content-between mb-4">
                     <h5>Notifications</h5>
                     <div>
@@ -339,18 +420,7 @@ watch(
                     </li>
                 </ul>
             </div>
-            <!-- <div
-                class="px-4 py-5 shadow-2 flex flex-column md:flex-row md:align-items-center justify-content-between mb-3"
-                style="border-radius: 1rem; background: linear-gradient(0deg, rgba(0, 123, 255, 0.5), rgba(0, 123, 255, 0.5)), linear-gradient(92.54deg, #1c80cf 47.88%, #ffffff 100.01%)"
-            >
-                <div>
-                    <div class="text-blue-100 font-medium text-xl mt-2 mb-3">TAKE THE NEXT STEP</div>
-                    <div class="text-white font-medium text-5xl">Try PrimeBlocks</div>
-                </div>
-                <div class="mt-4 mr-auto md:mt-0 md:mr-0">
-                    <a href="https://www.primefaces.org/primeblocks-vue" class="p-button font-bold px-5 py-3 p-button-warning p-button-rounded p-button-raised"> Get Started </a>
-                </div>
-            </div> -->
         </div>
+ 
     </div>
 </template>

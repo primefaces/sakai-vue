@@ -5,7 +5,7 @@ const layoutConfig = reactive({
     darkTheme: false,
     inputStyle: 'outlined',
     menuMode: 'static',
-    theme: 'md-light-indigo',
+    theme: 'mdc-light-indigo',
     scale: 12,
     activeMenuItem: null
 });

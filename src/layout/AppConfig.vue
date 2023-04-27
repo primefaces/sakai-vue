@@ -1,3 +1,4 @@
+<!-- eslint-disable prettier/prettier -->
 <script setup>
 import RadioButton from 'primevue/radiobutton';
 import Button from 'primevue/button';
@@ -16,25 +17,25 @@ defineProps({
 const scales = ref([12, 13, 14, 15, 16]);
 const visible = ref(false);
 
-const { setScale, layoutConfig } = useLayout();
+const {changeThemeSettings, setScale, layoutConfig } = useLayout();
 
 const onConfigButtonClick = () => {
     visible.value = !visible.value;
 };
-// const onChangeTheme = (theme, mode) => {
-//     const elementId = 'theme-css';
-//     const linkElement = document.getElementById(elementId);
-//     const cloneLinkElement = linkElement.cloneNode(true);
-//     const newThemeUrl = linkElement.getAttribute('href').replace(layoutConfig.theme.value, theme);
-//     cloneLinkElement.setAttribute('id', elementId + '-clone');
-//     cloneLinkElement.setAttribute('href', newThemeUrl);
-//     cloneLinkElement.addEventListener('load', () => {
-//         linkElement.remove();
-//         cloneLinkElement.setAttribute('id', elementId);
-//         changeThemeSettings(theme, mode === 'dark');
-//     });
-//     linkElement.parentNode.insertBefore(cloneLinkElement, linkElement.nextSibling);
-// };
+const onChangeTheme = (theme, mode) => {
+    const elementId = 'theme-css';
+    const linkElement = document.getElementById(elementId);
+    const cloneLinkElement = linkElement.cloneNode(true);
+    const newThemeUrl = linkElement.getAttribute('href').replace(layoutConfig.theme.value, theme);
+    cloneLinkElement.setAttribute('id', elementId + '-clone');
+    cloneLinkElement.setAttribute('href', newThemeUrl);
+    cloneLinkElement.addEventListener('load', () => {
+        linkElement.remove();
+        cloneLinkElement.setAttribute('id', elementId);
+        changeThemeSettings(theme, mode === 'dark');
+    });
+    linkElement.parentNode.insertBefore(cloneLinkElement, linkElement.nextSibling);
+};
 const decrementScale = () => {
     setScale(layoutConfig.scale.value - 1);
     applyScale();
@@ -85,7 +86,7 @@ const applyScale = () => {
                 </div>
             </div>
         </template>
-        <!-- 
+        
         <template v-if="!simple">
             <h5>Input Style</h5>
             <div class="flex">
@@ -101,9 +102,8 @@ const applyScale = () => {
 
             <h5>Ripple Effect</h5>
             <InputSwitch v-model="layoutConfig.ripple.value"></InputSwitch>
-        </template> -->
-        <!-- 
-        <h5>Bootstrap</h5>
+        </template>
+      <!--  <h5>Bootstrap</h5>
         <div class="grid">
             <div class="col-3">
                 <button class="p-link w-2rem h-2rem" @click="onChangeTheme('bootstrap4-light-blue', 'light')">
@@ -126,8 +126,7 @@ const applyScale = () => {
                 </button>
             </div>
         </div>
-    -->
-        <!-- <h5>Material Design</h5>
+     <h5>Material Design</h5>
         <div class="grid">
             <div class="col-3">
                 <button class="p-link w-2rem h-2rem" @click="onChangeTheme('md-light-indigo', 'light')">
@@ -149,7 +148,7 @@ const applyScale = () => {
                     <img src="/layout/images/themes/md-dark-deeppurple.svg" class="w-2rem h-2rem" alt="Material Dark DeepPurple" />
                 </button>
             </div>
-        </div> 
+        </div>  -->
 
         <h5>Material Design Compact</h5>
         <div class="grid">
@@ -157,23 +156,23 @@ const applyScale = () => {
                 <button class="p-link w-2rem h-2rem" @click="onChangeTheme('mdc-light-indigo', 'light')">
                     <img src="/layout/images/themes/md-light-indigo.svg" class="w-2rem h-2rem" alt="Material Light Indigo" />
                 </button>
-            </div> -->
+            </div> 
         <!-- <div class="col-3">
                 <button class="p-link w-2rem h-2rem" @click="onChangeTheme('mdc-light-deeppurple', 'light')">
                     <img src="/layout/images/themes/md-light-deeppurple.svg" class="w-2rem h-2rem" alt="Material Light Deep Purple" />
                 </button>
             </div> -->
-        <!-- <div class="col-3">
+        <div class="col-3">
                 <button class="p-link w-2rem h-2rem" @click="onChangeTheme('mdc-dark-indigo', 'dark')">
                     <img src="/layout/images/themes/md-dark-indigo.svg" class="w-2rem h-2rem" alt="Material Dark Indigo" />
                 </button>
-            </div> -->
+            </div>
         <!-- <div class="col-3">
                 <button class="p-link w-2rem h-2rem" @click="onChangeTheme('mdc-dark-deeppurple', 'dark')">
                     <img src="/layout/images/themes/md-dark-deeppurple.svg" class="w-2rem h-2rem" alt="Material Dark Deep Purple" />
                 </button>
             </div> -->
-        <!-- </div> -->
+        </div> 
 
         <!-- <h5>Tailwind</h5>
         <div class="grid">

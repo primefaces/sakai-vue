@@ -1,0 +1,23 @@
+$space-scales: 0, 0.25, 0.5, 1, 1.5, 2, 3, 4, 5 !default;
+$padding-properties: (
+    '': 'padding',
+    't': 'padding-top',
+    'r': 'padding-right',
+    'l': 'padding-left',
+    'b': 'padding-bottom',
+    'x': ('padding-left','padding-right'),
+    'y': ('padding-top','padding-bottom')
+) !default;
+
+$margin-properties: (
+    '': 'margin',
+    't': 'margin-top',
+    'r': 'margin-right',
+    'l': 'margin-left',
+    'b': 'margin-bottom',
+    'x': ('margin-left','margin-right'),
+    'y': ('margin-top','margin-bottom')
+) !default;
+
+@include spacing-class('p', $padding-properties, $space-scales);
+@include spacing-class('m', $margin-properties, $space-scales, true, true, true);

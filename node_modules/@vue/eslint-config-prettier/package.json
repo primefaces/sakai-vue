@@ -1,0 +1,49 @@
+{
+  "name": "@vue/eslint-config-prettier",
+  "version": "7.0.0",
+  "description": "eslint-config-prettier for Vue",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuejs/eslint-config-prettier.git"
+  },
+  "keywords": [
+    "vue",
+    "cli",
+    "eslint",
+    "prettier"
+  ],
+  "author": "Evan You",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vuejs/eslint-config-prettier/issues"
+  },
+  "homepage": "https://github.com/vuejs/eslint-config-prettier#readme",
+  "dependencies": {
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "prettier": "^2.5.1"
+  },
+  "peerDependencies": {
+    "eslint": ">= 7.28.0",
+    "prettier": ">= 2.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./index.js"
+    ]
+  },
+  "scripts": {
+    "lint": "eslint index.js --fix"
+  },
+  "readme": "# @vue/eslint-config-prettier\n\n> eslint-config-prettier for Vue\n\nThis config is specifically designed to be used by `@vue/cli` & `create-vue` setups\nand is not meant for outside use (it can be used but some adaptations\non the user side might be needed - for details see the config file).\n\nA part of its design is that this config may implicitly depend on\nother parts of `@vue/cli`/`create-vue` setups.\n\n## Installation\n\nIn order to work around [a known limitation in ESLint](https://github.com/eslint/eslint/issues/3458), we recommend you to use this package alongside `@rushstack/eslint-patch`, so that you don't have to install too many dependencies:\n\n```sh\nnpm add --dev @vue/eslint-config-prettier @rushstack/eslint-patch\n```\n\nPlease also make sure that you have `prettier` and `eslint` installed.\n\n## Usage\n\nAdd `\"@vue/eslint-config-prettier\"` to the `\"extends\"` array in your `.eslintrc.cjs` file. Make sure to put it **last**, so it gets the chance to override other configs.\n\n```js\nrequire(\"@rushstack/eslint-patch/modern-module-resolution\")\n\nmodule.exports = {\n  extends: [\n    // ... other configs\n    \"@vue/eslint-config-prettier\"\n  ]\n}\n```\n\n## Further Reading\n\nThe default config is based on the recommended configuration of [`eslint-plugin-prettier`](https://github.com/prettier/eslint-plugin-prettier/#recommended-configuration), which also depends on [`eslint-config-prettier`](https://github.com/prettier/eslint-config-prettier). Please refer to their corresponding documentations for more implementation details.\n"
+}

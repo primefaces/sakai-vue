@@ -1,0 +1,16 @@
+{
+  "name": "primeicons",
+  "version": "6.0.1",
+  "description": "Font Icon Library for Prime UI Libraries",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/primefaces/primeicons.git"
+  },
+  "keywords": ["Icon"],
+  "author": "PrimeTek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/primefaces/primeicons/issues"
+  },
+  "homepage": "https://github.com/primefaces/primeicons#readme"
+}

@@ -1,0 +1,21 @@
+$border-scales: 0px, 1px, 2px, 3px !default;
+
+$border-directions: (
+    '': 'border',
+    'top': 'border-top',
+    'right': 'border-right',
+    'left': 'border-left',
+    'bottom': 'border-bottom',
+    'x': ('border-left','border-right'),
+    'y': ('border-top','border-bottom')
+) !default;
+
+$border-styles: (
+    'border-solid': solid,
+    'border-dashed': dashed,
+    'border-dotted': dotted,
+    'border-double': double
+) !default;
+
+@include border-class('border', $border-directions, $border-scales);
+@include style-class('border-style', $border-styles, true);

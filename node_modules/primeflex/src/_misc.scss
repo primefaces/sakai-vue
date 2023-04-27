@@ -1,0 +1,51 @@
+$appearance-props: (
+    'appearance-none': none
+) !default;
+
+$outline-props: (
+    'outline-none': none
+) !default;
+
+$pointer-events-props: (
+    'pointer-events-none': none,
+    'pointer-events-auto': auto
+) !default;
+
+$cursor-props: (
+    'cursor-auto': 'auto',
+    'cursor-pointer': 'pointer',
+    'cursor-wait': 'wait',
+    'cursor-move': 'move'
+) !default;
+
+$select-props: (
+    'select-none': 'none',
+    'select-text': 'text',
+    'select-all': 'all',
+    'select-auto': 'auto'
+) !default;
+
+$opacity-props: (
+    'opacity-0': '0',
+    'opacity-10': '.1',
+    'opacity-20': '.2',
+    'opacity-30': '.3',
+    'opacity-40': '.4',
+    'opacity-50': '.5',
+    'opacity-60': '.6',
+    'opacity-70': '.7',
+    'opacity-80': '.8',
+    'opacity-90': '.9',
+    'opacity-100': '1'
+) !default;
+
+@include style-class('appearance', $appearance-props);
+@include style-class('outline', $outline-props);
+@include style-class('pointer-events', $pointer-events-props);
+@include style-class('cursor', $cursor-props);
+@include style-class('user-select', $select-props);
+@include style-class('opacity', $opacity-props);
+
+.#{$prefix}reset {
+    all: unset;
+}

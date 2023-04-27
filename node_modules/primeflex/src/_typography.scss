@@ -1,0 +1,84 @@
+$text-align-props: (
+    'text-center': center,
+    'text-justify': justify,
+    'text-left': left,
+    'text-right': right
+) !default;
+
+$text-decoration-props: (
+    'underline': underline,
+    'line-through': line-through,
+    'no-underline': none
+) !default;
+
+$text-transform-props: (
+    'lowercase': lowercase,
+    'uppercase': uppercase,
+    'capitalize': capitalize
+) !default;
+
+$text-overflow-props: (
+    'text-overflow-clip': clip,
+    'text-overflow-ellipsis': ellipsis
+) !default;
+
+$font-weight-props: (
+    'font-light': 300,
+    'font-normal': 400,
+    'font-medium': 500,
+    'font-semibold': 600,
+    'font-bold': 700
+) !default;
+
+$font-style-props: (
+    'font-italic': italic
+) !default;
+
+$font-size-props: (
+    'text-xs': .75rem,
+    'text-sm': .875rem,
+    'text-base': 1rem,
+    'text-lg': 1.125rem,
+    'text-xl': 1.25rem,
+    'text-2xl': 1.5rem,
+    'text-3xl': 1.75rem,
+    'text-4xl': 2rem,
+    'text-5xl': 2.5rem,
+    'text-6xl': 3rem,
+    'text-7xl': 4rem,
+    'text-8xl': 6rem
+) !default;
+
+$line-height-props: (
+    'line-height-1': 1,
+    'line-height-2': 1.25,
+    'line-height-3': 1.5,
+    'line-height-4': 2
+) !default;
+
+$white-space-props: (
+    'white-space-normal': normal,
+    'white-space-nowrap': nowrap
+) !default;
+
+$vertical-align-props: (
+    'vertical-align-baseline': baseline,
+    'vertical-align-top': top,
+    'vertical-align-middle': middle,
+    'vertical-align-bottom': bottom,
+    'vertical-align-text-top': text-top,
+    'vertical-align-text-bottom': text-bottom,
+    'vertical-align-sub': sub,
+    'vertical-align-super': super
+) !default;
+
+@include style-class('text-align', $text-align-props, true);
+@include style-class('text-decoration', $text-decoration-props, false, true);
+@include style-class('text-transform', $text-transform-props);
+@include style-class('text-overflow', $text-overflow-props, true);
+@include style-class('font-weight', $font-weight-props, true);
+@include style-class('font-style', $font-style-props);
+@include style-class('font-size', $font-size-props, true);
+@include style-class('line-height', $line-height-props);
+@include style-class('white-space', $white-space-props);
+@include style-class('vertical-align', $vertical-align-props, true);

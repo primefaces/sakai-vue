@@ -1,0 +1,36 @@
+$themeColors: 'blue', 'green', 'yellow', 'cyan', 'pink', 'indigo', 'teal', 'orange', 'bluegray', 'purple', 'gray', 'red', 'primary' !default;
+$colorShades: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900 !default;
+$surfaceShades: 0, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900 !default;
+$rgbaShades: 10, 20, 30, 40, 50, 60, 70, 80, 90 !default;
+
+@include surface-class('text', 'color', $surfaceShades);
+@include surface-class('surface', 'background-color', $surfaceShades);
+@include surface-class('border', 'border-color', $surfaceShades);
+@include style-class('background-color', (bg-transparent:'transparent'), true);
+@include style-class('border-color', (border-transparent:'transparent'), true);
+@include color-class('text-', 'color', $themeColors, $colorShades);
+@include color-class('bg-', 'background-color', $themeColors, $colorShades);
+@include color-class('border-', 'border-color', $themeColors, $colorShades);
+@include rgba-color-class('bg-', 'background-color', ('white': '255,255,255', 'black': '0,0,0'), $rgbaShades);
+@include rgba-color-class('border-', 'border-color', ('white': '255,255,255', 'black': '0,0,0'), $rgbaShades);
+@include rgba-color-class('text-', 'color', ('white': '255,255,255', 'black': '0,0,0'), $rgbaShades);
+
+$custom-properties: (
+    'text-primary': ('color': var(--primary-color)),
+    'bg-primary': ('color': var(--primary-color-text), 'background-color': var(--primary-color)),
+    'bg-primary-reverse': ('color': var(--primary-color), 'background-color': var(--primary-color-text)),
+    'bg-white': ('background-color': #ffffff),
+    'border-primary': ('border-color': var(--primary-color)),
+    'text-white': ('color': #ffffff),
+    'border-white': ('border-color': #ffffff),
+    'text-color': ('color': var(--text-color)),
+    'text-color-secondary': ('color': var(--text-color-secondary)),
+    'surface-ground': ('background-color': var(--surface-ground)),
+    'surface-section': ('background-color': var(--surface-section)),
+    'surface-card': ('background-color': var(--surface-card)),
+    'surface-overlay': ('background-color': var(--surface-overlay)),
+    'surface-hover': ('background-color': var(--surface-hover)),
+    'surface-border': ('border-color': var(--surface-border))
+) !default;
+
+@include generate-class($custom-properties, true, true);

@@ -1,0 +1,25 @@
+@mixin styleclass($metas) {
+   @each $meta in str-split($metas) {
+      $actionSeparatorIndex: str-index(quote($meta), ':');
+
+      @if $actionSeparatorIndex and $actionSeparatorIndex >= 0 {
+         @extend .#{str-slice($meta, 0, $actionSeparatorIndex - 1) + '\\:' + str-slice($meta, $actionSeparatorIndex + 1, -1)} !optional;
+      }
+      @else {
+         @extend .#{$meta} !optional;
+      }
+   }
+}
+ 
+@function str-split($string, $separator: ' ') {
+   $split-arr: ();
+   $index: str-index($string, $separator);
+   @while $index != null {
+      $item: str-slice($string, 1, $index - 1);
+      $split-arr: append($split-arr, $item);
+      $string: str-slice($string, $index + 1);
+      $index : str-index($string, $separator);
+   }
+
+   @return append($split-arr, $string);
+}

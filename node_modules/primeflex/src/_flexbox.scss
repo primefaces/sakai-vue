@@ -1,0 +1,85 @@
+$flex-direction: (
+    'flex-row': row,
+    'flex-row-reverse': row-reverse,
+    'flex-column': column,
+    'flex-column-reverse': column-reverse
+) !default;
+
+$flex-wrap: (
+    'flex-wrap': wrap,
+    'flex-wrap-reverse': wrap-reverse,
+    'flex-nowrap': nowrap
+) !default;
+
+$flex-justify-content: (
+    'justify-content-start': 'flex-start',
+    'justify-content-end': 'flex-end',
+    'justify-content-center': 'center',
+    'justify-content-between': 'space-between',
+    'justify-content-around': 'space-around',
+    'justify-content-evenly': 'space-evenly'
+) !default;
+
+$flex-align-content: (
+    'align-content-start': 'flex-start',
+    'align-content-end': 'flex-end',
+    'align-content-center': 'center',
+    'align-content-between': 'space-between',
+    'align-content-around': 'space-around',
+    'align-content-evenly': 'space-evenly'
+) !default;
+
+$flex-align-items: (
+    'align-items-stretch': 'stretch',
+    'align-items-start': 'flex-start',
+    'align-items-center': 'center',
+    'align-items-end': 'flex-end',
+    'align-items-baseline': 'baseline'
+) !default;
+
+$flex-align-self: (
+    'align-self-auto': 'auto',
+    'align-self-start': 'flex-start',
+    'align-self-end': 'flex-end',
+    'align-self-center': 'center',
+    'align-self-stretch': 'stretch',
+    'align-self-baseline': 'baseline'
+) !default;
+
+$flex-order: (
+    'flex-order-0': 0,
+    'flex-order-1': 1,
+    'flex-order-2': 2,
+    'flex-order-3': 3,
+    'flex-order-4': 4,
+    'flex-order-5': 5,
+    'flex-order-6': 6
+) !default;
+
+$flex-shorthand: (
+    'flex-1': 1 1 0%,
+    'flex-auto': 1 1 auto,
+    'flex-initial': 0 1 auto,
+    'flex-none': none
+) !default;
+
+$flex-grow: (
+    'flex-grow-0': 0,
+    'flex-grow-1': 1
+) !default;
+
+$flex-shrink: (
+    'flex-shrink-0': 0,
+    'flex-shrink-1': 1
+) !default;
+
+@include style-class('flex-direction', $flex-direction, true);
+@include style-class('flex-wrap', $flex-wrap, true);
+@include style-class('justify-content', $flex-justify-content, true);
+@include style-class('align-content', $flex-align-content, true);
+@include style-class('align-items', $flex-align-items, true);
+@include style-class('align-self', $flex-align-self, true);
+@include style-class('order', $flex-order, true);
+@include style-class('flex', $flex-shorthand, true);
+@include style-class('flex-grow', $flex-grow, true);
+@include style-class('flex-shrink', $flex-shrink, true);

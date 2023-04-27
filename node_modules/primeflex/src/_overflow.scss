@@ -1,0 +1,24 @@
+$overflow-props: (
+    'overflow-auto': 'auto',
+    'overflow-hidden': 'hidden',
+    'overflow-visible': 'visible',
+    'overflow-scroll': 'scroll'
+) !default;
+
+$overflow-x-props: (
+    'overflow-x-auto': 'auto',
+    'overflow-x-hidden': 'hidden',
+    'overflow-x-visible': 'visible',
+    'overflow-x-scroll': 'scroll'
+) !default;
+
+$overflow-y-props: (
+    'overflow-y-auto': 'auto',
+    'overflow-y-hidden': 'hidden',
+    'overflow-y-visible': 'visible',
+    'overflow-y-scroll': 'scroll'
+) !default;
+
+@include style-class('overflow', $overflow-props, true);
+@include style-class('overflow-x', $overflow-x-props, true);
+@include style-class('overflow-y', $overflow-y-props, true);

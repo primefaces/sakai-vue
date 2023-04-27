@@ -1,0 +1,10 @@
+$display-props: (
+    'hidden': 'none',
+    'block': 'block',
+    'inline': 'inline',
+    'inline-block': 'inline-block',
+    'flex': 'flex',
+    'inline-flex': 'inline-flex'
+) !default;
+
+@include style-class('display', $display-props, true);

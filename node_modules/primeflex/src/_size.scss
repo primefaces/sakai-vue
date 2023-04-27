@@ -1,0 +1,74 @@
+@use 'sass:map';
+
+@function size-map($default, $prefix, $size: 30) {
+    $size-map: ();
+
+    /* Add content type objects to map */
+    $size-map: map.merge($default, ('#{$prefix}-min': min-content, '#{$prefix}-max': max-content, '#{$prefix}-fit': fit-content));
+
+    /* Add rem type objects to map */
+    $rem-map: ();
+    @for $i from 1 through $size {
+        $rem-map: map.merge($rem-map, ('#{$prefix}-#{$i}rem': $i * 1rem));
+    }
+    $size-map: map.merge($size-map, $rem-map);
+    
+    @return $size-map;
+}
+
+$width-properties: size-map((
+    'w-full': 100%,
+    'w-screen': 100vw,
+    'w-auto': auto,
+    'w-1': 8.3333%,
+    'w-2': 16.6667%,
+    'w-3': 25%,
+    'w-4': 33.3333%,
+    'w-5': 41.6667%,
+    'w-6': 50%,
+    'w-7': 58.3333%,
+    'w-8': 66.6667%,
+    'w-9': 75%,
+    'w-10': 83.3333%,
+    'w-11': 91.6667%,
+    'w-12': 100%
+), 'w') !default;
+
+$height-properties: size-map((
+    'h-full': 100%,
+    'h-screen': 100vh,
+    'h-auto': auto,
+), 'h') !default;
+
+$min-width-properties: (
+    'min-w-0': 0px,
+    'min-w-full': 100%,
+    'min-w-screen': 100vw,
+    'min-w-min': min-content,
+    'min-w-max': max-content
+) !default;
+
+$max-width-properties: size-map((
+    'max-w-0': 0px,
+    'max-w-full': 100%,
+    'max-w-screen': 100vw
+), 'max-w') !default;
+
+$min-height-properties: (
+    'min-h-0': 0px,
+    'min-h-full': 100%,
+    'min-h-screen': 100vh
+) !default;
+
+$max-height-properties: size-map((
+    'max-h-0': 0px,
+    'max-h-full': 100%,
+    'max-h-screen': 100vh
+), 'max-h') !default;
+
+@include style-class('width', $width-properties, true);
+@include style-class('height', $height-properties, true);
+@include style-class('min-width', $min-width-properties, true);
+@include style-class('max-width', $max-width-properties, true);
+@include style-class('min-height', $min-height-properties, true);
+@include style-class('max-height', $max-height-properties, true);

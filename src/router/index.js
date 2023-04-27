@@ -132,7 +132,8 @@ const router = createRouter({
                     component: () => import('@/views/pages/Empty.vue')
                 },
                 {
-                    path: '/pages/crud',
+                    path: '/pages/crud/:id',
+                    props: true,
                     name: 'crud',
                     component: () => import('@/views/pages/Crud.vue')
                 },
@@ -169,6 +170,7 @@ const router = createRouter({
             name: 'error',
             component: () => import('@/views/pages/auth/Error.vue')
         }
+        
     ]
 });
 

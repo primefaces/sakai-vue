@@ -5,11 +5,10 @@ const layoutConfig = reactive({
     darkTheme: false,
     inputStyle: 'outlined',
     menuMode: 'static',
-    theme: 'lara-light-indigo',
-    scale: 14,
+    theme: 'md-light-indigo',
+    scale: 12,
     activeMenuItem: null
 });
-
 const layoutState = reactive({
     staticMenuDesktopInactive: false,
     overlayMenuActive: false,
@@ -27,6 +26,9 @@ export function useLayout() {
 
     const setScale = (scale) => {
         layoutConfig.scale = scale;
+
+        console.log(layoutConfig);
+        console.log(layoutState);
     };
 
     const setActiveMenuItem = (item) => {

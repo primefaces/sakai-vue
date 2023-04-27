@@ -1,9 +1,14 @@
+<!-- eslint-disable prettier/prettier -->
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import CustomerService from '@/service/CustomerService';
 import ProductService from '@/service/ProductService';
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, onMounted } from 'vue';
+// import CountryService from '@/service/CountryService';
+const countries = ref([]);
 
+
+const filteredCountries = ref(null);
 const customer1 = ref(null);
 const customer2 = ref(null);
 const customer3 = ref(null);
@@ -29,20 +34,107 @@ const representatives = ref([
 
 const customerService = new CustomerService();
 const productService = new ProductService();
+// const countryService = new CountryService();
+
+onMounted(() => {
+    // productService.getProductsWithOrdersSmall().then((data) => (countries.value = data));
+    let productsList = [
+    {
+        "code": "37",
+        "name": "LECHE PAST. ENTERA",
+        "description": "LECHE PAST. ENTERA GALON",
+        "content":1,
+        "content-um":"galon",
+        "price": 60,
+        "price-sale": 77,
+        "category": "Leches",
+        "box-quantity": 4,
+        "quantity": 10000,
+        "inventoryStatus": "INSTOCK",
+        "rating": 5,
+    },
+    {
+        "code": "6",
+        "name": "LECHE PAST. ENTERA",
+        "content":1,
+        "content-um":"Litro",
+        "description": "LECHE PAST. ENTERA 1LT.",
+        "price": 60,
+        "price-sale": 77,
+        "category": "Leches",
+        "box-quantity": 4,
+        "quantity": 10000,
+        "inventoryStatus": "INSTOCK",
+        "rating": 5,
+    },
+    {
+        "code": "80",
+        "name": "LECHE PAST. ENTERA",
+        "description": "LECHE PAST. ENTERA 1/2GALON",
+        "content":0.5,
+        "content-um":"galon",
+        "price": 60,
+        "price-sale": 77,
+        "category": "Leches",
+        "box-quantity": 4,
+        "quantity": 10000,
+        "inventoryStatus": "INSTOCK",
+        "rating": 5,
+    },
+    {
+        "code": "83",
+        "name": "LECHE PAST. LIGTH",
+        "description": "LECHE PAST. LIGTH 1/2GALON",
+        "content":0.5,
+        "content-um":"galon",
+        "price": 60,
+        "price-sale": 77,
+        "category": "Leches",
+        "box-quantity": 4,
+        "quantity": 10000,
+        "inventoryStatus": "INSTOCK",
+        "rating": 5,
+    },
+    
+]
+countries.value = productsList;
+        console.log(countries);
+    // })
+});
 
 onBeforeMount(() => {
     productService.getProductsWithOrdersSmall().then((data) => (products.value = data));
     customerService.getCustomersLarge().then((data) => {
-        customer1.value = data;
+        customer1.value = [data[0]];
+        console.log([data[0]]);
         loading1.value = false;
         customer1.value.forEach((customer) => (customer.date = new Date(customer.date)));
     });
     customerService.getCustomersLarge().then((data) => (customer2.value = data));
     customerService.getCustomersMedium().then((data) => (customer3.value = data));
+    console.log(customer1);
+    // console.log(customer2);
+    // console.log(customer3);
     loading2.value = false;
 
     initFilters1();
 });
+const searchCountry = (event) => {
+
+    //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
+    const filtered = [];
+    const query = event.query;
+    for (let i = 0; i < countries.value.length; i++) {
+        const country = countries.value[i];
+        if (country.code.toLocaleString().toLowerCase().indexOf(query.toLowerCase()) == 0) {
+            filtered.push(country);
+        }
+    }
+    filteredCountries.value = filtered;
+};
+const selectOne = (event) => {
+console.log(event);
+};
 
 const initFilters1 = () => {
     filters1.value = {
@@ -123,12 +215,18 @@ const calculateCustomerTotal = (name) => {
                     <template #empty> No customers found. </template>
                     <template #loading> Loading customers data. Please wait. </template>
                     <Column field="name" header="Name" style="min-width: 12rem">
-                        <template #body="{ data }">
-                            {{ data.name }}
+                        <template #body="{ }">
+                            <AutoComplete id="autocomplete" v-model="value2" :suggestions="filteredCountries" @complete="searchCountry($event)" field="code" @select="selectOne" placeholder="input here" style="width: 300px">
+                                <!-- <Option v-for="option in item.filteredCountries" :value="option.code" :key="option.description">
+                                    <span class="demo-auto-complete-title">{{ option.code }}</span>
+                                    <span class="demo-auto-complete-count">{{ option.name }} {{ option.content }}{{ option.content - um }}</span>
+                                </Option> -->
+                            </AutoComplete>
+                            <!-- {{ data.name }} -->
                         </template>
-                        <template #filter="{ filterModel }">
+                        <!-- <template #filter="{ filterModel }">
                             <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name" />
-                        </template>
+                        </template> -->
                     </Column>
                     <Column header="Country" filterField="country.name" style="min-width: 12rem">
                         <template #body="{ data }">
@@ -284,8 +382,8 @@ const calculateCustomerTotal = (name) => {
                     <Column field="category" header="Category" :sortable="true">
                         <template #body="slotProps">
                             {{ formatCurrency(slotProps.data.category) }}
-                        </template></Column
-                    >
+                        </template>
+                    </Column>
                     <Column field="rating" header="Reviews" :sortable="true">
                         <template #body="slotProps">
                             <Rating :modelValue="slotProps.data.rating" :readonly="true" :cancel="false" />
@@ -378,5 +476,32 @@ const calculateCustomerTotal = (name) => {
 
 ::v-deep(.p-datatable-scrollable .p-frozen-column) {
     font-weight: bold;
+}
+
+.demo-auto-complete-item{
+    padding: 4px 0;
+    border-bottom: 1px solid #F6F6F6;
+}
+.demo-auto-complete-group{
+    font-size: 12px;
+    padding: 4px 6px;
+}
+.demo-auto-complete-group span{
+    color: #666;
+    font-weight: bold;
+}
+.demo-auto-complete-group a{
+    float: right;
+}
+.demo-auto-complete-count{
+    float: right;
+    color: #999;
+}
+.demo-auto-complete-more{
+    display: block;
+    margin: 0 auto;
+    padding: 4px;
+    text-align: center;
+    font-size: 12px;
 }
 </style>

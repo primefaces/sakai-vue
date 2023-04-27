@@ -11,3 +11,26 @@ $gutter: 1rem; //for primeflex grid system
 /* Demos */
 @import '@/assets/demo/styles/flags/flags.css';
 @import '@/assets/demo/styles/badges.scss';
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #68686870;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+:root {
+    --primary-color:#BF0811;
+  }

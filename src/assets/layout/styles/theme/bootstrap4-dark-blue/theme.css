@@ -7,7 +7,7 @@
   --surface-f:#2a323d;
   --text-color:rgba(255, 255, 255, 0.87);
   --text-color-secondary:rgba(255, 255, 255, 0.6);
-  --primary-color:#8dd0ff;
+  --primary-color:#ff8d8d;
   --primary-color-text:#151515;
   --font-family:-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
   --surface-0: #20262e;
@@ -223,16 +223,16 @@
   --red-700:#9a2530;
   --red-800:#791d26;
   --red-900:#58151c;
-  --primary-50:#f9fdff;
-  --primary-100:#e4f4ff;
-  --primary-200:#ceebff;
-  --primary-300:#b8e2ff;
-  --primary-400:#a3d9ff;
-  --primary-500:#8dd0ff;
-  --primary-600:#78b1d9;
-  --primary-700:#6392b3;
-  --primary-800:#4e728c;
-  --primary-900:#385366;
+  --primary-50:#fff9f9;
+  --primary-100:#ffe4e4;
+  --primary-200:#ffcece;
+  --primary-300:#ffb8b8;
+  --primary-400:#ffa3a3;
+  --primary-500:#ff8d8d;
+  --primary-600:#d97878;
+  --primary-700:#b36363;
+  --primary-800:#8c4e4e;
+  --primary-900:#663838;
 }
 
 .p-autocomplete .p-autocomplete-loader {

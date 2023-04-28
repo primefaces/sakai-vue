@@ -104,27 +104,47 @@ onMounted(() => {
 
     ]
     countries.value = productsList;
-    filteredCountries.value = productsList.slice(0,2)
-    filteredCountries2.value = productsList.slice(0,2)
+    filteredCountries.value = productsList.slice(0, 2)
+    filteredCountries2.value = productsList.slice(0, 2)
 });
 
 const changeRuta = (event) => {
     console.log(event.value.code);
     value9.value = { name: 'Pepe', code: '2' }
 }
-const changecode = (event) => {
-    if (event.value.code) {
-        console.log(event.value.code, '-', value2.value);
-        value3.value = value2.value
+const updateValue = (event, code) => {
+    console.log('updateValue', event);
+    if (!event) {
+        if (code) {
+            value3.value = null;
+        } else {
+            value2.value = null;
+        }
+
+    }
+    else if (typeof event !== 'string') {
+        // console.log('\t',typeof event);
+        if (code) {
+            value3.value = value2.value;
+        } else {
+            value2.value = value3.value;
+        }
     }
 }
-const changeDescription = (event) => {
-    if (event.value.code) {
-        console.log(event.value.code, '-', value3.value);
-        value2.value = value3.value
-    }
-    // value9.value = { name: 'Pepe', code: '2' }
-}
+// const changecode = (event) => {
+//     console.log('changecode',event);
+//     if (event.value?.code) {
+//         console.log(event.value.code, '-', value2.value);
+//         value3.value = value2.value
+//     }
+// }
+// const changeDescription = (event) => {
+//     if (event.value.code) {
+//         console.log(event.value.code, '-', value3.value);
+//         value2.value = value3.value
+//     }
+//     // value9.value = { name: 'Pepe', code: '2' }
+// }
 
 const searchCountry = (event) => {
     //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
@@ -158,8 +178,7 @@ const searchCountry2 = (event) => {
         <div class="grid p-fluid mt-3">
             <div class="field col-12 md:col-4">
                 <span class="p-float-label">
-                    <Dropdown @change="changeRuta" id="ruta" :options="cities" v-model="value8" optionLabel="name">
-                    </Dropdown>
+                    <Dropdown @change="changeRuta" id="ruta" :options="cities" v-model="value8" optionLabel="name"> </Dropdown>
                     <label for="ruta">Ruta</label>
                 </span>
             </div>
@@ -240,18 +259,66 @@ const searchCountry2 = (event) => {
             <!-- </div> -->
             <!-- <div class="row"> -->
             <div class="field col-12 md:col-1 p-0">
-                <label for="autocomplete">Codigo</label>
-                <AutoComplete class="no-margin" id="autocomplete" :clearable="true" v-model="value2" :suggestions="filteredCountries"
-                    @change="changecode" @complete="searchCountry($event)" field="code"></AutoComplete>
+                <span class="p-float-label mt-4">
+                    <AutoComplete
+                        v-model="value2"
+                        class="no-margin"
+                        id="code"
+                        forceSelection
+                        :completeOnFocus="true"
+                        optionLabel="code"
+                        :dropdown="true"
+                        :clearable="true"
+                        :suggestions="filteredCountries"
+                        @update:modelValue="updateValue($event, true)"
+                        @complete="searchCountry($event)"
+                    >
+                        <template #option="slotProps">
+                            <div class="flex align-options-center justify-content-between item-autocomplete-opt">
+                                <div class="text-code">{{ slotProps.option.code }}</div>
+                                <div class="text-descpription">{{ slotProps.option.description }}</div>
+                            </div>
+                        </template>
+                    </AutoComplete>
+                    <label for="code">Codigo</label>
+                </span>
             </div>
             <div class="field col-12 md:col-2 p-0">
-                <label for="autocomplete">Producto</label>
-                <AutoComplete class="no-margin" id="autocomplete2" :clearable="true" v-model="value3" :suggestions="filteredCountries2"
-                    @change="changeDescription" @complete="searchCountry2($event)" field="description"></AutoComplete>
+                <span class="p-float-label mt-4">
+                    <AutoComplete
+                        class="no-margin"
+                        id="product"
+                        forceSelection
+                        :completeOnFocus="true"
+                        optionLabel="description"
+                        :dropdown="true"
+                        :clearable="true"
+                        v-model="value3"
+                        :suggestions="filteredCountries2"
+                        @update:modelValue="updateValue($event, false)"
+                        @complete="searchCountry2($event)"
+                        field="description"
+                    ></AutoComplete>
+                    <label for="product">Producto</label>
+                </span>
             </div>
             <div class="field col-12 md:col-1 p-0">
-                <label for="lastname2">CajasS</label>
-                <InputNumber class="no-margin" id="CajasS" v-model="value4" type="number" />
+                <span class="p-float-label mt-4">
+                    <InputNumber id="cajas-s" :min="0"  v-model="value4" />
+                    <label for="cajas-s">Cajas salida</label>
+                </span>
+            </div>
+            <div class="field col-12 md:col-1 p-0">
+                <span class="p-float-label mt-4">
+                    <InputNumber id="piesas-s" :min="0"  v-model="value5" />
+                    <label for="piesas-s">Piesas salida</label>
+                </span>
+            </div>
+            <div class="field col-12 md:col-1 p-0">
+                <span class="p-float-label mt-4">
+                    <InputNumber id="salida" :min="0"  v-model="value6" />
+                    <label for="salida">salida total</label>
+                </span>
             </div>
             <div class="field col-12 md:col-1 p-0">
                 <label for="city">PiesasS</label>
@@ -273,15 +340,27 @@ const searchCountry2 = (event) => {
                 <label for="city">Regreso Pzs</label>
                 <InputNumber readonly disabled class="no-margin" id="piesasS" v-model="value11" type="number" />
             </div>
-            
 
             <!-- </div> -->
         </div>
     </div>
 </template>
 
-<style >
+<style>
 .w-100 {
     width: 100%;
+}
+
+.item-autocomplete-opt {
+    width: 250px;
+}
+
+.text-code {
+    font-weight: 600;
+}
+
+.text-descpription {
+    font-size: small;
+    opacity: 0.5;
 }
 </style>

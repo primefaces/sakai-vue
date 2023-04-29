@@ -40,9 +40,14 @@ const model = ref([
             //     ]
             // },
             {
-                label: 'Usuarios',
-                icon: 'pi pi-fw pi-sign-in',
-                to: '/pages/crud/Usuarios'
+                label: 'Familias',
+                icon: 'pi pi-fw pi-tag',
+                to: '/pages/crud/Familias'
+            },
+            {
+                label: 'Grupos',
+                icon: 'pi pi-fw pi-tags',
+                to: '/pages/crud/Grupos'
             },
             {
                 label: 'Unidades de medida',
@@ -50,40 +55,26 @@ const model = ref([
                 to: '/pages/crud/Unidades de medida'
             },
             {
-                label: 'Categorías',
-                icon: 'pi pi-fw pi-sort-amount-up',
-                to: '/pages/crud/Categorías'
+                label: 'Factores de conversión',
+                icon: 'pi pi-fw pi-sliders-v',
+                to: '/pages/crud/Factores de conversión'
             },
             {
                 label: 'Productos',
-                icon: 'pi pi-fw pi-cart-plus',
+                icon: 'pi pi-fw pi-box',
                 to: '/pages/crud/Productos'
+            },
+            {
+                label: 'Repartidores',
+                icon: 'pi pi-fw pi-pound',
+                to: '/pages/crud/pi-truck'
             },
             {
                 label: 'Rutas',
                 icon: 'pi pi-fw pi-map',
                 to: '/pages/crud/Rutas'
             },
-            {
-                label: 'Repartidores',
-                icon: 'pi pi-fw pi-car',
-                to: '/pages/crud/Repartidores'
-            },
-            // {
-            //     label: 'Timeline',
-            //     icon: 'pi pi-fw pi-calendar',
-            //     to: '/pages/timeline'
-            // },
-            // {
-            //     label: 'Not Found',
-            //     icon: 'pi pi-fw pi-exclamation-circle',
-            //     to: '/pages/notfound'
-            // },
-            // {
-            //     label: 'Empty',
-            //     icon: 'pi pi-fw pi-circle-off',
-            //     to: '/pages/empty'
-            // }
+            { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/utilities/icons' }
         ]
     },
 

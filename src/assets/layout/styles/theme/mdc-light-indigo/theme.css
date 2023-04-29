@@ -1788,7 +1788,7 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
 }
 
 p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
-  border-color: #B00020;
+  border-color: hwb(349 0% 31%);
 }
 
 .p-inputwrapper-filled .p-treeselect.p-treeselect-chip .p-treeselect-label {
@@ -1883,7 +1883,7 @@ p-treeselect.p-treeselect-clearable .p-treeselect-clear-icon {
   border-radius: 4px;
 }
 .p-button:enabled:hover {
-  background: rgba(63, 81, 181, 0.92);
+  background: rgba(191,8, 17, 0.92);
   color: #ffffff;
   border-color: transparent;
 }
@@ -3125,7 +3125,7 @@ p-treeselect.p-treeselect-clearable .p-treeselect-clear-icon {
   align-items: center;
 }
 .fc.fc-unthemed .fc-toolbar .fc-button:enabled:hover {
-  background: rgba(63, 81, 181, 0.92);
+  background: rgba(191,8, 17, 0.92);
   color: #ffffff;
   border-color: transparent;
 }
@@ -3287,7 +3287,7 @@ p-treeselect.p-treeselect-clearable .p-treeselect-clear-icon {
   border-radius: 4px;
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button:enabled:hover {
-  background: rgba(63, 81, 181, 0.92);
+  background: rgba(191,8, 17, 0.92);
   color: #ffffff;
   border-color: transparent;
 }
@@ -4487,7 +4487,7 @@ p-treeselect.p-treeselect-clearable .p-treeselect-clear-icon {
   right: -1rem;
 }
 .p-overlaypanel .p-overlaypanel-close:enabled:hover {
-  background: rgba(63, 81, 181, 0.92);
+  background: rgba(191,8, 17, 0.92);
   color: #ffffff;
 }
 .p-overlaypanel:after {
@@ -4601,7 +4601,7 @@ p-treeselect.p-treeselect-clearable .p-treeselect-clear-icon {
 }
 
 .p-fileupload-choose:not(.p-disabled):hover {
-  background: rgba(63, 81, 181, 0.92);
+  background: rgba(191,8, 17, 0.92);
   color: #ffffff;
   border-color: transparent;
 }

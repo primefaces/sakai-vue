@@ -196,7 +196,7 @@ const toggle = () => {
             <div class="card">
                 <h5>Splitter</h5>
 
-                <Splitter style="height: 300px" class="mb-5">
+                <Splitter style="height: 250px" class="mb-5">
                     <SplitterPanel :size="30" :minSize="10" style="overflow: scroll">
                         <div className="h-full flex align-items-center justify-content-center">Panel 1</div>
                     </SplitterPanel>

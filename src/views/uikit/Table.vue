@@ -216,7 +216,7 @@ const calculateCustomerTotal = (name) => {
                     <template #loading> Loading customers data. Please wait. </template>
                     <Column field="name" header="Name" style="min-width: 12rem">
                         <template #body="{ }">
-                            <AutoComplete id="autocomplete" v-model="value2" :suggestions="filteredCountries" @complete="searchCountry($event)" field="code" @select="selectOne" placeholder="input here" style="width: 300px">
+                            <AutoComplete id="autocomplete" v-model="value2" :suggestions="filteredCountries" @complete="searchCountry($event)" field="code" @select="selectOne" placeholder="input here" style="width: 250px">
                                 <!-- <Option v-for="option in item.filteredCountries" :value="option.code" :key="option.description">
                                     <span class="demo-auto-complete-title">{{ option.code }}</span>
                                     <span class="demo-auto-complete-count">{{ option.name }} {{ option.content }}{{ option.content - um }}</span>

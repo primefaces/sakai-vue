@@ -1,6 +1,6 @@
 {
     "name": "sakai-vue",
-    "version": "3.6.0",
+    "version": "3.7.0",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
@@ -11,7 +11,7 @@
         "chart.js": "3.3.2",
         "primeflex": "^3.2.1",
         "primeicons": "^6.0.1",
-        "primevue": "3.26.1",
+        "primevue": "3.28.0",
         "vue": "^3.2.41",
         "vue-router": "^4.1.5"
     },

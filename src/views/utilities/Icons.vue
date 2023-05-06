@@ -28,57 +28,55 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
-        <div class="card">
-            <h3>Icons</h3>
-            <p>
-                PrimeVue components internally use <a href="https://github.com/primefaces/primeicons" class="font-medium text-primary hover:underline">PrimeIcons</a> library, the official icons suite from
-                <a href="https://www.primetek.com.tr" class="font-medium text-primary hover:underline">PrimeTek</a>.
-            </p>
+    <div class="card">
+        <h3>Icons</h3>
+        <p>
+            PrimeVue components internally use <a href="https://github.com/primefaces/primeicons" class="font-medium text-primary hover:underline">PrimeIcons</a> library, the official icons suite from
+            <a href="https://www.primetek.com.tr" class="font-medium text-primary hover:underline">PrimeTek</a>.
+        </p>
 
-            <h5>Download</h5>
-            <p>PrimeIcons is available at npm, run the following command to download it to your project.</p>
+        <h5>Download</h5>
+        <p>PrimeIcons is available at npm, run the following command to download it to your project.</p>
 
-            <CodeHighlight> npm install primeicons --save </CodeHighlight>
+        <CodeHighlight> npm install primeicons --save </CodeHighlight>
 
-            <h5>Getting Started</h5>
-            <p>PrimeIcons use the <strong>pi pi-&#123;icon&#125;</strong> syntax such as <strong>pi pi-check</strong>. A standalone icon can be displayed using an element like <i>i</i> or <i>span</i></p>
+        <h5>Getting Started</h5>
+        <p>PrimeIcons use the <strong>pi pi-&#123;icon&#125;</strong> syntax such as <strong>pi pi-check</strong>. A standalone icon can be displayed using an element like <i>i</i> or <i>span</i></p>
 
-            <CodeHighlight> &lt;i class="pi pi-check"&gt;&lt;/i&gt; &lt;i class="pi pi-times"&gt;&lt;/i&gt; </CodeHighlight>
+        <CodeHighlight> &lt;i class="pi pi-check"&gt;&lt;/i&gt; &lt;i class="pi pi-times"&gt;&lt;/i&gt; </CodeHighlight>
 
-            <i class="pi pi-check" style="margin-right: 0.5rem"></i>
-            <i class="pi pi-times"></i>
+        <i class="pi pi-check" style="margin-right: 0.5rem"></i>
+        <i class="pi pi-times"></i>
 
-            <h5>Size</h5>
-            <p>Size of the icons can easily be changed using font-size property.</p>
+        <h5>Size</h5>
+        <p>Size of the icons can easily be changed using font-size property.</p>
 
-            <CodeHighlight> &lt;i class="pi pi-check"&gt;&lt;/i&gt; </CodeHighlight>
+        <CodeHighlight> &lt;i class="pi pi-check"&gt;&lt;/i&gt; </CodeHighlight>
 
-            <i class="pi pi-check"></i>
+        <i class="pi pi-check"></i>
 
-            <CodeHighlight> &lt;i class="pi pi-check" style="font-size: 2rem"&gt;&lt;/i&gt; </CodeHighlight>
+        <CodeHighlight> &lt;i class="pi pi-check" style="font-size: 2rem"&gt;&lt;/i&gt; </CodeHighlight>
 
-            <i class="pi pi-check" style="font-size: 2rem"></i>
+        <i class="pi pi-check" style="font-size: 2rem"></i>
 
-            <h5>Spinning Animation</h5>
-            <p>Special pi-spin class applies continuous rotation to an icon.</p>
-            <CodeHighlight> &lt;i class="pi pi-spin pi-spinner" style="font-size: 2rem"&gt;&lt;/i&gt; </CodeHighlight>
+        <h5>Spinning Animation</h5>
+        <p>Special pi-spin class applies continuous rotation to an icon.</p>
+        <CodeHighlight> &lt;i class="pi pi-spin pi-spinner" style="font-size: 2rem"&gt;&lt;/i&gt; </CodeHighlight>
 
-            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
 
-            <h5>List of Icons</h5>
-            <p>
-                Here is the current list of PrimeIcons, more icons are added periodically. You may also <a href="https://github.com/primefaces/primeicons/issues" class="font-medium text-primary hover:underline">request new icons</a> at the issue
-                tracker.
-            </p>
+        <h5>List of Icons</h5>
+        <p>
+            Here is the current list of PrimeIcons, more icons are added periodically. You may also <a href="https://github.com/primefaces/primeicons/issues" class="font-medium text-primary hover:underline">request new icons</a> at the issue
+            tracker.
+        </p>
 
-            <InputText v-model="filter" class="w-full p-3 mt-3 mb-5" placeholder="Search an icon" />
+        <InputText v-model="filter" class="w-full p-3 mt-3 mb-5" placeholder="Search an icon" />
 
-            <div class="grid icons-list text-center">
-                <div class="col-6 sm:col-4 lg:col-3 xl:col-2 pb-5" v-for="icon of filteredIcons" :key="icon.properties.name">
-                    <i :class="'text-2xl mb-2 pi pi-' + icon.properties.name"></i>
-                    <div>pi-{{ icon.properties.name }}</div>
-                </div>
+        <div class="grid icons-list text-center">
+            <div class="col-6 sm:col-4 lg:col-3 xl:col-2 pb-5" v-for="icon of filteredIcons" :key="icon.properties.name">
+                <i :class="'text-2xl mb-2 pi pi-' + icon.properties.name"></i>
+                <div>pi-{{ icon.properties.name }}</div>
             </div>
         </div>
     </div>

@@ -16,48 +16,25 @@ const model = ref([
         label: 'Catálogos',
         icon: 'pi pi-fw pi-briefcase',
         to: '/pages',
-        items: [
-
-            // {
-            //     label: 'Auth',
-            //     icon: 'pi pi-fw pi-user',
-            //     items: [
-            //         {
-            //             label: 'Login',
-            //             icon: 'pi pi-fw pi-sign-in',
-            //             to: '/auth/login'
-            //         },
-            //         {
-            //             label: 'Error',
-            //             icon: 'pi pi-fw pi-times-circle',
-            //             to: '/auth/error'
-            //         },
-            //         {
-            //             label: 'Access Denied',
-            //             icon: 'pi pi-fw pi-lock',
-            //             to: '/auth/access'
-            //         }
-            //     ]
-            // },
-            {
+        items: [{
                 label: 'Familias',
                 icon: 'pi pi-fw pi-tag',
-                to: '/pages/crud/Familias'
+                to: '/pages/crud/familias'
             },
             {
                 label: 'Grupos',
                 icon: 'pi pi-fw pi-tags',
-                to: '/pages/crud/Grupos'
+                to: '/pages/crud/grupos'
             },
             {
                 label: 'Unidades de medida',
                 icon: 'pi pi-fw pi-pound',
-                to: '/pages/crud/Unidades de medida'
+                to: '/pages/crud/unidades_de_medida'
             },
             {
                 label: 'Factores de conversión',
                 icon: 'pi pi-fw pi-sliders-v',
-                to: '/pages/crud/Factores de conversión'
+                to: '/pages/crud/factores_de_conversión'
             },
             {
                 label: 'Productos',
@@ -66,8 +43,8 @@ const model = ref([
             },
             {
                 label: 'Repartidores',
-                icon: 'pi pi-fw pi-pound',
-                to: '/pages/crud/pi-truck'
+                icon: 'pi pi-fw pi-truck',
+                to: '/pages/crud/Repartidores'
             },
             {
                 label: 'Rutas',

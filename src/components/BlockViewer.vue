@@ -46,11 +46,14 @@ export default {
                 <span class="badge-new" v-if="recent">New</span>
             </span>
             <div class="block-actions">
-                <a tabindex="0" :class="{ 'block-action-active': blockView === BlockView.PREVIEW }" @click="activateView($event, BlockView.PREVIEW)"><span>Preview</span></a>
-                <a :tabindex="'0'" :class="{ 'block-action-active': blockView === BlockView.CODE }" @click="activateView($event, BlockView.CODE)">
+                <a tabindex="0" :class="{ 'block-action-active': blockView === BlockView.PREVIEW }"
+                    @click="activateView($event, BlockView.PREVIEW)"><span>Preview</span></a>
+                <a :tabindex="'0'" :class="{ 'block-action-active': blockView === BlockView.CODE }"
+                    @click="activateView($event, BlockView.CODE)">
                     <span>Code</span>
                 </a>
-                <a :tabindex="0" class="block-action-copy" @click="copyCode($event)" v-tooltip.focus.bottom="{ value: 'Copied to clipboard' }"><i class="pi pi-copy"></i></a>
+                <a :tabindex="0" class="block-action-copy" @click="copyCode($event)"
+                    v-tooltip.focus.bottom="{ value: 'Copied to clipboard' }"><i class="pi pi-copy"></i></a>
             </div>
         </div>
         <div class="block-content">
@@ -58,7 +61,7 @@ export default {
                 <slot></slot>
             </div>
             <div v-if="blockView === BlockView.CODE">
-<CodeHighlight class="surface-card m-0">{{code}}</CodeHighlight>
+                <CodeHighlight class="surface-card m-0">{{ code }}</CodeHighlight>
             </div>
         </div>
     </div>
@@ -173,6 +176,7 @@ pre[class*='language-'] {
         padding: 0 2rem !important;
 
         .token {
+
             &.tag,
             &.keyword {
                 color: #2196f3 !important;
@@ -209,5 +213,4 @@ pre[class*='language-'] {
             margin-left: 0;
         }
     }
-}
-</style>
+}</style>

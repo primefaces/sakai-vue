@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "Node",
+        "strictNullChecks": false,
+        "strictFunctionTypes": false
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

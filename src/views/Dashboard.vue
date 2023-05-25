@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <!-- eslint-disable no-unused-vars -->
 <!-- eslint-disable prettier/prettier -->
 <!-- eslint-disable prettier/prettier -->
@@ -53,6 +54,7 @@ const productService = new ProductService();
 const barOptions = ref(null);
 
 onMounted(() => {
+    // this.$route.params
     productService.getProductsSmall().then((data) => (products.value = data));
 });
 

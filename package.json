@@ -4,22 +4,23 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview",
-        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+        "preview": "vite preview"
     },
     "dependencies": {
         "chart.js": "3.3.2",
+        "pinia": "^2.0.35",
         "primeflex": "^3.2.1",
         "primeicons": "^6.0.1",
         "primevue": "3.26.1",
         "vue": "^3.2.41",
-        "vue-router": "^4.1.5"
+        "vue-router": "^4.2.1"
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.1.4",
         "@vitejs/plugin-vue": "^4.1.0",
         "@vue/eslint-config-prettier": "^7.0.0",
         "eslint": "^8.22.0",
+        "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-vue": "^9.3.0",
         "prettier": "^2.7.1",
         "sass": "^1.55.0",

@@ -1,0 +1,1088 @@
+ [
+    {
+        "code": "360",
+        "descripcion": "ANTIGUA CRUZ DE ORO .900 ML ",
+        "pzasCaja":16,
+        "precioLista": 13
+    },
+    {
+        "code": "866",
+        "descripcion": "AVENA BIOPET .250 ML ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "685674-4332",
+        "descripcion": "BARRA DE CHULETA AHUMADA",
+        "pzasCaja":16,
+        "precioLista": 95
+    },
+    {
+        "code": "685673-4332",
+        "descripcion": "BARRA JAMON EXTRAFINO ",
+        "pzasCaja":16,
+        "precioLista": 98
+    },
+    {
+        "code": "685675-4332",
+        "descripcion": "BARRA JAMON VIRGINIA",
+        "pzasCaja":16,
+        "precioLista": 76
+    },
+    {
+        "code": "C25",
+        "descripcion": "BOLIMANTECA 1 KG",
+        "pzasCaja":16,
+        "precioLista": 57
+    },
+    {
+        "code": "387",
+        "descripcion": "BUEN FRIA .1800 ML  MANZANA",
+        "pzasCaja":16,
+        "precioLista": 15
+    },
+    {
+        "code": "343",
+        "descripcion": "BUEN FRIA .1800 ML NARANJA",
+        "pzasCaja":16,
+        "precioLista": 15
+    },
+    {
+        "code": "415",
+        "descripcion": "BUEN FRIA .1800 ML UVA",
+        "pzasCaja":16,
+        "precioLista": 15
+    },
+    {
+        "code": "860",
+        "descripcion": "BUEN FRIA .500 ML MANZANA",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "65",
+        "descripcion": "BUEN FRIA .500 ML NARANJA",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "859",
+        "descripcion": "BUEN FRIA .500 ML UVA",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "333",
+        "descripcion": "BUEN FRIA 1 LT MANZANA",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "56",
+        "descripcion": "BUEN FRIA 1 LT NARANJA",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "132",
+        "descripcion": "BUEN FRIA 1 LT UVA",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "862",
+        "descripcion": "BUEN FRIA GL MANZANA",
+        "pzasCaja":16,
+        "precioLista": 28
+    },
+    {
+        "code": "58",
+        "descripcion": "BUEN FRIA GL NARANJA",
+        "pzasCaja":16,
+        "precioLista": 28
+    },
+    {
+        "code": "861",
+        "descripcion": "BUEN FRIA GL UVA",
+        "pzasCaja":16,
+        "precioLista": 28
+    },
+    {
+        "code": "833",
+        "descripcion": "CAFÉ LECHERO 1LT",
+        "pzasCaja":16,
+        "precioLista": 30
+    },
+    {
+        "code": "693",
+        "descripcion": "CAFÉ LECHERO 250 ML",
+        "pzasCaja":16,
+        "precioLista": 15
+    },
+    {
+        "code": "685661-4332",
+        "descripcion": "CANASTILLA SELLO ROJO",
+        "pzasCaja":16,
+        "precioLista": 0.1
+    },
+    {
+        "code": "C12",
+        "descripcion": "CHORIZO EXTRAFINO .500 GRS",
+        "pzasCaja":16,
+        "precioLista": 47
+    },
+    {
+        "code": "C10",
+        "descripcion": "CHULETA .500 GRS",
+        "pzasCaja":16,
+        "precioLista": 50
+    },
+    {
+        "code": "C27",
+        "descripcion": "CHULETA 1 KG",
+        "pzasCaja":16,
+        "precioLista": 95
+    },
+    {
+        "code": "C41",
+        "descripcion": "CREMA .200 GRS TRES GENERACIONES",
+        "pzasCaja":16,
+        "precioLista": 11.5
+    },
+    {
+        "code": "683",
+        "descripcion": "CREMA 1 KG ACIDA",
+        "pzasCaja":16,
+        "precioLista": 57
+    },
+    {
+        "code": "C40",
+        "descripcion": "CREMA 1 KG TRES GENERACIONES",
+        "pzasCaja":16,
+        "precioLista": 37
+    },
+    {
+        "code": "687",
+        "descripcion": "CREMA 1KG PAST.",
+        "pzasCaja":16,
+        "precioLista": 57
+    },
+    {
+        "code": "267",
+        "descripcion": "CREMA 220 ACIDA",
+        "pzasCaja":16,
+        "precioLista": 14.5
+    },
+    {
+        "code": "260",
+        "descripcion": "CREMA 220 PAST.",
+        "pzasCaja":16,
+        "precioLista": 14.5
+    },
+    {
+        "code": "291",
+        "descripcion": "CREMA 450 ACIDA",
+        "pzasCaja":16,
+        "precioLista": 30
+    },
+    {
+        "code": "155",
+        "descripcion": "CREMA 450 PAST.",
+        "pzasCaja":16,
+        "precioLista": 30
+    },
+    {
+        "code": "218",
+        "descripcion": "CUB YOGHURT DURAZNO 4 KGS",
+        "pzasCaja":16,
+        "precioLista": 127
+    },
+    {
+        "code": "217",
+        "descripcion": "CUB YOGHURT FRESA 4 KGS",
+        "pzasCaja":16,
+        "precioLista": 127
+    },
+    {
+        "code": "221",
+        "descripcion": "CUB YOGHURT NATURAL 4 KGS",
+        "pzasCaja":16,
+        "precioLista": 127
+    },
+    {
+        "code": "220",
+        "descripcion": "CUB YOGHURT NUEZ 4 KGS",
+        "pzasCaja":16,
+        "precioLista": 127
+    },
+    {
+        "code": "219",
+        "descripcion": "CUB YOGHURT PIÑA COCO 4 KGS",
+        "pzasCaja":16,
+        "precioLista": 127
+    },
+    {
+        "code": "347",
+        "descripcion": "CUBETA CREMA ACIDIFICADA 4 KGS ",
+        "pzasCaja":16,
+        "precioLista": 228
+    },
+    {
+        "code": "244",
+        "descripcion": "CUBETA CREMA CRUDA 4 KGS ",
+        "pzasCaja":16,
+        "precioLista": 228
+    },
+    {
+        "code": "873",
+        "descripcion": "DELAC. SEMI UP PRISMA 1 LT ",
+        "pzasCaja":16,
+        "precioLista": 26
+    },
+    {
+        "code": "522",
+        "descripcion": "DELICRECE BOLSA .900 ML ",
+        "pzasCaja":16,
+        "precioLista": 15
+    },
+    {
+        "code": "686",
+        "descripcion": "DELIGHURT 1KG DURAZNO",
+        "pzasCaja":16,
+        "precioLista": 35
+    },
+    {
+        "code": "685",
+        "descripcion": "DELIGHURT 1KG FRESA",
+        "pzasCaja":16,
+        "precioLista": 35
+    },
+    {
+        "code": "690",
+        "descripcion": "DELIGHURT 1KG NATURAL",
+        "pzasCaja":16,
+        "precioLista": 38
+    },
+    {
+        "code": "691",
+        "descripcion": "DELIGHURT 1KG NATURAL ENDULZADO CON SPLENDA",
+        "pzasCaja":16,
+        "precioLista": 42
+    },
+    {
+        "code": "689",
+        "descripcion": "DELIGHURT 1KG NUEZ",
+        "pzasCaja":16,
+        "precioLista": 35
+    },
+    {
+        "code": "688",
+        "descripcion": "DELIGHURT 1KG PIÑA COCO",
+        "pzasCaja":16,
+        "precioLista": 35
+    },
+    {
+        "code": "640",
+        "descripcion": "DELIGHURT 220 GRS  FRESA",
+        "pzasCaja":16,
+        "precioLista": 13.5
+    },
+    {
+        "code": "653",
+        "descripcion": "DELIGHURT 220 GRS DURAZNO",
+        "pzasCaja":16,
+        "precioLista": 13.5
+    },
+    {
+        "code": "656",
+        "descripcion": "DELIGHURT 220 GRS NUEZ",
+        "pzasCaja":16,
+        "precioLista": 13.5
+    },
+    {
+        "code": "655",
+        "descripcion": "DELIGHURT 220 GRS PIÑA COCO",
+        "pzasCaja":16,
+        "precioLista": 13.5
+    },
+    {
+        "code": "870",
+        "descripcion": "DESLAC. LIGHT UP PRISMA 1 LT ",
+        "pzasCaja":16,
+        "precioLista": 26
+    },
+    {
+        "code": "270",
+        "descripcion": "GELATINA AGUA FRESA",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "271",
+        "descripcion": "GELATINA AGUA LIMON",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "272",
+        "descripcion": "GELATINA AGUA NARANJA",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "383",
+        "descripcion": "GELATINA LECHE CHOCOLATE",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "384",
+        "descripcion": "GELATINA LECHE FRESA",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "385",
+        "descripcion": "GELATINA LECHE VAINILLA",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "C28",
+        "descripcion": "JAMON ARO PAV RIK 1 KG",
+        "pzasCaja":16,
+        "precioLista": 70
+    },
+    {
+        "code": "C2",
+        "descripcion": "JAMON EXTRAFINO .250 GRS",
+        "pzasCaja":16,
+        "precioLista": 29
+    },
+    {
+        "code": "C1",
+        "descripcion": "JAMON EXTRAFINO 1 KG",
+        "pzasCaja":16,
+        "precioLista": 102
+    },
+    {
+        "code": "C9",
+        "descripcion": "JAMON LUNCH .250 GRS",
+        "pzasCaja":16,
+        "precioLista": 23
+    },
+    {
+        "code": "C8",
+        "descripcion": "JAMON LUNCH 1 KG",
+        "pzasCaja":16,
+        "precioLista": 72
+    },
+    {
+        "code": "C7",
+        "descripcion": "JAMON VIRGINIA .250 GRS",
+        "pzasCaja":16,
+        "precioLista": 25
+    },
+    {
+        "code": "C6",
+        "descripcion": "JAMON VIRGINIA 1 KG",
+        "pzasCaja":16,
+        "precioLista": 79
+    },
+    {
+        "code": "868",
+        "descripcion": "LECHE  UP SEMI PRISMA 1 LT",
+        "pzasCaja":16,
+        "precioLista": 24.5
+    },
+    {
+        "code": "830",
+        "descripcion": "LECHE BIOPET 3% .250 ML",
+        "pzasCaja":16,
+        "precioLista": 10.5
+    },
+    {
+        "code": "857",
+        "descripcion": "LECHE BIOPET DESLAC. LIGHT  1 LT ",
+        "pzasCaja":16,
+        "precioLista": 26
+    },
+    {
+        "code": "851",
+        "descripcion": "LECHE BIOPET ENTERA  1 LT ",
+        "pzasCaja":16,
+        "precioLista": 25
+    },
+    {
+        "code": "853",
+        "descripcion": "LECHE BIOPET LIGHT  1 LT ",
+        "pzasCaja":16,
+        "precioLista": 25
+    },
+    {
+        "code": "735",
+        "descripcion": "LECHE DESLAC 1% UHT .900 ML ",
+        "pzasCaja":16,
+        "precioLista": 19
+    },
+    {
+        "code": "750",
+        "descripcion": "LECHE ENTERA UHT BOLSA  .900 ML ",
+        "pzasCaja":16,
+        "precioLista": 17.5
+    },
+    {
+        "code": "890",
+        "descripcion": "LECHE EVAPORADA  1 LT",
+        "pzasCaja":16,
+        "precioLista": 41
+    },
+    {
+        "code": "187",
+        "descripcion": "LECHE EVAPORADA .250 ML",
+        "pzasCaja":16,
+        "precioLista": 13
+    },
+    {
+        "code": "179",
+        "descripcion": "LECHE PAST. DESLACTOSADA .1800 ML ",
+        "pzasCaja":16,
+        "precioLista": 37.5
+    },
+    {
+        "code": "80",
+        "descripcion": "LECHE PAST. ENTERA .1800 ML ",
+        "pzasCaja":16,
+        "precioLista": 36.5
+    },
+    {
+        "code": "180",
+        "descripcion": "LECHE PAST. ENTERA .1800 ML MUY BUENA",
+        "pzasCaja":16,
+        "precioLista": 34
+    },
+    {
+        "code": "25",
+        "descripcion": "LECHE PAST. ENTERA .250 ML",
+        "pzasCaja":16,
+        "precioLista": 9
+    },
+    {
+        "code": "26",
+        "descripcion": "LECHE PAST. ENTERA .500 ML",
+        "pzasCaja":16,
+        "precioLista": 12.5
+    },
+    {
+        "code": "37",
+        "descripcion": "LECHE PAST. ENTERA 1 GALON",
+        "pzasCaja":16,
+        "precioLista": 71.5
+    },
+    {
+        "code": "6",
+        "descripcion": "LECHE PAST. ENTERA 1 LT",
+        "pzasCaja":16,
+        "precioLista": 22.5
+    },
+    {
+        "code": "354",
+        "descripcion": "LECHE PAST. ENTERA 1 LT MUY BUENA",
+        "pzasCaja":16,
+        "precioLista": 21
+    },
+    {
+        "code": "82",
+        "descripcion": "LECHE PAST. LIGHT .1800 ML ",
+        "pzasCaja":16,
+        "precioLista": 36.5
+    },
+    {
+        "code": "149",
+        "descripcion": "LECHE PAST. LIGHT 1 LT",
+        "pzasCaja":16,
+        "precioLista": 22.5
+    },
+    {
+        "code": "869",
+        "descripcion": "LECHE UP ENTERA PRISMA 1 LT",
+        "pzasCaja":16,
+        "precioLista": 24.5
+    },
+    {
+        "code": "871",
+        "descripcion": "LECHE UP LIGHT PRISMA 1 LT",
+        "pzasCaja":16,
+        "precioLista": 24.5
+    },
+    {
+        "code": "543",
+        "descripcion": "LECHERITO DURAZNO .120 ML",
+        "pzasCaja":16,
+        "precioLista": 5
+    },
+    {
+        "code": "541",
+        "descripcion": "LECHERITO FRESA .120 ML",
+        "pzasCaja":16,
+        "precioLista": 5
+    },
+    {
+        "code": "542",
+        "descripcion": "LECHERITO PIÑA .120 ML",
+        "pzasCaja":16,
+        "precioLista": 5
+    },
+    {
+        "code": "83",
+        "descripcion": "LICUADO FRESA .250 GRS ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "86",
+        "descripcion": "LICUADO FRUTAS TROPICALES .250 GRS ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "84",
+        "descripcion": "LICUADO MANZANA .250 GRS ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "85",
+        "descripcion": "LICUADO NUEZ .250 GRS ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "C24",
+        "descripcion": "MANTECA CUBETA CHICA 3.5KG ",
+        "pzasCaja":16,
+        "precioLista": 235
+    },
+    {
+        "code": "C23",
+        "descripcion": "MANTECA CUBETA GRANDE 18.2 KG",
+        "pzasCaja":16,
+        "precioLista": 1039
+    },
+    {
+        "code": "C43",
+        "descripcion": "MANTECA DE BOLSA 10 KG ",
+        "pzasCaja":16,
+        "precioLista": 560
+    },
+    {
+        "code": "C44",
+        "descripcion": "MANTEQUILLA 1 KG DAISY ",
+        "pzasCaja":16,
+        "precioLista": 120
+    },
+    {
+        "code": "C45",
+        "descripcion": "MARGARINA DAISY 1 KG ",
+        "pzasCaja":16,
+        "precioLista": 75
+    },
+    {
+        "code": "C14",
+        "descripcion": "MARGARINA S/ SAL .90 GRS ALPINO",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "194",
+        "descripcion": "MEDIA CREMA .250 ML",
+        "pzasCaja":16,
+        "precioLista": 13.5
+    },
+    {
+        "code": "580",
+        "descripcion": "MEDIA CREMA 1 LT.",
+        "pzasCaja":16,
+        "precioLista": 44
+    },
+    {
+        "code": "614",
+        "descripcion": "NECTAR NAT. GUAYABA .500 ML ",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "204",
+        "descripcion": "NECTAR NAT. GUAYABA 1LT",
+        "pzasCaja":16,
+        "precioLista": 17
+    },
+    {
+        "code": "282",
+        "descripcion": "NECTAR NAT. JAMAICA .500 ML",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "53",
+        "descripcion": "NECTAR NAT. MANZANA .500 ML ",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "605",
+        "descripcion": "NECTAR NAT. NARA GALON",
+        "pzasCaja":16,
+        "precioLista": 58
+    },
+    {
+        "code": "612",
+        "descripcion": "NECTAR NAT. NARANJA .500 ML ",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "613",
+        "descripcion": "NECTAR NAT. PIÑA .500 ML ",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "266",
+        "descripcion": "NECTAR NAT. TAMARIN . 500 ML ",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "297",
+        "descripcion": "NECTAR NAT. TAMARINDO 1LT",
+        "pzasCaja":16,
+        "precioLista": 17
+    },
+    {
+        "code": "55",
+        "descripcion": "NECTAR NAT. UVA .500 ML ",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "290",
+        "descripcion": "NECTAR NAT.JAMAICA 1LT",
+        "pzasCaja":16,
+        "precioLista": 17
+    },
+    {
+        "code": "207",
+        "descripcion": "NECTAR NAT.MANGO .500 ML ",
+        "pzasCaja":16,
+        "precioLista": 11
+    },
+    {
+        "code": "206",
+        "descripcion": "NECTAR NAT.MANGO 1LT",
+        "pzasCaja":16,
+        "precioLista": 17
+    },
+    {
+        "code": "131",
+        "descripcion": "NECTAR NAT.PINA 1LT",
+        "pzasCaja":16,
+        "precioLista": 17
+    },
+    {
+        "code": "609",
+        "descripcion": "NECTAR NATNARANJA 1 LT",
+        "pzasCaja":16,
+        "precioLista": 17
+    },
+    {
+        "code": "12",
+        "descripcion": "NECTAR UP DURAZNO 250 ML",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "173",
+        "descripcion": "NECTAR UP GUAYABA 250 ML ",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "101",
+        "descripcion": "NECTAR UP MAGO 250 ML",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "9",
+        "descripcion": "NECTAR UP MANZA 250 ML",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "13",
+        "descripcion": "NECTAR UP PIÑA 250 ML",
+        "pzasCaja":16,
+        "precioLista": 7
+    },
+    {
+        "code": "C13",
+        "descripcion": "PEPERONI CAMPESTRE KG",
+        "pzasCaja":16,
+        "precioLista": 203
+    },
+    {
+        "code": "C22",
+        "descripcion": "PRENSADO .250 GRS",
+        "pzasCaja":16,
+        "precioLista": 27
+    },
+    {
+        "code": "C21",
+        "descripcion": "PRENSADO 1 KG",
+        "pzasCaja":16,
+        "precioLista": 92
+    },
+    {
+        "code": "C20",
+        "descripcion": "QUESO AMARILLO CASA BLANCA PAQ 7 PZAS.",
+        "pzasCaja":16,
+        "precioLista": 15
+    },
+    {
+        "code": "C42",
+        "descripcion": "QUESO COTIJA .250 GRS TRES GENERACIONES",
+        "pzasCaja":16,
+        "precioLista": 30
+    },
+    {
+        "code": "685388-4332",
+        "descripcion": "QUESO COTIJA ENCHILADO KG ",
+        "pzasCaja":16,
+        "precioLista": 103
+    },
+    {
+        "code": "C19",
+        "descripcion": "QUESO OAXACA .200 GRS ALPINO ",
+        "pzasCaja":16,
+        "precioLista": 29
+    },
+    {
+        "code": "672158-4332",
+        "descripcion": "QUESO OAXACA BOLA KG TRES GENERACIONES",
+        "pzasCaja":16,
+        "precioLista": 100
+    },
+    {
+        "code": "685669-4332",
+        "descripcion": "QUESO OAXACA RAYADO KG TRES GENERACIONES",
+        "pzasCaja":16,
+        "precioLista": 100
+    },
+    {
+        "code": "671897-4332",
+        "descripcion": "QUESO OAXACA TIRA KG TRES GENERACIONES",
+        "pzasCaja":16,
+        "precioLista": 100
+    },
+    {
+        "code": "195",
+        "descripcion": "QUESO PETTIT DURAZNO 180 GRS",
+        "pzasCaja":16,
+        "precioLista": 5.5
+    },
+    {
+        "code": "193",
+        "descripcion": "QUESO PETTIT FRESA .180 GRS",
+        "pzasCaja":16,
+        "precioLista": 5.5
+    },
+    {
+        "code": "192",
+        "descripcion": "QUESO PETTIT MANGO 180 GRS",
+        "pzasCaja":16,
+        "precioLista": 5.5
+    },
+    {
+        "code": "C18",
+        "descripcion": "QUESO PUERCO CAMPESTRE .250 GRS",
+        "pzasCaja":16,
+        "precioLista": 22
+    },
+    {
+        "code": "C16",
+        "descripcion": "SALCHICHA DUBY 2.5  KG ",
+        "pzasCaja":16,
+        "precioLista": 86
+    },
+    {
+        "code": "C5",
+        "descripcion": "SALCHICHA FRANKFURT BAFAR 2 KG",
+        "pzasCaja":16,
+        "precioLista": 124
+    },
+    {
+        "code": "C4",
+        "descripcion": "SALCHICHA FRANKFURT KIR 2 KG",
+        "pzasCaja":16,
+        "precioLista": 124
+    },
+    {
+        "code": "C15",
+        "descripcion": "SALCHICHA FRANKFURT SUZANNE .500 GRS",
+        "pzasCaja":16,
+        "precioLista": 31
+    },
+    {
+        "code": "C17",
+        "descripcion": "SALCHIPESO PAQ 10 PZAS",
+        "pzasCaja":16,
+        "precioLista": 16
+    },
+    {
+        "code": "586",
+        "descripcion": "SHEIK CIRUELA .250 GRS ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "584",
+        "descripcion": "SHEIK DURAZNO .250 GRS ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "583",
+        "descripcion": "SHEIK FRESA .250 GRS ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "585",
+        "descripcion": "SHEIK PIÑA-COCO .250 GRS ",
+        "pzasCaja":16,
+        "precioLista": 12
+    },
+    {
+        "code": "867",
+        "descripcion": "SHOT CHOCOLATE BIOPET .250 ML ",
+        "pzasCaja":16,
+        "precioLista": 13
+    },
+    {
+        "code": "825",
+        "descripcion": "SHOT FRESA SHOT BIOPET  .250 ML ",
+        "pzasCaja":16,
+        "precioLista": 13
+    },
+    {
+        "code": "826",
+        "descripcion": "SHOT VAINILLA SHOT BIOPET .250 ML",
+        "pzasCaja":16,
+        "precioLista": 13
+    },
+    {
+        "code": "24",
+        "descripcion": "TIKITO CHOCO FRESCO .236 ML",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "14",
+        "descripcion": "TIKITO FRESA FRESCO .236 ML",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "959",
+        "descripcion": "TIKITO UP CHOCOLATE .236 ML ",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "960",
+        "descripcion": "TIKITO UP FRESA .236 ML ",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "961",
+        "descripcion": "TIKITO UP VAINILLA .236 ML ",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "17",
+        "descripcion": "TIKITO VAINILLA FRESCO .236 ML ",
+        "pzasCaja":16,
+        "precioLista": 10
+    },
+    {
+        "code": "685663-4332",
+        "descripcion": "TINAS TRES GENERACIONES ",
+        "pzasCaja":16,
+        "precioLista": 0.1
+    },
+    {
+        "code": "C11",
+        "descripcion": "TOCINO AREZZO .250 GRS",
+        "pzasCaja":16,
+        "precioLista": 35
+    }
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

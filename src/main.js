@@ -1,5 +1,4 @@
 import { createApp } from 'vue';
-import App from './App.vue';
 import router from './router';
 
 import PrimeVue from 'primevue/config';
@@ -102,11 +101,13 @@ import VirtualScroller from 'primevue/virtualscroller';
 
 import CodeHighlight from '@/components/CodeHighlight.vue';
 import BlockViewer from '@/components/BlockViewer.vue';
+import { createPinia } from 'pinia'
 
 import '@/assets/styles.scss';
-
+import App from './App.vue';
 const app = createApp(App);
 
+app.use(createPinia())
 app.use(router);
 app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
@@ -212,3 +213,4 @@ app.component('TriStateCheckbox', TriStateCheckbox);
 app.component('VirtualScroller', VirtualScroller);
 
 app.mount('#app');
+

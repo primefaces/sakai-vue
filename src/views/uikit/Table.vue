@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <!-- eslint-disable prettier/prettier -->
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';

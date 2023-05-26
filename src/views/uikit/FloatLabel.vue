@@ -31,7 +31,7 @@ const columns = ref([
   {field: 'salTotal', header: 'Sal. Total'},
   {field: 'regCj', header: 'Reg. Caj'},
   {field: 'regPz', header: 'Reg. Pzs'},
-  {field: 'regTotal', header: 'Reg. Pzs'},
+  {field: 'regTotal', header: 'Reg. Total'},
   {field: 'venta', header: 'Venta Total'},
   {field: 'saldo', header: 'Saldo venta'},
 ]);
@@ -133,16 +133,16 @@ watch(filteredProducts, (prev) => {
 <template>
   <div class="card">
     <h5>Captura de venta</h5>
-    <div class="grid p-fluid mt-3">
-      <div class="field col-6 md:col-2">
+    <div class="grid p-fluid mt-3 align-items-end">
+      <div class="field col-6 md:col-4">
           <span class="p-float-label">
-            <Dropdown @change="changeRuta" id="ruta" :options="rutas" v-model="value8"
+            <Dropdown class="p-inputtext-sm " @change="changeRuta" id="ruta" :options="rutas" v-model="value8"
                       optionLabel="name">
             </Dropdown>
             <label for="ruta">Ruta</label>
           </span>
       </div>
-      <div class="field col-12 md:col-4 pt-2">
+      <div class="field col-6 md:col-4 pt-2">
         <p style=" color: grey;">
           {{ value9?.name ? 'repartidor: ' + value9?.name : 'Selecciona la ruta' }}
 
@@ -153,38 +153,53 @@ watch(filteredProducts, (prev) => {
     <h5 class="mt-0">Captura de productos</h5>
 
     <DataTable :value="detalleCobro" showGridlines @cell-edit-complete="onCellEditComplete"
-               tableClass="editable-cells-table" tableStyle="min-width: 50rem">
+               tableClass="editable-cells-table" tableStyle="min-width: 20rem">
       <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
         <template #body="{ data, field }">
           <template v-if="field === 'code'">
-            <AutoComplete v-model="data[field]"  class="p-inputtext-sm " optionLabel="code" :suggestions="filteredProducts" @complete="searchCode" >
-              <template #option="slotProps">
-                <div class="flex align-items-baseline align-options-center">
-                  <b class="mr-2">{{ slotProps.option.code }}</b> <small>{{slotProps.option.descripcion}}</small>
-
-                </div>
-              </template>
-            </AutoComplete>
-          </template>
-          <template v-else>
-            <InputNumber type="decimal" class="p-inputtext-sm w-5rem" v-model="data[field]" mode="currency"
-                         :disabled="['salTotal', 'regTotal'].includes(field)" currency="USD" locale="en-US"/>
-          </template>
-        </template>
-        <template #editor="{ data, field }">
-          <template v-if="field === 'code'">
-            <AutoComplete v-model="data[field]" class="p-inputtext-sm" optionLabel="code" :suggestions="filteredProducts" @complete="searchCode" >
+            <AutoComplete v-model="data[field]" class="p-inputtext-sm" optionLabel="code"
+                          :suggestions="filteredProducts" @complete="searchCode">
               <template #option="slotProps">
                 <div class="flex align-items-baseline  align-options-center">
-                  <b class="mr-2">{{ slotProps.option.code }}</b> <small>{{slotProps.option.descripcion}}</small>
+                  <b class="mr-2">{{ slotProps.option.code }}</b> <small>{{ slotProps.option.descripcion }}</small>
 
                 </div>
               </template>
             </AutoComplete>
           </template>
-          <template v-else>
-            <InputNumber type="decimal" class="p-inputtext-sm w-5rem" v-model="data[field]" mode="currency"
+          <template v-else-if="['venta', 'saldo'].includes(field)">
+
+            <InputNumber type="decimal" class="p-inputnumber-sm w-5rem" v-model="data[field]" mode="currency"
                          :disabled="['salTotal', 'regTotal'].includes(field)" currency="USD" locale="en-US"/>
+          </template>
+          <template v-else>
+
+            <InputNumber type="decimal" class="p-inputnumber-sm w-5rem" v-model="data[field]" :disabled="['salTotal', 'regTotal'].includes(field)"/>
+          </template>
+        </template>
+
+
+
+        <template #editor="{ data, field }">
+          <template v-if="field === 'code'">
+            <AutoComplete v-model="data[field]" class="p-inputtext-sm" optionLabel="code"
+                          :suggestions="filteredProducts" @complete="searchCode">
+              <template #option="slotProps">
+                <div class="flex align-items-baseline  align-options-center">
+                  <b class="mr-2">{{ slotProps.option.code }}</b> <small>{{ slotProps.option.descripcion }}</small>
+
+                </div>
+              </template>
+            </AutoComplete>
+          </template>
+          <template v-else-if="['venta', 'saldo'].includes(field)">
+
+            <InputNumber type="decimal" class="p-inputnumber-sm w-5rem" v-model="data[field]" mode="currency"
+                         :disabled="['salTotal', 'regTotal'].includes(field)" currency="USD" locale="en-US"/>
+          </template>
+          <template v-else>
+
+            <InputNumber type="decimal" class="p-inputnumber-sm w-2rem" v-model="data[field]" :disabled="['salTotal', 'regTotal'].includes(field)"/>
           </template>
         </template>
       </Column>
@@ -195,11 +210,11 @@ watch(filteredProducts, (prev) => {
 
 <style lang="scss" scoped>
 ::v-deep(.editable-cells-table td) {
-  padding: 0.2rem 0.3rem;
+  padding: 0.2rem 0.2rem !important;
 }
 
 ::v-deep(.editable-cells-table td.p-cell-editing) {
-  padding: 0.2rem 0.3rem;
+  padding: 0.2rem 0.2rem !important;
 }
 
 ::v-deep(.p-inputnumber),

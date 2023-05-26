@@ -1,0 +1,89 @@
+.p-listbox {
+    background: $inputListBg;
+    color: $inputListTextColor;
+    border: $inputListBorder;
+    border-radius: $borderRadius;
+    transition: $formElementTransition;
+
+    .p-listbox-header {
+        padding: $inputListHeaderPadding;
+        border-bottom: $inputListHeaderBorder;
+        color: $inputListHeaderTextColor;
+        background: $inputListHeaderBg;
+        margin: $inputListHeaderMargin;
+        border-top-right-radius: $borderRadius;
+        border-top-left-radius: $borderRadius;
+
+        .p-listbox-filter {
+            padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+        }
+
+        .p-listbox-filter-icon {
+            right: nth($inputPadding, 2);
+            color: $inputIconColor;
+        }
+    }
+
+    .p-listbox-list {
+        padding: $inputListPadding;
+        outline: 0 none;
+
+        .p-listbox-item {
+            margin: $inputListItemMargin;
+            padding: $inputListItemPadding;
+            border: $inputListItemBorder;
+            color: $inputListItemTextColor;
+            transition: $listItemTransition;
+            border-radius: $inputListItemBorderRadius;
+
+            &.p-highlight {
+                color: $highlightTextColor;
+                background: $highlightBg;
+            }
+        }
+
+        .p-listbox-item-group {
+            margin: $submenuHeaderMargin;
+            padding: $submenuHeaderPadding;
+            color: $submenuHeaderTextColor;
+            background: $submenuHeaderBg;
+            font-weight: $submenuHeaderFontWeight;
+        }
+
+        .p-listbox-empty-message {
+            padding: $inputListItemPadding;
+            color: $inputListItemTextColor;
+            background: $inputListItemBg;
+        }
+    }
+
+    &:not(.p-disabled) {
+        .p-listbox-item {
+            &.p-highlight {
+                &.p-focus {
+                    background: $highlightFocusBg;
+                }
+            }
+
+            &:not(.p-highlight):not(.p-disabled) {
+                &.p-focus {
+                    color: $inputListItemTextFocusColor;
+                    background: $inputListItemFocusBg;
+                }
+
+                &:hover {
+                    color: $inputListItemTextHoverColor;
+                    background: $inputListItemHoverBg;
+                }
+            }
+        }
+    }
+
+    &.p-focus {
+        @include focused-input();
+    }
+
+    &.p-invalid {
+        @include invalid-input();
+    }
+}

@@ -1,0 +1,5 @@
+.p-speeddial-item {
+    &.p-focus > .p-speeddial-action {
+        background: rgba($speedDialActionHoverBg, .76);
+    }
+}

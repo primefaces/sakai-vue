@@ -59,11 +59,16 @@
     .blocked-scroll {
         overflow: hidden;
     }
-
+.card{
+    padding: 1.5rem 1rem!important;
+}
     .layout-wrapper {
         .layout-main-container {
             margin-left: 0;
-            padding-left: 2rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            padding-top: 6rem;
+
         }
 
         .layout-sidebar {

@@ -1,0 +1,18 @@
+/* Vendor extensions to the designer enhanced bootstrap compatibility */
+.p-breadcrumb {
+    .p-breadcrumb-chevron {
+        font-family: $fontFamily;
+
+        &:before {
+            content: '/';
+        }
+    }
+}
+
+.fc {
+    &.fc-theme-standard {
+        .fc-highlight {
+            background: $primaryAccentBg;
+        }
+    }
+}

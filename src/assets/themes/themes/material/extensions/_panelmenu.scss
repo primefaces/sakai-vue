@@ -1,0 +1,66 @@
+.p-panelmenu {
+    .p-panelmenu-header {
+        .p-panelmenu-header-content {
+            .p-panelmenu-header-action {
+                .p-submenu-icon {
+                    order: 1;
+                    margin-left: auto;
+                    margin-right: 0;
+                }
+            }
+        }
+        
+        &.p-disabled {
+            opacity: 1;
+
+            .p-panelmenu-header-content > * {
+                opacity: $disabledOpacity;
+            }
+        }
+
+        &:focus, 
+        &.p-highlight:focus {
+            .p-panelmenu-header-content {
+                background: $accordionHeaderHoverBg;
+            }
+        }
+    }
+
+    .p-panelmenu-content {
+        .p-menuitem {
+            &.p-highlight {
+                &.p-focus {
+                    > .p-menuitem-content {
+                        background: $emphasis-lower;
+                    }
+                }
+            }
+    
+            &:not(.p-highlight):not(.p-disabled) {
+                &.p-focus {
+                    > .p-menuitem-content {
+                        background: $emphasis-lower;
+                    }
+                }
+            }
+        }
+    }
+
+    .p-panelmenu-panel {
+        box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+        margin-bottom: 0;
+        border-radius: 0;
+        position: relative;
+        transition: margin-bottom 225ms;
+
+        &:first-child {
+            border-top-left-radius: $borderRadius;
+            border-top-right-radius: $borderRadius;
+        }
+
+        &:last-child {
+            border-bottom-left-radius: $borderRadius;
+            border-bottom-right-radius: $borderRadius;
+        }
+    }
+}

@@ -1,0 +1,250 @@
+@mixin icon-override($icon) {
+	&:before {
+		content: $icon;
+	}
+}
+
+@mixin focused() {
+	outline: $focusOutline;
+    outline-offset: $focusOutlineOffset;
+    box-shadow: $focusShadow;
+}
+
+@mixin focused-inset() {
+	outline: $focusOutline;
+    outline-offset: $focusOutlineOffset;
+    box-shadow: inset $focusShadow;
+}
+
+@mixin focused-input() {
+	@include focused();
+	border-color: $inputFocusBorderColor;
+}
+
+@mixin focused-listitem() {
+	outline: $focusOutline;
+    outline-offset: $focusOutlineOffset;
+    box-shadow: $inputListItemFocusShadow;
+}
+
+@mixin invalid-input() {
+	border-color: $inputErrorBorderColor;
+}
+
+@mixin menuitem {
+    > .p-menuitem-content {
+        color: $menuitemTextColor;
+        transition: $listItemTransition;
+        border-radius: $menuitemBorderRadius;
+
+        .p-menuitem-link {
+            color: $menuitemTextColor;
+            padding: $menuitemPadding;
+            user-select: none;
+
+            .p-menuitem-text {
+                color: $menuitemTextColor;
+            }
+        
+            .p-menuitem-icon {
+                color: $menuitemIconColor;
+                margin-right: $inlineSpacing;
+            }
+            
+            .p-submenu-icon {
+                color: $menuitemIconColor;
+            }
+        }
+    }
+
+    &.p-highlight {
+        > .p-menuitem-content {
+            color: $menuitemTextActiveColor;
+            background: $menuitemActiveBg;
+
+            .p-menuitem-link {
+                .p-menuitem-text {
+                    color: $menuitemTextActiveColor;
+                }
+
+                .p-menuitem-icon, .p-submenu-icon {
+                    color: $menuitemIconActiveColor;
+                }
+            }
+        }
+
+        &.p-focus {
+            > .p-menuitem-content {
+                background: $menuitemActiveFocusBg;
+            }
+        }
+    }
+
+    &:not(.p-highlight):not(.p-disabled) {
+        &.p-focus {
+            > .p-menuitem-content {
+                color: $menuitemTextFocusColor;
+                background: $menuitemFocusBg;
+    
+                .p-menuitem-link {
+                    .p-menuitem-text {
+                        color: $menuitemTextFocusColor;
+                    }
+                
+                    .p-menuitem-icon, .p-submenu-icon {
+                        color: $menuitemIconFocusColor;
+                    }
+                }
+            }
+        }
+
+        > .p-menuitem-content {
+            &:hover {
+                color: $menuitemTextHoverColor;
+                background: $menuitemHoverBg;
+    
+                .p-menuitem-link {
+                    .p-menuitem-text {
+                        color: $menuitemTextHoverColor;
+                    }
+    
+                    .p-menuitem-icon, .p-submenu-icon {
+                        color: $menuitemIconHoverColor;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@mixin horizontal-rootmenuitem {
+    > .p-menuitem-content {
+        color: $horizontalMenuRootMenuitemTextColor;
+        transition: $listItemTransition;
+        border-radius: $horizontalMenuRootMenuitemBorderRadius;
+
+        .p-menuitem-link {
+            padding: $horizontalMenuRootMenuitemPadding;
+            user-select: none;
+
+            .p-menuitem-text {
+                color: $horizontalMenuRootMenuitemTextColor;
+            }
+        
+            .p-menuitem-icon {
+                color: $horizontalMenuRootMenuitemIconColor;
+                margin-right: $inlineSpacing;
+            }
+            
+            .p-submenu-icon {
+                color: $horizontalMenuRootMenuitemIconColor;
+                margin-left: $inlineSpacing;
+            }
+        }
+    }
+
+    &:not(.p-highlight):not(.p-disabled) {
+        > .p-menuitem-content {
+            &:hover {
+                color: $horizontalMenuRootMenuitemTextHoverColor;
+                background: $horizontalMenuRootMenuitemHoverBg;
+    
+                .p-menuitem-link {
+                    .p-menuitem-text {
+                        color: $horizontalMenuRootMenuitemTextHoverColor;
+                    }
+    
+                    .p-menuitem-icon, .p-submenu-icon {
+                        color: $horizontalMenuRootMenuitemIconHoverColor;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@mixin placeholder {
+	::-webkit-input-placeholder {
+		@content
+	}
+	:-moz-placeholder {
+		@content
+	}
+	::-moz-placeholder {
+		@content
+	}
+	:-ms-input-placeholder {
+		@content
+	}
+}
+
+@mixin scaledPadding($val, $scale) {
+    padding: nth($val, 1) * $scale nth($val, 2) * $scale;
+}
+
+@mixin scaledFontSize($val, $scale) {
+    font-size: $val * $scale;
+}
+
+@mixin nested-submenu-indents($val, $index, $length) {
+    .p-submenu-list {
+        .p-menuitem {
+            .p-menuitem-content {
+                .p-menuitem-link {
+                    padding-left: $val * ($index + 1);
+                }
+    
+            }
+            @if $index < $length {
+                @include nested-submenu-indents($val, $index + 2, $length);
+            }
+        }
+    }
+}
+
+@mixin action-icon($enabled: true) {
+    width: $actionIconWidth;
+    height: $actionIconHeight;
+    color: $actionIconColor;
+    border: $actionIconBorder;
+    background: $actionIconBg;
+    border-radius: $actionIconBorderRadius;
+    transition: $actionIconTransition;
+
+    @if $enabled {
+        &:enabled:hover {
+            @include action-icon-hover();
+        }
+    } @else {
+        &:hover {
+            @include action-icon-hover();
+        }
+    }
+
+    &:focus {
+        @include focused();
+    }
+}
+
+@mixin action-icon-hover() {
+    color: $actionIconHoverColor;
+    border-color: $actionIconHoverBorderColor;
+    background: $actionIconHoverBg;
+}
+
+@mixin button-states {
+    // <button> and <a> tags support :enabled selector.
+
+    &:enabled,
+    &:not(button):not(a):not(.p-disabled) {
+        @content;
+    }
+}
+
+@function tint($color, $percentage) {
+    @return mix(#fff, $color, $percentage);
+}
+
+@function shade($color, $percentage) {
+    @return mix(#000, $color, $percentage);
+}

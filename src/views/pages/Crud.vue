@@ -58,7 +58,7 @@ watch(
   <div class="grid">
     <div class="col-12">
       <div class="card">
-        <h1>{{ currentP.title }}</h1>
+        <h5 >{{ currentP.title }}</h5>
         <DataTable
             :value="store.dataCatalog"
             :paginator="true"

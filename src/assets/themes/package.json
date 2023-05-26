@@ -1,0 +1,24 @@
+{
+  "name": "primevue-sass-theme",
+  "version": "3.26.1",
+  "description": "PrimeVue Sass Theme",
+  "homepage": "https://primevue.org/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/primefaces/primevue-sass-theme.git"
+  },
+  "keywords": [
+    "primevue",
+    "vue",
+    "ui framework",
+    "component framework",
+    "ui library",
+    "component library",
+    "material",
+    "bootstrap"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/primefaces/primevue-sass-theme/issues"
+  }
+}

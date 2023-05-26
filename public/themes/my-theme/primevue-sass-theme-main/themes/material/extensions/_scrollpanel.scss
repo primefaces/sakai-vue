@@ -1,0 +1,7 @@
+.p-scrollpanel {
+    .p-scrollpanel-bar {
+        &:focus {
+            box-shadow: 0 0 1px 4px rgba($accentColor, .2);
+        }
+    }
+}

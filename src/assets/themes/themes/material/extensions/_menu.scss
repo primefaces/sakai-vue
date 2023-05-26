@@ -1,0 +1,19 @@
+.p-menu {
+    .p-menuitem {
+        &.p-highlight {
+            &.p-focus {
+                > .p-menuitem-content {
+                    background: $emphasis-lower;
+                }
+            }
+        }
+
+        &:not(.p-highlight):not(.p-disabled) {
+            &.p-focus {
+                > .p-menuitem-content {
+                    background: $emphasis-lower;
+                }
+            }
+        }
+    }
+}

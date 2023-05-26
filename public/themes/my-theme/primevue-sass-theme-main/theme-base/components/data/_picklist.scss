@@ -1,0 +1,70 @@
+.p-picklist {
+    .p-picklist-buttons {
+        padding: $panelContentPadding;
+
+        .p-button {
+            margin-bottom: $inlineSpacing;
+        }
+    }
+
+    .p-picklist-header {
+        background: $panelHeaderBg;
+        color: $panelHeaderTextColor;
+        border: $panelHeaderBorder;
+        padding: $panelHeaderPadding;
+        font-weight: $panelHeaderFontWeight;
+        border-bottom: 0 none;
+        border-top-right-radius: $borderRadius;
+        border-top-left-radius: $borderRadius;
+    }
+
+    .p-picklist-list {
+        border: $panelContentBorder;
+        background: $panelContentBg;
+        color: $panelContentTextColor;
+        padding: $inputListPadding;
+        border-bottom-right-radius: $borderRadius;
+        border-bottom-left-radius: $borderRadius;
+        outline: 0 none;
+
+        .p-picklist-item {
+            padding: $inputListItemPadding;
+            margin: $inputListItemMargin;
+            border: $inputListItemBorder;
+            color: $inputListItemTextColor;
+            background: $inputListItemBg;
+            transition: transform $transitionDuration, $listItemTransition;
+
+            &:not(.p-highlight):hover {
+                background: $inputListItemHoverBg;
+                color: $inputListItemTextHoverColor;
+            }
+
+            &.p-focus {
+                color: $inputListItemTextFocusColor;
+                background: $inputListItemFocusBg;
+            }
+
+            &.p-highlight {
+                color: $highlightTextColor;
+                background: $highlightBg;
+
+                &.p-focus {
+                    background: $highlightFocusBg;
+                }
+            }
+        }
+    }
+
+    &.p-picklist-striped {
+        .p-picklist-list {
+            .p-picklist-item:nth-child(even) {
+                background: $panelContentEvenRowBg;
+
+                &:hover {
+                    background: $inputListItemHoverBg;
+                }
+            }
+        }
+    }
+}

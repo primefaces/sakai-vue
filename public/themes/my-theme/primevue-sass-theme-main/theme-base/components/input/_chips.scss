@@ -1,0 +1,52 @@
+@use 'sass:math';
+
+.p-chips {
+    &:not(.p-disabled):hover {
+        .p-chips-multiple-container {
+            border-color: $inputHoverBorderColor;
+        }
+    }
+
+    &:not(.p-disabled).p-focus {
+        .p-chips-multiple-container {
+            @include focused-input();
+        }
+    }
+
+    .p-chips-multiple-container {
+        padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
+
+        .p-chips-token {
+            padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
+            margin-right: $inlineSpacing;
+            background: $chipBg;
+            color: $chipTextColor;
+            border-radius: $chipBorderRadius;
+
+            &.p-focus {
+                background: $chipFocusBg;
+                color: $chipFocusTextColor;
+            }
+
+            .p-chips-token-icon {
+                margin-left: $inlineSpacing;
+            }
+        }
+
+        .p-chips-input-token {
+            padding: math.div(nth($inputPadding, 1), 2) 0;
+                
+            input {
+                font-family: $fontFamily;
+                font-size: $fontSize;
+                color: $textColor;
+                padding: 0;
+                margin: 0;
+            }
+        }
+    }
+
+    &.p-invalid.p-component > .p-inputtext {
+        @include invalid-input();
+    }
+}

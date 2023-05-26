@@ -64,7 +64,9 @@
         "descripcion": "BUEN FRIA .500 ML NARANJA",
         "pzasCaja":16,
         "precioLista": 7
-    },
+    },<div class="flex ms-4 align-items-center justify-content-center bg-red-100 border-round" style="width: 2.5rem; height: 2.5rem">
+     <i class="pi pi-shopping-cart text-red-500 text-xl"></i>
+     </div>,
     {
         "code": "859",
         "descripcion": "BUEN FRIA .500 ML UVA",

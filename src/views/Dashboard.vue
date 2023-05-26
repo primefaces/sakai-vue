@@ -3,426 +3,437 @@
 <!-- eslint-disable prettier/prettier -->
 <!-- eslint-disable prettier/prettier -->
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import {onMounted, reactive, ref, watch} from 'vue';
 import ProductService from '@/service/ProductService';
-import { useLayout } from '@/layout/composables/layout';
+import {useLayout} from '@/layout/composables/layout';
+
 let documentStyle = getComputedStyle(document.documentElement);
 
 let textColor = documentStyle.getPropertyValue('--text-color');
 let textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
 let surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-const { isDarkTheme } = useLayout();
+const {isDarkTheme} = useLayout();
 
 const products = ref(null);
 const lineData = reactive({
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-        {
-            label: 'Ruta 1',
-            data: [25000, 24000, 25000, 24500, 25000, 24000, 24800],
-            fill: false,
-            backgroundColor: '#2f4860',
-            borderColor: '#2f4860',
-            tension: 0.4
-        },
-        {
-            label: 'Ruta 21',
-            data: [22000, 23000, 23500, 23200, 22000, 21500, 23000],
-            fill: false,
-            backgroundColor: '#00bb7e',
-            borderColor: '#00bb7e',
-            tension: 0.4
-        },{
-            label: 'Ruta 10',
-            data: [25000, 23000, 25500, 25200, 25000, 24000, 24200],
-            fill: false,
-            backgroundColor: '#689f38',
-            borderColor: '#689f38',
-            tension: 0.4
-        }
-    ]
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+    {
+      label: 'Ruta 1',
+      data: [25000, 24000, 25000, 24500, 25000, 24000, 24800],
+      fill: false,
+      backgroundColor: 'rgba(28,206,138,0.46)',
+      borderColor: 'rgba(28,206,138,0.72)',
+      tension: 0.4
+    },
+    {
+      label: 'Ruta 21',
+      data: [22000, 23000, 23500, 23200, 22000, 21500, 23000],
+      fill: false,
+      backgroundColor: 'rgba(194,222,14,0.49)',
+      borderColor: 'rgba(194,222,14,0.75)',
+      tension: 0.4
+    }, {
+      label: 'Ruta 10',
+      data: [25000, 23000, 25500, 25200, 25000, 24000, 24200],
+      fill: false,
+      backgroundColor: 'rgba(88,238,65,0.53)',
+      borderColor: 'rgba(88,238,65,0.77)',
+      tension: 0.4
+    }
+  ]
 });
 
 const barData = ref(null);
 
 const items = ref([
-    { label: 'Agregar', icon: 'pi pi-fw pi-plus' },
-    { label: 'Quitar', icon: 'pi pi-fw pi-minus' }
+  {label: 'Agregar', icon: 'pi pi-fw pi-plus'},
+  {label: 'Agregar', icon: 'pi pi-fw pi-plus'},
+  {label: 'Quitar', icon: 'pi pi-fw pi-minus'}
 ]);
 const lineOptions = ref(null);
 const productService = new ProductService();
 const barOptions = ref(null);
 
 onMounted(() => {
-    // this.$route.params
-    productService.getProductsSmall().then((data) => (products.value = data));
+  productService.getProductsSmall().then((data) => (products.value = data));
 });
 
 const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 };
 const applyLightTheme = () => {
-    lineOptions.value = {
-        plugins: {
-            legend: {
-                labels: {
-                    color: '#495057'
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: '#495057'
-                },
-                grid: {
-                    color: '#ebedef'
-                }
-            },
-            y: {
-                ticks: {
-                    color: '#495057'
-                },
-                grid: {
-                    color: '#ebedef'
-                }
-            }
+  lineOptions.value = {
+    plugins: {
+      legend: {
+        labels: {
+          color: '#495057'
         }
-    };
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: '#495057'
+        },
+        grid: {
+          color: '#ebedef'
+        }
+      },
+      y: {
+        ticks: {
+          color: '#495057'
+        },
+        grid: {
+          color: '#ebedef'
+        }
+      }
+    }
+  };
 };
 const setChart = () => {
-    barData.value = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-            {
-                label: 'My First dataset',
-                backgroundColor: documentStyle.getPropertyValue('--red-500'),
-                borderColor: documentStyle.getPropertyValue('--red-500'),
-                data: [65, 59, 80, 81, 56, 55, 40]
-            },
-            {
-                label: 'My Second dataset',
-                backgroundColor: documentStyle.getPropertyValue('--red-200'),
-                borderColor: documentStyle.getPropertyValue('--red-200'),
-                data: [28, 48, 40, 19, 86, 27, 90]
-            }
-        ]
-    };
-    barOptions.value = {
-        plugins: {
-            legend: {
-                labels: {
-                    fontColor: textColor
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary,
-                    font: {
-                        weight: 500
-                    }
-                },
-                grid: {
-                    display: false,
-                    drawBorder: false
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder,
-                    drawBorder: false
-                }
-            }
+  barData.value = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        type: 'bar',
+        label: 'Costo',
+        backgroundColor: documentStyle.getPropertyValue('--cyan-200'),
+        data: [50, 55, 52, 58, 50, 56, 52]
+      },
+      {
+        type: 'bar',
+        label: 'Utilidad',
+        backgroundColor: documentStyle.getPropertyValue('--cyan-300'),
+        data: [4, 5, 4, 6, 4, 4, 6]
+      }
+    ]
+  };
+  barOptions.value = {
+    plugins: {
+      tooltips: {
+        mode: 'index',
+        intersect: false
+      },
+      legend: {
+        labels: {
+          color: textColor
         }
-    };
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          color: textColorSecondary
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      },
+      y: {
+        stacked: true,
+        ticks: {
+          color: textColorSecondary
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      }
+    }
 
-};
-
+  };
+}
 const applyDarkTheme = () => {
-    lineOptions.value = {
-        plugins: {
-            legend: {
-                labels: {
-                    color: '#ebedef'
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: '#ebedef'
-                },
-                grid: {
-                    color: 'rgba(160, 167, 181, .3)'
-                }
-            },
-            y: {
-                ticks: {
-                    color: '#ebedef'
-                },
-                grid: {
-                    color: 'rgba(160, 167, 181, .3)'
-                }
-            }
+  lineOptions.value = {
+    plugins: {
+      legend: {
+        labels: {
+          color: '#ebedef'
         }
-    };
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: '#ebedef'
+        },
+        grid: {
+          color: 'rgba(160, 167, 181, .3)'
+        }
+      },
+      y: {
+        ticks: {
+          color: '#ebedef'
+        },
+        grid: {
+          color: 'rgba(160, 167, 181, .3)'
+        }
+      }
+    }
+  };
 };
 
 watch(
     isDarkTheme,
     (val) => {
-        if (val) {
-            applyDarkTheme();
-        } else {
-            applyLightTheme();
-        }
-        setChart()
+      if (val) {
+        applyDarkTheme();
+      } else {
+        applyLightTheme();
+      }
+      setChart()
     },
-    { immediate: true }
+    {immediate: true}
 );
 </script>
 
 <template>
-    <div class="grid ">
-        <div class="col-6 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Litros vendidos</span>
-                        <div class="text-900 font-medium text-xl">30000</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-red-300 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-red-500 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">4000 más</span>
-                <span class="text-500"> este mes</span>
+  <div class="grid ">
+
+    <div class="col-6  lg:col-6 xl:col-3">
+      <div class="card mb-0 px-3 py-3 ">
+        <div class="flex  justify-content-between">
+
+          <div class="px-3">
+            <div>
+              <div class="text-900 font-medium text-xl">$0.00</div>
             </div>
+            <span class="text-600 font-medium mb-3">Venta</span>
+            <span class="text-500"> del día</span>
+          </div>
+          <div class="flex ms-4 align-items-center justify-content-center bg-red-100 border-round"
+               style="width: 2.5rem; height: 2.5rem">
+            <i class="pi pi-shopping-cart text-red-500 text-xl"></i>
+          </div>
         </div>
-        <div class="col-6 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Ventas</span>
-                        <div class="text-900 font-medium text-xl">$2.600.100.00</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-indigo-300 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-map-marker text-indigo-500 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">%.12+ </span>
-                <span class="text-500"> este mes</span>
+      </div>
+    </div>
+    <div class="col-6  lg:col-6 xl:col-3">
+      <div class="card mb-0 px-3 py-3 ">
+        <div class="flex  justify-content-between">
+
+          <div class="px-3">
+            <div>
+              <div class="text-900 font-medium text-xl">$0.00</div>
             </div>
+            <span class="text-600 font-medium mb-3">Venta</span>
+            <span class="text-500"> del día</span>
+          </div>
+          <div class="flex ms-4 align-items-center justify-content-center bg-cyan-100 border-round"
+               style="width: 2.5rem; height: 2.5rem">
+            <i class="pi pi-shopping-cart text-cyan-500 text-xl"></i>
+          </div>
         </div>
-        <div class="col-6 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Utilidad</span>
-                        <div class="text-900 font-medium text-xl">$400,000.00</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-cyan-300 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-comment text-cyan-500 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">%10+ </span>
-                <span class="text-500"> este mes</span>
+      </div>
+    </div>
+    <div class="col-6  lg:col-6 xl:col-3">
+      <div class="card mb-0 px-3 py-3 ">
+        <div class="flex  justify-content-between">
+
+          <div class="px-3">
+            <div>
+              <div class="text-900 font-medium text-xl">$0.00</div>
             </div>
+            <span class="text-600 font-medium mb-3">Venta</span>
+            <span class="text-500"> del día</span>
+          </div>
+          <div class="flex ms-4 align-items-center justify-content-center bg-green-100 border-round"
+               style="width: 2.5rem; height: 2.5rem">
+            <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
+          </div>
         </div>
-        <div class="col-6 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Clientes</span>
-                        <div class="text-900 font-medium text-xl">166</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-teal-300 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-inbox text-teal-500 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">19 </span>
-                <span class="text-500">registrados</span>
+      </div>
+    </div>
+    <div class="col-6  lg:col-6 xl:col-3">
+      <div class="card mb-0 px-3 py-3 ">
+        <div class="flex  justify-content-between">
+
+          <div class="px-3">
+            <div>
+              <div class="text-900 font-medium text-xl">$0.00</div>
             </div>
+            <span class="text-600 font-medium mb-3">Venta</span>
+            <span class="text-500"> del día</span>
+          </div>
+          <div class="flex ms-4 align-items-center justify-content-center bg-orange-100 border-round"
+               style="width: 2.5rem; height: 2.5rem">
+            <i class="pi pi-shopping-cart text-orange-500 text-xl"></i>
+          </div>
         </div>
-        <div class="col-12 xl:col-6">
-            <div class="card">
-                <h5>Ventas</h5>
-                <Chart type="line" :data="lineData" :options="lineOptions" />
-            </div>
-            
-            <!-- <div
-                class="px-4 py-5 shadow-2 flex flex-column md:flex-row md:align-items-center justify-content-between mb-3"
-                style="border-radius: 1rem; background: linear-gradient(0deg, rgba(0, 123, 255, 0.5), rgba(0, 123, 255, 0.5)), linear-gradient(92.54deg, #1c80cf 47.88%, #ffffff 100.01%)"
-            >
-                <div>
-                    <div class="text-blue-100 font-medium text-xl mt-2 mb-3">TAKE THE NEXT STEP</div>
-                    <div class="text-white font-medium text-5xl">Try PrimeBlocks</div>
-                </div>
-                <div class="mt-4 mr-auto md:mt-0 md:mr-0">
-                    <a href="https://www.primefaces.org/primeblocks-vue" class="p-button font-bold px-5 py-3 p-button-warning p-button-rounded p-button-raised"> Get Started </a>
-                </div>
-            </div> -->
+      </div>
+    </div>
+
+    <div class="col-12 xl:col-6">
+      <div class="card">
+        <h5>Ventas</h5>
+        <Chart type="line" :data="lineData" :options="lineOptions"/>
+      </div>
+      s
+    </div>
+    <div class="col-12 xl:col-6">
+      <div class="card">
+        <h5>Cierres</h5>
+        <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+      </div>
+    </div>
+
+    <div class="col-12 xl:col-6">
+      <!-- <div class="card">
+          <h5>Recent Sales</h5>
+          <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
+              <Column style="width: 15%">
+                  <template #header> Image </template>
+                  <template #body="slotProps">
+                      <img :src="'demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image" width="50" class="shadow-2" />
+                  </template>
+              </Column>
+              <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
+              <Column field="price" header="Price" :sortable="true" style="width: 35%">
+                  <template #body="slotProps">
+                      {{ formatCurrency(slotProps.data.price) }}
+                  </template>
+              </Column>
+              <Column style="width: 15%">
+                  <template #header> View </template>
+                  <template #body>
+                      <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
+                  </template>
+              </Column>
+          </DataTable>
+      </div> -->
+      <div class="card">
+        <div class="flex justify-content-between align-items-center mb-2">
+          <h5>Productos más vendidos</h5>
+          <div>
+            <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-plain p-button-rounded"
+                    @click="$refs.menu2.toggle($event)"></Button>
+            <Menu ref="menu2" :popup="true" :model="items"></Menu>
+          </div>
         </div>
-        <div class="col-12 xl:col-6">
-            <div class="card">
-                <h5>Bar Chart</h5>
-                <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+        <ul class="list-none p-0 m-0">
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca Litro </span>
+              <div class="mt-1 text-600">Sello Rojo</div>
             </div>
+            <div class="mt-2 md:mt-0 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca 1/2 Galón</span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Tikito 1/4</span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Jamón rebanado 1kg</span>
+              <div class="mt-1 text-600">Embutidos</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Deligurt 230g</span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Sheik</span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-12 xl:col-6">
+      <div class="card">
+        <div class="flex align-items-center justify-content-between mb-4">
+          <h5>Notifications</h5>
+          <div>
+            <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-plain p-button-rounded"
+                    @click="$refs.menu1.toggle($event)"></Button>
+            <Menu ref="menu1" :popup="true" :model="items"></Menu>
+          </div>
         </div>
 
-        <div class="col-12 xl:col-6">
-            <!-- <div class="card">
-                <h5>Recent Sales</h5>
-                <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
-                    <Column style="width: 15%">
-                        <template #header> Image </template>
-                        <template #body="slotProps">
-                            <img :src="'demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image" width="50" class="shadow-2" />
-                        </template>
-                    </Column>
-                    <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
-                    <Column field="price" header="Price" :sortable="true" style="width: 35%">
-                        <template #body="slotProps">
-                            {{ formatCurrency(slotProps.data.price) }}
-                        </template>
-                    </Column>
-                    <Column style="width: 15%">
-                        <template #header> View </template>
-                        <template #body>
-                            <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
-                        </template>
-                    </Column>
-                </DataTable>
-            </div> -->
-            <div class="card">
-                <div class="flex justify-content-between align-items-center mb-2">
-                    <h5>Productos más vendidos</h5>
-                    <div>
-                        <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-plain p-button-rounded" @click="$refs.menu2.toggle($event)"></Button>
-                        <Menu ref="menu2" :popup="true" :model="items"></Menu>
-                    </div>
-                </div>
-                <ul class="list-none p-0 m-0">
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca Litro </span>
-                            <div class="mt-1 text-600">Sello Rojo</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 flex align-items-center">
-                            <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-                            <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca 1/2 Galón</span>
-                            <div class="mt-1 text-600">Sello Rojo</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-                            <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Tikito 1/4</span>
-                            <div class="mt-1 text-600">Sello Rojo</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-                            <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Jamón rebanado 1kg</span>
-                            <div class="mt-1 text-600">Embutidos</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-                            <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Deligurt 230g</span>
-                            <div class="mt-1 text-600">Sello Rojo</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-                            <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Sheik</span>
-                            <div class="mt-1 text-600">Sello Rojo</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-                            <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-                        </div>
-                    </li>
-                </ul>
+        <span class="block text-600 font-medium mb-3">TODAY</span>
+        <ul class="p-0 mx-0 mt-0 mb-4 list-none">
+          <li class="flex align-items-center py-2 border-bottom-1 surface-border">
+            <div
+                class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+              <i class="pi pi-dollar text-xl text-blue-500"></i>
             </div>
-        </div>
-        <div class="col-12 xl:col-6">
-            <div class="card">
-                <div class="flex align-items-center justify-content-between mb-4">
-                    <h5>Notifications</h5>
-                    <div>
-                        <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-plain p-button-rounded" @click="$refs.menu1.toggle($event)"></Button>
-                        <Menu ref="menu1" :popup="true" :model="items"></Menu>
-                    </div>
-                </div>
-
-                <span class="block text-600 font-medium mb-3">TODAY</span>
-                <ul class="p-0 mx-0 mt-0 mb-4 list-none">
-                    <li class="flex align-items-center py-2 border-bottom-1 surface-border">
-                        <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                            <i class="pi pi-dollar text-xl text-blue-500"></i>
-                        </div>
-                        <span class="text-900 line-height-3"
-                            >Richard Jones
-                            <span class="text-700">has purchased a blue t-shirt for <span class="text-blue-500">79$</span></span>
+            <span class="text-900 line-height-3"
+            >Richard Jones
+                            <span class="text-700">has purchased a blue t-shirt for <span
+                                class="text-blue-500">79$</span></span>
                         </span>
-                    </li>
-                    <li class="flex align-items-center py-2">
-                        <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
-                            <i class="pi pi-download text-xl text-orange-500"></i>
-                        </div>
-                        <span class="text-700 line-height-3">Your request for withdrawal of <span class="text-blue-500 font-medium">2500$</span> has been initiated.</span>
-                    </li>
-                </ul>
+          </li>
+          <li class="flex align-items-center py-2">
+            <div
+                class="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
+              <i class="pi pi-download text-xl text-orange-500"></i>
+            </div>
+            <span class="text-700 line-height-3">Your request for withdrawal of <span class="text-blue-500 font-medium">2500$</span> has been initiated.</span>
+          </li>
+        </ul>
 
-                <span class="block text-600 font-medium mb-3">YESTERDAY</span>
-                <ul class="p-0 m-0 list-none">
-                    <li class="flex align-items-center py-2 border-bottom-1 surface-border">
-                        <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                            <i class="pi pi-dollar text-xl text-blue-500"></i>
-                        </div>
-                        <span class="text-900 line-height-3"
-                            >Keyser Wick
-                            <span class="text-700">has purchased a black jacket for <span class="text-blue-500">59$</span></span>
+        <span class="block text-600 font-medium mb-3">YESTERDAY</span>
+        <ul class="p-0 m-0 list-none">
+          <li class="flex align-items-center py-2 border-bottom-1 surface-border">
+            <div
+                class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+              <i class="pi pi-dollar text-xl text-blue-500"></i>
+            </div>
+            <span class="text-900 line-height-3"
+            >Keyser Wick
+                            <span class="text-700">has purchased a black jacket for <span
+                                class="text-blue-500">59$</span></span>
                         </span>
-                    </li>
-                    <li class="flex align-items-center py-2 border-bottom-1 surface-border">
-                        <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-pink-100 border-circle mr-3 flex-shrink-0">
-                            <i class="pi pi-question text-xl text-pink-500"></i>
-                        </div>
-                        <span class="text-900 line-height-3"
-                            >Jane Davis
+          </li>
+          <li class="flex align-items-center py-2 border-bottom-1 surface-border">
+            <div
+                class="w-3rem h-3rem flex align-items-center justify-content-center bg-pink-100 border-circle mr-3 flex-shrink-0">
+              <i class="pi pi-question text-xl text-pink-500"></i>
+            </div>
+            <span class="text-900 line-height-3"
+            >Jane Davis
                             <span class="text-700">has posted a new questions about your product.</span>
                         </span>
-                    </li>
-                </ul>
-            </div>
-        </div>
- 
+          </li>
+        </ul>
+      </div>
     </div>
+
+  </div>
 </template>

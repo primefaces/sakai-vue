@@ -5,7 +5,7 @@
             <div class="card docs">
                 <h3>Version actual</h3>
                 <p>Instrucciones</p>
-                
+
             </div>
         </div>
     </div>

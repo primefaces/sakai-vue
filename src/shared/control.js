@@ -51,7 +51,7 @@ const controls = [
     {
       label: "Familias",
       icon: "pi pi-fw pi-tag",
-      to: "/pages/crud/Familias",
+        to: "/pages/crud/Familias",
       properties: commonProperties.columns.Familias,
       routeApi: 'familias'
     },

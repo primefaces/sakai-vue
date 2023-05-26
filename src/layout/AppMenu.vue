@@ -51,7 +51,6 @@ const model = ref([
                 icon: 'pi pi-fw pi-map',
                 to: '/pages/crud/Rutas'
             },
-            { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/utilities/icons' }
         ]
     },
 ]);

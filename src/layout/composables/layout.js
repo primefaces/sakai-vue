@@ -4,7 +4,7 @@ const layoutConfig = reactive({
     ripple: false,
     darkTheme: false,
     inputStyle: 'outlined',
-    menuMode: 'static',
+    menuMode: 'overlay',
     theme: 'mdc-light-indigo',
     scale: 12,
     activeMenuItem: null

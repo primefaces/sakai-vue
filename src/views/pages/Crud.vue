@@ -2,14 +2,13 @@
 <script setup>
 import {getCurrentColumns} from "./../../shared/control";
 import { useCatalogosStore } from '@/stores'
-const store = useCatalogosStore()
-console.log(store);
 const frmat =  txt => capitalize(txt).replaceAll('_', ' ')
-import {capitalize, onBeforeMount, watch} from 'vue';
+import {capitalize, onBeforeMount, onMounted, onUpdated, watch} from 'vue';
 import {defineProps} from 'vue';
 import {useRoute} from 'vue-router';
 
 const route = useRoute();
+const store = useCatalogosStore()
 
 const currentP = {}
 let columns = [
@@ -30,18 +29,27 @@ const props = defineProps({
   indx: {type: String, default: 'ss'},
 })
 
+
+
 const formatCurrency = (value) => {
   return value.toLocaleString('es-US', {style: 'currency', currency: 'USD'});
 }
 
 onBeforeMount(() => {
+  console.log('beforeMount')
   setCurrentP(props.indx)
 });
 
+onMounted(()=>{
+  console.log('Mounted')
+})
+
 watch(
+
     () => props.indx,
-    (newVal) => {
-      setCurrentP( newVal)
+    (val) => {
+      console.log(val)
+      setCurrentP( val )
     }
 );
 </script>
@@ -51,7 +59,15 @@ watch(
     <div class="col-12">
       <div class="card">
         <h1>{{ currentP.title }}</h1>
-        <DataTable :value="store.dataCatalog" class='p-datatable-sm' :key="currentP.key" tableStyle="min-width: 50rem" :loading="store.isLoading">
+        <DataTable
+            :value="store.dataCatalog"
+            :paginator="true"
+            :rows="10"
+            dataKey="id"
+            :rowHover="true"
+            :key="currentP.key"
+            tableStyle="min-width: 50rem"
+            :loading="store.isLoading">
           <template #empty> No customers found. </template>
           <template #loading> Loading customers data. Please wait. </template>
             <Column v-for="col of columns" sortable :key="col.field" :field="col.field" :header="col.header">

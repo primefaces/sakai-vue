@@ -103,7 +103,7 @@ const applyScale = () => {
             <h5>Ripple Effect</h5>
             <InputSwitch v-model="layoutConfig.ripple.value"></InputSwitch>
         </template>
-      <!--  <h5>Bootstrap</h5>
+       <h5>Bootstrap</h5>
         <div class="grid">
             <div class="col-3">
                 <button class="p-link w-2rem h-2rem" @click="onChangeTheme('bootstrap4-light-blue', 'light')">
@@ -148,7 +148,7 @@ const applyScale = () => {
                     <img src="/layout/images/themes/md-dark-deeppurple.svg" class="w-2rem h-2rem" alt="Material Dark DeepPurple" />
                 </button>
             </div>
-        </div>  -->
+        </div> 
 
         <h5>Material Design Compact</h5>
         <div class="grid">
@@ -174,7 +174,7 @@ const applyScale = () => {
             </div> -->
         </div> 
 
-        <!-- <h5>Tailwind</h5>
+        <h5>Tailwind</h5>
         <div class="grid">
             <div class="col-3">
                 <button class="p-link w-2rem h-2rem" @click="onChangeTheme('tailwind-light', 'light')">
@@ -298,7 +298,7 @@ const applyScale = () => {
                     <img src="/layout/images/themes/arya-purple.png" class="w-2rem h-2rem" alt="Arya Purple" />
                 </button>
             </div>
-        </div> -->
+        </div>
 </Sidebar></template>
 
 <style lang="scss" scoped></style>

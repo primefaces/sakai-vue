@@ -5,7 +5,7 @@ const layoutConfig = reactive({
     darkTheme: false,
     inputStyle: 'outlined',
     menuMode: 'overlay',
-    theme: 'mdc-light-indigo',
+    theme: 'tailwind-light',
     scale: 12,
     activeMenuItem: null
 });

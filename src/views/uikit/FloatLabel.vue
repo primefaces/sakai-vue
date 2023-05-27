@@ -1,14 +1,13 @@
 <!-- eslint-disable prettier/prettier -->
 <!-- eslint-disable prettier/prettier -->
 <script setup>
+import AutoComplete from 'primevue/autocomplete';
 import {ref, onMounted, watch} from 'vue';
-// import CountryService from '@/service/CountryService';
 import ProductService from '@/service/ProductService';
-// let products_ = require('../utilities/products.json');
-import json from './../utilities/products.json'
+import {useCaptuaraStore} from "@/stores";
 
-const productsList = json;
-const countries = ref([]);
+const store = useCaptuaraStore();
+
 const rutas = ref([
   {name: '1', code: '1'},
   {name: '5', code: '5'},
@@ -38,6 +37,7 @@ const columns = ref([
 const filteredProducts = ref([]);
 let detalleCobro = ref([
   {
+    index: 0,
     code: "",
     salCj: 0,
     salPz: 0,
@@ -49,8 +49,6 @@ let detalleCobro = ref([
     saldo: 0
   }
 ])
-const filteredCountries2 = ref(null);
-
 
 const value8 = ref(null);
 const value9 = ref(null);
@@ -58,9 +56,26 @@ const value9 = ref(null);
 const productService = new ProductService();
 
 onMounted(() => {
-  products.value = productsList;
-  filteredProducts.value = productsList.slice(0, 2)
+   fetchCatalogos()
 });
+const fetchCatalogos = () => {
+
+  // Obtener todos los catálogos
+  store.setProducts('productos');
+
+  // Acceder a los datos del catálogo
+  // products.value = ;
+
+  // Realizar otras operaciones con los datos
+  // console.log(products.value);
+}
+
+// const deleteCatalogo = async () => {
+//   // const store = useCaptuaraStore();
+//
+//   // Eliminar un catálogo por su ID
+//   await store.delete('frgm', id);
+// }
 
 const changeRuta = (event) => {
   console.log(event.value.code);
@@ -69,7 +84,9 @@ const changeRuta = (event) => {
 
 
 const onCellEditComplete = (event) => {
+// const onCellEditComplete = (event) => {
   let {data, newValue, field} = event;
+  console.log('onEditCelol')
 
   switch (field) {
     case 'code':
@@ -77,8 +94,8 @@ const onCellEditComplete = (event) => {
       if (newValue.trim().length > 0)
         data[field] = newValue;
       else
-        event.preventDefault();
-      break;
+
+        break;
     default:
       if (isPositiveInteger(newValue))
         data[field] = newValue;
@@ -103,29 +120,32 @@ const isPositiveInteger = (val) => {
 const productFormat = (value) => {
   return value ? `<b> [${value}] </b>` : ''
 }
+const selectOne = (event, rowThat) => {
+  console.log(event, rowThat);
+};
+const onChange = (data) => {
 
+  console.log('onCgange', data);
+  setValue(data);
+};
 
 const searchCode = (event) => {
-  console.log(event)
   setTimeout(() => {
+  console.log(event, store.getProducts)
     if (!event.query.trim().length) {
-      filteredProducts.value = [...products.value];
+      filteredProducts.value = [];
     } else {
-      filteredProducts.value = products.value.filter((p) => {
-        console.log(p.code, p.descripcion)
-        return p.code.toLowerCase().startsWith(event.query.toLowerCase()) ||
-            p.descripcion.toLowerCase().startsWith(event.query.toLowerCase())
+      filteredProducts.value = store.getProducts.filter(({code, description}) => {
+        console.log(code, description)
+        return code.toLowerCase().startsWith(event.query.toLowerCase()) ||
+            description.toLowerCase().startsWith(event.query.toLowerCase())
       });
     }
-  }, 250);
+  }, 10);
   // filteredProducts.value = filtered;
 };
 
 
-watch(filteredProducts, (prev) => {
-  console.log(prev);
-
-})
 
 
 </script>
@@ -136,7 +156,7 @@ watch(filteredProducts, (prev) => {
     <div class="grid p-fluid mt-3 align-items-end">
       <div class="field col-6 md:col-4">
           <span class="p-float-label">
-            <Dropdown class="p-inputtext-sm " @change="changeRuta" id="ruta" :options="rutas" v-model="value8"
+            <Dropdown class="p-inputtext-sm " @change="changeRuta" id="ruta" :options="rutas"
                       optionLabel="name">
             </Dropdown>
             <label for="ruta">Ruta</label>
@@ -153,55 +173,61 @@ watch(filteredProducts, (prev) => {
     <h5 class="mt-0">Captura de productos</h5>
 
     <DataTable :value="detalleCobro" showGridlines @cell-edit-complete="onCellEditComplete"
-               tableClass="editable-cells-table" tableStyle="min-width: 20rem">
+               tableClass="editable-cells-table">
       <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
         <template #body="{ data, field }">
           <template v-if="field === 'code'">
-            <AutoComplete v-model="data[field]" class="p-inputtext-sm" optionLabel="code"
-                          :suggestions="filteredProducts" @complete="searchCode">
+            <AutoComplete :id="`${field}${data.index}`"
+                          @complete="searchCode"
+                          @change="selectOne(e, data)"
+                          v-model="data[field]"
+                          class="p-autocomplete-sm"
+                          optionLabel="code"
+                          :suggestions="filteredProducts" :delay="100" selectOnFocus force-selection complete-on-focus
+                          autoOptionFocus selectionMessage="selection message" emptySelectionMessage="empty selection"
+                          searchMessage="search msj" aria-labelledby="codeSearch">
               <template #option="slotProps">
                 <div class="flex align-items-baseline  align-options-center">
-                  <b class="mr-2">{{ slotProps.option.code }}</b> <small>{{ slotProps.option.descripcion }}</small>
+                  <b class="mr-2">{{ slotProps.option.code }}</b> <small class="text-mutted"> {{ slotProps.option.description }}</small>
 
                 </div>
               </template>
             </AutoComplete>
           </template>
           <template v-else-if="['venta', 'saldo'].includes(field)">
-
-            <InputNumber type="decimal" class="p-inputnumber-sm w-5rem" v-model="data[field]" mode="currency"
+            <InputNumber :id="`${field}${data.index}`" readonly type="decimal" class="p-inputnumber-sm "
+                         v-model="data[field]" mode="currency"
                          :disabled="['salTotal', 'regTotal'].includes(field)" currency="USD" locale="en-US"/>
           </template>
           <template v-else>
 
-            <InputNumber type="decimal" class="p-inputnumber-sm w-5rem" v-model="data[field]" :disabled="['salTotal', 'regTotal'].includes(field)"/>
+            <InputNumber type="decimal" class="p-inputnumber-sm " v-model="data[field]"
+                         :disabled="['salTotal', 'regTotal'].includes(field)"/>
           </template>
         </template>
+        <!--        <template #editor="{ data, field }">-->
+        <!--          <template v-if="field === 'code'">-->
+        <!--            <AutoComplete @complete="searchCode" v-model="data[field]"  class="p-autocomplete-sm" optionLabel="code"-->
+        <!--                          :suggestions="filteredProducts" >-->
+        <!--              <template #option="slotProps">-->
+        <!--                <div class="flex align-items-baseline  align-options-center">-->
+        <!--                  <b class="mr-2">{{ slotProps.option.code }}</b> <small>{{ slotProps.option.descripcion }}</small>-->
 
+        <!--                </div>-->
+        <!--              </template>-->
+        <!--            </AutoComplete>-->
+        <!--          </template>-->
+        <!--          <template v-else-if="['venta', 'saldo'].includes(field)">-->
 
+        <!--            <InputNumber type="decimal" class="p-inputnumber-sm " v-model="data[field]" mode="currency"-->
+        <!--                         :disabled="['salTotal', 'regTotal'].includes(field)" currency="USD" locale="en-US"/>-->
+        <!--          </template>-->
+        <!--          <template v-else>-->
 
-        <template #editor="{ data, field }">
-          <template v-if="field === 'code'">
-            <AutoComplete v-model="data[field]" class="p-inputtext-sm" optionLabel="code"
-                          :suggestions="filteredProducts" @complete="searchCode">
-              <template #option="slotProps">
-                <div class="flex align-items-baseline  align-options-center">
-                  <b class="mr-2">{{ slotProps.option.code }}</b> <small>{{ slotProps.option.descripcion }}</small>
-
-                </div>
-              </template>
-            </AutoComplete>
-          </template>
-          <template v-else-if="['venta', 'saldo'].includes(field)">
-
-            <InputNumber type="decimal" class="p-inputnumber-sm w-5rem" v-model="data[field]" mode="currency"
-                         :disabled="['salTotal', 'regTotal'].includes(field)" currency="USD" locale="en-US"/>
-          </template>
-          <template v-else>
-
-            <InputNumber type="decimal" class="p-inputnumber-sm w-2rem" v-model="data[field]" :disabled="['salTotal', 'regTotal'].includes(field)"/>
-          </template>
-        </template>
+        <!--            <InputNumber type="decimal" class="p-inputnumber-sm " v-model="data[field]"-->
+        <!--                         :disabled="['salTotal', 'regTotal'].includes(field)"/>-->
+        <!--          </template>-->
+        <!--        </template>-->
       </Column>
     </DataTable>
   </div>
@@ -209,20 +235,25 @@ watch(filteredProducts, (prev) => {
 
 
 <style lang="scss" scoped>
-::v-deep(.editable-cells-table td) {
+::v-deep(.editable-cells-table td .p-autocomplete) {
+  padding: 0.2rem 0.2rem !important;
+  display: contents;
+
+  .p-inputtext{
+
+    width: 17em;
+  }
+
+}
+
+::v-deep(.editable-cells-table td .p-inputnumber) {
+  display: grid;
   padding: 0.2rem 0.2rem !important;
 }
 
-::v-deep(.editable-cells-table td.p-cell-editing) {
+::v-deep(.editable-cells-table td ) {
   padding: 0.2rem 0.2rem !important;
 }
 
-::v-deep(.p-inputnumber),
-::v-deep(.p-autocomplete) {
-  display: table;
-  margin: auto;
-  width: max-content !important;
-  /* flex-wrap: wrap; */
-  /* justify-content: space-between; */
-}
+
 </style>

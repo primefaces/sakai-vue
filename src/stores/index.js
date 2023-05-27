@@ -1,5 +1,6 @@
 export * from './loader.store';
 export * from './factoresDeConversion.store'
+export * from './capturas.store'
 export * from './familias.store'
 export * from './grupos.store'
 export * from './itemOperation.store'

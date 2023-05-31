@@ -48,7 +48,21 @@ let detalleCobro = ref([
     venta: 0,
     saldo: 0
   }
-])
+],
+[
+  {
+    index: 0,
+    code: "",
+    salCj: 0,
+    salPz: 0,
+    salTotal: 0,
+    regCj: 0,
+    regPz: 0,
+    regTotal: 0,
+    venta: 0,
+    saldo: 0
+  }
+],)
 
 const value8 = ref(null);
 const value9 = ref(null);

@@ -37,8 +37,9 @@ const columns = ref([
 const filteredProducts = ref([]);
 let detalleCobro = ref([
   {
-    index: 0,
+    key: 0,
     code: "",
+    uC:1,
     salCj: 0,
     salPz: 0,
     salTotal: 0,
@@ -48,21 +49,7 @@ let detalleCobro = ref([
     venta: 0,
     saldo: 0
   }
-],
-[
-  {
-    index: 0,
-    code: "",
-    salCj: 0,
-    salPz: 0,
-    salTotal: 0,
-    regCj: 0,
-    regPz: 0,
-    regTotal: 0,
-    venta: 0,
-    saldo: 0
-  }
-],)
+])
 
 const value8 = ref(null);
 const value9 = ref(null);
@@ -134,23 +121,42 @@ const isPositiveInteger = (val) => {
 const productFormat = (value) => {
   return value ? `<b> [${value}] </b>` : ''
 }
-const selectOne = (event, rowThat) => {
-  console.log(event, rowThat);
+const selectOne = (event, field) => {
+  if(typeof event.value === 'object'){
+    console.log('Añadir row', event.originalEvent.code)
+    if(['Enter', undefined].includes(event.originalEvent.code) ){
+      const {key} = field;
+      
+      console.log('----------add row',event,'\n', field,'\n', detalleCobro.value[key])
+    }
+    // const keyI = detalleCobro.value.length
+    // detalleCobro.value.push( {
+    //   key: keyI,
+    //   code: "",
+    //   uC:1,
+    //   salCj: 0,
+    //   salPz: 0,
+    //   salTotal: 0,
+    //   regCj: 0,
+    //   regPz: 0,
+    //   regTotal: 0,
+    //   venta: 0,
+    //   saldo: 0
+    // })
+  }
+  console.log('selectOne', event.value);
 };
 const onChange = (data) => {
-
   console.log('onCgange', data);
-  setValue(data);
+  setValue(data)
 };
 
 const searchCode = (event) => {
   setTimeout(() => {
-  console.log(event, store.getProducts)
     if (!event.query.trim().length) {
       filteredProducts.value = [];
     } else {
       filteredProducts.value = store.getProducts.filter(({code, description}) => {
-        console.log(code, description)
         return code.toLowerCase().startsWith(event.query.toLowerCase()) ||
             description.toLowerCase().startsWith(event.query.toLowerCase())
       });
@@ -191,9 +197,9 @@ const searchCode = (event) => {
       <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
         <template #body="{ data, field }">
           <template v-if="field === 'code'">
-            <AutoComplete :id="`${field}${data.index}`"
+            <AutoComplete :id="`${field}-${data.index}`"
                           @complete="searchCode"
-                          @change="selectOne(e, data)"
+                          @change="selectOne($event, data)"
                           v-model="data[field]"
                           class="p-autocomplete-sm"
                           optionLabel="code"

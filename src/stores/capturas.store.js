@@ -34,11 +34,9 @@ export const useCaptuaraStore = defineStore("capturas", {
         },
         getSalidaTotal(state) {
             const { salidaPiezas, salidaCajas, product} = state;
-
             if (!product) {
                 return 0;
             }
-
             const cantCaja = product.cant_caja ?? 0;
 
             return salidaPiezas + (salidaCajas * cantCaja);
@@ -121,6 +119,5 @@ export const useCaptuaraStore = defineStore("capturas", {
                 // console.log(this.catalogos)
             }
         },
-
     },
 });

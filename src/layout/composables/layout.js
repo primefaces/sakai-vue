@@ -26,7 +26,6 @@ export function useLayout() {
 
     const setScale = (scale) => {
         layoutConfig.scale = scale;
-
         console.log(layoutConfig);
         console.log(layoutState);
     };

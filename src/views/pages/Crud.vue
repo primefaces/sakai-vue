@@ -45,7 +45,6 @@ onMounted(()=>{
 })
 
 watch(
-
     () => props.indx,
     (val) => {
       console.log(val)
@@ -68,8 +67,8 @@ watch(
             :key="currentP.key"
             tableStyle="min-width: 50rem"
             :loading="store.isLoading">
-          <template #empty> No customers found. </template>
-          <template #loading> Loading customers data. Please wait. </template>
+          <template #empty> {{ currentP.title }} no tiene registros. </template>
+          <template #loading> Cargando la información..</template>
             <Column v-for="col of columns" sortable :key="col.field" :field="col.field" :header="col.header">
               <template v-if="'precio_lista' === col.field " #body="slotProps">
                 {{ formatCurrency(slotProps.data.precio_lista) }}

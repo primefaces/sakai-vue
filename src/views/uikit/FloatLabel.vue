@@ -2,6 +2,9 @@
 <!-- eslint-disable prettier/prettier -->
 <script setup>
 import AutoComplete from 'primevue/autocomplete';
+import {useToast} from 'primevue/usetoast';
+
+const toast = useToast();
 import {ref, onMounted, watch} from 'vue';
 import ProductService from '@/service/ProductService';
 import {useCaptuaraStore} from "@/stores";
@@ -39,7 +42,8 @@ let detalleCobro = ref([
   {
     key: 0,
     code: "",
-    uC:1,
+    uC: 1,
+    pL: 0,
     salCj: 0,
     salPz: 0,
     salTotal: 0,
@@ -50,33 +54,23 @@ let detalleCobro = ref([
     saldo: 0
   }
 ])
-
-const value8 = ref(null);
 const value9 = ref(null);
 
-const productService = new ProductService();
-
 onMounted(() => {
-   fetchCatalogos()
+  fetchCatalogos()
 });
 const fetchCatalogos = () => {
-
-  // Obtener todos los catálogos
   store.setProducts('productos');
-
-  // Acceder a los datos del catálogo
-  // products.value = ;
-
-  // Realizar otras operaciones con los datos
-  // console.log(products.value);
 }
 
-// const deleteCatalogo = async () => {
-//   // const store = useCaptuaraStore();
-//
-//   // Eliminar un catálogo por su ID
-//   await store.delete('frgm', id);
-// }
+/**
+ * @Params
+ * hOLA WE
+ * */
+const showToast = (severity, summary, detail, life) => {
+  toast.add({severity, summary, detail, life});
+}
+
 
 const changeRuta = (event) => {
   console.log(event.value.code);
@@ -87,7 +81,7 @@ const changeRuta = (event) => {
 const onCellEditComplete = (event) => {
 // const onCellEditComplete = (event) => {
   let {data, newValue, field} = event;
-  console.log('onEditCelol')
+  console.log('onEditCel')
 
   switch (field) {
     case 'code':
@@ -107,49 +101,87 @@ const onCellEditComplete = (event) => {
 };
 const isPositiveInteger = (val) => {
   let str = String(val);
-
   str = str.trim();
-
-  if (!str) {
+  if (!str)
     return false;
-  }
   str = str.replace(/^0+/, '') || '0';
   var n = Math.floor(Number(str));
-
   return n !== Infinity && String(n) === str && n >= 0;
 };
-const productFormat = (value) => {
-  return value ? `<b> [${value}] </b>` : ''
-}
+
 const selectOne = (event, field) => {
-  if(typeof event.value === 'object'){
-    console.log('Añadir row', event.originalEvent.code)
-    if(['Enter', undefined].includes(event.originalEvent.code) ){
-      const {key} = field;
-      
-      console.log('----------add row',event,'\n', field,'\n', detalleCobro.value[key])
+
+  if (typeof event.value === 'object') {
+
+    const {originalEvent} = event;
+    if (originalEvent) {
+      const {code, type} = event.originalEvent;
+
+      if (code === 'Enter' || type === 'click') {//  SE REQUIERE SETEAR LAS UNIDADES POR CAJA(uC), PRECIO LISTA
+        const {key} = field;
+        const {cant_caja, precio_lista, description} = event.value
+        detalleCobro.value[key].uC = cant_caja;
+        detalleCobro.value[key].pL = precio_lista;
+
+        showToast('info', 'Código añadido', `Se añadió ${description} al renglón correctamente.`, 2000)
+        console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
+      }
+
     }
-    // const keyI = detalleCobro.value.length
-    // detalleCobro.value.push( {
-    //   key: keyI,
-    //   code: "",
-    //   uC:1,
-    //   salCj: 0,
-    //   salPz: 0,
-    //   salTotal: 0,
-    //   regCj: 0,
-    //   regPz: 0,
-    //   regTotal: 0,
-    //   venta: 0,
-    //   saldo: 0
-    // })
   }
-  console.log('selectOne', event.value);
 };
 const onChange = (data) => {
   console.log('onCgange', data);
   setValue(data)
 };
+
+const handleBlurInputNumber = (event, index, field) => {
+  const {uC} = detalleCobro.value[index];
+  console.log('handleBlurInputNumber->', event, index, field, detalleCobro.value[index])
+  switch (field) {
+    case 'salCj':
+    case 'salPz':
+      const {salCj, salPz} = detalleCobro.value[index];
+      console.log(uC, salCj, salPz)
+      detalleCobro.value[index].salTotal = (uC * salCj) + salPz;
+      break
+    case 'regCj':
+    case 'regPz':
+      const {regCj, regPz} = detalleCobro.value[index];
+      const totalReg = (uC * regCj) + regPz;
+      detalleCobro.value[index].regTotal = totalReg
+      if (totalReg > 0) {
+        if(!detalleCobro.value[index + 1])
+           detalleCobro.value.push({
+          key: index + 1,
+          code: "",
+          uC: 1,
+          pL: 0,
+          salCj: 0,
+          salPz: 0,
+          salTotal: 0,
+          regCj: 0,
+          regPz: 0,
+          regTotal: 0,
+          venta: 0,
+          saldo: 0
+        })
+        const {salTotal, regTotal, pL}  = detalleCobro.value[index];
+        const venta   = salTotal - regTotal;
+        const saldo = venta * pL;
+
+
+        detalleCobro.value[index].venta = venta;
+        detalleCobro.value[index].saldo = saldo;
+
+
+      }
+      console.log(uC, regCj, regPz)
+      break
+    default:
+      console.log('default case')
+  }
+}
 
 const searchCode = (event) => {
   setTimeout(() => {
@@ -164,8 +196,6 @@ const searchCode = (event) => {
   }, 10);
   // filteredProducts.value = filtered;
 };
-
-
 
 
 </script>
@@ -183,48 +213,73 @@ const searchCode = (event) => {
           </span>
       </div>
       <div class="field col-6 md:col-4 pt-2">
-        <p style=" color: grey;">
+        <p style="color: grey;">
           {{ value9?.name ? 'repartidor: ' + value9?.name : 'Selecciona la ruta' }}
-
         </p>
       </div>
     </div>
 
     <h5 class="mt-0">Captura de productos</h5>
+    <Toast/>
 
-    <DataTable :value="detalleCobro" showGridlines @cell-edit-complete="onCellEditComplete"
+    <DataTable :value="detalleCobro" showGridlines class="p-datatable-sm" @cell-edit-complete="onCellEditComplete"
                tableClass="editable-cells-table">
       <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
         <template #body="{ data, field }">
           <template v-if="field === 'code'">
-            <AutoComplete :id="`${field}-${data.index}`"
+            <AutoComplete :id="`${field}-${data.key}`"
                           @complete="searchCode"
                           @change="selectOne($event, data)"
                           v-model="data[field]"
                           class="p-autocomplete-sm"
                           optionLabel="code"
-                          :suggestions="filteredProducts" :delay="100" selectOnFocus force-selection complete-on-focus
-                          autoOptionFocus selectionMessage="selection message" emptySelectionMessage="empty selection"
+                          :suggestions="filteredProducts" :delay="100"  selectionMessage="Mensaje de seleccion" emptySelectionMessage="No se encontró"
                           searchMessage="search msj" aria-labelledby="codeSearch">
               <template #option="slotProps">
                 <div class="flex align-items-baseline  align-options-center">
-                  <b class="mr-2">{{ slotProps.option.code }}</b> <small class="text-mutted"> {{ slotProps.option.description }}</small>
+                  <b class="mr-2">{{ slotProps.option.code }}</b> <small class="text-mutted">
+                  {{ slotProps.option.description }}</small>
 
                 </div>
               </template>
             </AutoComplete>
           </template>
-          <template v-else-if="['venta', 'saldo'].includes(field)">
-            <InputNumber :id="`${field}${data.index}`" readonly type="decimal" class="p-inputnumber-sm "
-                         v-model="data[field]" mode="currency"
-                         :disabled="['salTotal', 'regTotal'].includes(field)" currency="USD" locale="en-US"/>
-          </template>
-          <template v-else>
 
-            <InputNumber type="decimal" class="p-inputnumber-sm " v-model="data[field]"
-                         :disabled="['salTotal', 'regTotal'].includes(field)"/>
+
+          <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
+          <template v-else-if="['saldo'].includes(field)">
+            <InputNumber :id="`${field}${data.key}`" readonly type="decimal" class="p-inputnumber-sm "
+                         v-model="data[field]" mode="currency"
+                         currency="USD" locale="en-US"/>
+          </template>
+
+          <!--SALIDAS-->
+          <template v-else-if="['salCj', 'salPz'].includes(field)">
+            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"
+                         :min="0"
+                         v-model="data[field]"
+                         :disabled="data['pL'] === 0"/>
+          </template>
+
+          <!--REGRESOS-->
+          <template v-else-if="['regCj', 'regPz'].includes(field)">
+            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"
+                         :min="0"
+                         v-model="data[field]"
+                         :disabled="data['salTotal'] === 0"/>
+
+          </template>
+          <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
+          <template v-else>
+            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"
+                         :min="0"
+                         v-model="data[field]"
+                         readonly
+                         :disabled="data['pL'] === 0"
+            />
           </template>
         </template>
+
         <!--        <template #editor="{ data, field }">-->
         <!--          <template v-if="field === 'code'">-->
         <!--            <AutoComplete @complete="searchCode" v-model="data[field]"  class="p-autocomplete-sm" optionLabel="code"-->
@@ -259,7 +314,7 @@ const searchCode = (event) => {
   padding: 0.2rem 0.2rem !important;
   display: contents;
 
-  .p-inputtext{
+  .p-inputtext {
 
     width: 17em;
   }

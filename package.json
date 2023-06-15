@@ -8,6 +8,7 @@
     },
     "dependencies": {
         "chart.js": "3.3.2",
+        "magic.css": "^1.4.8",
         "pinia": "^2.0.35",
         "primeflex": "^3.2.1",
         "primeicons": "^6.0.1",

@@ -18,7 +18,7 @@ setTimeout(() => {
 
 <style scoped>
 .fondo {
-    background: azure;
+    background: lightgrey;
     width: 100vw;
     z-index: 1000;
     height: 100vh;

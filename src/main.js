@@ -104,6 +104,9 @@ import BlockViewer from '@/components/BlockViewer.vue';
 import { createPinia } from 'pinia'
 
 import '@/assets/styles.scss';
+
+import './assets/themes/themes/tailwind/tailwind-light/theme.css';
+
 import App from './App.vue';
 const app = createApp(App);
 

@@ -1,10 +1,10 @@
-$primaryColor: #4F46E5 !default;
-$primaryDarkColor: #4338CA !default;
-$primaryDarkerColor: #3730A3 !default;
+$primaryColor: #e5464b !default;
+$primaryDarkColor: #ca3838 !default;
+$primaryDarkerColor: #a33030 !default;
 $primaryTextColor: #ffffff !default;
 
 $highlightBg: #EEF2FF !default;
-$highlightTextColor: #312E81 !default;
+$highlightTextColor: #812e2e !default;
 $highlightFocusBg: #E0E7FF !default;
 
 $colors: (
@@ -58,7 +58,7 @@ $scaleSM:0.875 !default;
 $scaleLG:1.25 !default;
 
 //focus
-$focusOutlineColor:#6366F1 !default;
+$focusOutlineColor: #f16363 !default;
 $focusOutline:0 none !default;
 $focusOutlineOffset:0 !default;
 $focusShadow:0 0 0 1px $focusOutlineColor !default;

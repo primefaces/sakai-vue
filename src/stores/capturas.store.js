@@ -7,6 +7,7 @@ const baseUrl = `https://api-sello.herokuapp.com/`;
 export const useCaptuaraStore = defineStore("capturas", {
     state: () => ({
         products: json,
+        rutas:[],
         procuct: {},
         salidaCajas: 0,
         salidaPiezas: 0,
@@ -16,6 +17,9 @@ export const useCaptuaraStore = defineStore("capturas", {
     }),
     getters: {
 
+        getRutas(state){
+          return state.rutas;
+        },
         getProducts(state){
           return state.products;
         },
@@ -111,6 +115,21 @@ export const useCaptuaraStore = defineStore("capturas", {
                 let data = await fetchWrapper.get(`${baseUrl}${frgm}`);
                 // console.log(s)
                 this.products = data
+            } catch (error) {
+                this.errord = { error };
+            }
+            finally {
+                this.loading = false;
+                // console.log(this.catalogos)
+            }
+        },
+        async setRutas(frgm) {
+            this.loading = true;
+
+            try {
+                let data = await fetchWrapper.get(`${baseUrl}${frgm}`);
+                // console.log(s)
+                this.rutas = data
             } catch (error) {
                 this.errord = { error };
             }

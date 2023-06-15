@@ -54,13 +54,14 @@ let detalleCobro = ref([
     saldo: 0
   }
 ])
-const value9 = ref(null);
+const rutaSeleccionada = ref(null);
 
 onMounted(() => {
   fetchCatalogos()
 });
 const fetchCatalogos = () => {
   store.setProducts('productos');
+  store.setRutas('rutas');
 }
 
 /**
@@ -71,10 +72,50 @@ const showToast = (severity, summary, detail, life) => {
   toast.add({severity, summary, detail, life});
 }
 
+const formatoMoneda = (valor) => {
+  return Number(valor).toLocaleString("es-MX", {
+    style: "currency",
+    currency: "MXN"
+  });
+};
 
+const getTotalVenta = () => {
+  return detalleCobro.value.map(({saldo}) => {
+    return saldo
+  }).reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0).toLocaleString("es-MX", {
+    style: "currency",
+    currency: "MXN"
+  });
+}
+const getPiezasSalida = () => {
+  return detalleCobro.value.map(({salTotal}) => {
+    return salTotal
+  }).reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0);
+}
+const getVentas = () => {
+  return detalleCobro.value.map(({venta}) => {
+    return venta
+  }).reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0);
+}
+
+
+const getPorcentajeVendido = () => {
+  const serie = detalleCobro.value.map(({salTotal, venta}) => {
+    return ((Number(venta) * 100) / Number(salTotal)) | 0
+  }).filter(cob => cob > 0);
+  return serie.length > 0 ? (serie.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0) / serie.length) : 0
+}
 const changeRuta = (event) => {
-  console.log(event.value.code);
-  value9.value = {name: 'Pepe', code: '2'}
+  rutaSeleccionada.value = event.value
+  console.log(event.value);
 }
 
 
@@ -110,6 +151,7 @@ const isPositiveInteger = (val) => {
 };
 
 const selectOne = (event, field) => {
+  console.log('selectOne', event, field)
 
   if (typeof event.value === 'object') {
 
@@ -119,9 +161,10 @@ const selectOne = (event, field) => {
 
       if (code === 'Enter' || type === 'click') {//  SE REQUIERE SETEAR LAS UNIDADES POR CAJA(uC), PRECIO LISTA
         const {key} = field;
-        const {cant_caja, precio_lista, description} = event.value
+        const {cant_caja, precio_lista, description, code} = event.value
         detalleCobro.value[key].uC = cant_caja;
         detalleCobro.value[key].pL = precio_lista;
+        detalleCobro.value[key].code.nameCode = `[${code}] ${description} caja X${cant_caja}`;
 
         showToast('info', 'Código añadido', `Se añadió ${description} al renglón correctamente.`, 2000)
         console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
@@ -134,6 +177,10 @@ const onChange = (data) => {
   console.log('onCgange', data);
   setValue(data)
 };
+const handleChangeNumber = (e) => {
+  console.log('onCgange', e);
+  // setValue(data)
+};
 
 const handleBlurInputNumber = (event, index, field) => {
   const {uC} = detalleCobro.value[index];
@@ -143,6 +190,8 @@ const handleBlurInputNumber = (event, index, field) => {
     case 'salPz':
       const {salCj, salPz} = detalleCobro.value[index];
       console.log(uC, salCj, salPz)
+      console.log(`${field}${index}`);
+      document.getElementById(`${field}${index}`)?.toggleClass('perspectiveUpReturn');
       detalleCobro.value[index].salTotal = (uC * salCj) + salPz;
       break
     case 'regCj':
@@ -151,23 +200,23 @@ const handleBlurInputNumber = (event, index, field) => {
       const totalReg = (uC * regCj) + regPz;
       detalleCobro.value[index].regTotal = totalReg
       if (totalReg > 0) {
-        if(!detalleCobro.value[index + 1])
-           detalleCobro.value.push({
-          key: index + 1,
-          code: "",
-          uC: 1,
-          pL: 0,
-          salCj: 0,
-          salPz: 0,
-          salTotal: 0,
-          regCj: 0,
-          regPz: 0,
-          regTotal: 0,
-          venta: 0,
-          saldo: 0
-        })
-        const {salTotal, regTotal, pL}  = detalleCobro.value[index];
-        const venta   = salTotal - regTotal;
+        if (!detalleCobro.value[index + 1])
+          detalleCobro.value.push({
+            key: index + 1,
+            code: "",
+            uC: 1,
+            pL: 0,
+            salCj: 0,
+            salPz: 0,
+            salTotal: 0,
+            regCj: 0,
+            regPz: 0,
+            regTotal: 0,
+            venta: 0,
+            saldo: 0
+          })
+        const {salTotal, regTotal, pL} = detalleCobro.value[index];
+        const venta = salTotal - regTotal;
         const saldo = venta * pL;
 
 
@@ -202,24 +251,28 @@ const searchCode = (event) => {
 
 <template>
   <div class="card">
-    <h5>Captura de venta</h5>
-    <div class="grid p-fluid mt-3 align-items-end">
-      <div class="field col-6 md:col-4">
+
+    <div class="grid p-fluid mt-3 align-items-center">
+      <div class="field col-6 md:col-8">
+        <h5>Captura de venta</h5>
+      </div>
+
+      <div class="field text-right pb-2 col-6 md:col-2 p-2">
+        <p style="color: grey;">
+          {{ rutaSeleccionada?.no_ruta ? '' + rutaSeleccionada?.descripcion : 'Selecciona la ruta' }}
+        </p>
+      </div>
+      <div class="field  col-6 md:col-2">
           <span class="p-float-label">
-            <Dropdown class="p-inputtext-sm " @change="changeRuta" id="ruta" :options="rutas"
-                      optionLabel="name">
+            <Dropdown class="p-inputtext-sm " :model-value="rutaSeleccionada" @change="changeRuta" id="ruta"
+                      :options="store.getRutas"
+                      optionLabel="no_ruta">
             </Dropdown>
             <label for="ruta">Ruta</label>
           </span>
       </div>
-      <div class="field col-6 md:col-4 pt-2">
-        <p style="color: grey;">
-          {{ value9?.name ? 'repartidor: ' + value9?.name : 'Selecciona la ruta' }}
-        </p>
-      </div>
     </div>
 
-    <h5 class="mt-0">Captura de productos</h5>
     <Toast/>
 
     <DataTable :value="detalleCobro" showGridlines class="p-datatable-sm" @cell-edit-complete="onCellEditComplete"
@@ -232,8 +285,9 @@ const searchCode = (event) => {
                           @change="selectOne($event, data)"
                           v-model="data[field]"
                           class="p-autocomplete-sm"
-                          optionLabel="code"
-                          :suggestions="filteredProducts" :delay="100"  selectionMessage="Mensaje de seleccion" emptySelectionMessage="No se encontró"
+                          optionLabel="nameCode"
+                          :suggestions="filteredProducts" :delay="100" selectionMessage="Mensaje de seleccion"
+                          emptySelectionMessage="No se encontró"
                           searchMessage="search msj" aria-labelledby="codeSearch">
               <template #option="slotProps">
                 <div class="flex align-items-baseline  align-options-center">
@@ -248,14 +302,18 @@ const searchCode = (event) => {
 
           <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
           <template v-else-if="['saldo'].includes(field)">
-            <InputNumber :id="`${field}${data.key}`" readonly type="decimal" class="p-inputnumber-sm "
-                         v-model="data[field]" mode="currency"
-                         currency="USD" locale="en-US"/>
+            <span>
+              <div :id="`${field}${data.key}`" class="container-digits slideDown">
+              {{ formatoMoneda(data[field]) }}
+
+              </div>
+            </span>
           </template>
 
           <!--SALIDAS-->
           <template v-else-if="['salCj', 'salPz'].includes(field)">
-            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"
+            <InputNumber type="decimal" @update:modelValue="handleBlurInputNumber($event,data.key, field)"
+                         class="p-inputnumber-sm"
                          :min="0"
                          v-model="data[field]"
                          :disabled="data['pL'] === 0"/>
@@ -263,20 +321,27 @@ const searchCode = (event) => {
 
           <!--REGRESOS-->
           <template v-else-if="['regCj', 'regPz'].includes(field)">
-            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"
+            <InputNumber type="decimal" @update:modelValue="handleBlurInputNumber($event,data.key, field)"
+                         class="p-inputnumber-sm"
                          :min="0"
+                         :max="field === 'regCj' ? data.salCj :data.salPz"
                          v-model="data[field]"
                          :disabled="data['salTotal'] === 0"/>
 
           </template>
           <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
           <template v-else>
-            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"
-                         :min="0"
-                         v-model="data[field]"
-                         readonly
-                         :disabled="data['pL'] === 0"
-            />
+            <span>
+              <div :id="`${field}${data.key}`" class="container-digits slideDown">
+              {{ data[field] }}
+              </div>
+            </span>
+            <!--            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"-->
+            <!--                         :min="0"-->
+            <!--                         v-model="data[field]"-->
+            <!--                         readonly-->
+            <!--                         :disabled="['salTotal', 'regTotal'].includes( field) ||  data['pL'] === 0"-->
+            <!--            />-->
           </template>
         </template>
 
@@ -305,6 +370,40 @@ const searchCode = (event) => {
         <!--        </template>-->
       </Column>
     </DataTable>
+    <Divider/>
+
+
+    <div class="grid justify-content-end align-content-center align-items-center px-4">
+      <div class="field text-center pb-2 p-2">
+        <p class="m-0 text-gray-600">Salidas</p>
+        <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
+
+        <h3 class="m-0 mt-1">{{ getPiezasSalida() }}</h3><small class="text-gray-500">Pzas</small>
+        </p>
+      </div>
+      <Divider layout="vertical" class="m-3" /><div class="field text-center pb-2 p-2">
+        <p class="m-0 text-gray-600">Venta</p>
+      <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
+
+        <h3 class="m-0 mt-1">{{ getVentas() }} </h3> <small class="text-gray-500"> Pzas</small>
+      </p>
+      </div>
+      <Divider layout="vertical" class="m-3" /><div class="field text-center pb-2 p-2">
+        <p class="m-0 text-gray-600">Carga vendida</p>
+      <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
+        <h3 class="m-0 mt-1">{{ getPorcentajeVendido() }}</h3><small class="text-gray-500">%</small>
+      </p>
+      </div>
+      <Divider layout="vertical" class="m-3" />
+      <div class="field text-center py-2">
+
+        <p class="m-0 text-gray-600">Total de venta</p>
+        <h3 class="m-0 mt-1">{{ getTotalVenta() }}</h3>
+      </div>
+      <Divider layout="vertical" class="m-3" />
+      <Button label="Primary" raised >Guardar registro</Button>
+    </div>
+
   </div>
 </template>
 
@@ -315,10 +414,9 @@ const searchCode = (event) => {
   display: contents;
 
   .p-inputtext {
-
-    width: 17em;
+    //background: #0aa9f2;
+    width: 100%;
   }
-
 }
 
 ::v-deep(.editable-cells-table td .p-inputnumber) {
@@ -328,7 +426,38 @@ const searchCode = (event) => {
 
 ::v-deep(.editable-cells-table td ) {
   padding: 0.2rem 0.2rem !important;
+  //background:blanchedalmond;
+
+
 }
 
+::v-deep(.editable-cells-table td:first-of-type ) {
+  padding: 0.2rem 0.2rem !important;
+  //background:grey;
+  width: 40%;
+}
+
+::v-deep(.p-inputtext ) {
+  margin: 0;
+  width: 5em;
+  max-width: 100%;
+  padding: 0.55rem 0.75rem;
+
+}
+
+::v-deep(.p-datatable-table) {
+
+  border-spacing: 0px;
+  width: 100%;
+  max-width: 100%;
+}
+
+
+.container-digits {
+  margin: 0;
+  width: 6em;
+  max-width: 100%;
+  padding: 0.75rem 0.75rem;
+}
 
 </style>

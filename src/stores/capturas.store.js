@@ -1,13 +1,18 @@
 import {defineStore} from "pinia";
 import json from "./../views/utilities/products.json";
 import {fetchWrapper} from "@/helpers";
-// const baseUrl = `http://localhost:3000/`;
-const baseUrl = `https://api-sello.herokuapp.com/`;
+
+const baseUrl = `http://localhost:3000/`;
+// const baseUrl = `https://api-sello.herokuapp.com/`;
 
 export const useCaptuaraStore = defineStore("capturas", {
     state: () => ({
-        products: json,
-        rutas:[],
+        products: [],
+        rutas: [],
+        loading: false,
+        currentOperation:{},
+        operations:[],
+        repartidores: [],
         procuct: {},
         salidaCajas: 0,
         salidaPiezas: 0,
@@ -17,11 +22,17 @@ export const useCaptuaraStore = defineStore("capturas", {
     }),
     getters: {
 
-        getRutas(state){
-          return state.rutas;
+        getRutas(state) {
+            return state.rutas;
         },
-        getProducts(state){
-          return state.products;
+        isLoading(state) {
+            return state.loading;
+        },
+        getRepartidores(state) {
+            return state.repartidores;
+        },
+        getProducts(state) {
+            return state.products;
         },
         getActive(state) {
             return state.products.length;
@@ -33,11 +44,11 @@ export const useCaptuaraStore = defineStore("capturas", {
             return state.salidaPiezas;
         },
 
-        getProducto(state){
+        getProducto(state) {
             return state.procuct
         },
         getSalidaTotal(state) {
-            const { salidaPiezas, salidaCajas, product} = state;
+            const {salidaPiezas, salidaCajas, product} = state;
             if (!product) {
                 return 0;
             }
@@ -52,7 +63,7 @@ export const useCaptuaraStore = defineStore("capturas", {
             return state.regresoPiezas;
         },
         getRegresoTotal(state) {
-            const { regresoPiezas, regresoCajas, product } = state;
+            const {regresoPiezas, regresoCajas, product} = state;
 
             if (!product) {
                 return 0;
@@ -75,19 +86,20 @@ export const useCaptuaraStore = defineStore("capturas", {
             };
         },
         getVentaSaldoTotal(state) {
-            const { SalidaPiezas, SalidaCajas, RegresoPiezas, RegresoCajas, product } = state;
+            const {SalidaPiezas, SalidaCajas, RegresoPiezas, RegresoCajas, product} = state;
 
             if (!product) {
                 return 0;
             }
 
-            const { cant_caja, precio_lista } = product;
+            const {cant_caja, precio_lista} = product;
 
             const totalSalida = (SalidaPiezas + (SalidaCajas * cant_caja));
             const totalRegreso = (RegresoPiezas + (RegresoCajas * cant_caja));
 
             return (totalSalida + totalRegreso) * precio_lista;
         },
+
         async searchCode(event) {
             if (!event.query.trim().length) {
                 return this.products.slice(0, 4);
@@ -113,15 +125,25 @@ export const useCaptuaraStore = defineStore("capturas", {
 
             try {
                 let data = await fetchWrapper.get(`${baseUrl}${frgm}`);
-                // console.log(s)
-                this.products = data
+                this.products = data.map(d => ({...d, nameCode: `[${d.code}] ${d.description.trim()}`}));
+                // console.log(this.products)
+                // this.products = data.map(d => Object.assign(d, {nameCode: `[${d.code}] ${d.description} caja X${d.cant_caja}`}))
             } catch (error) {
-                this.errord = { error };
-            }
-            finally {
+                this.errord = {error};
+            } finally {
                 this.loading = false;
                 // console.log(this.catalogos)
             }
+        },
+        quitProd(product) {
+                const i = this.products.indexOf(product)
+            // console.log(                    this.products[i])
+            this.products.splice(i,1)
+            //
+            // console.log('new length qui', this.products.length)
+        },
+        addProd(product) {
+            this.products.unshift(product)// console.log('new length add', this.products.unshift(product))
         },
         async setRutas(frgm) {
             this.loading = true;
@@ -131,10 +153,50 @@ export const useCaptuaraStore = defineStore("capturas", {
                 // console.log(s)
                 this.rutas = data
             } catch (error) {
-                this.errord = { error };
-            }
-            finally {
+                this.errord = {error};
+            } finally {
                 this.loading = false;
+                // console.log(this.catalogos)
+            }
+        },
+        async setRepartidores(frgm) {
+            // console.log(' setRepartidores')
+            this.loading = true;
+
+            try {
+                let data = await fetchWrapper.get(`${baseUrl}${frgm}`);
+                // console.log(data)|
+                this.repartidores = data
+            } catch (error) {
+                // console.log(error)
+                this.errord = {error};
+            } finally {
+                this.loading = false;
+                // console.log(this.catalogos)
+            }
+        },
+        async saveOperation(operation) {
+            this.loading = true;
+            console.log(operation)
+            try {
+                let {data} = await fetchWrapper.post(`${baseUrl}operations/complete`, operation);
+                console.log('-',data)
+                let resp
+                if(data){
+                    resp = await fetchWrapper.get(`${baseUrl}operations/${data}`);
+                }
+                else
+                    throw new Error('No se guardo')
+                    console.log(resp)
+                return true
+            } catch (error) {
+                this.errord = {error};
+                console.log(error)
+            } finally {
+                setTimeout(()=>{
+                this.loading = false;
+                    return true
+                }, 2000)
                 // console.log(this.catalogos)
             }
         },

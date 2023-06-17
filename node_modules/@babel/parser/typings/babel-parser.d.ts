@@ -26,7 +26,8 @@ type Plugin =
   | "importMeta"
   | "jsx"
   | "logicalAssignment"
-  | "importAssertions"
+  | "importAssertions" // deprecated
+  | "importAttributes"
   | "importReflection"
   | "moduleBlocks"
   | "moduleStringNames"
@@ -38,7 +39,7 @@ type Plugin =
   | "partialApplication"
   | "placeholders"
   | "privateIn" // Enabled by default
-  | "regexpUnicodeSets"
+  | "regexpUnicodeSets" // Enabled by default
   | "throwExpressions"
   | "topLevelAwait"
   | "v8intrinsic"
@@ -47,6 +48,7 @@ type Plugin =
 type ParserPluginWithOptions =
   | ["decorators", DecoratorsPluginOptions]
   | ["estree", { classFeatures?: boolean }]
+  | ["importAttributes", { deprecatedAssertSyntax: boolean }]
   // @deprecated
   | ["moduleAttributes", { version: "may-2020" }]
   | ["pipelineOperator", PipelineOperatorPluginOptions]
@@ -122,6 +124,12 @@ interface ParserOptions {
    */
   allowReturnOutsideFunction?: boolean;
 
+  /**
+   * By default, new.target use is not allowed outside of a function or class.
+   * Set this to true to accept such code.
+   */
+  allowNewTargetOutsideFunction?: boolean;
+
   allowSuperOutsideMethod?: boolean;
 
   /**
@@ -129,6 +137,12 @@ interface ParserOptions {
    * Set this to true to allow export statements to reference undeclared variables.
    */
   allowUndeclaredExports?: boolean;
+
+  /**
+   * By default, Babel parser JavaScript code according to Annex B syntax.
+   * Set this to `false` to disable such behavior.
+   */
+  annexB?: boolean;
 
   /**
    * By default, Babel attaches comments to adjacent AST nodes.

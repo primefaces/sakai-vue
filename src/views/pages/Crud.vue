@@ -102,6 +102,7 @@ watch(
             dataKey="id"
             :rowHover="true"
             :key="currentP.key"
+            scrollable scrollHeight="10%"
             tableStyle="min-width: 50rem"
             :loading="store.isLoading">
           <template #empty> {{ currentP.title }} no tiene registros.</template>

@@ -10,6 +10,7 @@ const model = ref([
         items: [
             { label: 'Mi día', icon: 'pi pi-fw pi-home', to: '/' },
             { label: 'Capturar', icon: 'pi pi-fw pi-id-card', to: '/uikit/floatlabel' },
+            { label: 'Reportes', icon: 'pi pi-fw pi-id-card', to: '/uikit/report' },
         ]
     },
     {

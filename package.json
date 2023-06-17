@@ -9,10 +9,12 @@
     "dependencies": {
         "chart.js": "3.3.2",
         "magic.css": "^1.4.8",
+        "moment": "^2.29.4",
         "pinia": "^2.0.35",
         "primeflex": "^3.2.1",
         "primeicons": "^6.0.1",
         "primevue": "3.26.1",
+        "vee-validate": "^4.9.6",
         "vue": "^3.2.41",
         "vue-router": "^4.2.1"
     },

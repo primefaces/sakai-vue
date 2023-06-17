@@ -2,11 +2,11 @@
 import 'vite/modulepreload-polyfill'
 import { useFlagsStore } from '@/stores'
 const store = useFlagsStore()
-console.log(store);
+// console.log(store);
 setTimeout(() => {
     store.setShowSplash(false);
     console.log('active', store.isShowSplash);
-}, 3000);
+}, 2000);
 </script>
 
 <template>
@@ -31,7 +31,7 @@ setTimeout(() => {
 }
 
 .animacionFondo {
-    animation-duration: 3s;
+    animation-duration:2s;
     animation-delay: .2s;
     animation-iteration-count: 1;
     animation-name: animFondo;
@@ -40,7 +40,7 @@ setTimeout(() => {
 }
 
 .animacionLogo {
-    animation-duration: 3s;
+    animation-duration:2s;
     animation-delay: .2s;
     animation-iteration-count: 1;
     visibility: hidden;

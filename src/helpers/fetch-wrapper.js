@@ -11,7 +11,7 @@ function request(method) {
     return (url, body) => {
         const requestOptions = {
             method,
-            // headers: authHeader(url)
+            headers: authHeader(url)
         };
         if (body) {
             requestOptions.headers['Content-Type'] = 'application/json';
@@ -23,7 +23,7 @@ function request(method) {
 
 // helper functions
 
-// function authHeader(url) {
+function authHeader(url) {
 //     // return auth header with jwt if user is logged in and request is to the api url
 //     const { user } = useAuthStore();
 //     const isLoggedIn = !!user?.token;
@@ -31,9 +31,9 @@ function request(method) {
 //     if (isLoggedIn && isApiUrl) {
 //         return { Authorization: `Bearer ${user.token}` };
 //     } else {
-//         return {};
+        return {};
 //     }
-// }
+}
 
 async function handleResponse(response) {
     const isJson = response.headers?.get('content-type')?.includes('application/json');

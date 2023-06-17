@@ -35,6 +35,7 @@ import Dialog from 'primevue/dialog';
 import DialogService from 'primevue/dialogservice';
 import Divider from 'primevue/divider';
 import Dock from 'primevue/dock';
+// import  from 'vee-validate';
 import Dropdown from 'primevue/dropdown';
 import DynamicDialog from 'primevue/dynamicdialog';
 import Fieldset from 'primevue/fieldset';
@@ -99,13 +100,15 @@ import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
+
 import CodeHighlight from '@/components/CodeHighlight.vue';
 import BlockViewer from '@/components/BlockViewer.vue';
 import { createPinia } from 'pinia'
 
 import '@/assets/styles.scss';
+import FocusTrap from 'primevue/focustrap';
 
-import './assets/themes/themes/tailwind/tailwind-light/theme.css';
+import './assets/layout/styles/theme/tailwind-light/theme.css';
 
 import App from './App.vue';
 const app = createApp(App);
@@ -117,6 +120,7 @@ app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
 
+
 app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);
 app.directive('ripple', Ripple);
@@ -124,6 +128,7 @@ app.directive('styleclass', StyleClass);
 
 app.component('CodeHighlight', CodeHighlight);
 app.component('BlockViewer', BlockViewer);
+app.directive('focustrap', FocusTrap);
 
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);

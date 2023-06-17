@@ -61,7 +61,7 @@ onMounted(() => {
 });
 const fetchCatalogos = () => {
   store.setProducts('productos');
-  store.setRutas('rutas');
+  store.setRepartidores('repartidores');
 }
 
 /**
@@ -96,12 +96,22 @@ const getPiezasSalida = () => {
     return accumulator + currentValue;
   }, 0);
 }
+const getUtilidad = () => {
+
+}
+const getComisiones = () => {
+  return Number(detalleCobro.value.map(({comision}) => {
+    return comision
+  }).reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0).toFixed(8));
+}
 const getVentas = () => {
-  return detalleCobro.value.map(({venta}) => {
+  return Number(detalleCobro.value.map(({venta}) => {
     return venta
   }).reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
-  }, 0);
+  }, 0).toFixed(8));
 }
 
 
@@ -111,7 +121,7 @@ const getPorcentajeVendido = () => {
   }).filter(cob => cob > 0);
   return serie.length > 0 ? (serie.reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
-  }, 0) / serie.length) : 0
+  }, 0) / serie.length).toFixed(2) : 0
 }
 const changeRuta = (event) => {
   rutaSeleccionada.value = event.value
@@ -151,27 +161,43 @@ const isPositiveInteger = (val) => {
 };
 
 const selectOne = (event, field) => {
-  console.log('selectOne', event, field)
 
+  const {key} = field;
   if (typeof event.value === 'object') {
 
     const {originalEvent} = event;
     if (originalEvent) {
+      console.log('selectOne', event, field, typeof event.value)
       const {code, type} = event.originalEvent;
 
-      if (code === 'Enter' || type === 'click') {//  SE REQUIERE SETEAR LAS UNIDADES POR CAJA(uC), PRECIO LISTA
-        const {key} = field;
+      if (['Enter', 'Tab'].includes(code) || type === 'click') {//  SE REQUIERE SETEAR LAS UNIDADES POR CAJA(uC), PRECIO LISTA
         const {cant_caja, precio_lista, description, code} = event.value
+
+
+        detalleCobro.value[key].uC = 0;
+        detalleCobro.value[key].pL = 0;
+        detalleCobro.value[key].salCj = 0;
+        detalleCobro.value[key].salPz = 0;
+        detalleCobro.value[key].salTotal = 0;
+        detalleCobro.value[key].regCj = 0;
+        detalleCobro.value[key].regPz = 0;
+        detalleCobro.value[key].regTotal = 0;
+        detalleCobro.value[key].venta = 0;
+        detalleCobro.value[key].saldo = 0;
         detalleCobro.value[key].uC = cant_caja;
         detalleCobro.value[key].pL = precio_lista;
-        detalleCobro.value[key].code.nameCode = `[${code}] ${description} caja X${cant_caja}`;
-
+        filteredProducts.value = [...store.getProducts.slice(0, 5)]
+        // store.quitProd(event.value);
         showToast('info', 'Código añadido', `Se añadió ${description} al renglón correctamente.`, 2000)
-        console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
+        // console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
       }
 
     }
+  } else {
+    detalleCobro.value[key].uC = 0;
+    detalleCobro.value[key].pL = 0;
   }
+
 };
 const onChange = (data) => {
   console.log('onCgange', data);
@@ -184,13 +210,10 @@ const handleChangeNumber = (e) => {
 
 const handleBlurInputNumber = (event, index, field) => {
   const {uC} = detalleCobro.value[index];
-  console.log('handleBlurInputNumber->', event, index, field, detalleCobro.value[index])
   switch (field) {
     case 'salCj':
     case 'salPz':
       const {salCj, salPz} = detalleCobro.value[index];
-      console.log(uC, salCj, salPz)
-      console.log(`${field}${index}`);
       document.getElementById(`${field}${index}`)?.toggleClass('perspectiveUpReturn');
       detalleCobro.value[index].salTotal = (uC * salCj) + salPz;
       break
@@ -225,34 +248,115 @@ const handleBlurInputNumber = (event, index, field) => {
 
 
       }
-      console.log(uC, regCj, regPz)
+      // console.log(uC, regCj, regPz)
       break
     default:
       console.log('default case')
   }
 }
-
+const handleFocus = (e, inx) => {
+  const {sourceCapabilities, relatedTarget} = e
+  // console.log(e,value)
+  let {code} = detalleCobro.value[inx]
+  let noneValid = ['focus p-toast-icon-close p-link', 'focus p-inputtext p-component p-inputnumber-input'].includes(e.relatedTarget?.className)
+  // console.log('\tfocus', noneValid)
+  if (typeof code === "object" && sourceCapabilities && !noneValid) {
+    store.addProd(code)
+  }
+}
+const handleblur = (e, inx) => {
+  let {code} = detalleCobro.value[inx]
+  // console.log('\tblur',value,code)
+  if (typeof code === "object") {
+    store.quitProd(code)
+  }
+}
 const searchCode = (event) => {
-  setTimeout(() => {
-    if (!event.query.trim().length) {
-      filteredProducts.value = [];
-    } else {
-      filteredProducts.value = store.getProducts.filter(({code, description}) => {
-        return code.toLowerCase().startsWith(event.query.toLowerCase()) ||
-            description.toLowerCase().startsWith(event.query.toLowerCase())
-      });
-    }
-  }, 10);
-  // filteredProducts.value = filtered;
+  const {query} = event
+  if (!query.trim().length)
+    filteredProducts.value = store.getProducts.slice(0, 5);
+  else {
+    console.log('---')
+    filteredProducts.value = store.getProducts.filter(({code, description, nameCode}) => {
+      // console.log(nameCode, query)
+      return code.toLowerCase().startsWith(query?.toLowerCase()) ||
+          description.toLowerCase().startsWith(query?.toLowerCase()) ||
+          nameCode.toLowerCase().startsWith(query?.toLowerCase())
+    });
+  }
+};
+const onColReorder = () => {
+  toast.add({severity: 'success', summary: 'Column Reordered', life: 3000});
+};
+const onRowReorder = (event) => {
+  detalleCobro.value = event.value;
+  toast.add({severity: 'success', summary: 'Rows Reordered', life: 3000});
 };
 
+
+const saveOperation = async () => {
+  // console.log(rutaSeleccionada.value)
+  const comision = detalleCobro.value.map(({code, venta}) => {
+    console.log(code.comision, venta)
+    return code ? code.comision * venta : 0}).reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0)
+
+  const ventas = detalleCobro.value.map(({code, venta}) => {
+    console.log(code.precio_lista, venta)
+    return code ? code.precio_lista * venta : 0}).reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0)
+  console.log('------------',)
+  // let uitilidad = detalleCobro.value.map()
+  const body = {
+    repartidor: rutaSeleccionada.value.no_ruta,
+    utilidad: ventas * .2,
+    cobro: ventas,
+    comision: comision,
+    items: detalleCobro.value.filter(d => d.code).map(det => {
+      return {
+        code: det.code.code,
+        sCj: det.salCj,
+        sPz: det.salPz,
+        sTotalPz: det.salTotal,
+        rCj: det.regCj,
+        rPz: det.regPz,
+        rTotalPz: det.regTotal,
+        ventaPz: det.venta,
+        saldo: det.saldo,
+      }
+    })
+  }
+  await store.saveOperation(body)
+  console.log(body)
+  showToast('info', 'Operación guardada!', `Se guardaron los datos correctamente".`, 8000)
+  detalleCobro.value = [
+    {
+      key: 0,
+      code: "",
+      uC: 1,
+      pL: 0,
+      salCj: 0,
+      salPz: 0,
+      salTotal: 0,
+      regCj: 0,
+      regPz: 0,
+      regTotal: 0,
+      venta: 0,
+      saldo: 0
+    }
+  ]
+  rutaSeleccionada.value = undefined
+
+}
 
 </script>
 
 <template>
-  <div class="card">
+  <div class="card py-4">
 
-    <div class="grid p-fluid mt-3 align-items-center">
+    <div class="grid p-fluid align-items-center">
       <div class="field col-6 md:col-8">
         <h5>Captura de venta</h5>
       </div>
@@ -263,30 +367,36 @@ const searchCode = (event) => {
         </p>
       </div>
       <div class="field  col-6 md:col-2">
-          <span class="p-float-label">
-            <Dropdown class="p-inputtext-sm " :model-value="rutaSeleccionada" @change="changeRuta" id="ruta"
-                      :options="store.getRutas"
-                      optionLabel="no_ruta">
-            </Dropdown>
-            <label for="ruta">Ruta</label>
-          </span>
+        <div class="p-float-label">
+          <Dropdown class="p-inputtext-sm" :model-value="rutaSeleccionada" @change="changeRuta" id="ruta"
+                    :options="store.getRepartidores"
+                    optionLabel="no_ruta">
+          </Dropdown>
+          <label for="ruta">Ruta</label>
+        </div>
       </div>
     </div>
 
     <Toast/>
 
-    <DataTable :value="detalleCobro" showGridlines class="p-datatable-sm" @cell-edit-complete="onCellEditComplete"
+    <DataTable :value="detalleCobro" :reorderableColumns="true" @columnReorder="onColReorder" @rowReorder="onRowReorder"
+               showGridlines class="p-datatable-sm" scrollable scrollHeight="calc(100% - 500px)"
+               @cell-edit-complete="onCellEditComplete"
                tableClass="editable-cells-table">
+      <Column rowReorder headerStyle="width: 1rem" :reorderableColumn="false"/>
       <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
         <template #body="{ data, field }">
           <template v-if="field === 'code'">
             <AutoComplete :id="`${field}-${data.key}`"
                           @complete="searchCode"
                           @change="selectOne($event, data)"
+                          @focus="handleFocus($event, data.key)"
+                          @blur="handleblur($event, data.key)"
                           v-model="data[field]"
                           class="p-autocomplete-sm"
+                          autoOptionFocus
                           optionLabel="nameCode"
-                          :suggestions="filteredProducts" :delay="100" selectionMessage="Mensaje de seleccion"
+                          :suggestions="filteredProducts" :delay="50" selectionMessage="Mensaje de seleccion"
                           emptySelectionMessage="No se encontró"
                           searchMessage="search msj" aria-labelledby="codeSearch">
               <template #option="slotProps">
@@ -303,7 +413,7 @@ const searchCode = (event) => {
           <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
           <template v-else-if="['saldo'].includes(field)">
             <span>
-              <div :id="`${field}${data.key}`" class="container-digits slideDown">
+              <div :id="`${field}${data.key}`" class="container-digits price slideDown ">
               {{ formatoMoneda(data[field]) }}
 
               </div>
@@ -331,11 +441,9 @@ const searchCode = (event) => {
           </template>
           <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
           <template v-else>
-            <span>
-              <div :id="`${field}${data.key}`" class="container-digits slideDown">
-              {{ data[field] }}
-              </div>
-            </span>
+            <div :id="`${field}${data.key}`" class="container-digits slideDown">
+              {{ data[field] }} <small class="text-gray-400">pzas.</small>
+            </div>
             <!--            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"-->
             <!--                         :min="0"-->
             <!--                         v-model="data[field]"-->
@@ -378,30 +486,32 @@ const searchCode = (event) => {
         <p class="m-0 text-gray-600">Salidas</p>
         <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
 
-        <h3 class="m-0 mt-1">{{ getPiezasSalida() }}</h3><small class="text-gray-500">Pzas</small>
+          <h3 class="m-0 mt-1">{{ getPiezasSalida() }}</h3><small class="text-gray-500">Pzas</small>
         </p>
       </div>
-      <Divider layout="vertical" class="m-3" /><div class="field text-center pb-2 p-2">
+      <Divider layout="vertical" class="m-3"/>
+      <div class="field text-center pb-2 p-2">
         <p class="m-0 text-gray-600">Venta</p>
-      <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
+        <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
 
-        <h3 class="m-0 mt-1">{{ getVentas() }} </h3> <small class="text-gray-500"> Pzas</small>
-      </p>
+          <h3 class="m-0 mt-1">{{ getVentas() }} </h3> <small class="text-gray-500"> Pzas</small>
+        </p>
       </div>
-      <Divider layout="vertical" class="m-3" /><div class="field text-center pb-2 p-2">
+      <Divider layout="vertical" class="m-3"/>
+      <div class="field text-center pb-2 p-2">
         <p class="m-0 text-gray-600">Carga vendida</p>
-      <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
-        <h3 class="m-0 mt-1">{{ getPorcentajeVendido() }}</h3><small class="text-gray-500">%</small>
-      </p>
+        <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
+          <h3 class="m-0 mt-1">{{ getPorcentajeVendido() }}</h3><small class="text-gray-500">%</small>
+        </p>
       </div>
-      <Divider layout="vertical" class="m-3" />
+      <Divider layout="vertical" class="m-3"/>
       <div class="field text-center py-2">
 
         <p class="m-0 text-gray-600">Total de venta</p>
         <h3 class="m-0 mt-1">{{ getTotalVenta() }}</h3>
       </div>
-      <Divider layout="vertical" class="m-3" />
-      <Button label="Primary" raised >Guardar registro</Button>
+      <Divider layout="vertical" class="m-3"/>
+      <Button type="button" label="Guardar" icon="pi pi-spin pi-cog" :loading="store.isLoading" :disabled="detalleCobro.length < 2 || !rutaSeleccionada" @click="saveOperation" />
     </div>
 
   </div>
@@ -421,27 +531,45 @@ const searchCode = (event) => {
 
 ::v-deep(.editable-cells-table td .p-inputnumber) {
   display: grid;
-  padding: 0.2rem 0.2rem !important;
+  padding: 0.1rem 0.1rem !important;
 }
 
 ::v-deep(.editable-cells-table td ) {
-  padding: 0.2rem 0.2rem !important;
+  padding: 0rem 0rem !important;
   //background:blanchedalmond;
+  width: 7.5%;
+  min-width: 5em;
 
 
 }
 
-::v-deep(.editable-cells-table td:first-of-type ) {
-  padding: 0.2rem 0.2rem !important;
-  //background:grey;
-  width: 40%;
+::v-deep(.editable-cells-table td:first-of-type) {
+  width: 3rem !important;
+  min-width: 3em;
+  text-align: center;
+  cursor: move;
+  transition: all .3s ease;
+}
+
+::v-deep(.editable-cells-table td:nth-of-type(2) ) {
+  width: 40% !important;
+}
+
+::v-deep(.editable-cells-table td:first-of-type:hover ) {
+  color: var(--highlight-text-color);
+  background: var(--surface-50);
+}
+
+::v-deep(.p-datatable-scrollable > .p-datatable-wrapper ) {
+  position: relative;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 ::v-deep(.p-inputtext ) {
   margin: 0;
-  width: 5em;
+  width: 100%;
   max-width: 100%;
-  padding: 0.55rem 0.75rem;
+  padding: 0.3rem 0.75rem;
 
 }
 
@@ -455,9 +583,14 @@ const searchCode = (event) => {
 
 .container-digits {
   margin: 0;
-  width: 6em;
+  width: 7.5%;
+  min-width: 5em;
   max-width: 100%;
-  padding: 0.75rem 0.75rem;
+  //padding: 0rem 0.75rem;
+  font-weight: 600;
+  background: #f7fff7;
+  padding: 5.2px 5px;
+  width: auto;
 }
 
 </style>

@@ -108,7 +108,7 @@ import { createPinia } from 'pinia'
 import '@/assets/styles.scss';
 import FocusTrap from 'primevue/focustrap';
 
-import './assets/layout/styles/theme/tailwind-light/theme.css';
+// import './assets/layout/styles/theme/tailwind-light/theme.css';
 
 import App from './App.vue';
 const app = createApp(App);

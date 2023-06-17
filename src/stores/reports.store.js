@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 
 import { fetchWrapper } from '@/helpers';
 
-const baseUrl = `http://localhost:3000/`;
-// const baseUrl = `https://api-sello.herokuapp.com/`;
+// const baseUrl = `http://localhost:3000/`;
+const baseUrl = `https://api-sello.herokuapp.com/`;
 export const useReportStore = defineStore({
     id: 'report',
     state: () => ({

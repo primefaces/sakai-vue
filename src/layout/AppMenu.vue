@@ -158,6 +158,11 @@ const model = ref([
                 label: 'Nuxt Version',
                 url: 'https://github.com/primefaces/sakai-nuxt',
                 icon: 'pi pi-fw pi-star'
+            },
+            {
+              label: 'Laravel+Inertia+Vue Version',
+              url: 'https://github.com/naveedali8086/sakai-theme-laravel-inertia',
+              icon: 'pi pi-fw pi-star'
             }
         ]
     }

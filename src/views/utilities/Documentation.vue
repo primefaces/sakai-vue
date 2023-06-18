@@ -1,7 +1,10 @@
 <template>
     <div class="card">
         <h3>Documentation</h3>
-        <p class="bg-primary border-round p-3">This page covers the Vite version, for Nuxt 3 visit the <a href="https://github.com/primefaces/sakai-nuxt" class="font-bold bg-primary hover:underline">sakai-nuxt</a> repository instead.</p>
+        <p class="bg-primary border-round p-3">This page covers the Vite version, for Nuxt 3 visit the <a href="https://github.com/primefaces/sakai-nuxt" class="font-bold bg-primary hover:underline">sakai-nuxt</a> repository
+          and for Laravel+Inertia+Vue3 setup visit the
+          <a href="https://github.com/naveedali8086/sakai-theme-laravel-inertia" class="font-bold bg-primary hover:underline">Sakai theme setup for Laravel+Inertia+Vue3 app</a> repository instead.
+        </p>
         <h5>Getting Started</h5>
         <p>
             Sakai is an application template for Vue based on the <a href="https://github.com/vuejs/create-vue" class="font-medium text-primary hover:underline">create-vue</a>, the recommended way to start a <strong>Vite-powered</strong> Vue

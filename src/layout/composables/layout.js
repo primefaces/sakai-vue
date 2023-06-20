@@ -7,7 +7,7 @@ const layoutConfig = reactive({
     menuMode: 'static',
     theme: 'lara-light-indigo',
     scale: 14,
-    activeMenuItem: null
+    activeMenuItem: null,
 });
 
 const layoutState = reactive({
@@ -16,7 +16,7 @@ const layoutState = reactive({
     profileSidebarVisible: false,
     configSidebarVisible: false,
     staticMenuMobileActive: false,
-    menuHoverActive: false
+    menuHoverActive: false,
 });
 
 export function useLayout() {

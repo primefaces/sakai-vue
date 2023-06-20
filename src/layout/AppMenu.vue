@@ -6,9 +6,16 @@ import AppMenuItem from './AppMenuItem.vue';
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+        items: [{ label: 'Home', icon: 'pi pi-fw pi-home', to: '/' }],
     },
     {
+        label: 'Systems',
+        items: [
+            { label: 'FAIMS', icon: 'pi pi-fw pi-globe', url: 'http://192.168.1.6:8080', target: '_blank' },
+            { label: 'EULIMS', icon: 'pi pi-fw pi-globe', url: 'http://192.168.1.6:9090', target: '_blank' },
+        ],
+    },
+    /*{
         label: 'UI Components',
         items: [
             { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
@@ -26,22 +33,22 @@ const model = ref([
             { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/uikit/message' },
             { label: 'File', icon: 'pi pi-fw pi-file', to: '/uikit/file' },
             { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/charts' },
-            { label: 'Misc', icon: 'pi pi-fw pi-circle', to: '/uikit/misc' }
-        ]
+            { label: 'Misc', icon: 'pi pi-fw pi-circle', to: '/uikit/misc' },
+        ],
     },
     {
         label: 'Prime Blocks',
         items: [
             { label: 'Free Blocks', icon: 'pi pi-fw pi-eye', to: '/blocks', badge: 'NEW' },
-            { label: 'All Blocks', icon: 'pi pi-fw pi-globe', url: 'https://www.primefaces.org/primeblocks-vue', target: '_blank' }
-        ]
+            { label: 'All Blocks', icon: 'pi pi-fw pi-globe', url: 'https://www.primefaces.org/primeblocks-vue', target: '_blank' },
+        ],
     },
     {
         label: 'Utilities',
         items: [
             { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/utilities/icons' },
-            { label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: 'https://www.primefaces.org/primeflex/', target: '_blank' }
-        ]
+            { label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: 'https://www.primefaces.org/primeflex/', target: '_blank' },
+        ],
     },
     {
         label: 'Pages',
@@ -51,7 +58,7 @@ const model = ref([
             {
                 label: 'Landing',
                 icon: 'pi pi-fw pi-globe',
-                to: '/landing'
+                to: '/landing',
             },
             {
                 label: 'Auth',
@@ -60,41 +67,41 @@ const model = ref([
                     {
                         label: 'Login',
                         icon: 'pi pi-fw pi-sign-in',
-                        to: '/auth/login'
+                        to: '/auth/login',
                     },
                     {
                         label: 'Error',
                         icon: 'pi pi-fw pi-times-circle',
-                        to: '/auth/error'
+                        to: '/auth/error',
                     },
                     {
                         label: 'Access Denied',
                         icon: 'pi pi-fw pi-lock',
-                        to: '/auth/access'
-                    }
-                ]
+                        to: '/auth/access',
+                    },
+                ],
             },
             {
                 label: 'Crud',
                 icon: 'pi pi-fw pi-pencil',
-                to: '/pages/crud'
+                to: '/pages/crud',
             },
             {
                 label: 'Timeline',
                 icon: 'pi pi-fw pi-calendar',
-                to: '/pages/timeline'
+                to: '/pages/timeline',
             },
             {
                 label: 'Not Found',
                 icon: 'pi pi-fw pi-exclamation-circle',
-                to: '/pages/notfound'
+                to: '/pages/notfound',
             },
             {
                 label: 'Empty',
                 icon: 'pi pi-fw pi-circle-off',
-                to: '/pages/empty'
-            }
-        ]
+                to: '/pages/empty',
+            },
+        ],
     },
     {
         label: 'Hierarchy',
@@ -109,15 +116,15 @@ const model = ref([
                         items: [
                             { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
                             { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-                        ]
+                            { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' },
+                        ],
                     },
                     {
                         label: 'Submenu 1.2',
                         icon: 'pi pi-fw pi-bookmark',
-                        items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                    }
-                ]
+                        items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }],
+                    },
+                ],
             },
             {
                 label: 'Submenu 2',
@@ -128,17 +135,17 @@ const model = ref([
                         icon: 'pi pi-fw pi-bookmark',
                         items: [
                             { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' }
-                        ]
+                            { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' },
+                        ],
                     },
                     {
                         label: 'Submenu 2.2',
                         icon: 'pi pi-fw pi-bookmark',
-                        items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                    }
-                ]
-            }
-        ]
+                        items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }],
+                    },
+                ],
+            },
+        ],
     },
     {
         label: 'Get Started',
@@ -146,21 +153,21 @@ const model = ref([
             {
                 label: 'Documentation',
                 icon: 'pi pi-fw pi-question',
-                to: '/documentation'
+                to: '/documentation',
             },
             {
                 label: 'View Source',
                 icon: 'pi pi-fw pi-search',
                 url: 'https://github.com/primefaces/sakai-vue',
-                target: '_blank'
+                target: '_blank',
             },
             {
                 label: 'Nuxt Version',
                 url: 'https://github.com/primefaces/sakai-nuxt',
-                icon: 'pi pi-fw pi-star'
-            }
-        ]
-    }
+                icon: 'pi pi-fw pi-star',
+            },
+        ],
+    },*/
 ]);
 </script>
 
@@ -170,11 +177,6 @@ const model = ref([
             <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
-        <li>
-            <a href="https://www.primefaces.org/primeblocks-vue/#/" target="_blank">
-                <img src="/layout/images/banner-primeblocks.png" alt="Prime Blocks" class="w-full mt-3" />
-            </a>
-        </li>
     </ul>
 </template>
 

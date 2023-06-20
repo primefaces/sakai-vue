@@ -5,7 +5,7 @@ module.exports = {
     root: true,
     extends: ['plugin:vue/vue3-essential', 'eslint:recommended', '@vue/eslint-config-prettier'],
     parserOptions: {
-        ecmaVersion: 'latest'
+        ecmaVersion: 'latest',
     },
     rules: {
         'vue/multi-word-component-names': 'off',
@@ -13,8 +13,8 @@ module.exports = {
         'vue/component-tags-order': [
             'error',
             {
-                order: ['script', 'template', 'style']
-            }
-        ]
-    }
+                order: ['script', 'template', 'style'],
+            },
+        ],
+    },
 };

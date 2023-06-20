@@ -10,8 +10,8 @@ const router = createRouter({
             children: [
                 {
                     path: '/',
-                    name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
+                    name: 'portal',
+                    component: () => import('@/views/Portal.vue')
                 },
                 {
                     path: '/uikit/formlayout',

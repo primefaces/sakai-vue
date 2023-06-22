@@ -11,8 +11,14 @@ const model = ref([
     {
         label: 'Systems',
         items: [
-            { label: 'FAIMS', icon: 'pi pi-fw pi-globe', url: 'http://192.168.1.6:8080', target: '_blank' },
-            { label: 'EULIMS', icon: 'pi pi-fw pi-globe', url: 'http://192.168.1.6:9090', target: '_blank' },
+            { label: 'DMS', icon: 'pi pi-fw pi-globe', url: 'https://dms.dost9.ph', target: '_blank' },
+            { label: 'EULIMS', icon: 'pi pi-fw pi-globe', url: 'https://eulims.dost9.ph', target: '_blank' },
+            { label: 'FAIMS', icon: 'pi pi-fw pi-globe', url: 'https://faims2.dost9.ph', target: '_blank' },
+            { label: 'IMPRESSION', icon: 'pi pi-fw pi-globe', url: 'https://impression.dost9.ph', target: '_blank' },
+            { label: 'SCHOLARSHIP', icon: 'pi pi-fw pi-globe', url: 'https://scholarship.dost9.ph', target: '_blank' },
+            { label: 'SCIMS', icon: 'pi pi-fw pi-globe', url: 'https://scims.dost9.ph', target: '_blank' },
+            { label: 'TRACE', icon: 'pi pi-fw pi-globe', url: 'https://trace.dost9.ph', target: '_blank' },
+            { label: 'VRAMS', icon: 'pi pi-fw pi-globe', url: 'https://vrams.dost9.ph', target: '_blank' },
         ],
     },
     /*{

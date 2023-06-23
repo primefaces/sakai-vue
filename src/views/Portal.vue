@@ -8,7 +8,7 @@
                 </div>
                 <div class="text-700 text-md mb-6">
                     This portal serves as an online directory of web applications currently deployed to DOST-IX. <br />
-                    Select the web application you wish to access. (some applications may require login credentials - contact your system administrator if you don't have one).
+                    Select the web application you wish to access. (some applications may require login credentials - contact your <a href="mailto: dost9ict@gmail.com">System Administrator</a> if you don't have one).
                 </div>
                 <div class="grid">
                     <div class="col-12 md:col-4 mb-4 px-5">

@@ -132,6 +132,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/Empty.vue')
                 },
                 {
+                    path: '/pages/submenu/:title',
+                    name: 'submenu',
+                    component: () => import('@/views/pages/Submenu.vue')
+                },
+                {
                     path: '/pages/crud',
                     name: 'crud',
                     component: () => import('@/views/pages/Crud.vue')

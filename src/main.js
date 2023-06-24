@@ -109,7 +109,9 @@ import '@/assets/styles.scss';
 
 import FocusTrap from 'primevue/focustrap';
 
-// import './assets/layout/styles/theme/tailwind-light/theme.css';
+import '@/assets/themes/themes/mytheme/theme.css';
+
+
 
 import App from './App.vue';
 const app = createApp(App);

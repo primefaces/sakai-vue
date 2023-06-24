@@ -1,0 +1,17 @@
+/* Error: Undefined variable.
+ *    ,
+ * 13 |     "primary": $primaryColor
+ *    |                ^^^^^^^^^^^^^
+ *    '
+ *   _variables_light.scss 13:16  root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: 'Error: Undefined variable.\a    \2577 \a 13 \2502      "primary": $primaryColor\d\a    \2502                 ^^^^^^^^^^^^^\a    \2575 \a   _variables_light.scss 13:16  root stylesheet';
+}

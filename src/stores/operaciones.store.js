@@ -2,7 +2,10 @@ import { defineStore } from 'pinia';
 
 import { fetchWrapper } from '@/helpers';
 
-const baseUrl = `http://localhost:3000/operacions`;
+// const baseUrl = `http://localhost:3000/`;
+const baseUrl = `https://api-sello.herokuapp.com/`;
+
+
 export const useOperacionStore = defineStore({
     id: 'operacions',
     state: () => ({
@@ -16,7 +19,7 @@ export const useOperacionStore = defineStore({
         async getAll() {
             this.operacions = { loading: true };
             try {
-                this.operacions = await fetchWrapper.get(baseUrl);
+                this.operacions = await fetchWrapper.get(`${baseUrl}operations` );
             } catch (error) {
                 this.operacions = { error };
             }
@@ -24,17 +27,17 @@ export const useOperacionStore = defineStore({
         async getById(id) {
             this.operacion = { loading: true };
             try {
-                this.operacion = await fetchWrapper.get(`${baseUrl}/${id}`);
+                this.operacion = await fetchWrapper.get(`${baseUrl}operations/${id}`);
             } catch (error) {
                 this.operacion = { error };
             }
         },
         async update(id, params) {
-            await fetchWrapper.put(`${baseUrl}/${id}`, params);
+            await fetchWrapper.put(`${baseUrl}operations/${id}`, params);
         },
         async delete(id) {
             this.operacions.find(x => x.id === id).isDeleting = true;
-            await fetchWrapper.delete(`${baseUrl}/${id}`);
+            await fetchWrapper.delete(`${baseUrl}operations/${id}`);
             this.operacions = this.operacions.filter(x => x.id !== id);
         }
     }

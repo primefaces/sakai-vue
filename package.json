@@ -10,13 +10,15 @@
         "chart.js": "3.3.2",
         "magic.css": "^1.4.8",
         "moment": "^2.29.4",
+        "moment-timezone": "^0.5.43",
         "pinia": "^2.0.35",
         "primeflex": "^3.2.1",
         "primeicons": "^6.0.1",
         "primevue": "3.26.1",
         "vee-validate": "^4.9.6",
         "vue": "^3.2.41",
-        "vue-router": "^4.2.1"
+        "vue-router": "^4.2.1",
+        "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.1.4",

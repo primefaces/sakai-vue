@@ -26,13 +26,13 @@ let commonProperties = {
     Productos: [
       {field: "code", header: "code"},
       {field: "description", header: "description"},
-      {field: "precio_lista", header: "precio"},
       {field: "precio_compra", header: "costo"},
+      {field: "precio_lista", header: "precio"},
       {field: "cant_caja", header: "Caja"},
       {field: "content", header: "Cont."},
-      {field: "um", header: "um"},
-      {field: "grupo", header: "grupo"},
-      {field: "tipo", header: "tipo"},
+      {field: "uM", header: "um"},
+      {field: "grupod", header: "grupo"},
+      // {field: "tipo", header: "tipo"},
     ],
     Repartidores: [
       {field: "id", header: "id"},

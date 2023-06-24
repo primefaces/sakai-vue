@@ -191,7 +191,6 @@ const selectOne = (event, field) => {
         showToast('info', 'Código añadido', `Se añadió ${description} al renglón correctamente.`, 2000)
         // console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
       }
-
     }
   } else {
     detalleCobro.value[key].uC = 0;
@@ -212,46 +211,48 @@ const handleBlurInputNumber = (event, index, field) => {
   const {uC} = detalleCobro.value[index];
   switch (field) {
     case 'salCj':
-    case 'salPz':
-      const {salCj, salPz} = detalleCobro.value[index];
-      document.getElementById(`${field}${index}`)?.toggleClass('perspectiveUpReturn');
-      detalleCobro.value[index].salTotal = (uC * salCj) + salPz;
+      let {salPz} = detalleCobro.value[index];
+      detalleCobro.value[index].salTotal = (uC * event) + salPz;
       break
+    case 'salPz':
+      const {salCj} = detalleCobro.value[index];
+      detalleCobro.value[index].salTotal = (uC * salCj) + event;
+      break
+
     case 'regCj':
+      const {regPz} = detalleCobro.value[index];
+
+      detalleCobro.value[index].regTotal = (uC * event) + regPz;
+      break
     case 'regPz':
-      const {regCj, regPz} = detalleCobro.value[index];
-      const totalReg = (uC * regCj) + regPz;
-      detalleCobro.value[index].regTotal = totalReg
-      if (totalReg > 0) {
-        if (!detalleCobro.value[index + 1])
-          detalleCobro.value.push({
-            key: index + 1,
-            code: "",
-            uC: 1,
-            pL: 0,
-            salCj: 0,
-            salPz: 0,
-            salTotal: 0,
-            regCj: 0,
-            regPz: 0,
-            regTotal: 0,
-            venta: 0,
-            saldo: 0
-          })
-        const {salTotal, regTotal, pL} = detalleCobro.value[index];
-        const venta = salTotal - regTotal;
-        const saldo = venta * pL;
-
-
-        detalleCobro.value[index].venta = venta;
-        detalleCobro.value[index].saldo = saldo;
-
-
-      }
-      // console.log(uC, regCj, regPz)
+      const {regCj} = detalleCobro.value[index];
+      detalleCobro.value[index].regTotal = (uC * regCj) + event;
       break
     default:
       console.log('default case')
+  }
+  if (detalleCobro.value[index].salTotal > 0) {
+    if (!detalleCobro.value[index + 1])
+      detalleCobro.value.push({
+        key: index + 1,
+        code: "",
+        uC: 1,
+        pL: 0,
+        salCj: 0,
+        salPz: 0,
+        salTotal: 0,
+        regCj: 0,
+        regPz: 0,
+        regTotal: 0,
+        venta: 0,
+        saldo: 0
+      })
+    const {salTotal, regTotal, pL} = detalleCobro.value[index];
+    const venta = salTotal - regTotal;
+    const saldo = venta * pL;
+
+    detalleCobro.value[index].venta = venta;
+    detalleCobro.value[index].saldo = saldo;
   }
 }
 const handleFocus = (e, inx) => {
@@ -293,27 +294,30 @@ const onRowReorder = (event) => {
   toast.add({severity: 'success', summary: 'Rows Reordered', life: 3000});
 };
 
+const getPriceFormat = (cant) => Math.round(cant, 3);
 
 const saveOperation = async () => {
   // console.log(rutaSeleccionada.value)
   const comision = detalleCobro.value.map(({code, venta}) => {
     console.log(code.comision, venta)
-    return code ? code.comision * venta : 0}).reduce((accumulator, currentValue) => {
+    return code ? code.comision * venta : 0
+  }).reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
   }, 0)
 
   const ventas = detalleCobro.value.map(({code, venta}) => {
     console.log(code.precio_lista, venta)
-    return code ? code.precio_lista * venta : 0}).reduce((accumulator, currentValue) => {
+    return code ? code.precio_lista * venta : 0
+  }).reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
   }, 0)
   console.log('------------',)
   // let uitilidad = detalleCobro.value.map()
   const body = {
     repartidor: rutaSeleccionada.value.no_ruta,
-    utilidad: ventas * .2,
-    cobro: ventas,
-    comision: comision,
+    utilidad: getPriceFormat(ventas * .2),
+    cobro: getPriceFormat(ventas),
+    comision: getPriceFormat(comision),
     items: detalleCobro.value.filter(d => d.code).map(det => {
       return {
         code: det.code.code,
@@ -328,8 +332,8 @@ const saveOperation = async () => {
       }
     })
   }
+  console.log('body-> ',body)
   await store.saveOperation(body)
-  console.log(body)
   showToast('info', 'Operación guardada!', `Se guardaron los datos correctamente".`, 8000)
   detalleCobro.value = [
     {
@@ -350,6 +354,16 @@ const saveOperation = async () => {
   rutaSeleccionada.value = undefined
 
 }
+const rowStyle = (data) => {
+  if (data.salTotal === data.regTotal) {
+    if (data.salTotal > 0)
+      return {fontWeight: 'bold', fontStyle: 'italic', color: 'red'};
+
+  }
+};
+const rowClass = (data) => {
+  return [{'text-muted': data.code === '' && data.salTotal === 0 && data.regTotal === 0}];
+};
 
 </script>
 
@@ -381,7 +395,7 @@ const saveOperation = async () => {
 
     <DataTable :value="detalleCobro" :reorderableColumns="true" @columnReorder="onColReorder" @rowReorder="onRowReorder"
                showGridlines class="p-datatable-sm" scrollable scrollHeight="calc(100% - 500px)"
-               @cell-edit-complete="onCellEditComplete"
+               @cell-edit-complete="onCellEditComplete" :rowStyle="rowStyle" :row-class="rowClass"
                tableClass="editable-cells-table">
       <Column rowReorder headerStyle="width: 1rem" :reorderableColumn="false"/>
       <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
@@ -511,7 +525,8 @@ const saveOperation = async () => {
         <h3 class="m-0 mt-1">{{ getTotalVenta() }}</h3>
       </div>
       <Divider layout="vertical" class="m-3"/>
-      <Button type="button" label="Guardar" icon="pi pi-spin pi-cog" :loading="store.isLoading" :disabled="detalleCobro.length < 2 || !rutaSeleccionada" @click="saveOperation" />
+      <Button type="button" label="Guardar" icon="pi pi-spin pi-cog" :loading="store.isLoading"
+              :disabled="detalleCobro.length < 2 || !rutaSeleccionada" @click="saveOperation"/>
     </div>
 
   </div>
@@ -591,6 +606,10 @@ const saveOperation = async () => {
   background: #f7fff7;
   padding: 5.2px 5px;
   width: auto;
+}
+
+.text-muted {
+  color: var(--gray-100) !important;
 }
 
 </style>

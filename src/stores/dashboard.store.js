@@ -2,23 +2,32 @@ import { defineStore } from 'pinia';
 
 import { fetchWrapper } from '@/helpers';
 
-const baseUrl = `http://localhost:3000/products`;
-export const useProductStore = defineStore({
-    id: 'products',
+// const baseUrl = `http://localhost:3000/`;
+const baseUrl = `https://api-sello.herokuapp.com/`;
+
+export const useDashboardStore = defineStore({
+    id: 'dashboard',
     state: () => ({
-        products: {},
-        product: {}
+        operations: {}
     }),
+    getters: {
+        getOperations(state) {
+            return state.operations;
+        },
+        isLoading(state) {
+            return state.loading
+        }
+    },
     actions: {
         async register(product) {
             await fetchWrapper.post(`${baseUrl}`, product);
         },
         async getAll() {
-            this.products = { loading: true };
+            this.operacions = { loading: true };
             try {
-                this.products = await fetchWrapper.get(baseUrl);
+                this.operacions = await fetchWrapper.get(baseUrl + 'operations');
             } catch (error) {
-                this.products = { error };
+                this.operacions = { error };
             }
         },
         async getById(id) {
@@ -32,10 +41,6 @@ export const useProductStore = defineStore({
         async update(id, params) {
             await fetchWrapper.put(`${baseUrl}/${id}`, params);
         },
-        async delete(id) {
-            this.products.find(x => x.id === id).isDeleting = true;
-            await fetchWrapper.delete(`${baseUrl}/${id}`);
-            this.products = this.products.filter(x => x.id !== id);
-        }
+
     }
 });

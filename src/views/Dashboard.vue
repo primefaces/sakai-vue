@@ -6,6 +6,10 @@
 import {onMounted, reactive, ref, watch} from 'vue';
 import ProductService from '@/service/ProductService';
 import {useLayout} from '@/layout/composables/layout';
+import {useDashboardStore} from '@/stores'
+import {getCurrentColumns} from "@/shared/control";
+const store = useDashboardStore()
+
 
 let documentStyle = getComputedStyle(document.documentElement);
 
@@ -16,11 +20,11 @@ const {isDarkTheme} = useLayout();
 
 const products = ref(null);
 const lineData = reactive({
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
   datasets: [
     {
       label: 'Ruta 1',
-      data: [25000, 24000, 25000, 24500, 25000, 24000, 24800],
+      data: [25000, 24000, 25000, 24500, 25000, 24000],
       fill: false,
       backgroundColor: 'rgba(28,206,138,0.46)',
       borderColor: 'rgba(28,206,138,0.72)',
@@ -28,14 +32,14 @@ const lineData = reactive({
     },
     {
       label: 'Ruta 21',
-      data: [22000, 23000, 23500, 23200, 22000, 21500, 23000],
+      data: [22000, 23000, 23500, 23200, 22000, 21500],
       fill: false,
       backgroundColor: 'rgba(194,222,14,0.49)',
       borderColor: 'rgba(194,222,14,0.75)',
       tension: 0.4
     }, {
       label: 'Ruta 10',
-      data: [25000, 23000, 25500, 25200, 25000, 24000, 24200],
+      data: [25000, 23000, 25500, 25200, 25000, 24000],
       fill: false,
       backgroundColor: 'rgba(88,238,65,0.53)',
       borderColor: 'rgba(88,238,65,0.77)',
@@ -54,8 +58,12 @@ const items = ref([
 const lineOptions = ref(null);
 const productService = new ProductService();
 const barOptions = ref(null);
-
+const setData = (param) => {
+  store.getAll();
+  console.log('setCurrentP-> ', store.getOperations)
+}
 onMounted(() => {
+  setData()
   productService.getProductsSmall().then((data) => (products.value = data));
 });
 
@@ -269,7 +277,6 @@ watch(
         <h5>Ventas</h5>
         <Chart type="line" :data="lineData" :options="lineOptions"/>
       </div>
-      s
     </div>
     <div class="col-12 xl:col-6">
       <div class="card">

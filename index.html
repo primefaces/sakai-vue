@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
       <meta charset="UTF-8">
@@ -11,7 +11,16 @@
 
 <body>
       <div id="app"></div>
+<!--      <script type="module" src="https://momentjs.com/downloads/moment-with-locales.js"></script>-->
       <script type="module" src="/src/main.js"></script>
+<!--      <script src="https://momentjs.com/downloads/moment.js"></script>-->
+      <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
+      <script>
+          // import moment from 'moment'
+
+          moment.locale('es-mx');
+          console.log('MOMENT', moment().format('LLLL'))
+      </script>
 </body>
 
 </html>

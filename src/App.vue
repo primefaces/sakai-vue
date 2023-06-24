@@ -2,6 +2,14 @@
 import 'vite/modulepreload-polyfill'
 import { useFlagsStore } from '@/stores'
 const store = useFlagsStore()
+// import moment from "moment-timezone";
+moment.locale('es-mx')
+import {onBeforeMount} from "vue";
+onBeforeMount(()=>{
+  console.log('before mount')
+
+  console.log(moment().format('LLLL'))
+})
 // console.log(store);
 setTimeout(() => {
     store.setShowSplash(false);

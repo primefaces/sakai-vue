@@ -106,6 +106,7 @@ import BlockViewer from '@/components/BlockViewer.vue';
 import { createPinia } from 'pinia'
 
 import '@/assets/styles.scss';
+
 import FocusTrap from 'primevue/focustrap';
 
 // import './assets/layout/styles/theme/tailwind-light/theme.css';

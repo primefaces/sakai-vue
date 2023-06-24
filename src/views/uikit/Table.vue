@@ -200,7 +200,7 @@ const getOrderSeverity = (order) => {
           </Column>
           <Column field="comision" header="Comision">
             <template #body="slotProps">
-              {{ formatCurrency(slotProps.data.comosion) }}
+              {{ formatCurrency(slotProps.data.comision) }}
             </template>
           </Column>
           <Column field="utilidad" header="Utilidad">

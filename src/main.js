@@ -109,7 +109,7 @@ import '@/assets/styles.scss';
 
 import FocusTrap from 'primevue/focustrap';
 
-import '@/assets/themes/themes/mytheme/theme.css';
+import '@/assets/themes/themes/mytheme/theme.scss';
 
 
 

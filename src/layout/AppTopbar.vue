@@ -1,13 +1,13 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
-// import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 const { layoutConfig, onMenuToggle } = useLayout();
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
-// const router = useRouter();
+const router = useRouter();
 
 onMounted(() => {
     bindOutsideClickListener();
@@ -27,10 +27,15 @@ const logoUrl = computed(() => {
 const onTopBarMenuButton = () => {
     topbarMenuActive.value = !topbarMenuActive.value;
 };
-// const onSettingsClick = () => {
-//     topbarMenuActive.value = false;
-//     router.push('/documentation');
-// };
+
+const onLoginClick = () => {
+    topbarMenuActive.value = !topbarMenuActive.value;
+    router.push('/auth/login');
+};
+const onSettingsClick = () => {
+    topbarMenuActive.value = false;
+    // router.push('/documentation');
+};
 const topbarMenuClasses = computed(() => {
     return {
         'layout-topbar-menu-mobile-active': topbarMenuActive.value
@@ -83,14 +88,14 @@ const isOutsideClicked = (event) => {
                 <i class="pi pi-calendar"></i>
                 <span>Calendar</span>
             </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+            <button @click="onLoginClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-user"></i>
                 <span>Profile</span>
             </button>
-            <!--button @click="onSettingsClick()" class="p-link layout-topbar-button">
+            <button @click="onSettingsClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>
-            </button-->
+            </button>
         </div>
     </div>
 </template>

@@ -198,7 +198,7 @@ const getOrderSeverity = (order) => {
             <template #body="slotProps">
               <b class="">
 
-              {{ moment(slotProps.data.date).format('LLLLL') }}
+              {{ moment(slotProps.data.date).format('LLLL', 'es-mx') }}
               </b>
             </template>
           </Column>

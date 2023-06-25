@@ -19,32 +19,85 @@ let surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 const {isDarkTheme} = useLayout();
 
 const products = ref(null);
-const lineData = reactive({
+const lineData = ref({
   labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-  datasets: store.getDataFor
+  datasets: [...store.labels]
 });
 
 const barData = ref(null);
 
-const items = ref([
-  {label: 'Agregar', icon: 'pi pi-fw pi-plus'},
-  {label: 'Agregar', icon: 'pi pi-fw pi-plus'},
-  {label: 'Quitar', icon: 'pi pi-fw pi-minus'}
-]);
+
 const lineOptions = ref(null);
 const productService = new ProductService();
 const barOptions = ref(null);
+
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+const chartData = ref();
+const chartOptions = ref();
+
+const setChartData = () =>  {
+  const documentStyle = getComputedStyle(document.documentElement);
+
+  return {
+    labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
+    datasets: store.data2
+  };
+};
+const setChartOptions = () =>  {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+  const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.8,
+    plugins: {
+      tooltips: {
+        mode: 'index',
+        intersect: false
+      },
+      legend: {
+        labels: {
+          color: textColor
+        }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          color: textColorSecondary
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      },
+      y: {
+        stacked: true,
+        ticks: {
+          color: textColorSecondary
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      }
+    }
+  };
+}
 const setData = (param) => {
   store.getAll();
   console.log('setCurrentP-> ', store.getOperations)
 }
 onMounted(() => {
+  chartData.value = setChartData();
+  chartOptions.value = setChartOptions();
   setData()
-  productService.getProductsSmall().then((data) => (products.value = data));
 });
 
 const formatCurrency = (value) => {
-  return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+  return value?.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 };
 const applyLightTheme = () => {
   lineOptions.value = {
@@ -157,7 +210,20 @@ const applyDarkTheme = () => {
     }
   };
 };
-
+watch(
+    () => store.getLoading,
+    (val) => {
+      console.log(val)
+      if (val === false){
+        chartData.value = setChartData();
+        lineData.value = {
+          labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
+          datasets: [...store.labels]
+        }
+      }
+      // setCurrentP(val)
+    }
+);
 watch(
     isDarkTheme,
     (val) => {
@@ -175,6 +241,7 @@ watch(
 <template>
 <!--  {{store.getDataFor}}-->
   <div class="grid ">
+    <Toast />
 
     <div class="col-6  lg:col-6 xl:col-3">
       <div class="card mb-0 px-3 py-3 ">
@@ -182,9 +249,9 @@ watch(
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">$0.00</div>
+              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getCobrosDia)}}</div>
             </div>
-            <span class="text-600 font-medium mb-3">Venta</span>
+            <span class="text-600 font-medium mb-3">Cobros</span>
             <span class="text-500"> del día</span>
           </div>
           <div class="flex ms-4 align-items-center justify-content-center bg-red-100 border-round"
@@ -200,9 +267,9 @@ watch(
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">$0.00</div>
+              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getUtilidadDia)}}</div>
             </div>
-            <span class="text-600 font-medium mb-3">Venta</span>
+            <span class="text-600 font-medium mb-3">Utilidad</span>
             <span class="text-500"> del día</span>
           </div>
           <div class="flex ms-4 align-items-center justify-content-center bg-cyan-100 border-round"
@@ -218,9 +285,9 @@ watch(
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">$0.00</div>
+              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getComisionDia)}}</div>
             </div>
-            <span class="text-600 font-medium mb-3">Venta</span>
+            <span class="text-600 font-medium mb-3">Comisiones</span>
             <span class="text-500"> del día</span>
           </div>
           <div class="flex ms-4 align-items-center justify-content-center bg-green-100 border-round"
@@ -251,14 +318,65 @@ watch(
 
     <div class="col-12 xl:col-6">
       <div class="card">
+        <div class="flex  justify-content-between">
         <h5>Ventas</h5>
-        <Chart type="line" :data="lineData" :options="lineOptions"/>
+          <div class="grid w-50">
+            <div class="col-12 md:col-4">
+              <div class="field-radiobutton mb-0">
+                <RadioButton id="option1" name="option" value="semana" v-model="store.modeVentas" />
+                <label for="option1">semana</label>
+              </div>
+            </div>
+            <div class="col-12 md:col-4">
+              <div class="field-radiobutton mb-0">
+                <RadioButton disabled id="option2" name="option" value="mes" v-model="store.modeVentas" />
+                <label for="option2">mes</label>
+              </div>
+            </div>
+            <div class="col-12 md:col-4">
+              <div class="field-radiobutton mb-0">
+                <RadioButton disabled id="option3" name="option" value="año" v-model="store.modeVentas" />
+                <label for="option3">año</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Chart v-if="!store.getLoading" type="line" :data="lineData" :options="lineOptions" class="h-20rem"/>
+        <div v-else class="card flex justify-content-center">
+          <ProgressSpinner />
+        </div>
       </div>
     </div>
     <div class="col-12 xl:col-6">
       <div class="card">
-        <h5>Cierres</h5>
-        <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+        <div class="flex  justify-content-between">
+          <h5>Cierres</h5>
+          <div class="grid w-50">
+            <div class="col-12 md:col-4">
+              <div class="field-radiobutton mb-0">
+                <RadioButton id="option1" name="option" value="semana" v-model="store.modeCierres" />
+                <label for="option1">semana</label>
+              </div>
+            </div>
+            <div class="col-12 md:col-4">
+              <div class="field-radiobutton mb-0">
+                <RadioButton id="option2" name="option" value="mes" v-model="store.modeCierres" />
+                <label for="option2">mes</label>
+              </div>
+            </div>
+            <div class="col-12 md:col-4">
+              <div class="field-radiobutton mb-0">
+                <RadioButton id="option3" name="option" value="año" v-model="store.modeCierres" />
+                <label for="option3">año</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--        <Chart type="bar" :data="barData" :options="barOptions"></Chart>-->
+        <Chart v-if="!store.getLoading" type="bar" :data="chartData" :options="chartOptions" class="h-20rem" />
+        <div v-else class="card flex justify-content-center">
+          <ProgressSpinner />
+        </div>
       </div>
     </div>
 
@@ -292,7 +410,7 @@ watch(
           <div>
             <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-plain p-button-rounded"
                     @click="$refs.menu2.toggle($event)"></Button>
-            <Menu ref="menu2" :popup="true" :model="items"></Menu>
+<!--            <Menu ref="menu2" :popup="true" :model="items"></Menu>-->
           </div>
         </div>
 <!--        <ul class="list-none p-0 m-0">-->
@@ -421,3 +539,9 @@ watch(
 
   </div>
 </template>
+
+<style >
+.w-50{
+  width: 50%;
+}
+</style>

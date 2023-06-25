@@ -4,7 +4,9 @@ import {fetchWrapper} from '@/helpers';
 
 // const baseUrl = `http://localhost:3000/`;
 const baseUrl = import.meta.env.VITE_BASE_URL;
-
+const removeAccents = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 export const useCatalogosStore = defineStore({
     id: 'catalogos',
     state: () => ({
@@ -16,10 +18,11 @@ export const useCatalogosStore = defineStore({
         grupos: [],
         unidadesMedida: [],
         rutas: [],
+        searching: '',
     }),
     getters: {
         dataCatalog(state) {
-            return state.catalogos;
+            return state.searching ? state.catalogos.filter( d => Object.values(d).join(' ').toLowerCase().includes(state.searching)) : state.catalogos;
         }, getFamilias(state) {
             return state.familias.map(d => {return {...d,'label': d.codigo, 'value': d.id}});
         }, getGrupos(state) {
@@ -27,7 +30,7 @@ export const useCatalogosStore = defineStore({
         }, getUnidadesMedida(state) {
             return state.unidadesMedida.map(d => {return {...d,'label': d.codigo, 'value': d.id}});
         }, getRutas(state) {
-            return state.rutas.map(d => {return {...d,'label': d.codigo, 'value': d.id}});
+            return state.rutas.map(d => {return {...d,'label': d.descripcion, 'value': d.no_ruta}});
         },
         isError(state) {
             return state.catalogo

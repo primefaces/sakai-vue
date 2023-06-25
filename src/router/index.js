@@ -14,9 +14,9 @@ const router = createRouter({
                     component: () => import('@/views/Portal.vue'),
                 },
                 {
-                    path: '/uikit/formlayout',
-                    name: 'formlayout',
-                    component: () => import('@/views/uikit/FormLayout.vue'),
+                    path: '/auth/register',
+                    name: 'register',
+                    component: () => import('@/views/pages/Register.vue'),
                 },
                 {
                     path: '/uikit/input',
@@ -153,7 +153,6 @@ const router = createRouter({
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue'),
         },
-
         {
             path: '/auth/login',
             name: 'login',

@@ -39,3 +39,4 @@ staging-portal.code-workspace
 # Builds
 staging
 web
+src/views/pages/auth/Login.vue

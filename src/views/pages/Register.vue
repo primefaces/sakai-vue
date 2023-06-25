@@ -19,7 +19,7 @@ const dropdownRole = ref(null);
     <div class="grid">
         <div class="col-12">
             <div class="card">
-                <h3>User Registrationssss</h3>
+                <h3>User Registrations</h3>
                 <div class="p-fluid formgrid grid">
                     <div class="field col-12 md:col-6">
                         <label for="firstname">Firstname</label>

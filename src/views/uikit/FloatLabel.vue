@@ -61,7 +61,7 @@ onMounted(() => {
 });
 const fetchCatalogos = () => {
   store.setProducts('productos');
-  store.setRepartidores('repartidores');
+  store.setRepartidores('repartidores/aviables');
 }
 
 /**
@@ -334,7 +334,9 @@ const saveOperation = async () => {
   }
   console.log('body-> ',body)
   await store.saveOperation(body)
-  showToast('info', 'Operación guardada!', `Se guardaron los datos correctamente".`, 8000)
+  showToast('success', 'Operación guardada!', `Captura de la ruta ${rutaSeleccionada.value.no_ruta} guardada gorrectamente.`, 8000)
+  fetchCatalogos()
+
   detalleCobro.value = [
     {
       key: 0,
@@ -357,7 +359,7 @@ const saveOperation = async () => {
 const rowStyle = (data) => {
   if (data.salTotal === data.regTotal) {
     if (data.salTotal > 0)
-      return {fontWeight: 'bold', fontStyle: 'italic', color: 'red'};
+      return {fontWeight: 'bold', fontStyle: 'italic', color: 'red !important' };
 
   }
 };
@@ -428,8 +430,7 @@ const rowClass = (data) => {
           <template v-else-if="['saldo'].includes(field)">
             <span>
               <div :id="`${field}${data.key}`" class="container-digits price slideDown ">
-              {{ formatoMoneda(data[field]) }}
-
+                <span class="text-primary">{{ formatoMoneda(data[field]) }}</span>
               </div>
             </span>
           </template>
@@ -440,6 +441,8 @@ const rowClass = (data) => {
                          class="p-inputnumber-sm"
                          :min="0"
                          v-model="data[field]"
+                         :max="field === 'salPz' ? data.uC : null"
+
                          :disabled="data['pL'] === 0"/>
           </template>
 
@@ -448,7 +451,7 @@ const rowClass = (data) => {
             <InputNumber type="decimal" @update:modelValue="handleBlurInputNumber($event,data.key, field)"
                          class="p-inputnumber-sm"
                          :min="0"
-                         :max="field === 'regCj' ? data.salCj :data.salPz"
+                         :max="field === 'regCj' ? data.salCj : (data.salCj === data.regCj ? data.salPz : data.uC) "
                          v-model="data[field]"
                          :disabled="data['salTotal'] === 0"/>
 
@@ -609,7 +612,7 @@ const rowClass = (data) => {
 }
 
 .text-muted {
-  color: var(--gray-100) !important;
+  color: var(--gray-100) ;
 }
 
 </style>

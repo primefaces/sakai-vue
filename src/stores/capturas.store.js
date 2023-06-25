@@ -3,7 +3,8 @@ import json from "./../views/utilities/products.json";
 import {fetchWrapper} from "@/helpers";
 
 // const baseUrl = `http://localhost:3000/`;
-const baseUrl = `https://api-sello.herokuapp.com/`;
+// const baseUrl = `https://api-sello.herokuapp.com/`;
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 export const useCaptuaraStore = defineStore("capturas", {
     state: () => ({
@@ -164,6 +165,7 @@ export const useCaptuaraStore = defineStore("capturas", {
             this.loading = true;
 
             try {
+                console.log(`${baseUrl}${frgm}`)
                 let data = await fetchWrapper.get(`${baseUrl}${frgm}`);
                 // console.log(data)|
                 this.repartidores = data

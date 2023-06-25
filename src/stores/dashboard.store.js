@@ -3,14 +3,22 @@ import { defineStore } from 'pinia';
 import { fetchWrapper } from '@/helpers';
 
 // const baseUrl = `http://localhost:3000/`;
-const baseUrl = `https://api-sello.herokuapp.com/`;
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 
 export const useDashboardStore = defineStore({
     id: 'dashboard',
     state: () => ({
-        operations: {}
+        operations: {},
+        labels:[]
     }),
     getters: {
+        getDataFor(state){
+
+
+    return state.labels
+
+        },
         getOperations(state) {
             return state.operations;
         },
@@ -25,7 +33,34 @@ export const useDashboardStore = defineStore({
         async getAll() {
             this.operacions = { loading: true };
             try {
-                this.operacions = await fetchWrapper.get(baseUrl + 'operations');
+                let dats = await fetchWrapper.get(baseUrl + 'operations');
+                console.log(dats.data.head)
+                const agrupadoPorRepartidor = dats.data.head.reduce((result, elemento) => {
+                    const repartidor = elemento.repartidor;
+                    if (!result[repartidor]) {
+                        result[repartidor] = [];
+                    }
+                    result[repartidor].push(elemento.cobro);
+                    return result;
+                }, {});
+                console.log('---',agrupadoPorRepartidor)
+
+                let formated = []
+                for (const agrupadoPorRepartidorKey in agrupadoPorRepartidor) {
+                    console.log(agrupadoPorRepartidorKey)
+                    formated.push({
+                        label:  'Ruta ' + agrupadoPorRepartidorKey,
+                        data: agrupadoPorRepartidor[agrupadoPorRepartidorKey],
+                        fill: false,
+                        backgroundColor: 'rgba(28,206,138,0.46)',
+                        borderColor: 'rgba(28,206,138,0.72)',
+                        tension: 0.4
+                    })
+                }
+                console.log('---',formated)
+                this.operacions = dats.data.head
+
+                this.labels = formated;
             } catch (error) {
                 this.operacions = { error };
             }

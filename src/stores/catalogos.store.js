@@ -3,7 +3,8 @@ import {defineStore} from 'pinia';
 import {fetchWrapper} from '@/helpers';
 
 // const baseUrl = `http://localhost:3000/`;
-const baseUrl = `https://api-sello.herokuapp.com/`;
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 export const useCatalogosStore = defineStore({
     id: 'catalogos',
     state: () => ({

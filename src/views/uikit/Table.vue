@@ -159,10 +159,11 @@ const getOrderSeverity = (order) => {
             v-model:expandedRows="expandedRows"
             dataKey="id"
             ref="dt"
+
             :tableProps="{ style: { minWidth: '650px' } }" style="overflow: auto"
             @rowExpand="onRowExpand"
             @rowCollapse="onRowCollapse"
-            class="p-datatable-sm">
+            class="p-datatable">
           <template #header>
             <div class="flex flex-wrap justify-content-end gap-2">
               <div class="formgroup-inline align-items-baseline">
@@ -193,6 +194,15 @@ const getOrderSeverity = (order) => {
           </template>
           <template #loading> Cargando la información..</template>
           <Column expander style="width: 5rem"/>
+          <Column field="date" header="Date">
+            <template #body="slotProps">
+              <b class="">
+
+              {{ moment(slotProps.data.date).format('LLLLL') }}
+              </b>
+            </template>
+          </Column>
+
           <Column field="cobro" header="Cobro">
             <template #body="slotProps">
               {{ formatCurrency(slotProps.data.cobro) }}
@@ -208,15 +218,11 @@ const getOrderSeverity = (order) => {
               {{ formatCurrency(slotProps.data.utilidad) }}
             </template>
           </Column>
-          <Column field="date" header="Date">
-            <template #body="slotProps">
-              {{ moment(slotProps.data.date).format('LLLLL') }}
-            </template>
-          </Column>
-          <Column field="descripcion" header="Category"></Column>
+
+<!--          <Column field="descripcion" header="Category"></Column>-->
           <template #expansion="slotProps">
             <div class="p-0 bg-light">
-              <DataTable class="p-datatable-sm" :value="slotProps.data.items">
+              <DataTable class="p-datatable-sm"  scrollable scrollHeight="130px" :value="slotProps.data.items">
                 <Column field="description" header="Producto"></Column>
                 <Column field="sCj" header="Sal. Cj."></Column>
                 <Column field="sPz" header="Sal. Pz."></Column>
@@ -236,22 +242,30 @@ const getOrderSeverity = (order) => {
           </template>
           <template #footer>
             <template v-if="store.getOperaciones.length > 0">
+              <div class="footer-cont">
+              <div>
 
-              <p><span
-                  class="font-300 text-400">Utilidad total: </span>{{
-                  formatCurrency(store.getTotalOperacionesUtilidad)
-                }}.
-              </p>
-              <p><span class="font-300 text-400">Cobro total: </span>
+
+              <p class="m-0"><span class="font-300 text-400">Cobro total: </span>
                 {{ formatCurrency(store.getTotalOperacionesCobro) }}. </p>
-              <p><span
+              <p class="m-0"><span
                   class="font-300 text-400">Comision total:  </span>{{
                   formatCurrency(store.getTotalOperacionesComision)
                 }}.
               </p>
-              <Button label="Guardar" size="small" :loading="store.isLoading" @click="exportFile"
-                      icon="pi pi-file-excel"/>
+              </div>
+                <div class="text-end">
 
+                <p class="m-0"><span
+                  class="font-300 text-400">Utilidad total: </span>{{
+                  formatCurrency(store.getTotalOperacionesUtilidad)
+                }}.
+              </p>
+                  <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"
+                          icon="pi pi-file-excel"/>
+
+                </div>
+              </div>
             </template>
 
           </template>
@@ -274,6 +288,8 @@ const getOrderSeverity = (order) => {
 ::v-deep(.p-datatable-row-expansion > td) {
 
   background: #fafafa;
+  box-shadow: inset 0px 2px 4px -1px #d7d7d7;
+  padding: 4px 5px 4px 24px;
 }
 
 .font-400 {
@@ -282,5 +298,15 @@ const getOrderSeverity = (order) => {
 
 .font-300 {
   font-weight: 300;
+}
+.text-end{
+  text-align:end;
+}
+.footer-cont{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size:smaller;
+  padding: .5em 1em;
 }
 </style>

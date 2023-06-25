@@ -21,31 +21,7 @@ const {isDarkTheme} = useLayout();
 const products = ref(null);
 const lineData = reactive({
   labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-  datasets: [
-    {
-      label: 'Ruta 1',
-      data: [],
-      fill: false,
-      backgroundColor: 'rgba(28,206,138,0.46)',
-      borderColor: 'rgba(28,206,138,0.72)',
-      tension: 0.4
-    },
-    {
-      label: 'Ruta 21',
-      data: [],
-      fill: false,
-      backgroundColor: 'rgba(194,222,14,0.49)',
-      borderColor: 'rgba(194,222,14,0.75)',
-      tension: 0.4
-    }, {
-      label: 'Ruta 10',
-      data: [],
-      fill: false,
-      backgroundColor: 'rgba(88,238,65,0.53)',
-      borderColor: 'rgba(88,238,65,0.77)',
-      tension: 0.4
-    }
-  ]
+  datasets: store.getDataFor
 });
 
 const barData = ref(null);
@@ -197,6 +173,7 @@ watch(
 </script>
 
 <template>
+<!--  {{store.getDataFor}}-->
   <div class="grid ">
 
     <div class="col-6  lg:col-6 xl:col-3">

@@ -49,9 +49,9 @@ const applyScale = () => {
 </script>
 
 <template>
-  <button class="layout-config-button p-link" type="button" @click="onConfigButtonClick()">
-    <i class="pi pi-cog"></i>
-  </button>
+<!--  <button class="layout-config-button p-link" type="button" @click="onConfigButtonClick()">-->
+<!--    <i class="pi pi-cog"></i>-->
+<!--  </button>-->
 
   <Sidebar v-model:visible="visible" position="right" :transitionOptions="'.3s cubic-bezier(0, 0, 0.2, 1)'" class="layout-config-sidebar w-20rem">
     <h5>Scale</h5>

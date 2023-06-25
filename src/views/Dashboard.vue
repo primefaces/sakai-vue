@@ -101,6 +101,8 @@ const formatCurrency = (value) => {
 };
 const applyLightTheme = () => {
   lineOptions.value = {
+    maintainAspectRatio: false,
+    aspectRatio: 0.8,
     plugins: {
       legend: {
         labels: {
@@ -318,30 +320,9 @@ watch(
 
     <div class="col-12 xl:col-6">
       <div class="card">
-        <div class="flex  justify-content-between">
         <h5>Ventas</h5>
-          <div class="grid w-50">
-            <div class="col-12 md:col-4">
-              <div class="field-radiobutton mb-0">
-                <RadioButton id="option1" name="option" value="semana" v-model="store.modeVentas" />
-                <label for="option1">semana</label>
-              </div>
-            </div>
-            <div class="col-12 md:col-4">
-              <div class="field-radiobutton mb-0">
-                <RadioButton disabled id="option2" name="option" value="mes" v-model="store.modeVentas" />
-                <label for="option2">mes</label>
-              </div>
-            </div>
-            <div class="col-12 md:col-4">
-              <div class="field-radiobutton mb-0">
-                <RadioButton disabled id="option3" name="option" value="año" v-model="store.modeVentas" />
-                <label for="option3">año</label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <Chart v-if="!store.getLoading" type="line" :data="lineData" :options="lineOptions" class="h-20rem"/>
+
+        <Chart v-if="!store.isLoading" type="line" :data="lineData" :options="lineOptions" class="h-20rem"/>
         <div v-else class="card flex justify-content-center">
           <ProgressSpinner />
         </div>
@@ -349,31 +330,10 @@ watch(
     </div>
     <div class="col-12 xl:col-6">
       <div class="card">
-        <div class="flex  justify-content-between">
           <h5>Cierres</h5>
-          <div class="grid w-50">
-            <div class="col-12 md:col-4">
-              <div class="field-radiobutton mb-0">
-                <RadioButton id="option1" name="option" value="semana" v-model="store.modeCierres" />
-                <label for="option1">semana</label>
-              </div>
-            </div>
-            <div class="col-12 md:col-4">
-              <div class="field-radiobutton mb-0">
-                <RadioButton id="option2" name="option" value="mes" v-model="store.modeCierres" />
-                <label for="option2">mes</label>
-              </div>
-            </div>
-            <div class="col-12 md:col-4">
-              <div class="field-radiobutton mb-0">
-                <RadioButton id="option3" name="option" value="año" v-model="store.modeCierres" />
-                <label for="option3">año</label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!--        <Chart type="bar" :data="barData" :options="barOptions"></Chart>-->
-        <Chart v-if="!store.getLoading" type="bar" :data="chartData" :options="chartOptions" class="h-20rem" />
+
+        <!--        <Chart type="bar" :data="barData" :options="barOptions"></1Chart>-->
+        <Chart v-if="!store.isLoading" type="bar" :data="chartData" :options="chartOptions" class="h-20rem" />
         <div v-else class="card flex justify-content-center">
           <ProgressSpinner />
         </div>
@@ -413,68 +373,68 @@ watch(
 <!--            <Menu ref="menu2" :popup="true" :model="items"></Menu>-->
           </div>
         </div>
-<!--        <ul class="list-none p-0 m-0">-->
-<!--          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">-->
-<!--            <div>-->
-<!--              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca Litro </span>-->
-<!--              <div class="mt-1 text-600">Sello Rojo</div>-->
-<!--            </div>-->
-<!--            <div class="mt-2 md:mt-0 flex align-items-center">-->
-<!--              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>-->
-<!--              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>-->
-<!--            </div>-->
-<!--          </li>-->
-<!--          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">-->
-<!--            <div>-->
-<!--              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca 1/2 Galón</span>-->
-<!--              <div class="mt-1 text-600">Sello Rojo</div>-->
-<!--            </div>-->
-<!--            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">-->
-<!--              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>-->
-<!--              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>-->
-<!--            </div>-->
-<!--          </li>-->
-<!--          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">-->
-<!--            <div>-->
-<!--              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Tikito 1/4</span>-->
-<!--              <div class="mt-1 text-600">Sello Rojo</div>-->
-<!--            </div>-->
-<!--            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">-->
-<!--              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>-->
-<!--              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>-->
-<!--            </div>-->
-<!--          </li>-->
-<!--          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">-->
-<!--            <div>-->
-<!--              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Jamón rebanado 1kg</span>-->
-<!--              <div class="mt-1 text-600">Embutidos</div>-->
-<!--            </div>-->
-<!--            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">-->
-<!--              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>-->
-<!--              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>-->
-<!--            </div>-->
-<!--          </li>-->
-<!--          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">-->
-<!--            <div>-->
-<!--              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Deligurt 230g</span>-->
-<!--              <div class="mt-1 text-600">Sello Rojo</div>-->
-<!--            </div>-->
-<!--            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">-->
-<!--              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>-->
-<!--              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>-->
-<!--            </div>-->
-<!--          </li>-->
-<!--          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">-->
-<!--            <div>-->
-<!--              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Sheik</span>-->
-<!--              <div class="mt-1 text-600">Sello Rojo</div>-->
-<!--            </div>-->
-<!--            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">-->
-<!--              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>-->
-<!--              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>-->
-<!--            </div>-->
-<!--          </li>-->
-<!--        </ul>-->
+        <ul class="list-none p-0 m-0">
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca Litro </span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca 1/2 Galón</span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Tikito 1/4</span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Jamón rebanado 1kg</span>
+              <div class="mt-1 text-600">Embutidos</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Deligurt 230g</span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+            <div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Sheik</span>
+              <div class="mt-1 text-600">Sello Rojo</div>
+            </div>
+            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
+              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
 <!--    <div class="col-12 xl:col-6">-->

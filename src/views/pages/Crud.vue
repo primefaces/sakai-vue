@@ -209,7 +209,7 @@ watch(
             <div class="flex flex-wrap justify-content-between gap-2">
                 <span class="p-input-icon-left">
             <i class="pi pi-search"/>
-            <InputText v-model="store.searching" placeholder="Global Search"/>
+            <InputText v-model="store.searching" placeholder="Busqueda"/>
         </span>
               <div class="formgroup-inline align-items-baseline">
                 <span class="p-buttonset">

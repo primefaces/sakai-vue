@@ -13,6 +13,7 @@
         "primeflex": "^3.2.1",
         "primeicons": "^6.0.1",
         "primevue": "3.28.0",
+        "vee-validate": "^4.10.2",
         "vue": "^3.2.41",
         "vue-router": "^4.1.5",
         "yup": "^1.2.0"

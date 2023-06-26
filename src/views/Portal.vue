@@ -21,7 +21,7 @@
                         <span class="text-700 text-sm line-height-3">Document Management System</span>
                     </div>
                     <div class="col-12 md:col-4 mb-4 px-5">
-                        <a href="https://eulim.dost9.ph" target="_blank">
+                        <a href="https://eulims.dost9.ph" target="_blank">
                             <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
                                 <i class="pi pi-check-square text-4xl text-blue-500"></i>
                             </span>

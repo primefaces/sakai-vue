@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import {createApp} from 'vue';
 import router from './router';
 
 import PrimeVue from 'primevue/config';
@@ -103,7 +103,7 @@ import VirtualScroller from 'primevue/virtualscroller';
 
 import CodeHighlight from '@/components/CodeHighlight.vue';
 import BlockViewer from '@/components/BlockViewer.vue';
-import { createPinia } from 'pinia'
+import {createPinia} from 'pinia'
 
 import '@/assets/styles.scss';
 
@@ -112,13 +112,22 @@ import FocusTrap from 'primevue/focustrap';
 import '@/assets/themes/themes/mytheme/theme.scss';
 
 
-
 import App from './App.vue';
+
 const app = createApp(App);
 
 app.use(createPinia())
 app.use(router);
-app.use(PrimeVue, { ripple: true });
+app.use(PrimeVue, {
+    // locale: {
+    //     dayNames: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'],
+    //     dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+    //     dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+    //     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    //     monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sept', 'Oct', 'Nov', 'Dic']
+    // },
+    ripple: true,
+});
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);

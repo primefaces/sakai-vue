@@ -1,28 +1,21 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <!-- eslint-disable prettier/prettier -->
 <script setup>
-import Card from 'primevue/card';
 import {ref, onMounted} from 'vue';
 import {useReportStore} from "@/stores";
 import {useToast} from 'primevue/usetoast';
-import moment from 'moment';
-moment.locale('es-mx');
-
-
 import XLSX from 'xlsx';
 import {read, utils, writeFileXLSX} from 'xlsx';
 
+moment.locale('es-mx');
+
 const rows = ref([]);
-
-
-// Descargar el archivo
 const expandedRows = ref([]);
 const dt = ref(null);
 const maxDate = ref(new Date());
 const rutaSeleccionada = ref();
-// const rangoDeReporte = ref();
 const rangoDeReporte = ref([
-  moment().subtract(1, 'month').toDate(),
+  moment().subtract(1, 'week').toDate(),
   moment().toDate()
 ]);
 
@@ -30,18 +23,15 @@ const store = useReportStore();
 const toast = useToast();
 
 onMounted(async () => {
-  /* Download from https://sheetjs.com/pres.numbers */
   fetchCatalogos()
-
   const f = await fetch("https://sheetjs.com/pres.numbers");
   const ab = await f.arrayBuffer();
-
   /* parse workbook */
   const wb = read(ab);
 
   /* update data */
   rows.value = utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-  console.log(moment().format('LLLL'))
+  console.log('TABLE-> ', moment().format('LLLL'))
 });
 
 const fetchCatalogos = () => {
@@ -70,6 +60,10 @@ const collapseAll = () => {
 const formatCurrency = (value) => {
   return (value || 0).toLocaleString('en-MX', {style: 'currency', currency: 'MXN'});
 };
+
+const getLts = (mlts) => {
+  return mlts / 1000;
+}
 
 function exportFile() {
   const ws = utils.json_to_sheet(rows.value);
@@ -143,6 +137,9 @@ const getOrderSeverity = (order) => {
   }
 };
 
+const formatDate = (date) => {
+  return moment(date).format('LLLL')
+}
 </script>
 
 <template>
@@ -189,6 +186,7 @@ const getOrderSeverity = (order) => {
               </div>
             </div>
           </template>
+
           <template #empty>
             <div class="text-gray-500 px-4 py-2">Genera tu reporte en el boton <b>+ Generar</b></div>
           </template>
@@ -198,7 +196,7 @@ const getOrderSeverity = (order) => {
             <template #body="slotProps">
               <b class="">
 
-              {{ moment(slotProps.data.date).format('LLLL', 'es-mx') }}
+                {{ formatDate(slotProps.data.date) }}
               </b>
             </template>
           </Column>
@@ -218,22 +216,35 @@ const getOrderSeverity = (order) => {
               {{ formatCurrency(slotProps.data.utilidad) }}
             </template>
           </Column>
+          <Column field="klts" header="k-Lts">
+            <template #body="slotProps">
+              <b class="text-primary"> {{ slotProps.data.klts }} </b>
+            </template>
+          </Column>
 
-<!--          <Column field="descripcion" header="Category"></Column>-->
+          <!--          <Column field="descripcion" header="Category"></Column>-->
           <template #expansion="slotProps">
             <div class="p-0 bg-light">
-              <DataTable class="p-datatable-sm"  scrollable scrollHeight="130px" :value="slotProps.data.items">
+              <DataTable class="p-datatable-sm" scrollable scrollHeight="130px" :value="slotProps.data.items">
                 <Column field="description" header="Producto"></Column>
-                <Column field="sCj" header="Sal. Cj."></Column>
-                <Column field="sPz" header="Sal. Pz."></Column>
-                <Column field="sTotalPz" header="Sal. Total"></Column>
-                <Column field="rCj" header="Reg. Cj."></Column>
-                <Column field="rPz" header="Reg. Pz."></Column>
-                <Column field="rTotalPz" header="Reg. Total"></Column>
-<!--                <Column field="ventaPz" header="Date"></Column>-->
-                <Column field="saldo" header="Amount" sortable>
+                <Column field="sCj" header="S.Cj."></Column>
+                <Column field="sPz" header="S.Pz."></Column>
+                <Column field="sTotalPz" header="S.Total"></Column>
+                <Column field="rCj" header="R.Cj."></Column>
+                <Column field="rPz" header="R.Pz."></Column>
+                <Column field="rTotalPz" header="R.Total"></Column>
+                <Column field="ventaPz" header="ventaPz"></Column>
+
+                <!--                <Column field="ventaPz" header="Date"></Column>-->
+                <Column field="saldo" header="importe" sortable>
                   <template #body="slotProps">
                     {{ formatCurrency(slotProps.data.saldo) }}
+                  </template>
+                </Column>
+                <Column field="klts" header="k-Lts" sortable>
+                  <template #body="slotProps">
+                    <b class="text-primary"> {{ slotProps.data.klts }} </b>
+
                   </template>
                 </Column>
 
@@ -243,24 +254,30 @@ const getOrderSeverity = (order) => {
           <template #footer>
             <template v-if="store.getOperaciones.length > 0">
               <div class="footer-cont">
-              <div>
+                <div>
 
 
-              <p class="m-0"><span class="font-300 text-400">Cobro total: </span>
-                {{ formatCurrency(store.getTotalOperacionesCobro) }}. </p>
-              <p class="m-0"><span
-                  class="font-300 text-400">Comision total:  </span>{{
-                  formatCurrency(store.getTotalOperacionesComision)
-                }}.
-              </p>
-              </div>
+                  <p class="m-0"><span class="font-300 text-400">Cobro total: </span>
+                    {{ formatCurrency(store.getTotalOperacionesCobro) }}. </p>
+                  <p class="m-0"><span
+                      class="font-300 text-400">Comision total:  </span>{{
+                      formatCurrency(store.getTotalOperacionesComision)
+                    }}.
+                  </p>
+                </div>
                 <div class="text-end">
 
-                <p class="m-0"><span
-                  class="font-300 text-400">Utilidad total: </span>{{
-                  formatCurrency(store.getTotalOperacionesUtilidad)
-                }}.
-              </p>
+                  <p class="m-0"><span
+                      class="font-300 text-400">Utilidad total: </span>{{
+                      formatCurrency(store.getTotalOperacionesUtilidad)
+                    }}.
+                  </p>
+
+                  <p class="m-0"><span
+                      class="font-300 text-400">Kilo-Litros: </span>{{
+                      formatCurrency(store.getTotalKlts)
+                    }}.
+                  </p>
                   <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"
                           icon="pi pi-file-excel"/>
 
@@ -299,14 +316,16 @@ const getOrderSeverity = (order) => {
 .font-300 {
   font-weight: 300;
 }
-.text-end{
-  text-align:end;
+
+.text-end {
+  text-align: end;
 }
-.footer-cont{
+
+.footer-cont {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  font-size:smaller;
+  font-size: smaller;
   padding: .5em 1em;
 }
 </style>

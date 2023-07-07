@@ -251,7 +251,7 @@ watch(
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getCobrosDia)}}</div>
+              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getCobrosDia | 0)}}</div>
             </div>
             <span class="text-600 font-medium mb-3">Cobros</span>
             <span class="text-500"> del día</span>
@@ -269,7 +269,7 @@ watch(
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getUtilidadDia)}}</div>
+              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getUtilidadDia | 0)}}</div>
             </div>
             <span class="text-600 font-medium mb-3">Utilidad</span>
             <span class="text-500"> del día</span>
@@ -287,7 +287,7 @@ watch(
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getComisionDia)}}</div>
+              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getComisionDia | 0)}}</div>
             </div>
             <span class="text-600 font-medium mb-3">Comisiones</span>
             <span class="text-500"> del día</span>

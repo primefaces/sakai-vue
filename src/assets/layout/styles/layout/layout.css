@@ -50,20 +50,13 @@
     opacity: 0;
   }
 }
-:root {
-  --surface-section:#ffffff;
-  --surface-card:#ffffff;
-  --surface-overlay:#ffffff;
-}
-
 * {
   box-sizing: border-box;
-  --surface-ground:#f7f7f7;
 }
 
 html {
   height: 100%;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 body {
@@ -274,7 +267,7 @@ a {
   color: var(--text-color);
   cursor: pointer;
   padding: 0.75rem 1rem;
-  border-radius: 5px;
+  border-radius: 8px;
   transition: background-color 0.5s, box-shadow 0.5s;
 }
 .layout-menu ul a .layout-menuitem-icon {
@@ -300,7 +293,7 @@ a {
 }
 .layout-menu ul ul {
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 .layout-menu ul ul li a {
   margin-left: 1rem;
@@ -490,7 +483,7 @@ a {
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: var(--card-shadow);
-  border-radius: 5px;
+  border-radius: 8px;
 }
 .card:last-child {
   margin-bottom: 0;
@@ -538,7 +531,7 @@ h6 {
 mark {
   background: #FFF8E1;
   padding: 0.25rem 0.4rem;
-  border-radius: 5px;
+  border-radius: 8px;
   font-family: monospace;
 }
 

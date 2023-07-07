@@ -95,10 +95,10 @@ const hideDialog = () => {
   submitted.value = false;
 };
 
-const deleteProduct = () => {
+const deleteProduct = async () => {
   console.log('delete', product.value)
 
-  store.delete(currentP.key, product.value.id)
+  await store.delete(currentP.routeApi, product.value.id)
   deleteProductDialog.value = false;
   setCurrentP(currentP.key)
 
@@ -154,7 +154,7 @@ const saveProduct = async () => {
         console.log('default')
         break
     }
-    store.register(currentP.routeApi, product.value)
+    await store.register(currentP.routeApi, product.value)
   }
   productDialog.value = false;
   await store.getAll(currentP.routeApi);

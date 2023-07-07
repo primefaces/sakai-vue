@@ -8,9 +8,141 @@ const toast = useToast();
 import {ref, onMounted, watch} from 'vue';
 import ProductService from '@/service/ProductService';
 import {useCaptuaraStore} from "@/stores";
+import {useReportStore} from "@/stores";
+import {markRaw, defineAsyncComponent} from 'vue';
+import {useDialog} from 'primevue/usedialog';
+import Button from 'primevue/button';
+// import moment from "moment";
+const ProductListDemo = defineAsyncComponent(() => import('./List.vue'));
+const FooterDemo = defineAsyncComponent(() => import('./FooterDemo.vue'));
+
+const dialog = useDialog();
 
 const store = useCaptuaraStore();
-
+const storeReport = useReportStore();
+const items = ref([
+  {
+    label: 'File',
+    icon: 'pi pi-fw pi-file',
+    items: [
+      {
+        label: 'New',
+        icon: 'pi pi-fw pi-plus',
+        items: [
+          {
+            label: 'Bookmark',
+            icon: 'pi pi-fw pi-bookmark'
+          },
+          {
+            label: 'Video',
+            icon: 'pi pi-fw pi-video'
+          }
+        ]
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-fw pi-trash'
+      },
+      {
+        separator: true
+      },
+      {
+        label: 'Export',
+        icon: 'pi pi-fw pi-external-link'
+      }
+    ]
+  },
+  {
+    label: 'Edit',
+    icon: 'pi pi-fw pi-pencil',
+    items: [
+      {
+        label: 'Left',
+        icon: 'pi pi-fw pi-align-left'
+      },
+      {
+        label: 'Right',
+        icon: 'pi pi-fw pi-align-right'
+      },
+      {
+        label: 'Center',
+        icon: 'pi pi-fw pi-align-center'
+      },
+      {
+        label: 'Justify',
+        icon: 'pi pi-fw pi-align-justify'
+      }
+    ]
+  },
+  {
+    label: 'Users',
+    icon: 'pi pi-fw pi-user',
+    items: [
+      {
+        label: 'New',
+        icon: 'pi pi-fw pi-user-plus'
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-fw pi-user-minus'
+      },
+      {
+        label: 'Search',
+        icon: 'pi pi-fw pi-users',
+        items: [
+          {
+            label: 'Filter',
+            icon: 'pi pi-fw pi-filter',
+            items: [
+              {
+                label: 'Print',
+                icon: 'pi pi-fw pi-print'
+              }
+            ]
+          },
+          {
+            icon: 'pi pi-fw pi-bars',
+            label: 'List'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    label: 'Events',
+    icon: 'pi pi-fw pi-calendar',
+    items: [
+      {
+        label: 'Edit',
+        icon: 'pi pi-fw pi-pencil',
+        items: [
+          {
+            label: 'Save',
+            icon: 'pi pi-fw pi-calendar-plus'
+          },
+          {
+            label: 'Delete',
+            icon: 'pi pi-fw pi-calendar-minus'
+          }
+        ]
+      },
+      {
+        label: 'Archieve',
+        icon: 'pi pi-fw pi-calendar-times',
+        items: [
+          {
+            label: 'Remove',
+            icon: 'pi pi-fw pi-calendar-minus'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    label: 'Quit',
+    icon: 'pi pi-fw pi-power-off'
+  }
+]);
 const rutas = ref([
   {name: '1', code: '1'},
   {name: '5', code: '5'},
@@ -38,6 +170,7 @@ const columns = ref([
   {field: 'saldo', header: 'Saldo venta'},
 ]);
 const filteredProducts = ref([]);
+const operationEditing = ref({})
 let detalleCobro = ref([
   {
     key: 0,
@@ -54,14 +187,110 @@ let detalleCobro = ref([
     saldo: 0
   }
 ])
+const selectedProduct = ref(null);
+const op = ref(null);
+const op2 = ref(null);
+
+
 const rutaSeleccionada = ref(null);
+moment.locale('es-mx');
+
 
 onMounted(() => {
+
   fetchCatalogos()
 });
+
+const clearViewInfo = () =>{
+  operationEditing.value = null;
+  detalleCobro.value = [
+    {
+      key: 0,
+      code: "",
+      uC: 1,
+      pL: 0,
+      salCj: 0,
+      salPz: 0,
+      salTotal: 0,
+      regCj: 0,
+      regPz: 0,
+      regTotal: 0,
+      venta: 0,
+      saldo: 0
+    }
+  ]
+  toast.add({severity: 'info', ...summary_and_detail, life: 3000});
+
+}
+const showProducts = () => {
+  const dialogRef = dialog.open(ProductListDemo, {
+    props: {
+      header: 'Capturas de hoy',
+      style: {
+        width: '25rem',
+      },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      modal: true
+    },
+    templates: {
+      footer: markRaw(FooterDemo)
+    },
+    onClose: (options) => {
+      const data = options.data;
+      if (data) {
+        console.log(data)
+        const {id, items} = data;
+        operationEditing.value = {...data};
+        rutaSeleccionada.value = null
+        detalleCobro.value = [...items.map((i, indx) => {
+          return {
+            key: indx,
+            id: i.id,
+            code: store.products.find(p => p.code === i.code),
+            uC: i.cant_caja,
+            pL: i.precio_lista,
+            salCj: i.sCj,
+            salPz: i.sPz,
+            salTotal: i.sTotalPz,
+            regCj: i.rCj,
+            regPz: i.rPz,
+            regTotal: i.rTotalPz,
+            venta: i.ventaPz,
+            saldo: i.saldo
+          }
+        }), {
+          key: items.length,
+          code: "",
+          uC: 1,
+          pL: 0,
+          salCj: 0,
+          salPz: 0,
+          salTotal: 0,
+          regCj: 0,
+          regPz: 0,
+          regTotal: 0,
+          venta: 0,
+          saldo: 0
+        }]
+        const summary_and_detail = id ? {summary: 'Product Selected', detail: data.id} : {
+          summary: 'No Product Selected',
+          detail: `Pressed '${id}' button`
+        }
+
+        toast.add({severity: 'info', ...summary_and_detail, life: 3000});
+      }
+    }
+  });
+
+}
+
 const fetchCatalogos = () => {
   store.setProducts('productos');
   store.setRepartidores('repartidores/aviables');
+  storeReport.setOperacionesCount(moment().format('YYYY-MM-DD'), moment().add(1, 'day').format('YYYY-MM-DD'))
 }
 
 /**
@@ -96,16 +325,6 @@ const getPiezasSalida = () => {
     return accumulator + currentValue;
   }, 0);
 }
-const getUtilidad = () => {
-
-}
-const getComisiones = () => {
-  return Number(detalleCobro.value.map(({comision}) => {
-    return comision
-  }).reduce((accumulator, currentValue) => {
-    return accumulator + currentValue;
-  }, 0).toFixed(8));
-}
 const getVentas = () => {
   return Number(detalleCobro.value.map(({venta}) => {
     return venta
@@ -113,8 +332,6 @@ const getVentas = () => {
     return accumulator + currentValue;
   }, 0).toFixed(8));
 }
-
-
 const getPorcentajeVendido = () => {
   const serie = detalleCobro.value.map(({salTotal, venta}) => {
     return ((Number(venta) * 100) / Number(salTotal)) | 0
@@ -161,19 +378,13 @@ const isPositiveInteger = (val) => {
 };
 
 const selectOne = (event, field) => {
-
   const {key} = field;
   if (typeof event.value === 'object') {
-
     const {originalEvent} = event;
     if (originalEvent) {
-      console.log('selectOne', event, field, typeof event.value)
       const {code, type} = event.originalEvent;
-
       if (['Enter', 'Tab'].includes(code) || type === 'click') {//  SE REQUIERE SETEAR LAS UNIDADES POR CAJA(uC), PRECIO LISTA
         const {cant_caja, precio_lista, description, code} = event.value
-
-
         detalleCobro.value[key].uC = 0;
         detalleCobro.value[key].pL = 0;
         detalleCobro.value[key].salCj = 0;
@@ -202,11 +413,6 @@ const onChange = (data) => {
   console.log('onCgange', data);
   setValue(data)
 };
-const handleChangeNumber = (e) => {
-  console.log('onCgange', e);
-  // setValue(data)
-};
-
 const handleBlurInputNumber = (event, index, field) => {
   const {uC} = detalleCobro.value[index];
   switch (field) {
@@ -221,7 +427,6 @@ const handleBlurInputNumber = (event, index, field) => {
 
     case 'regCj':
       const {regPz} = detalleCobro.value[index];
-
       detalleCobro.value[index].regTotal = (uC * event) + regPz;
       break
     case 'regPz':
@@ -250,7 +455,6 @@ const handleBlurInputNumber = (event, index, field) => {
     const {salTotal, regTotal, pL} = detalleCobro.value[index];
     const venta = salTotal - regTotal;
     const saldo = venta * pL;
-
     detalleCobro.value[index].venta = venta;
     detalleCobro.value[index].saldo = saldo;
   }
@@ -277,9 +481,7 @@ const searchCode = (event) => {
   if (!query.trim().length)
     filteredProducts.value = store.getProducts.slice(0, 5);
   else {
-    console.log('---')
     filteredProducts.value = store.getProducts.filter(({code, description, nameCode}) => {
-      // console.log(nameCode, query)
       return code.toLowerCase().startsWith(query?.toLowerCase()) ||
           description.toLowerCase().startsWith(query?.toLowerCase()) ||
           nameCode.toLowerCase().startsWith(query?.toLowerCase())
@@ -287,37 +489,36 @@ const searchCode = (event) => {
   }
 };
 const onColReorder = () => {
-  toast.add({severity: 'success', summary: 'Column Reordered', life: 3000});
+  toast.add({severity: 'success', summary: 'Elemento reajustado', life: 3000});
 };
 const onRowReorder = (event) => {
   detalleCobro.value = event.value;
-  toast.add({severity: 'success', summary: 'Rows Reordered', life: 3000});
+  toast.add({severity: 'success', summary: 'Elemento reajustado', life: 3000});
 };
-
 const getPriceFormat = (cant) => Math.round(cant, 3);
 
 const saveOperation = async () => {
   // console.log(rutaSeleccionada.value)
   const comision = detalleCobro.value.map(({code, venta}) => {
-    console.log(code.comision, venta)
     return code ? code.comision * venta : 0
   }).reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
   }, 0)
 
   const ventas = detalleCobro.value.map(({code, venta}) => {
-    console.log(code.precio_lista, venta)
     return code ? code.precio_lista * venta : 0
   }).reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
   }, 0)
-  console.log('------------',)
+  console.log('------------ detalleCobro', detalleCobro)
   // let uitilidad = detalleCobro.value.map()
   const body = {
     repartidor: rutaSeleccionada.value.no_ruta,
     utilidad: getPriceFormat(ventas * .2),
     cobro: getPriceFormat(ventas),
     comision: getPriceFormat(comision),
+    date: moment().format("YYYY-MM-DD HH:mm:ss"),
+    // date: moment().format(),
     items: detalleCobro.value.filter(d => d.code).map(det => {
       return {
         code: det.code.code,
@@ -332,7 +533,7 @@ const saveOperation = async () => {
       }
     })
   }
-  console.log('body-> ',body)
+  console.log('body-> ', body)
   await store.saveOperation(body)
   showToast('success', 'Operación guardada!', `Captura de la ruta ${rutaSeleccionada.value.no_ruta} guardada gorrectamente.`, 8000)
   fetchCatalogos()
@@ -357,49 +558,85 @@ const saveOperation = async () => {
 
 }
 const rowStyle = (data) => {
-  if (data.salTotal === data.regTotal) {
-    if (data.salTotal > 0)
-      return {fontWeight: 'bold', fontStyle: 'italic', color: 'red !important' };
+  if (operationEditing.value.id) {
+    if (data.id) {
+      return {background: '#e0ebf4', fontWeight: 'bold'};
+    } else {
 
+        return {background: 'rgb(254 255 194)'};
+    }
+  } else {
+    if (data.salTotal === data.regTotal) {
+      if (data.salTotal > 0)
+        return {fontWeight: 'bold', fontStyle: 'italic', color: 'red !important'};
+    }
   }
 };
 const rowClass = (data) => {
   return [{'text-muted': data.code === '' && data.salTotal === 0 && data.regTotal === 0}];
 };
 
+const formatDate = (date) => {
+  return moment(date).calendar()
+}
+
 </script>
 
 <template>
   <div class="card py-4">
+    <div class="p-fluid formgrid grid align-items-flex-end">
 
-    <div class="grid p-fluid align-items-center">
-      <div class="field col-6 md:col-8">
+      <div class="field col-12 md:col-6 align-self-start">
         <h5>Captura de venta</h5>
       </div>
-
-      <div class="field text-right pb-2 col-6 md:col-2 p-2">
-        <p style="color: grey;">
-          {{ rutaSeleccionada?.no_ruta ? '' + rutaSeleccionada?.descripcion : 'Selecciona la ruta' }}
-        </p>
+      <div class="field col-12 md:col-3">
+        <label for="ruta">Ruta</label>
+        <Dropdown class="" :model-value="rutaSeleccionada" @change="changeRuta" placeholder="Selecciona una ruta"
+                  id="ruta"
+                  :options="store.getRepartidores"
+                  optionLabel="no_ruta">
+        </Dropdown>
       </div>
-      <div class="field  col-6 md:col-2">
-        <div class="p-float-label">
-          <Dropdown class="p-inputtext-sm" :model-value="rutaSeleccionada" @change="changeRuta" id="ruta"
-                    :options="store.getRepartidores"
-                    optionLabel="no_ruta">
-          </Dropdown>
-          <label for="ruta">Ruta</label>
-        </div>
+      <div class="field col-12 md:col-3">
+        <Button label="Capturas de hoy" :disabled="storeReport.getOperacionesCount === 0" severity="secondary" text
+                raised icon="pi pi-external-link" @click="showProducts"/>
+        <DynamicDialog/>
       </div>
     </div>
 
     <Toast/>
 
-    <DataTable :value="detalleCobro" :reorderableColumns="true" @columnReorder="onColReorder" @rowReorder="onRowReorder"
-               showGridlines class="p-datatable-sm" scrollable scrollHeight="calc(100% - 500px)"
+    <DataTable :value="detalleCobro"
+               showGridlines :class="[operationEditing.id ? 'editando': 'normal', 'p-datatable-sm table-operations']"
+               scrollable scrollHeight="calc(100% - 500px)"
                @cell-edit-complete="onCellEditComplete" :rowStyle="rowStyle" :row-class="rowClass"
                tableClass="editable-cells-table">
-      <Column rowReorder headerStyle="width: 1rem" :reorderableColumn="false"/>
+      <template #header>
+        <div class="flex justify-content-between px-2 gap-2">
+          <div v-if="operationEditing.id">
+            <p class="m-0 text-gray-500 text-sm font-light">Repartidor: <span class="text-primary font-normal text-xl"> {{
+                operationEditing.repartidor || 'No seleccionado'
+              }}</span>
+            </p>
+            <p class="m-0 text-gray-400 text-sm font-normal">Ruta: {{ operationEditing.no_ruta }}
+              ({{ operationEditing.descripcion }}), </p>
+            <p class="m-0 text-primary-300 text-sm font-normal">{{ formatDate(operationEditing.date) }}</p>
+          </div>
+          <div v-else>
+            <p class="m-0 text-gray-500 text-sm font-light">Repartidor: <span class="text-primary font-normal text-xl"> {{
+                rutaSeleccionada?.nombres || 'No seleccionado'
+              }}</span>
+            </p>
+            <p v-if="rutaSeleccionada" class="m-0 text-gray-800 text-sm font-light">Ruta:
+              {{ rutaSeleccionada?.no_ruta }} ( {{ rutaSeleccionada?.descripcion }}), </p>
+            <p v-if="rutaSeleccionada" class="m-0 text-primary-300 text-sm font-normal">{{ formatDate() }}</p>
+          </div>
+          <div>
+            <p :class="[operationEditing.id ? 'text-blue-700': 'text-primary', 'text-2xl']">
+              {{ operationEditing.id ? 'EDITANDO' : 'NUEVA' }}</p>
+          </div>
+        </div>
+      </template>
       <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
         <template #body="{ data, field }">
           <template v-if="field === 'code'">
@@ -424,8 +661,6 @@ const rowClass = (data) => {
               </template>
             </AutoComplete>
           </template>
-
-
           <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
           <template v-else-if="['saldo'].includes(field)">
             <span>
@@ -461,38 +696,8 @@ const rowClass = (data) => {
             <div :id="`${field}${data.key}`" class="container-digits slideDown">
               {{ data[field] }} <small class="text-gray-400">pzas.</small>
             </div>
-            <!--            <InputNumber type="decimal" @blur="handleBlurInputNumber($event,data.key, field)" class="p-inputnumber-sm"-->
-            <!--                         :min="0"-->
-            <!--                         v-model="data[field]"-->
-            <!--                         readonly-->
-            <!--                         :disabled="['salTotal', 'regTotal'].includes( field) ||  data['pL'] === 0"-->
-            <!--            />-->
           </template>
         </template>
-
-        <!--        <template #editor="{ data, field }">-->
-        <!--          <template v-if="field === 'code'">-->
-        <!--            <AutoComplete @complete="searchCode" v-model="data[field]"  class="p-autocomplete-sm" optionLabel="code"-->
-        <!--                          :suggestions="filteredProducts" >-->
-        <!--              <template #option="slotProps">-->
-        <!--                <div class="flex align-items-baseline  align-options-center">-->
-        <!--                  <b class="mr-2">{{ slotProps.option.code }}</b> <small>{{ slotProps.option.descripcion }}</small>-->
-
-        <!--                </div>-->
-        <!--              </template>-->
-        <!--            </AutoComplete>-->
-        <!--          </template>-->
-        <!--          <template v-else-if="['venta', 'saldo'].includes(field)">-->
-
-        <!--            <InputNumber type="decimal" class="p-inputnumber-sm " v-model="data[field]" mode="currency"-->
-        <!--                         :disabled="['salTotal', 'regTotal'].includes(field)" currency="USD" locale="en-US"/>-->
-        <!--          </template>-->
-        <!--          <template v-else>-->
-
-        <!--            <InputNumber type="decimal" class="p-inputnumber-sm " v-model="data[field]"-->
-        <!--                         :disabled="['salTotal', 'regTotal'].includes(field)"/>-->
-        <!--          </template>-->
-        <!--        </template>-->
       </Column>
     </DataTable>
     <Divider/>
@@ -528,7 +733,13 @@ const rowClass = (data) => {
         <h3 class="m-0 mt-1">{{ getTotalVenta() }}</h3>
       </div>
       <Divider layout="vertical" class="m-3"/>
-      <Button type="button" label="Guardar" icon="pi pi-spin pi-cog" :loading="store.isLoading"
+      <template v-if="operationEditing.id">
+        <Button type="button" text severity="secondary" label="Cerrar" icon="pi pi-times" :loading="store.isLoading"
+                disabled/>
+        <Button type="button" label="Editar" icon="pi pi-file-edit" :loading="store.isLoading"
+                disabled/>
+      </template>
+      <Button v-else type="button" label="Guardar" icon="pi pi-save" :loading="store.isLoading"
               :disabled="detalleCobro.length < 2 || !rutaSeleccionada" @click="saveOperation"/>
     </div>
 
@@ -556,20 +767,12 @@ const rowClass = (data) => {
   padding: 0rem 0rem !important;
   //background:blanchedalmond;
   width: 7.5%;
-  min-width: 5em;
+  min-width: 6em;
 
 
 }
 
 ::v-deep(.editable-cells-table td:first-of-type) {
-  width: 3rem !important;
-  min-width: 3em;
-  text-align: center;
-  cursor: move;
-  transition: all .3s ease;
-}
-
-::v-deep(.editable-cells-table td:nth-of-type(2) ) {
   width: 40% !important;
 }
 
@@ -583,7 +786,15 @@ const rowClass = (data) => {
   border-bottom: 1px solid #e8e8e8;
 }
 
-::v-deep(.p-inputtext ) {
+::v-deep(.editando .p-datatable-header) {
+  background: #f0f0ff !important;
+}
+
+//::v-deep(.editando .p-datatable-tbody > tr ){
+//    background: #e0ebf4!important;
+//}
+
+::v-deep(.table-operations .p-inputtext ) {
   margin: 0;
   width: 100%;
   max-width: 100%;
@@ -606,13 +817,25 @@ const rowClass = (data) => {
   max-width: 100%;
   //padding: 0rem 0.75rem;
   font-weight: 600;
-  background: #f7fff7;
   padding: 5.2px 5px;
   width: auto;
 }
 
+.normal .container-digits {
+  background: #f7fff7;
+
+}
+
+.editando .container-digits {
+  background: #f0f0ff75;
+}
+
 .text-muted {
-  color: var(--gray-100) ;
+  color: var(--gray-100);
+}
+
+.align-items-flex-end {
+  align-items: flex-end;
 }
 
 </style>

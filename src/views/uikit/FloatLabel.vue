@@ -80,7 +80,7 @@ onMounted(() => {
   fetchCatalogos()
 });
 
-const clearViewInfo = () =>{
+const clearViewInfo = () => {
   operationEditing.value = {};
   detalleCobro.value = [
     {
@@ -99,7 +99,7 @@ const clearViewInfo = () =>{
     }
   ]
   fetchCatalogos()
-  toast.add({severity: 'info', detail:'Listo', life: 3000});
+  toast.add({severity: 'info', detail: 'Listo', life: 3000});
 
 }
 const showProducts = () => {
@@ -384,23 +384,26 @@ const saveOperation = async () => {
   }).reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
   }, 0)
-
-  const ventas = detalleCobro.value.map(({code, venta}) => {
-    return code ? code.precio_lista * venta : 0
-  }).reduce((accumulator, currentValue) => {
-    return accumulator + currentValue;
+  const ventas = detalleCobro.value.map(({code, venta}) => code ? code.precio_lista * venta : 0).reduce((a, b) => {
+    return a + b
   }, 0)
-  console.log('------------ detalleCobro', detalleCobro)
+  const costos = detalleCobro.value.map(({code, venta}) => code ? code.precio_compra * venta : 0).reduce((a, b) => {
+    return a + b
+  }, 0)
+
+
+  console.log('------------ detalleCobro', detalleCobro.value)
   // let uitilidad = detalleCobro.value.map()
   const body = {
     repartidor: rutaSeleccionada.value.no_ruta,
-    utilidad: getPriceFormat(ventas * .2),
+    utilidad: getPriceFormat(ventas - (costos + comision)),
     cobro: getPriceFormat(ventas),
     comision: getPriceFormat(comision),
     date: moment().format("YYYY-MM-DD HH:mm:ss"),
     // date: moment().format(),
     items: detalleCobro.value.filter(d => d.code).map(det => {
       return {
+        id:det.id,
         code: det.code.code,
         sCj: det.salCj,
         sPz: det.salPz,
@@ -437,13 +440,19 @@ const saveOperation = async () => {
   rutaSeleccionada.value = undefined
 
 }
+
+const updateOperation = () => {
+ console.log(operationEditing.value, detalleCobro.value)
+
+}
 const rowStyle = (data) => {
   if (operationEditing.value.id) {
+
     if (data.id) {
       return {background: '#e0ebf4', fontWeight: 'bold'};
     } else {
 
-        return {background: 'rgb(254 255 194)'};
+      return {background: 'rgb(254 255 194)'};
     }
   } else {
     if (data.salTotal === data.regTotal) {
@@ -463,166 +472,173 @@ const formatDate = (date) => {
 </script>
 
 <template>
-  <div class="card py-4">
-    <div class="p-fluid formgrid grid align-items-flex-end">
-
-      <div class="field col-12 md:col-6 align-self-start">
-        <h5>Captura de venta</h5>
-      </div>
-      <div class="field col-12 md:col-3">
-        <label for="ruta">Ruta</label>
-        <Dropdown class="" :model-value="rutaSeleccionada" @change="changeRuta" placeholder="Selecciona una ruta"
-                  id="ruta"
-                  :options="store.getRepartidores"
-                  optionLabel="no_ruta">
-        </Dropdown>
-      </div>
-      <div class="field col-12 md:col-3">
-        <Button label="Capturas de hoy" :disabled="storeReport.getOperacionesCount === 0" severity="secondary" text
-                raised icon="pi pi-external-link" @click="showProducts"/>
-        <DynamicDialog/>
-      </div>
-    </div>
-
+  <div class="grid">
     <Toast/>
 
-    <DataTable :value="detalleCobro"
-               showGridlines :class="[operationEditing?.id ? 'editando': 'normal', 'p-datatable-sm table-operations']"
-               scrollable scrollHeight="calc(100% - 500px)"
-               @cell-edit-complete="onCellEditComplete" :rowStyle="rowStyle" :row-class="rowClass"
-               tableClass="editable-cells-table">
-      <template #header>
-        <div class="flex justify-content-between px-2 gap-2">
-          <div v-if="operationEditing.id">
-            <p class="m-0 text-gray-500 text-sm font-light">Repartidor: <span class="text-primary font-normal text-xl"> {{
-                operationEditing.repartidor || 'No seleccionado'
-              }}</span>
-            </p>
-            <p class="m-0 text-gray-400 text-sm font-normal">Ruta: {{ operationEditing.no_ruta }}
-              ({{ operationEditing.descripcion }}), </p>
-            <p class="m-0 text-primary-300 text-sm font-normal">{{ formatDate(operationEditing.date) }}</p>
+    <div class="col-12">
+      <div class="card mb-0 px-3 py-3 ">
+        <div class="p-fluid formgrid grid align-items-flex-end">
+
+          <div class="field col-12 md:col-6 align-self-start">
+            <h5>Captura de venta</h5>
           </div>
-          <div v-else>
-            <p class="m-0 text-gray-500 text-sm font-light">Repartidor: <span class="text-primary font-normal text-xl"> {{
-                rutaSeleccionada?.nombres || 'No seleccionado'
-              }}</span>
-            </p>
-            <p v-if="rutaSeleccionada" class="m-0 text-gray-800 text-sm font-light">Ruta:
-              {{ rutaSeleccionada?.no_ruta }} ( {{ rutaSeleccionada?.descripcion }}), </p>
-            <p v-if="rutaSeleccionada" class="m-0 text-primary-300 text-sm font-normal">{{ formatDate() }}</p>
+          <div class="field col-12 md:col-3">
+            <label for="ruta">Ruta</label>
+            <Dropdown class="" :model-value="rutaSeleccionada" @change="changeRuta" placeholder="Selecciona una ruta"
+                      id="ruta"
+                      :options="store.getRepartidores"
+                      optionLabel="no_ruta">
+            </Dropdown>
           </div>
-          <div>
-            <p :class="[operationEditing.id ? 'text-blue-700': 'text-primary', 'text-2xl']">
-              {{ operationEditing.id ? 'EDITANDO' : 'NUEVA' }}</p>
+          <div class="field col-12 md:col-3">
+            <Button label="Capturas de hoy" :disabled="storeReport.getOperacionesCount === 0" severity="secondary" text
+                    raised icon="pi pi-external-link" @click="showProducts"/>
+            <DynamicDialog/>
           </div>
         </div>
-      </template>
-      <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
-        <template #body="{ data, field }">
-          <template v-if="field === 'code'">
-            <AutoComplete :id="`${field}-${data.key}`"
-                          @complete="searchCode"
-                          @change="selectOne($event, data)"
-                          @focus="handleFocus($event, data.key)"
-                          @blur="handleblur($event, data.key)"
-                          v-model="data[field]"
-                          class="p-autocomplete-sm"
-                          autoOptionFocus
-                          optionLabel="nameCode"
-                          :suggestions="filteredProducts" :delay="50" selectionMessage="Mensaje de seleccion"
-                          emptySelectionMessage="No se encontró"
-                          searchMessage="search msj" aria-labelledby="codeSearch">
-              <template #option="slotProps">
-                <div class="flex align-items-baseline  align-options-center">
-                  <b class="mr-2">{{ slotProps.option.code }}</b> <small class="text-mutted">
-                  {{ slotProps.option.description }}</small>
 
-                </div>
-              </template>
-            </AutoComplete>
+        <DataTable :value="detalleCobro"
+                   showGridlines
+                   :class="[operationEditing?.id ? 'editando': 'normal', 'p-datatable-sm table-operations']"
+                   scrollable scrollHeight="calc(100% - 500px)"
+                   @cell-edit-complete="onCellEditComplete" :rowStyle="rowStyle" :row-class="rowClass"
+                   tableClass="editable-cells-table">
+          <template #header>
+            <div class="flex justify-content-between px-2 gap-2">
+              <div v-if="operationEditing.id">
+                <p class="m-0 p-text-secondary text-sm ">Repartidor: <span
+                    class="text-primary text-xl"> {{
+                    operationEditing.repartidor || 'No seleccionado'
+                  }}</span>
+                </p>
+                <p class="m-0 p-text-secondary text-sm">Ruta: {{ operationEditing.no_ruta }}
+                  ({{ operationEditing.descripcion }}), </p>
+                <p class="m-0 text-primary-300 text-sm ">{{ formatDate(operationEditing.date) }}</p>
+              </div>
+              <div v-else>
+                <p class="m-0 p-text-secondary text-sm ">Repartidor: <span
+                    class="text-primary text-xl"> {{
+                    rutaSeleccionada?.nombres || 'No seleccionado'
+                  }}</span>
+                </p>
+                <p v-if="rutaSeleccionada" class="m-0 p-text-secondary text-sm ">Ruta:
+                  {{ rutaSeleccionada?.no_ruta }} ( {{ rutaSeleccionada?.descripcion }}), </p>
+                <p v-if="rutaSeleccionada" class="m-0 text-primary-300 text-sm">{{ formatDate() }}</p>
+              </div>
+              <div>
+                <p :class="[operationEditing.id ? 'text-blue-700': 'text-primary', 'text-2xl']">
+                  {{ operationEditing.id ? 'EDITANDO' : 'NUEVA' }}</p>
+              </div>
+            </div>
           </template>
-          <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
-          <template v-else-if="['saldo'].includes(field)">
+          <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
+            <template #body="{ data, field }">
+              <template v-if="field === 'code'">
+                <AutoComplete :id="`${field}-${data.key}`"
+                              @complete="searchCode"
+                              @change="selectOne($event, data)"
+                              @focus="handleFocus($event, data.key)"
+                              @blur="handleblur($event, data.key)"
+                              v-model="data[field]"
+                              class="p-autocomplete-sm"
+                              autoOptionFocus
+                              optionLabel="nameCode"
+                              :suggestions="filteredProducts" :delay="50" selectionMessage="Mensaje de seleccion"
+                              emptySelectionMessage="No se encontró"
+                              searchMessage="search msj" aria-labelledby="codeSearch">
+                  <template #option="slotProps">
+                    <div class="flex align-items-baseline  align-options-center">
+                      <b class="mr-2">{{ slotProps.option.code }}</b> <small class="text-mutted">
+                      {{ slotProps.option.description }}</small>
+
+                    </div>
+                  </template>
+                </AutoComplete>
+              </template>
+              <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
+              <template v-else-if="['saldo'].includes(field)">
             <span>
               <div :id="`${field}${data.key}`" class="container-digits price slideDown ">
                 <span class="text-primary">{{ formatoMoneda(data[field]) }}</span>
               </div>
             </span>
+              </template>
+
+              <!--SALIDAS-->
+              <template v-else-if="['salCj', 'salPz'].includes(field)">
+                <InputNumber type="decimal" @update:modelValue="handleBlurInputNumber($event,data.key, field)"
+                             class="p-inputnumber-sm"
+                             :min="0"
+                             v-model="data[field]"
+                             :max="field === 'salPz' ? data.uC : null"
+
+                             :disabled="data['pL'] === 0"/>
+              </template>
+
+              <!--REGRESOS-->
+              <template v-else-if="['regCj', 'regPz'].includes(field)">
+                <InputNumber type="decimal" @update:modelValue="handleBlurInputNumber($event,data.key, field)"
+                             class="p-inputnumber-sm"
+                             :min="0"
+                             :max="field === 'regCj' ? data.salCj : (data.salCj === data.regCj ? data.salPz : data.uC) "
+                             v-model="data[field]"
+                             :disabled="data['salTotal'] === 0"/>
+
+              </template>
+              <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
+              <template v-else>
+                <div :id="`${field}${data.key}`" class="container-digits slideDown">
+                  {{ data[field] }} <small class="p-text-secondary">pzas.</small>
+                </div>
+              </template>
+            </template>
+          </Column>
+        </DataTable>
+        <Divider/>
+
+
+        <div class="grid justify-content-end align-content-center align-items-center px-4">
+          <div class="field text-center pb-2 p-2">
+            <p class="m-0 p-text-secondary">Salidas</p>
+            <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
+
+              <h3 class="m-0 mt-1">{{ getPiezasSalida() }}</h3><small class="p-text-secondary">Pzas</small>
+            </p>
+          </div>
+          <Divider layout="vertical" class="m-3"/>
+          <div class="field text-center pb-2 p-2">
+            <p class="m-0 p-text-secondary">Venta</p>
+            <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
+
+              <h3 class="m-0 mt-1">{{ getVentas() }} </h3> <small class="p-text-secondary"> Pzas</small>
+            </p>
+          </div>
+          <Divider layout="vertical" class="m-3"/>
+          <div class="field text-center pb-2 p-2">
+            <p class="m-0 p-text-secondary">Carga vendida</p>
+            <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
+              <h3 class="m-0 mt-1">{{ getPorcentajeVendido() }}</h3><small class="p-text-secondary">%</small>
+            </p>
+          </div>
+          <Divider layout="vertical" class="m-3"/>
+          <div class="field text-center py-2">
+
+            <p class="m-0 p-text-secondary">Total de venta</p>
+            <h3 class="m-0 mt-1">{{ getTotalVenta() }}</h3>
+          </div>
+          <Divider layout="vertical" class="m-3"/>
+          <template v-if="operationEditing.id">
+            <Button type="button" text severity="secondary" label="Cerrar" icon="pi pi-times" :loading="store.isLoading"
+                    @click="clearViewInfo()"/>
+            <Button type="button" label="Editar" icon="pi pi-file-edit" :loading="store.isLoading"
+                    @click="updateOperation()"/>
           </template>
+          <Button v-else type="button" label="Guardar" icon="pi pi-save" :loading="store.isLoading"
+                  :disabled="detalleCobro.length < 2 || !rutaSeleccionada" @click="saveOperation"/>
+        </div>
 
-          <!--SALIDAS-->
-          <template v-else-if="['salCj', 'salPz'].includes(field)">
-            <InputNumber type="decimal" @update:modelValue="handleBlurInputNumber($event,data.key, field)"
-                         class="p-inputnumber-sm"
-                         :min="0"
-                         v-model="data[field]"
-                         :max="field === 'salPz' ? data.uC : null"
-
-                         :disabled="data['pL'] === 0"/>
-          </template>
-
-          <!--REGRESOS-->
-          <template v-else-if="['regCj', 'regPz'].includes(field)">
-            <InputNumber type="decimal" @update:modelValue="handleBlurInputNumber($event,data.key, field)"
-                         class="p-inputnumber-sm"
-                         :min="0"
-                         :max="field === 'regCj' ? data.salCj : (data.salCj === data.regCj ? data.salPz : data.uC) "
-                         v-model="data[field]"
-                         :disabled="data['salTotal'] === 0"/>
-
-          </template>
-          <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
-          <template v-else>
-            <div :id="`${field}${data.key}`" class="container-digits slideDown">
-              {{ data[field] }} <small class="text-gray-400">pzas.</small>
-            </div>
-          </template>
-        </template>
-      </Column>
-    </DataTable>
-    <Divider/>
-
-
-    <div class="grid justify-content-end align-content-center align-items-center px-4">
-      <div class="field text-center pb-2 p-2">
-        <p class="m-0 text-gray-600">Salidas</p>
-        <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
-
-          <h3 class="m-0 mt-1">{{ getPiezasSalida() }}</h3><small class="text-gray-500">Pzas</small>
-        </p>
       </div>
-      <Divider layout="vertical" class="m-3"/>
-      <div class="field text-center pb-2 p-2">
-        <p class="m-0 text-gray-600">Venta</p>
-        <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
-
-          <h3 class="m-0 mt-1">{{ getVentas() }} </h3> <small class="text-gray-500"> Pzas</small>
-        </p>
-      </div>
-      <Divider layout="vertical" class="m-3"/>
-      <div class="field text-center pb-2 p-2">
-        <p class="m-0 text-gray-600">Carga vendida</p>
-        <p class="m-0 p-0 gap-1 inline-flex align-items-baseline">
-          <h3 class="m-0 mt-1">{{ getPorcentajeVendido() }}</h3><small class="text-gray-500">%</small>
-        </p>
-      </div>
-      <Divider layout="vertical" class="m-3"/>
-      <div class="field text-center py-2">
-
-        <p class="m-0 text-gray-600">Total de venta</p>
-        <h3 class="m-0 mt-1">{{ getTotalVenta() }}</h3>
-      </div>
-      <Divider layout="vertical" class="m-3"/>
-      <template v-if="operationEditing.id">
-        <Button type="button" text severity="secondary" label="Cerrar" icon="pi pi-times" :loading="store.isLoading"
-                @click="clearViewInfo()"/>
-        <Button type="button" label="Editar" icon="pi pi-file-edit" :loading="store.isLoading"
-                disabled/>
-      </template>
-      <Button v-else type="button" label="Guardar" icon="pi pi-save" :loading="store.isLoading"
-              :disabled="detalleCobro.length < 2 || !rutaSeleccionada" @click="saveOperation"/>
     </div>
-
   </div>
 </template>
 
@@ -667,7 +683,7 @@ const formatDate = (date) => {
 }
 
 ::v-deep(.editando .p-datatable-header) {
-  background: #f0f0ff !important;
+  //background: #f0f0ff !important;
 }
 
 //::v-deep(.editando .p-datatable-tbody > tr ){
@@ -702,12 +718,12 @@ const formatDate = (date) => {
 }
 
 .normal .container-digits {
-  background: #ffffea;
+  background: #fffff9;
 
 }
 
 .editando .container-digits {
-  background: #f7fcff;
+  background: #fcfeff;
 }
 
 .text-muted {

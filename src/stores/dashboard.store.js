@@ -1,8 +1,8 @@
 import {defineStore} from 'pinia';
 
 import {fetchWrapper} from '@/helpers';
-import moment from "moment";
-
+// import moment from "moment";
+moment.locale('es-mx')
 // const baseUrl = `http://localhost:3000/`;
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -61,15 +61,25 @@ export const useDashboardStore = defineStore({
                     result[date].push(elemento);
                     return result;
                 }, {});
+                console.log('dats', dats)
                 let agrupadoPorRepartidor = dats.reduce((result, elemento) => {
                     const repartidor = elemento.repartidor;
                     if (!result[repartidor])
-                        result[repartidor] = [];
-                    result[repartidor].push(elemento.totalMl);
+                        result[repartidor] = [0,0,0,0,0,0];
+                    const dayPos = moment().diff(moment().startOf('week'), 'days');
+                    result[repartidor][dayPos] = elemento.totalMl;
                     return result;
                 }, {});
-                console.log('---', agrupadoPorRepartidor)
-                console.log('---', agrupadoPorFecha)
+                let dataSemana = {}
+                for (let i = 0; i < 8; i++) {
+                    const currentLab = moment().startOf('week').add(i, 'days').format('L');
+                    dataSemana[`${currentLab}`] = agrupadoPorFecha[`${currentLab}`] ? agrupadoPorFecha[`${currentLab}`] : []
+                }
+                console.log('---agrupadoPorRepartidor', agrupadoPorRepartidor)
+                console.log('---fechas', dataSemana)
+                console.log('---agrupadoPorFecha', agrupadoPorFecha)
+                console.log('---sstartWeek', moment().diff(moment().startOf('week'), 'days'))
+
 
                 let formated = []
                 let formated2 = [
@@ -92,8 +102,8 @@ export const useDashboardStore = defineStore({
                         data: []
                     }
                 ]
-                for (const agrupadoKey in agrupadoPorFecha) {
-                    const s = agrupadoPorFecha[agrupadoKey].map(a => {
+                for (const agrupadoKey in dataSemana) {
+                    const s = dataSemana[agrupadoKey].map(a => {
                         return  a.items.map(i => i.precio_compra * i.ventaPz).reduce((a, z) => {
                             return a + z;
                         }, 0)
@@ -101,11 +111,11 @@ export const useDashboardStore = defineStore({
                             return a + z;
                         }, 0)
                     formated2[0].data.push(s)
-                    const ut = agrupadoPorFecha[agrupadoKey].map(s => s.utilidad).reduce((a, z) => {
+                    const ut = dataSemana[agrupadoKey].map(s => s.utilidad).reduce((a, z) => {
                         return a + z;
                     }, 0)
                     formated2[1].data.push(ut)
-                    const com = agrupadoPorFecha[agrupadoKey].map(s => s.comision).reduce((a, z) => {
+                    const com = dataSemana[agrupadoKey].map(s => s.comision).reduce((a, z) => {
                         return a + z;
                     }, 0)
                     formated2[2].data.push(com)
@@ -124,7 +134,7 @@ export const useDashboardStore = defineStore({
                         tension: 0.4
                     })
                 }
-                console.log([...formated])
+                console.log('---FORMATED',[...formated])
                 this.labels = [...formated];
                 this.operacions = dats
                 this.data2 = formated2

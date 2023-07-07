@@ -215,12 +215,12 @@ const applyDarkTheme = () => {
 watch(
     () => store.getLoading,
     (val) => {
-      console.log(val)
+      console.log('-----> ',val)
       if (val === false){
         chartData.value = setChartData();
         lineData.value = {
           labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-          datasets: [...store.labels]
+          datasets: [...store.getDataFor]
         }
       }
       // setCurrentP(val)
@@ -242,7 +242,7 @@ watch(
 
 <template>
 <!--  {{store.getDataFor}}-->
-  <div class="grid ">
+  <div  class="grid">
     <Toast />
 
     <div class="col-6  lg:col-6 xl:col-3">
@@ -504,4 +504,5 @@ watch(
 .w-50{
   width: 50%;
 }
+
 </style>

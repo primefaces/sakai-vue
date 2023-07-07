@@ -13,6 +13,8 @@ import {markRaw, defineAsyncComponent} from 'vue';
 import {useDialog} from 'primevue/usedialog';
 import Button from 'primevue/button';
 // import moment from "moment";
+moment.locale('es-mx');
+
 const ProductListDemo = defineAsyncComponent(() => import('./List.vue'));
 const FooterDemo = defineAsyncComponent(() => import('./FooterDemo.vue'));
 
@@ -20,129 +22,7 @@ const dialog = useDialog();
 
 const store = useCaptuaraStore();
 const storeReport = useReportStore();
-const items = ref([
-  {
-    label: 'File',
-    icon: 'pi pi-fw pi-file',
-    items: [
-      {
-        label: 'New',
-        icon: 'pi pi-fw pi-plus',
-        items: [
-          {
-            label: 'Bookmark',
-            icon: 'pi pi-fw pi-bookmark'
-          },
-          {
-            label: 'Video',
-            icon: 'pi pi-fw pi-video'
-          }
-        ]
-      },
-      {
-        label: 'Delete',
-        icon: 'pi pi-fw pi-trash'
-      },
-      {
-        separator: true
-      },
-      {
-        label: 'Export',
-        icon: 'pi pi-fw pi-external-link'
-      }
-    ]
-  },
-  {
-    label: 'Edit',
-    icon: 'pi pi-fw pi-pencil',
-    items: [
-      {
-        label: 'Left',
-        icon: 'pi pi-fw pi-align-left'
-      },
-      {
-        label: 'Right',
-        icon: 'pi pi-fw pi-align-right'
-      },
-      {
-        label: 'Center',
-        icon: 'pi pi-fw pi-align-center'
-      },
-      {
-        label: 'Justify',
-        icon: 'pi pi-fw pi-align-justify'
-      }
-    ]
-  },
-  {
-    label: 'Users',
-    icon: 'pi pi-fw pi-user',
-    items: [
-      {
-        label: 'New',
-        icon: 'pi pi-fw pi-user-plus'
-      },
-      {
-        label: 'Delete',
-        icon: 'pi pi-fw pi-user-minus'
-      },
-      {
-        label: 'Search',
-        icon: 'pi pi-fw pi-users',
-        items: [
-          {
-            label: 'Filter',
-            icon: 'pi pi-fw pi-filter',
-            items: [
-              {
-                label: 'Print',
-                icon: 'pi pi-fw pi-print'
-              }
-            ]
-          },
-          {
-            icon: 'pi pi-fw pi-bars',
-            label: 'List'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    label: 'Events',
-    icon: 'pi pi-fw pi-calendar',
-    items: [
-      {
-        label: 'Edit',
-        icon: 'pi pi-fw pi-pencil',
-        items: [
-          {
-            label: 'Save',
-            icon: 'pi pi-fw pi-calendar-plus'
-          },
-          {
-            label: 'Delete',
-            icon: 'pi pi-fw pi-calendar-minus'
-          }
-        ]
-      },
-      {
-        label: 'Archieve',
-        icon: 'pi pi-fw pi-calendar-times',
-        items: [
-          {
-            label: 'Remove',
-            icon: 'pi pi-fw pi-calendar-minus'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    label: 'Quit',
-    icon: 'pi pi-fw pi-power-off'
-  }
-]);
+
 const rutas = ref([
   {name: '1', code: '1'},
   {name: '5', code: '5'},
@@ -193,7 +73,6 @@ const op2 = ref(null);
 
 
 const rutaSeleccionada = ref(null);
-moment.locale('es-mx');
 
 
 onMounted(() => {
@@ -202,7 +81,7 @@ onMounted(() => {
 });
 
 const clearViewInfo = () =>{
-  operationEditing.value = null;
+  operationEditing.value = {};
   detalleCobro.value = [
     {
       key: 0,
@@ -219,7 +98,8 @@ const clearViewInfo = () =>{
       saldo: 0
     }
   ]
-  toast.add({severity: 'info', ...summary_and_detail, life: 3000});
+  fetchCatalogos()
+  toast.add({severity: 'info', detail:'Listo', life: 3000});
 
 }
 const showProducts = () => {
@@ -607,7 +487,7 @@ const formatDate = (date) => {
     <Toast/>
 
     <DataTable :value="detalleCobro"
-               showGridlines :class="[operationEditing.id ? 'editando': 'normal', 'p-datatable-sm table-operations']"
+               showGridlines :class="[operationEditing?.id ? 'editando': 'normal', 'p-datatable-sm table-operations']"
                scrollable scrollHeight="calc(100% - 500px)"
                @cell-edit-complete="onCellEditComplete" :rowStyle="rowStyle" :row-class="rowClass"
                tableClass="editable-cells-table">
@@ -735,7 +615,7 @@ const formatDate = (date) => {
       <Divider layout="vertical" class="m-3"/>
       <template v-if="operationEditing.id">
         <Button type="button" text severity="secondary" label="Cerrar" icon="pi pi-times" :loading="store.isLoading"
-                disabled/>
+                @click="clearViewInfo()"/>
         <Button type="button" label="Editar" icon="pi pi-file-edit" :loading="store.isLoading"
                 disabled/>
       </template>
@@ -822,12 +702,12 @@ const formatDate = (date) => {
 }
 
 .normal .container-digits {
-  background: #f7fff7;
+  background: #ffffea;
 
 }
 
 .editando .container-digits {
-  background: #f0f0ff75;
+  background: #f7fcff;
 }
 
 .text-muted {

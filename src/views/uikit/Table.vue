@@ -40,7 +40,7 @@ const fetchCatalogos = () => {
 
 const getReport = () => {
   console.log(rutaSeleccionada.value.ruta, moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'))
-  store.setOperaciones(rutaSeleccionada.value.ruta, moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'));
+  store.setOperaciones( moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'), rutaSeleccionada.value.ruta);
 }
 const onRowExpand = (event) => {
   console.log()
@@ -146,7 +146,7 @@ const formatDate = (date) => {
   <div class="card">
     <div class="d-flex justify-content-between w-100 mb-4">
       <div class="flex-auto bg-light">
-        <h5>Operaciones</h5>
+        <h5>Reportes</h5>
       </div>
     </div>
     <div class="row">
@@ -257,10 +257,10 @@ const formatDate = (date) => {
                 <div>
 
 
-                  <p class="m-0"><span class="font-300 text-400">Cobro total: </span>
+                  <p class="m-0"><span class="font-500 text-400">Cobro total: </span>
                     {{ formatCurrency(store.getTotalOperacionesCobro) }}. </p>
                   <p class="m-0"><span
-                      class="font-300 text-400">Comision total:  </span>{{
+                      class="font-500 text-400">Comision total:  </span>{{
                       formatCurrency(store.getTotalOperacionesComision)
                     }}.
                   </p>
@@ -268,14 +268,14 @@ const formatDate = (date) => {
                 <div class="text-end">
 
                   <p class="m-0"><span
-                      class="font-300 text-400">Utilidad total: </span>{{
+                      class="font-500 text-400">Utilidad total: </span>{{
                       formatCurrency(store.getTotalOperacionesUtilidad)
                     }}.
                   </p>
 
                   <p class="m-0"><span
-                      class="font-300 text-400">Kilo-Litros: </span>{{
-                      formatCurrency(store.getTotalKlts)
+                      class="font-500 text-400">Kilo-Litros: </span>{{
+                      store.getTotalKlts
                     }}.
                   </p>
                   <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"
@@ -313,8 +313,8 @@ const formatDate = (date) => {
   font-weight: 400;
 }
 
-.font-300 {
-  font-weight: 300;
+.font-500 {
+  font-weight: 500;
 }
 
 .text-end {

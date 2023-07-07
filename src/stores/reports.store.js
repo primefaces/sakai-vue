@@ -49,6 +49,7 @@ export const useReportStore = defineStore({
 
         async setRepartidores() {
             this.loading = true;
+            this.operaciones = []
 
             try {
                 let s = await fetchWrapper.get(`${baseUrl}repartidores`);

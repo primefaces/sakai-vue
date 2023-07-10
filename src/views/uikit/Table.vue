@@ -256,9 +256,7 @@ const formatDate = (date) => {
               <div class="footer-cont">
                 <div class="d-flex">
                 <div>
-
-
-                  <p class="m-0"><span class="font-500 text-400">Cobro total: </span>
+                    <p class="m-0"><span class="font-500 text-400">Cobro total: </span>
                     {{ formatCurrency(store.getTotalOperacionesCobro) }}. </p>
                   <p class="m-0"><span
                       class="font-500 text-400">Comision total:  </span>{{
@@ -266,7 +264,7 @@ const formatDate = (date) => {
                     }}.
                   </p>
                 </div>
-                <div >
+                <div>
                   <p class="m-0"><span
                       class="font-500 text-400">Utilidad total: </span>{{
                       formatCurrency(store.getTotalOperacionesUtilidad)
@@ -275,15 +273,12 @@ const formatDate = (date) => {
                   <p class="m-0"><span
                       class="font-500 text-400">Total Kilo-Litros: </span>
                     <b class="text-primary">
-
                     {{
                       store.getTotalKlts
                     }}.
                     </b>
                   </p>
-
                 </div>
-
                 </div>
                   <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"
                           icon="pi pi-file-excel"/>

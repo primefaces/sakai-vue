@@ -393,7 +393,7 @@ const saveOperation = async () => {
 
 
   console.log('------------ detalleCobro', detalleCobro.value)
-  // let uitilidad = detalleCobro.value.map()
+
   const body = {
     repartidor: rutaSeleccionada.value.no_ruta,
     utilidad: getPriceFormat(ventas - (costos + comision)),

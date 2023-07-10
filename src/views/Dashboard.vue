@@ -6,238 +6,48 @@
 import {onMounted, reactive, ref, watch} from 'vue';
 import ProductService from '@/service/ProductService';
 import {useLayout} from '@/layout/composables/layout';
+import { useToast } from "primevue/usetoast";
 import {useDashboardStore} from '@/stores'
 import {getCurrentColumns} from "@/shared/control";
-const store = useDashboardStore()
 
+const store = useDashboardStore()
+const toast = useToast();
 
 let documentStyle = getComputedStyle(document.documentElement);
 
 let textColor = documentStyle.getPropertyValue('--text-color');
-let textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-let surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 const {isDarkTheme} = useLayout();
 
 const products = ref(null);
-const lineData = ref({
-  labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-  datasets: [...store.labels]
-});
-
-const barData = ref(null);
 
 
-const lineOptions = ref(null);
-const productService = new ProductService();
-const barOptions = ref(null);
 
-import { useToast } from "primevue/usetoast";
-const toast = useToast();
-const chartData = ref();
-const chartOptions = ref();
+// moment.locale('es-mx')
+moment.updateLocale("es-mx", { week: {
+    dow: 6, // First day of week is Saturday
+    doy: 8 // First week of year must contain 1 January (7 + 6 - 1)
+  }});
 
-const setChartData = () =>  {
-  const documentStyle = getComputedStyle(document.documentElement);
-
-  return {
-    labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-    datasets: store.data2
-  };
-};
-const setChartOptions = () =>  {
-  const documentStyle = getComputedStyle(document.documentElement);
-  const textColor = documentStyle.getPropertyValue('--text-color');
-  const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-  const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-
-  return {
-    maintainAspectRatio: false,
-    aspectRatio: 0.8,
-    plugins: {
-      tooltips: {
-        mode: 'index',
-        intersect: false
-      },
-      legend: {
-        labels: {
-          color: textColor
-        }
-      }
-    },
-    scales: {
-      x: {
-        stacked: true,
-        ticks: {
-          color: textColorSecondary
-        },
-        grid: {
-          color: surfaceBorder
-        }
-      },
-      y: {
-        stacked: true,
-        ticks: {
-          color: textColorSecondary
-        },
-        grid: {
-          color: surfaceBorder
-        }
-      }
-    }
-  };
-}
 const setData = (param) => {
+  store.setOperationsVentas()
   store.getAll();
   console.log('setCurrentP-> ', store.getOperations)
 }
 onMounted(() => {
-  chartData.value = setChartData();
-  chartOptions.value = setChartOptions();
+  console.log(moment().startOf('week').format('LLLL'))
+  // chartData.value = setChartData();
+  // chartOptions.value = setChartOptions();
+
   setData()
+
 });
 
 const formatCurrency = (value) => {
   return value?.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 };
-const applyLightTheme = () => {
-  lineOptions.value = {
-    maintainAspectRatio: false,
-    aspectRatio: 0.8,
-    plugins: {
-      legend: {
-        labels: {
-          color: '#495057'
-        }
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: '#495057'
-        },
-        grid: {
-          color: '#ebedef'
-        }
-      },
-      y: {
-        ticks: {
-          color: '#495057'
-        },
-        grid: {
-          color: '#ebedef'
-        }
-      }
-    }
-  };
-};
-const setChart = () => {
-  barData.value = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        type: 'bar',
-        label: 'Costo',
-        backgroundColor: documentStyle.getPropertyValue('--cyan-200'),
-        data: []
-      },
-      {
-        type: 'bar',
-        label: 'Utilidad',
-        backgroundColor: documentStyle.getPropertyValue('--cyan-300'),
-        data: []
-      }
-    ]
-  };
-  barOptions.value = {
-    plugins: {
-      tooltips: {
-        mode: 'index',
-        intersect: false
-      },
-      legend: {
-        labels: {
-          color: textColor
-        }
-      }
-    },
-    scales: {
-      x: {
-        stacked: true,
-        ticks: {
-          color: textColorSecondary
-        },
-        grid: {
-          color: surfaceBorder
-        }
-      },
-      y: {
-        stacked: true,
-        ticks: {
-          color: textColorSecondary
-        },
-        grid: {
-          color: surfaceBorder
-        }
-      }
-    }
 
-  };
-}
-const applyDarkTheme = () => {
-  lineOptions.value = {
-    plugins: {
-      legend: {
-        labels: {
-          color: '#ebedef'
-        }
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: '#ebedef'
-        },
-        grid: {
-          color: 'rgba(160, 167, 181, .3)'
-        }
-      },
-      y: {
-        ticks: {
-          color: '#ebedef'
-        },
-        grid: {
-          color: 'rgba(160, 167, 181, .3)'
-        }
-      }
-    }
-  };
-};
-watch(
-    () => store.getLoading,
-    (val) => {
-      console.log('-----> ',val)
-      if (val === false){
-        chartData.value = setChartData();
-        lineData.value = {
-          labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-          datasets: [...store.getDataFor]
-        }
-      }
-      // setCurrentP(val)
-    }
-);
-watch(
-    isDarkTheme,
-    (val) => {
-      if (val) {
-        applyDarkTheme();
-      } else {
-        applyLightTheme();
-      }
-      setChart()
-    },
-    {immediate: true}
-);
+
+
 </script>
 
 <template>
@@ -321,22 +131,27 @@ watch(
     <div class="col-12 xl:col-6">
       <div class="card">
         <h5>Ventas</h5>
-
-        <Chart v-if="!store.isLoading" type="line" :data="lineData" :options="lineOptions" class="h-20rem"/>
-        <div v-else class="card flex justify-content-center">
+        <template v-if="store.getLoading">
+          <div class="card flex bg-light justify-content-center">
           <ProgressSpinner />
-        </div>
+          </div>
+        </template>
+        <template v-else>
+          <Chart  type="line" :data="store.getLineData" :options="store.getLineOptions" class="h-20rem"/>
+        </template>
       </div>
     </div>
     <div class="col-12 xl:col-6">
       <div class="card">
           <h5>Cierres</h5>
-
-        <!--        <Chart type="bar" :data="barData" :options="barOptions"></1Chart>-->
-        <Chart v-if="!store.isLoading" type="bar" :data="chartData" :options="chartOptions" class="h-20rem" />
-        <div v-else class="card flex justify-content-center">
-          <ProgressSpinner />
-        </div>
+        <template v-if="store.getLoading">
+          <div class="card flex bg-light justify-content-center">
+            <ProgressSpinner />
+          </div>
+        </template>
+        <template v-else>
+          <Chart  type="bar" :data="store.getBarData" :options="store.getBarOptions" class="h-20rem" />
+        </template>
       </div>
     </div>
 

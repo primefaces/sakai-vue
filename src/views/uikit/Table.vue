@@ -40,7 +40,7 @@ const fetchCatalogos = () => {
 
 const getReport = () => {
   console.log(rutaSeleccionada.value.ruta, moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'))
-  store.setOperaciones( moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'), rutaSeleccionada.value.ruta);
+  store.setOperaciones(moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'), rutaSeleccionada.value.ruta);
 }
 const onRowExpand = (event) => {
   console.log()
@@ -224,8 +224,8 @@ const formatDate = (date) => {
 
           <!--          <Column field="descripcion" header="Category"></Column>-->
           <template #expansion="slotProps">
-            <div class="p-0 bg-light">
-              <DataTable class="p-datatable-sm" scrollable scrollHeight="130px" :value="slotProps.data.items">
+            <div class="pl-8 bg-light">
+              <DataTable class="p-datatable-sm" showGridlines  scrollable scrollHeight="160px" :value="slotProps.data.items">
                 <Column field="description" header="Producto"></Column>
                 <Column field="sCj" header="S.Cj."></Column>
                 <Column field="sPz" header="S.Pz."></Column>
@@ -241,7 +241,7 @@ const formatDate = (date) => {
                     {{ formatCurrency(slotProps.data.saldo) }}
                   </template>
                 </Column>
-                <Column field="klts" header="k-Lts" sortable>
+                <Column field="klts" header="k-Lts" >
                   <template #body="slotProps">
                     <b class="text-primary"> {{ slotProps.data.klts }} </b>
 
@@ -254,6 +254,7 @@ const formatDate = (date) => {
           <template #footer>
             <template v-if="store.getOperaciones.length > 0">
               <div class="footer-cont">
+                <div class="d-flex">
                 <div>
 
 
@@ -265,23 +266,27 @@ const formatDate = (date) => {
                     }}.
                   </p>
                 </div>
-                <div class="text-end">
-
+                <div >
                   <p class="m-0"><span
                       class="font-500 text-400">Utilidad total: </span>{{
                       formatCurrency(store.getTotalOperacionesUtilidad)
                     }}.
                   </p>
-
                   <p class="m-0"><span
-                      class="font-500 text-400">Kilo-Litros: </span>{{
+                      class="font-500 text-400">Total Kilo-Litros: </span>
+                    <b class="text-primary">
+
+                    {{
                       store.getTotalKlts
                     }}.
+                    </b>
                   </p>
-                  <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"
-                          icon="pi pi-file-excel"/>
 
                 </div>
+
+                </div>
+                  <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"
+                          icon="pi pi-file-excel"/>
               </div>
             </template>
 
@@ -303,10 +308,32 @@ const formatDate = (date) => {
 
 <style scoped lang="scss">
 ::v-deep(.p-datatable-row-expansion > td) {
+  background: #ffffff;
+  padding: 4px 5px 0px 54px;
 
-  background: #fafafa;
-  box-shadow: inset 0px 2px 4px -1px #d7d7d7;
-  padding: 4px 5px 4px 24px;
+  .p-datatable .p-column-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+   .p-datatable-row-expansion > td .p-datatable .p-column-header-content * {
+    display: flex;
+    align-items: center !important;
+  }
+  .p-datatable .p-column-header-content * {
+    display: flex;
+    align-items: center !important;
+  }
+
+  .p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
+    padding: 2px 0;
+    text-align: center !important;
+  }
+
+  .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+    padding: 1px 0;
+    text-align: center;
+  }
 }
 
 .font-400 {
@@ -325,7 +352,24 @@ const formatDate = (date) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  font-size: smaller;
-  padding: .5em 1em;
+  font-size: inherit;
+  padding: 0.5em 1em;
+}
+.p-datatable .p-datatable-footer {
+  padding: 2px 8px;
+  font-weight: 600;
+}
+.p-datatable .p-datatable-thead > tr > th {
+  text-align: center;
+  font-weight: 700;
+  color: #574949;
+  background: #fbfbfb;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 1px 5px;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  text-align: left;
+  padding: 1px 4px;
 }
 </style>

@@ -16,6 +16,10 @@
 <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
 <script>
     moment.locale('es-mx');
+    moment.updateLocale("es-mx", { week: {
+            dow: 6, // First day of week is Saturday
+            doy: 8 // First week of year must contain 1 January (7 + 6 - 1)
+        }});
     console.log('MOMENT', moment().format('LLLL'))
 </script>
 </body>

@@ -318,7 +318,9 @@ export const useDashboardStore = defineStore({
                 this.operacions = dats
                 this.data2 = formated2
                 this.totales = totales[0];
-                this.isLoading = false
+                setTimeout(()=>{
+                    this.isLoading = false
+                }, 1000)
                 console.log('isLoading')
 
             } catch (error) {
@@ -328,7 +330,9 @@ export const useDashboardStore = defineStore({
                 console.log('isLoading')
             } finally {
                 this.isLoading = true
-                this.isLoading = false
+                setTimeout(()=>{
+                    this.isLoading = false
+                }, 1000)
                 console.log('isLoading')
 
 

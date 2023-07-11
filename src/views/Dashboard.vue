@@ -131,6 +131,7 @@ const formatCurrency = (value) => {
     <div class="col-12 xl:col-6">
       <div class="card">
         <h5>Ventas</h5>
+        <small> Kilo-Litros</small>
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">
 
@@ -145,6 +146,8 @@ const formatCurrency = (value) => {
     <div class="col-12 xl:col-6">
       <div class="card">
           <h5>Cierres</h5>
+        <small>Desglose $</small>
+
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">
             <img :src="'demo/images/Vanilla-1s-234px.gif'" :alt="'Cargando'" class="product-image" />

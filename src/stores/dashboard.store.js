@@ -207,6 +207,9 @@ export const useDashboardStore = defineStore({
                 labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
                 datasets: itmBase
             }
+            setTimeout(()=>{
+                this.isLoading = false
+            }, 1000)
         },
         async setOperationsCierres() {
             const itemsOperations = await fetchWrapper.get(baseUrl + 'operations/cobros');
@@ -316,13 +319,18 @@ export const useDashboardStore = defineStore({
                 this.data2 = formated2
                 this.totales = totales[0];
                 this.isLoading = false
+                console.log('isLoading')
+
             } catch (error) {
                 console.log('catch', error)
                 this.operacions = {error};
                 this.isLoading = false
+                console.log('isLoading')
             } finally {
                 this.isLoading = true
                 this.isLoading = false
+                console.log('isLoading')
+
 
             }
         },

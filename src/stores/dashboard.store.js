@@ -32,32 +32,9 @@ export const useDashboardStore = defineStore({
                     type: 'bar',
                     label: 'Cobro',
                     backgroundColor: colors[0],
-                    data: [43,63,47,56,23,57]
-                }, {
-                    type: 'bar',
-                    label: 'Margen',
-                    backgroundColor: colors[3],
-
-                    data: [44,66,44,56,23,54]
-                },
-                {
-                    type: 'bar',
-                    label: 'Comisiones',
-                    backgroundColor: colors[4],
-
-                    data: [44,61,24,46,57,44]
+                    data: [0, 0, 0, 0, 0, 0]
                 }
-            ],
-            parsing: {
-                yAxisKey: function (context) {
-                    const index = context.datasetIndex;
-                    const value = context.dataset.data[index];
-                    console.log('----@-@-@-@-@-@-@-',  index, value)
-                    console.log('----@-@-@-@-@-@-@-', value, index, context)
-                    return value.toFixed(2) | '0'
-                }
-            },
-
+            ]
         },
         storeBarChartOptions: {
             maintainAspectRatio: false,
@@ -103,6 +80,10 @@ export const useDashboardStore = defineStore({
             maintainAspectRatio: false,
             aspectRatio: 0.9,
             plugins: {
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
                 legend: {
                     labels: {
                         color: textColor
@@ -127,8 +108,9 @@ export const useDashboardStore = defineStore({
                     }
                 }
             }
-        }
+        },
 
+        productsTop:[]
     }),
     getters: {
         getDataFor(state) {
@@ -137,7 +119,9 @@ export const useDashboardStore = defineStore({
         getCobrosDia(state) {
             return state.totales.cobros
         },
-
+        getKltsDia(state) {
+            return state.totales.klts
+        },
         getUtilidadDia(state) {
             return state.totales.utilidad
         },
@@ -151,6 +135,9 @@ export const useDashboardStore = defineStore({
         },
         getLoading(state) {
             return state.isLoading
+        },
+        getProdTop(state) {
+            return state.productsTop
         },
         getLineOptions(state) {
             return state.storeChartOptions;
@@ -178,14 +165,13 @@ export const useDashboardStore = defineStore({
         async setOperationsVentas() {
             const itmBase = []
             const startW = moment().startOf('week')
-            console.log('start',startW.format('L'))
+            console.log('start', startW.format('L'))
 
             const itemsOperations = await fetchWrapper.get(baseUrl + 'operations/ventas');
             let agrupadoPorRepartidor = itemsOperations.reduce((result, {no_ruta, dte, klt}) => {
                 const dayPos = moment(dte).diff(startW, 'days');
-
                 if (!result[no_ruta])
-                    result[no_ruta] = [0,0,0,0,0,0];
+                    result[no_ruta] = [0, 0, 0, 0, 0, 0];
                 result[no_ruta][dayPos] = klt;
                 return result;
             }, {});
@@ -194,26 +180,59 @@ export const useDashboardStore = defineStore({
             console.log('\t[dashboardStore::getOperationsVentas->porRepartidor] ', agrupadoPorRepartidor)
 
             for (const aKey in agrupadoPorRepartidor) {
+                console.log('aKey', aKey, agrupadoPorRepartidor[aKey])
                 itmBase.push({
                     label: 'Ruta ' + aKey,
-                    data: agrupadoPorRepartidor[aKey].filter((_, i) => i !== 1),
+                    data: agrupadoPorRepartidor[aKey].filter((a, i) => i !== 1),
                     fill: false,
                     borderColor: colors[itmBase.length],
                     tension: 0.4
                 })
             }
             console.log('\t[dashboardStore::getOperationsVentas->Final] ', itmBase)
+            setTimeout(() => {
             this.storeChartData = {
                 labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
                 datasets: itmBase
             }
-            setTimeout(()=>{
                 this.isLoading = false
             }, 1000)
         },
         async setOperationsCierres() {
-            const itemsOperations = await fetchWrapper.get(baseUrl + 'operations/cobros');
-            console.log('\t[dashboardStore::getOperationsCierres] ', itemsOperations)
+            const cierres = await fetchWrapper.get(baseUrl + 'operations/cobros');
+            const startW = moment().startOf('week')
+
+            console.log(baseUrl + 'operations/cobros')
+            console.log('\t[dashboardStore::getOperationsCierres] ', cierres)
+            let agrupadoPorRepartidor = cierres.reduce((result, elemento) => {
+                const {repartidor, DATE, cobro} = elemento;
+                const dayPos = moment(DATE).diff(startW, 'days');
+
+                if (!result[repartidor])
+                    result[repartidor] = [0, 0, 0, 0, 0, 0];
+                result[repartidor][dayPos] = cobro;
+                return result;
+            }, {});
+            console.log('\t[dashboardStore::getOperationsCierres-agropF] ', agrupadoPorRepartidor)
+            const info = []
+            for (const aKey in agrupadoPorRepartidor) {
+                console.log('aKey', aKey, agrupadoPorRepartidor[aKey])
+                info.push({
+                        label: 'Ruta ' + aKey,
+                        data: agrupadoPorRepartidor[aKey].filter((a, i) => i !== 1),
+                        type: 'bar',
+                        backgroundColor: colors[info.length],
+                    }
+                )
+            }
+            setTimeout(() => {
+                this.storeBarChartData =  {
+                    labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
+                    datasets: info
+                }
+                this.isLoading = false
+            }, 1000)
+
         },
         async getAll() {
             // const documentStyle = getComputedStyle(document.documentElement);
@@ -223,7 +242,7 @@ export const useDashboardStore = defineStore({
                 // this.labels = []
                 let totales = await fetchWrapper.get(baseUrl + 'operations/totales');
                 let dats = await fetchWrapper.get(baseUrl + 'operations');
-                console.log(dats)
+                console.log(totales)
                 let agrupadoPorFecha = dats.reduce((result, elemento) => {
                     const date = moment(elemento.date).format('L');
                     if (!result[date])
@@ -236,7 +255,7 @@ export const useDashboardStore = defineStore({
                     const repartidor = elemento.repartidor;
                     if (!result[repartidor])
                         result[repartidor] = [0, 0, 0, 0, 0, 0];
-                    const dayPos = moment().diff(moment().startOf('week'), 'days');
+                    const dayPos = moment(elemento).diff(moment().startOf('week'), 'days');
                     result[repartidor][dayPos] = elemento.totalMl;
                     return result;
                 }, {});
@@ -318,7 +337,7 @@ export const useDashboardStore = defineStore({
                 this.operacions = dats
                 this.data2 = formated2
                 this.totales = totales[0];
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.isLoading = false
                 }, 1000)
                 console.log('isLoading')
@@ -330,7 +349,7 @@ export const useDashboardStore = defineStore({
                 console.log('isLoading')
             } finally {
                 this.isLoading = true
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.isLoading = false
                 }, 1000)
                 console.log('isLoading')
@@ -344,6 +363,18 @@ export const useDashboardStore = defineStore({
                 this.product = await fetchWrapper.get(`${baseUrl}/${id}`);
             } catch (error) {
                 this.product = {error};
+            }
+        },
+        async setProductsTOP() {
+            this.product = {loading: true};
+            try {
+                const respons = await fetchWrapper.get(`${baseUrl}productos/top`);
+                    console.log('...')
+                console.log('....<.')
+                console.log(respons)
+                this.productsTop = respons
+            } catch (error) {
+                this.productsTop = [];
             }
         },
         async update(id, params) {

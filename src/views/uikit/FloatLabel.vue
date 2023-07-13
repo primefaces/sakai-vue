@@ -397,6 +397,7 @@ const saveOperation = async () => {
   const body = {
     repartidor: rutaSeleccionada.value.no_ruta,
     utilidad: getPriceFormat(ventas - (costos + comision)),
+    costos,
     cobro: getPriceFormat(ventas),
     comision: getPriceFormat(comision),
     date: moment().format("YYYY-MM-DD HH:mm:ss"),

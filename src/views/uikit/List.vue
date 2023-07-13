@@ -17,7 +17,7 @@ const sortOptions = ref([
   {label: 'Price Low to High', value: 'price'}
 ]);
 
-import {inject} from "vue";
+x1import {inject} from "vue";
 // import moment from "moment";
 moment.locale('es-mx');
 

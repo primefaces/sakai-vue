@@ -30,6 +30,8 @@ moment.updateLocale("es-mx", { week: {
 
 const setData = (param) => {
   store.setOperationsVentas()
+  store.setOperationsCierres()
+  store.setProductsTOP()
   store.getAll();
   console.log('setCurrentP-> ', store.getOperations)
 }
@@ -115,9 +117,9 @@ const formatCurrency = (value) => {
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">$0.00</div>
+              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getKltsDia | 0)}}</div>
             </div>
-            <span class="text-600 font-medium mb-3">Venta</span>
+            <span class="text-600 font-medium mb-3">Kilolitros</span>
             <span class="text-500"> del día</span>
           </div>
           <div class="flex ms-4 align-items-center justify-content-center bg-orange-100 border-round"
@@ -131,7 +133,7 @@ const formatCurrency = (value) => {
     <div class="col-12 xl:col-6">
       <div class="card">
         <h5>Ventas</h5>
-        <small> Kilo-Litros</small>
+        <small class="text-primary"> Kilo-Litros</small>
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">
 
@@ -146,7 +148,7 @@ const formatCurrency = (value) => {
     <div class="col-12 xl:col-6">
       <div class="card">
           <h5>Cierres</h5>
-        <small>Desglose $</small>
+        <small class="text-primary">cobrado $</small>
 
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">
@@ -194,64 +196,16 @@ const formatCurrency = (value) => {
           </div>
         </div>
         <ul class="list-none p-0 m-0">
-          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+          <li v-for="item in store.getProdTop" class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
             <div>
-              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca Litro </span>
-              <div class="mt-1 text-600">Sello Rojo</div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">
+
+                {{item.code}} </span>
+              <div class="mt-1 text-600">{{ item.description }}</div>
             </div>
             <div class="mt-2 md:mt-0 flex align-items-center">
-              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-            </div>
-          </li>
-          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-            <div>
-              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Fresca 1/2 Galón</span>
-              <div class="mt-1 text-600">Sello Rojo</div>
-            </div>
-            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-            </div>
-          </li>
-          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-            <div>
-              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Tikito 1/4</span>
-              <div class="mt-1 text-600">Sello Rojo</div>
-            </div>
-            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-            </div>
-          </li>
-          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-            <div>
-              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Jamón rebanado 1kg</span>
-              <div class="mt-1 text-600">Embutidos</div>
-            </div>
-            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-            </div>
-          </li>
-          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-            <div>
-              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Deligurt 230g</span>
-              <div class="mt-1 text-600">Sello Rojo</div>
-            </div>
-            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
-            </div>
-          </li>
-          <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-            <div>
-              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Sheik</span>
-              <div class="mt-1 text-600">Sello Rojo</div>
-            </div>
-            <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-              <span class="text-400 ml-3 font-light"><small>x 1000</small></span>
-              <span class="text-red-600 ml-3 font-medium">$39,500.00</span>
+              <span class="text-400 ml-3 font-light"><small>x {{item.vendido}}</small></span>
+              <span class="text-red-600 ml-3 font-medium">{{formatCurrency( item.vendido * item.precio_lista)}}</span>
             </div>
           </li>
         </ul>

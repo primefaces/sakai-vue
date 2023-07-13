@@ -100,7 +100,7 @@ const confirm = (event) => {
                     </div>
                     <div>
                         <Button type="button" label="DataTable" @click="toggleDataTable" class="p-button-success" />
-                        <OverlayPanel ref="op2" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" modal>
+                        <OverlayPanel ref="op2" ap  pendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" modal>
                             <DataTable :value="products" v-model:selection="selectedProduct" selectionMode="single" :paginator="true" :rows="5" @row-select="onProductSelect" responsiveLayout="scroll">
                                 <Column field="name" header="Name" :sortable="true" headerStyle="min-width:12rem;"></Column>
                                 <Column header="Image" headerStyle="min-width:5rem;">

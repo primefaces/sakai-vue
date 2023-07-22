@@ -241,101 +241,101 @@ export const useDashboardStore = defineStore({
             try {
                 // this.labels = []
                 let totales = await fetchWrapper.get(baseUrl + 'operations/totales');
-                let dats = await fetchWrapper.get(baseUrl + 'operations');
+                // let dats = await fetchWrapper.get(baseUrl + 'operations');
                 console.log(totales)
-                let agrupadoPorFecha = dats.reduce((result, elemento) => {
-                    const date = moment(elemento.date).format('L');
-                    if (!result[date])
-                        result[date] = [];
-                    result[date].push(elemento);
-                    return result;
-                }, {});
-                console.log('dats', dats)
-                let agrupadoPorRepartidor = dats.reduce((result, elemento) => {
-                    const repartidor = elemento.repartidor;
-                    if (!result[repartidor])
-                        result[repartidor] = [0, 0, 0, 0, 0, 0];
-                    const dayPos = moment(elemento).diff(moment().startOf('week'), 'days');
-                    result[repartidor][dayPos] = elemento.totalMl;
-                    return result;
-                }, {});
-                let dataSemana = {}
-                let dataSemanaVentas = {}
-                for (let i = 0; i < 8; i++) {
-                    const currentLab = moment().startOf('week').add(i, 'days').format('L');
-                    console.log(currentLab, agrupadoPorFecha[`${currentLab}`])
-
-                    dataSemanaVentas[`${currentLab}`] = agrupadoPorFecha[`${currentLab}`] ? agrupadoPorFecha[`${currentLab}`] : []
-                }
-                for (let i = 0; i < 8; i++) {
-                    console.log(agrupadoPorFecha[i])
-                    const currentLab = moment().startOf('week').add(i, 'days').format('L');
-                    dataSemana[`${currentLab}`] = agrupadoPorFecha[`${currentLab}`] ? agrupadoPorFecha[`${currentLab}`] : []
-                }
-                console.log('---agrupadoPorRepartidor', agrupadoPorRepartidor)
-                console.log('---fechas', dataSemana)
-                console.log('---agrupadoPorFecha', agrupadoPorFecha)
-                console.log('---sstartWeek', moment().diff(moment().startOf('week'), 'days'))
-
-                // console.log(start)
-
-                let formated = []
-                let formated2 = [
-                    {
-                        type: 'bar',
-                        label: 'Costo',
-                        backgroundColor: colors[0],
-                        data: []
-                    },
-                    {
-                        type: 'bar',
-                        label: 'Utilidad',
-                        backgroundColor: colors[2],
-                        data: []
-                    },
-                    {
-                        type: 'bar',
-                        label: 'Comisiones',
-                        backgroundColor: colors[4],
-                        data: []
-                    }
-                ]
-                for (const agrupadoKey in dataSemana) {
-                    const s = dataSemana[agrupadoKey].map(a => {
-                        return a.items.map(i => i.precio_compra * i.ventaPz).reduce((a, z) => {
-                            return a + z;
-                        }, 0)
-                    }).reduce((a, z) => {
-                        return a + z;
-                    }, 0)
-                    formated2[0].data.push(s)
-                    const ut = dataSemana[agrupadoKey].map(s => s.utilidad).reduce((a, z) => {
-                        return a + z;
-                    }, 0)
-                    formated2[1].data.push(ut)
-                    const com = dataSemana[agrupadoKey].map(s => s.comision).reduce((a, z) => {
-                        return a + z;
-                    }, 0)
-                    formated2[2].data.push(com)
-                    console.log('s', formated2)
-
-                }
-                let cd = [...colors]
-                for (const agrupadoPorRepartidorKey in agrupadoPorRepartidor) {
-                    const color = cd.pop()
-                    formated.push({
-                        label: 'Ruta ' + agrupadoPorRepartidorKey,
-                        data: [...agrupadoPorRepartidor[agrupadoPorRepartidorKey]],
-                        fill: false,
-                        backgroundColor: color,
-                        borderColor: color,
-                        tension: 0.4
-                    })
-                }
-                console.log('---FORMATED', [...formated])
-                this.labels = [...formated];
-                this.operacions = dats
-                this.data2 = formated2
+                // let agrupadoPorFecha = dats.reduce((result, elemento) => {
+                //     const date = moment(elemento.date).format('L');
+                //     if (!result[date])
+                //         result[date] = [];
+                //     result[date].push(elemento);
+                //     return result;
+                // }, {});
+                // console.log('dats', dats)
+                // let agrupadoPorRepartidor = dats.reduce((result, elemento) => {
+                //     const repartidor = elemento.repartidor;
+                //     if (!result[repartidor])
+                //         result[repartidor] = [0, 0, 0, 0, 0, 0];
+                //     const dayPos = moment(elemento).diff(moment().startOf('week'), 'days');
+                //     result[repartidor][dayPos] = elemento.totalMl;
+                //     return result;
+                // }, {});
+                // let dataSemana = {}
+                // let dataSemanaVentas = {}
+                // for (let i = 0; i < 8; i++) {
+                //     const currentLab = moment().startOf('week').add(i, 'days').format('L');
+                //     console.log(currentLab, agrupadoPorFecha[`${currentLab}`])
+                //
+                //     dataSemanaVentas[`${currentLab}`] = agrupadoPorFecha[`${currentLab}`] ? agrupadoPorFecha[`${currentLab}`] : []
+                // }
+                // for (let i = 0; i < 8; i++) {
+                //     console.log(agrupadoPorFecha[i])
+                //     const currentLab = moment().startOf('week').add(i, 'days').format('L');
+                //     dataSemana[`${currentLab}`] = agrupadoPorFecha[`${currentLab}`] ? agrupadoPorFecha[`${currentLab}`] : []
+                // }
+                // console.log('---agrupadoPorRepartidor', agrupadoPorRepartidor)
+                // console.log('---fechas', dataSemana)
+                // console.log('---agrupadoPorFecha', agrupadoPorFecha)
+                // console.log('---sstartWeek', moment().diff(moment().startOf('week'), 'days'))
+                //
+                // // console.log(start)
+                //
+                // let formated = []
+                // let formated2 = [
+                //     {
+                //         type: 'bar',
+                //         label: 'Costo',
+                //         backgroundColor: colors[0],
+                //         data: []
+                //     },
+                //     {
+                //         type: 'bar',
+                //         label: 'Utilidad',
+                //         backgroundColor: colors[2],
+                //         data: []
+                //     },
+                //     {
+                //         type: 'bar',
+                //         label: 'Comisiones',
+                //         backgroundColor: colors[4],
+                //         data: []
+                //     }
+                // ]
+                // for (const agrupadoKey in dataSemana) {
+                //     const s = dataSemana[agrupadoKey].map(a => {
+                //         return a.items.map(i => i.precio_compra * i.ventaPz).reduce((a, z) => {
+                //             return a + z;
+                //         }, 0)
+                //     }).reduce((a, z) => {
+                //         return a + z;
+                //     }, 0)
+                //     formated2[0].data.push(s)
+                //     const ut = dataSemana[agrupadoKey].map(s => s.utilidad).reduce((a, z) => {
+                //         return a + z;
+                //     }, 0)
+                //     formated2[1].data.push(ut)
+                //     const com = dataSemana[agrupadoKey].map(s => s.comision).reduce((a, z) => {
+                //         return a + z;
+                //     }, 0)
+                //     formated2[2].data.push(com)
+                //     console.log('s', formated2)
+                //
+                // }
+                // let cd = [...colors]
+                // for (const agrupadoPorRepartidorKey in agrupadoPorRepartidor) {
+                //     const color = cd.pop()
+                //     formated.push({
+                //         label: 'Ruta ' + agrupadoPorRepartidorKey,
+                //         data: [...agrupadoPorRepartidor[agrupadoPorRepartidorKey]],
+                //         fill: false,
+                //         backgroundColor: color,
+                //         borderColor: color,
+                //         tension: 0.4
+                //     })
+                // }
+                // console.log('---FORMATED', [...formated])
+                // this.labels = [...formated];
+                // this.operacions = dats
+                // this.data2 = formated2
                 this.totales = totales[0];
                 setTimeout(() => {
                     this.isLoading = false
@@ -344,7 +344,7 @@ export const useDashboardStore = defineStore({
 
             } catch (error) {
                 console.log('catch', error)
-                this.operacions = {error};
+                // this.operacions = {error};
                 this.isLoading = false
                 console.log('isLoading')
             } finally {

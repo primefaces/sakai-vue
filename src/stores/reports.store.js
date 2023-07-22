@@ -75,8 +75,11 @@ export const useReportStore = defineStore({
             } catch (error) {
                 this.operaciones = []
                 this.errord = {error};
+                return false;
             } finally {
                 this.loading = false;
+                return !!this.operaciones.length;
+
                 // console.log(this.catalogos)
             }
         },

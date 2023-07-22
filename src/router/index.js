@@ -14,19 +14,14 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
-                    path: '/uikit/formlayout',
-                    name: 'formlayout',
-                    component: () => import('@/views/uikit/FormLayout.vue')
+                    path: '/captura_cobros',
+                    name: 'capturaCobros',
+                    component: () => import('@/views/pages/CapturaCobros.vue')
                 },
                 {
-                    path: '/uikit/input',
-                    name: 'input',
-                    component: () => import('@/views/uikit/Input.vue')
-                },
-                {
-                    path: '/uikit/floatlabel',
-                    name: 'floatlabel',
-                    component: () => import('@/views/uikit/FloatLabel.vue')
+                    path: '/reportes',
+                    name: 'reportes',
+                    component: () => import('@/views/pages/Reportes.vue')
                 },
                 {
                     path: '/uikit/invalidstate',
@@ -41,7 +36,7 @@ const router = createRouter({
                 {
                     path: '/uikit/report',
                     name: 'report',
-                    component: () => import('@/views/uikit/Table.vue')
+                    component: () => import('@/views/pages/Reportes.vue')
                 },
                 {
                     path: '/uikit/list',

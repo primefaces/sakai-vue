@@ -8,6 +8,7 @@
     },
     "dependencies": {
         "chart.js": "3.3.2",
+        "jspdf": "^2.5.1",
         "magic.css": "^1.4.8",
         "moment": "^2.29.4",
         "moment-timezone": "^0.5.43",

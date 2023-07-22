@@ -202,5 +202,23 @@ export const useCaptuaraStore = defineStore("capturas", {
                 // console.log(this.catalogos)
             }
         },
+        async updateOperation(operation) {
+            this.loading = true;
+            console.log(operation)
+            try {
+                let {data} = await fetchWrapper.put(`${baseUrl}operations/complete/${operation.id}`, operation);
+                console.log('-',data)
+                return true
+            } catch (error) {
+                this.errord = {error};
+                console.log(error)
+            } finally {
+                setTimeout(()=>{
+                this.loading = false;
+                    return true
+                }, 2000)
+                // console.log(this.catalogos)
+            }
+        },
     },
 });

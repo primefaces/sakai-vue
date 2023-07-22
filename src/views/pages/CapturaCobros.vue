@@ -3,6 +3,7 @@
 <script setup>
 import AutoComplete from 'primevue/autocomplete';
 import {useToast} from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 
 const toast = useToast();
 import {ref, onMounted, watch} from 'vue';
@@ -11,17 +12,23 @@ import {useCaptuaraStore} from "@/stores";
 import {useReportStore} from "@/stores";
 import {markRaw, defineAsyncComponent} from 'vue';
 import {useDialog} from 'primevue/usedialog';
+import {useRouter} from 'vue-router';
+const confirmPopup = useConfirm();
+
 import Button from 'primevue/button';
+// import {useConfirm} from "primevue/useconfirm";
 // import moment from "moment";
 moment.locale('es-mx');
 
-const ProductListDemo = defineAsyncComponent(() => import('./List.vue'));
-const FooterDemo = defineAsyncComponent(() => import('./FooterDemo.vue'));
+const router = useRouter();
+const ProductListDemo = defineAsyncComponent(() => import('../uikit/List.vue'));
+const FooterDemo = defineAsyncComponent(() => import('../uikit/FooterDemo.vue'));
 
 const dialog = useDialog();
 
 const store = useCaptuaraStore();
 const storeReport = useReportStore();
+// const confirmPopup = useConfirm();
 
 const rutas = ref([
   {name: '1', code: '1'},
@@ -122,9 +129,10 @@ const showProducts = () => {
       const data = options.data;
       if (data) {
         console.log(data)
-        const {id, items} = data;
+        const {id, items, no_ruta} = data;
         operationEditing.value = {...data};
-        rutaSeleccionada.value = null
+        rutaSeleccionada.value = no_ruta
+        detalleCobro.value = [],
         detalleCobro.value = [...items.map((i, indx) => {
           return {
             key: indx,
@@ -404,7 +412,7 @@ const saveOperation = async () => {
     // date: moment().format(),
     items: detalleCobro.value.filter(d => d.code).map(det => {
       return {
-        id:det.id,
+        id: det.id,
         code: det.code.code,
         sCj: det.salCj,
         sPz: det.salPz,
@@ -439,13 +447,97 @@ const saveOperation = async () => {
     }
   ]
   rutaSeleccionada.value = undefined
+  router.push('/');
 
 }
 
 const updateOperation = () => {
- console.log(operationEditing.value, detalleCobro.value)
+  const comision = detalleCobro.value.map(({code, venta}) => {
+    return code ? code.comision * venta : 0
+  }).reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0)
+  const ventas = detalleCobro.value.map(({code, venta}) => code ? code.precio_lista * venta : 0).reduce((a, b) => {
+    return a + b
+  }, 0)
+  const costos = detalleCobro.value.map(({code, venta}) => code ? code.precio_compra * venta : 0).reduce((a, b) => {
+    return a + b
+  }, 0)
+  console.log({...operationEditing.value})
+  let body = {
+    ...operationEditing.value,
+    comision,
+    ventas,
+    costos,
+    items: detalleCobro.value.filter(d => d.code && d.salTotal && d.saldo).map(det => {
+      return {
+        id: det.id,
+        code: det.code.code,
+        sCj: det.salCj,
+        sPz: det.salPz,
+        sTotalPz: det.salTotal,
+        rCj: det.regCj,
+        rPz: det.regPz,
+        rTotalPz: det.regTotal,
+        ventaPz: det.venta,
+        saldo: det.saldo,
+      }
+    })
+  }
+  console.log(body)
+  store.updateOperation(body).then(dat => {
+    showToast('success', 'Operación actualizada!', `Captura de la ruta ${body.no_ruta} se actualizó correctamente.`, 8000)
+    fetchCatalogos()
 
+    detalleCobro.value = [
+      {
+        key: 0,
+        code: "",
+        uC: 1,
+        pL: 0,
+        salCj: 0,
+        salPz: 0,
+        salTotal: 0,
+        regCj: 0,
+        regPz: 0,
+        regTotal: 0,
+        venta: 0,
+        saldo: 0
+      }
+    ]
+    rutaSeleccionada.value = undefined
+    router.push('/');
+  }).catch(er => {
+    console.log('errr--', er)
+  })
 }
+
+const confirmLeaveCurrentOp = (event) => {
+  const total = detalleCobro.value.map(({saldo}) => {
+    return saldo
+  }).reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0)
+  if (total > 0) {
+
+    confirmPopup.require({
+      target: event.target,
+      message: 'Si continuas se eliminará tu data actual?',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel:'Sí',
+      rejectLabel:'No',
+      accept: () => {
+        showProducts()
+      },
+      reject: () => {
+        console.log('rej')
+      }
+    });
+  }else{
+    showProducts()
+  }
+
+};
 const rowStyle = (data) => {
   if (operationEditing.value.id) {
 
@@ -492,8 +584,9 @@ const formatDate = (date) => {
             </Dropdown>
           </div>
           <div class="field col-12 md:col-3">
+            <ConfirmPopup></ConfirmPopup>
             <Button label="Capturas de hoy" :disabled="storeReport.getOperacionesCount === 0" severity="secondary" text
-                    raised icon="pi pi-external-link" @click="showProducts"/>
+                    raised icon="pi pi-external-link" @click="confirmLeaveCurrentOp"/>
             <DynamicDialog/>
           </div>
         </div>
@@ -735,4 +828,7 @@ const formatDate = (date) => {
   align-items: flex-end;
 }
 
+.p-disabled, .p-component:disabled {
+  opacity: 0.5;
+}
 </style>

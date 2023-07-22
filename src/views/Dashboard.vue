@@ -198,10 +198,9 @@ const formatCurrency = (value) => {
         <ul class="list-none p-0 m-0">
           <li v-for="item in store.getProdTop" class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
             <div>
-              <span class="text-900 font-medium mr-2 mb-1 md:mb-0">
 
-                {{item.code}} </span>
-              <div class="mt-1 text-600">{{ item.description }}</div>
+              <span class="text-900 font-medium mr-2 mb-1 md:mb-0 w-3rem"> [{{item.code}}]</span>
+              <span class="mt-1 text-600">{{ item.description }} </span>
             </div>
             <div class="mt-2 md:mt-0 flex align-items-center">
               <span class="text-400 ml-3 font-light"><small>x {{item.vendido}}</small></span>
@@ -277,6 +276,10 @@ const formatCurrency = (value) => {
 <style >
 .w-50{
   width: 50%;
+}
+
+.w-3rem{
+  width:3rem
 }
 
 </style>

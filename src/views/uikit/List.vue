@@ -31,7 +31,9 @@ onMounted(() => {
   fetchCatalogos()
   console.log(modal)
 });
-
+const formatCurrency = (value) => {
+  return value?.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+};
 const fetchCatalogos = () => {
   store.setOperaciones(moment().format('YYYY-MM-DD'), moment().add(1, 'day').format('YYYY-MM-DD'));
 }
@@ -49,12 +51,12 @@ const formatDate = (date) => {
         <div class="col-12">
           <div class="flex flex-row align-items-center p-3 w-full">
             <div class="flex-1 text-left">
-              <div class="font-bold text-l">Ruta {{ slotProps.data.no_ruta }}</div>
+              <div class="font-bold text-l">Ruta {{ slotProps.data.no_ruta }} - <strong class="text-primary">{{formatCurrency( slotProps.data.cobro)}} </strong></div>
               <div class="mb-0">{{ formatDate(slotProps.data.date) }}</div>
             </div>
             <div
                 class="flex flex-column justify-content-between w-auto align-items-center md:align-items-end mt-5 md:mt-0">
-              <Button text icon="pi pi-chevron-right" size="small" @click="closeDialog(slotProps.data)" class="mb-2"></Button>
+              <Button text icon="pi pi-chevron-right" size="small" label="ver" @click="closeDialog(slotProps.data)" class="mb-2"></Button>
             </div>
           </div>
         </div>
@@ -88,4 +90,11 @@ const formatDate = (date) => {
 
 <style scoped lang="scss">
 @import '@/assets/demo/styles/badges.scss';
+.p-dataview .p-dataview-content {
+  background: #ffffff;
+  color: #574949;
+  border: 0 none;
+  padding: 0;
+  min-height: 270px;
+}
 </style>

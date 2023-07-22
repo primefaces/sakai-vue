@@ -46,7 +46,8 @@ const getReport = () => {
       .then(data => {
         console.log('ddddddd',data)
         if(!data){
-          toast.add({severity: 'info', summary: 'No se encontraron cobros', detail: 'No se han registrado cobros del repartidor en estas fechas', life: 3000});
+        console.log('ddddddd',data)
+          toast.add({severity: 'info', summary: 'No se encontraron cobros', detail: 'No se han registrado cobros del repartidor en estas fechas', life: 5000, closable:true});
 
         }
       })
@@ -118,7 +119,7 @@ function exportFile() {
     var result = [];
     console.log(keys)
     for (var i = 0; i < keys.length; i += 1) {
-      let nt = ['code', 'precio_compra', 'description']
+      let nt = ['code', 'precio_compra', 'description', 'um', 'grupo', 'cant_caja']
       if (!nt.includes(keys[i]))
         result.push({
           id: keys[i],
@@ -157,7 +158,13 @@ function exportFile() {
     doc.setFontSize(10);
     doc.table(5, 45, generateData([...op.items]), headers, {fontSize: 8, autoSize: true, padding: 2, margins: 2});
   })
+  toast.add({severity: 'success', summary: 'Archivo creado', detail: getNamePdf(store.getOperaciones[0].repartidor), life: 3000});
+  setTimeout(()=>{
+
   doc.save(getNamePdf(store.getOperaciones[0].repartidor));
+  }, 2000)
+
+
 }
 
 
@@ -201,6 +208,8 @@ const formatDate = (date) => {
 </script>
 
 <template>
+  <Toast/>
+
   <div class="card">
     <div class="d-flex justify-content-between w-100 mb-4">
       <div class="flex-auto bg-light">
@@ -233,7 +242,7 @@ const formatDate = (date) => {
                 </div>
                 <div class="field mb-0 mt-3">
                      <span class="p-float-label">
-                       <Dropdown v-model="rutaSeleccionada" inputId="ruta" :options="store.getRepartidores"
+                       <Dropdown v-model="rutaSeleccionada"  inputId="ruta" :options="store.getRepartidores"
                                  optionLabel="ruta" class="w-full md:w-14rem"
                                  placeholder="Selecciona una"></Dropdown>
                     <label for="ruta">Ruta</label>

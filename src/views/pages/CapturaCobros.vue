@@ -132,7 +132,7 @@ const showProducts = () => {
         const {id, items, no_ruta} = data;
         operationEditing.value = {...data};
         rutaSeleccionada.value = no_ruta
-        detalleCobro.value = [],
+        detalleCobro.value = [];
         detalleCobro.value = [...items.map((i, indx) => {
           return {
             key: indx,
@@ -379,6 +379,24 @@ const searchCode = (event) => {
 const onColReorder = () => {
   toast.add({severity: 'success', summary: 'Elemento reajustado', life: 3000});
 };
+const setInitialItems = ()=>{
+  detalleCobro.value = [
+    {
+      key: 0,
+      code: "",
+      uC: 1,
+      pL: 0,
+      salCj: 0,
+      salPz: 0,
+      salTotal: 0,
+      regCj: 0,
+      regPz: 0,
+      regTotal: 0,
+      venta: 0,
+      saldo: 0
+    }
+  ]
+}
 const onRowReorder = (event) => {
   detalleCobro.value = event.value;
   toast.add({severity: 'success', summary: 'Elemento reajustado', life: 3000});
@@ -430,22 +448,7 @@ const saveOperation = async () => {
   showToast('success', 'Operación guardada!', `Captura de la ruta ${rutaSeleccionada.value.no_ruta} guardada gorrectamente.`, 8000)
   fetchCatalogos()
 
-  detalleCobro.value = [
-    {
-      key: 0,
-      code: "",
-      uC: 1,
-      pL: 0,
-      salCj: 0,
-      salPz: 0,
-      salTotal: 0,
-      regCj: 0,
-      regPz: 0,
-      regTotal: 0,
-      venta: 0,
-      saldo: 0
-    }
-  ]
+  setInitialItems()
   rutaSeleccionada.value = undefined
   router.push('/');
 
@@ -489,22 +492,7 @@ const updateOperation = () => {
     showToast('success', 'Operación actualizada!', `Captura de la ruta ${body.no_ruta} se actualizó correctamente.`, 8000)
     fetchCatalogos()
 
-    detalleCobro.value = [
-      {
-        key: 0,
-        code: "",
-        uC: 1,
-        pL: 0,
-        salCj: 0,
-        salPz: 0,
-        salTotal: 0,
-        regCj: 0,
-        regPz: 0,
-        regTotal: 0,
-        venta: 0,
-        saldo: 0
-      }
-    ]
+    setInitialItems()
     rutaSeleccionada.value = undefined
     router.push('/');
   }).catch(er => {
@@ -572,10 +560,10 @@ const formatDate = (date) => {
       <div class="card mb-0 px-3 py-3 ">
         <div class="p-fluid formgrid grid align-items-flex-end">
 
-          <div class="field col-12 md:col-6 align-self-start">
+          <div class="field col-12 md:col-9 align-self-start">
             <h5>Captura de venta</h5>
           </div>
-          <div class="field col-12 md:col-3">
+          <div class="field col-12 md:col-1">
             <label for="ruta">Ruta</label>
             <Dropdown class="" :model-value="rutaSeleccionada" @change="changeRuta" placeholder="Selecciona una ruta"
                       id="ruta"
@@ -583,10 +571,10 @@ const formatDate = (date) => {
                       optionLabel="no_ruta">
             </Dropdown>
           </div>
-          <div class="field col-12 md:col-3">
+          <div class="field col-12 md:col-2">
             <ConfirmPopup></ConfirmPopup>
-            <Button label="Capturas de hoy" :disabled="storeReport.getOperacionesCount === 0" severity="secondary" text
-                    raised icon="pi pi-external-link" @click="confirmLeaveCurrentOp"/>
+            <Button label="Capturas de hoy" :disabled="storeReport.getOperacionesCount === 0" severity="info"
+                     icon="pi pi-external-link" @click="confirmLeaveCurrentOp"/>
             <DynamicDialog/>
           </div>
         </div>

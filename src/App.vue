@@ -18,7 +18,7 @@ setTimeout(() => {
 
 <template>
     <div v-if="store.isShowSplash" class="fondo animacionFondo">
-        <img src="./assets/images/Lácteos-fotor-bg-remover-202304182390.png" class="animacionLogo" alt="ss">
+        <img src="./assets/images/pngwing.com.png" class="animacionLogo" alt="ss">
     </div>
     <router-view />
 </template>
@@ -61,22 +61,22 @@ setTimeout(() => {
     0% {
         visibility: visible;
         filter: blur(20px) opacity(.4);
-        transform: scale(3.6) rotate(60deg);
+        transform: scale(2.6) rotate(60deg);
     }
 
     20% {
         filter: blur(1px) opacity(.9);
-        transform: scale(1.5) rotate(3deg);
+        transform: scale(0.8) rotate(3deg);
     }
 
     60% {
         filter: blur(0px) opacity(1);
-        transform: scale(1) rotate(0deg);
+        transform: scale(0.5) rotate(0deg);
     }
 
     100% {
         filter: blur(4px);
-        transform: scale(1) rotate(0deg);
+        transform: scale(0.5) rotate(0deg);
     }
 }
 

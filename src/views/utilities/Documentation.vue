@@ -7,15 +7,15 @@
             Sakai is an application template for Vue based on the <a href="https://github.com/vuejs/create-vue" class="font-medium text-primary hover:underline">create-vue</a>, the recommended way to start a <strong>Vite-powered</strong> Vue
             projects. To get started, clone the <a href="https://github.com/primefaces/sakai-vue" class="font-medium text-primary hover:underline">repository</a> from GitHub and install the dependencies with npm or yarn.
         </p>
-        <CodeHighlight> npm install </CodeHighlight>
+        <pre class="app-code"><code> npm install </code></pre>
 
-        or
+        <p>or</p>
 
-        <CodeHighlight> yarn </CodeHighlight>
+        <pre class="app-code"><code> yarn </code></pre>
 
         <p>Next step is running the application using the serve script and navigate to <i>http://localhost:5173/</i> to view the application. That is it, you may now start with the development of your application using the Sakai template.</p>
 
-        <CodeHighlight> npm run dev </CodeHighlight>
+        <pre class="app-code"><code> npm run dev </code></pre>
 
         <h5>Structure</h5>
         <p>Sakai consists of a couple folders, demos and layout have been separated so that you can easily remove what is not necessary for your application.</p>
@@ -45,7 +45,7 @@
         <p>In case you&apos;d like to customize the main layout variables, open <b>_variables.scss</b> file under src/layout folder. Saving the changes will be reflected instantly at your browser.</p>
 
         <h6>src/layout/_variables.scss</h6>
-        <CodeHighlight>
+        <pre class="app-code">
             /* General */
             <br />
             $scale:14px; /* main font size */
@@ -53,7 +53,7 @@
             $borderRadius:12px; /* border radius of layout element e.g. card, sidebar */
             <br />
             $transitionDuration:.2s; /* transition duration of layout elements e.g. sidebar, overlay menus */
-        </CodeHighlight>
+        </pre>
     </div>
 </template>
 

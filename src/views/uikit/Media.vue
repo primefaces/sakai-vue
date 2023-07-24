@@ -57,22 +57,20 @@ onMounted(() => {
                 <h5>Carousel</h5>
                 <Carousel :value="products" :numVisible="3" :numScroll="3" :circular="false" :responsiveOptions="carouselResponsiveOptions">
                     <template #item="product">
-                        <div class="product-item">
-                            <div class="product-item-content">
-                                <div class="mb-3">
-                                    <img :src="'demo/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
-                                </div>
-                                <div>
-                                    <h4 class="mb-1">
-                                        {{ product.data.name }}
-                                    </h4>
-                                    <h6 class="mt-0 mb-3">${{ product.data.price }}</h6>
-                                    <span :class="'product-badge status-' + product.data.inventoryStatus.toLowerCase()">{{ product.data.inventoryStatus }}</span>
-                                    <div class="car-buttons mt-5">
-                                        <Button type="button" class="p-button p-button-rounded mr-2" icon="pi pi-search"></Button>
-                                        <Button type="button" class="p-button-success p-button-rounded mr-2" icon="pi pi-star-fill"></Button>
-                                        <Button type="button" class="p-button-help p-button-rounded" icon="pi pi-cog"></Button>
-                                    </div>
+                        <div class="border-round m-2 text-center p-2" style="border: 1px solid var(--surface-d)">
+                            <div class="my-5">
+                                <img :src="'demo/images/product/' + product.data.image" :alt="product.data.name" class="product-image" />
+                            </div>
+                            <div>
+                                <h5 class="mb-1">
+                                    {{ product.data.name }}
+                                </h5>
+                                <h6 class="mt-0 mb-3">${{ product.data.price }}</h6>
+                                <Badge :class="'product-badge status-' + product.data.inventoryStatus.toLowerCase()">{{ product.data.inventoryStatus }}</Badge>
+                                <div class="my-5">
+                                    <Button icon="pi pi-search" class="mr-2 p-button-rounded"></Button>
+                                    <Button icon="pi pi-star-fill" class="mr-2 p-button-rounded p-button-success"></Button>
+                                    <Button icon="pi pi-cog" class="p-button-rounded p-button-info"></Button>
                                 </div>
                             </div>
                         </div>
@@ -105,8 +103,3 @@ onMounted(() => {
         </div>
     </div>
 </template>
-
-<style lang="scss" scoped>
-@import '@/assets/demo/styles/badges.scss';
-@import '@/assets/demo/styles/items.scss';
-</style>

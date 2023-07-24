@@ -370,8 +370,6 @@ const calculateCustomerTotal = (name) => {
 </template>
 
 <style scoped lang="scss">
-@import '@/assets/demo/styles/badges.scss';
-
 ::v-deep(.p-datatable-frozen-tbody) {
     font-weight: bold;
 }

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-const block1 = ref(`<div class="grid grid-nogutter surface-section text-800">
+const block1 = ref(` <div class="grid grid-nogutter surface-section text-800">
     <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
         <section>
             <span class="block text-6xl font-bold mb-1">Create the screens your</span>
@@ -14,8 +14,9 @@ const block1 = ref(`<div class="grid grid-nogutter surface-section text-800">
     <div class="col-12 md:col-6 overflow-hidden">
         <img src="/demo/images/blocks/hero/hero-1.png" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
     </div>
-</div>`);
-const block2 = ref(`<div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
+ </div>`);
+
+const block2 = ref(` <div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
     <div class="mb-3 font-bold text-2xl">
         <span class="text-900">One Product, </span>
         <span class="text-blue-600">Many Solutions</span>
@@ -65,9 +66,9 @@ const block2 = ref(`<div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-c
             <span class="text-700 text-sm line-height-3">Mattis rhoncus urna neque viverra justo nec ultrices. Id cursus metus aliquam eleifend.</span>
         </div>
     </div>
-</div>`);
+ </div>`);
 
-const block3 = ref(`<div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
+const block3 = ref(` <div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
     <div class="text-900 font-bold text-6xl mb-4 text-center">Pricing Plans</div>
     <div class="text-700 text-xl mb-6 text-center line-height-3">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit numquam eligendi quos.</div>
 
@@ -181,18 +182,18 @@ const block3 = ref(`<div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
             </div>
         </div>
     </div>
-</div>`);
+ </div>`);
 
-const block4 = ref(`<div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+const block4 = ref(` <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
     <div class="text-700 text-center">
         <div class="text-blue-600 font-bold mb-3"><i class="pi pi-discord"></i>&nbsp;POWERED BY DISCORD</div>
         <div class="text-900 font-bold text-5xl mb-3">Join Our Design Community</div>
         <div class="text-700 text-2xl mb-5">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit numquam eligendi quos.</div>
         <Button label="Join Now" icon="pi pi-discord" class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></Button>
     </div>
-</div>`);
+ </div>`);
 
-const block5 = ref(`<div class="bg-bluegray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap">
+const block5 = ref(` <div class="bg-bluegray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap">
     <div class="font-bold mr-8">🔥 Hot Deals!</div>
     <div class="align-items-center hidden lg:flex">
         <span class="line-height-3">Libero voluptatum atque exercitationem praesentium provident odit.</span>
@@ -203,9 +204,9 @@ const block5 = ref(`<div class="bg-bluegray-900 text-gray-100 p-3 flex justify-c
     <a v-ripple class="flex align-items-center no-underline justify-content-center border-circle text-gray-50 hover:bg-bluegray-700 cursor-pointer transition-colors transition-duration-150 p-ripple" style="width:2rem; height: 2rem">
         <i class="pi pi-times"></i>
     </a>
-</div>`);
+ </div>`);
 
-const block6 = ref(`<div class="surface-section px-4 py-5 md:px-6 lg:px-8">
+const block6 = ref(` <div class="surface-section px-4 py-5 md:px-6 lg:px-8">
     <ul class="list-none p-0 m-0 flex align-items-center font-medium mb-3">
         <li>
             <a class="text-500 no-underline line-height-3 cursor-pointer">Application</a>
@@ -240,9 +241,9 @@ const block6 = ref(`<div class="surface-section px-4 py-5 md:px-6 lg:px-8">
             <Button label="Save" icon="pi pi-check"></Button>
         </div>
     </div>
-</div>`);
+ </div>`);
 
-const block7 = ref(`<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+const block7 = ref(` <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
     <div class="grid">
         <div class="col-12 md:col-6 lg:col-3">
             <div class="surface-card shadow-2 p-3 border-round">
@@ -305,9 +306,9 @@ const block7 = ref(`<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
             </div>
         </div>
     </div>
-</div>`);
+ </div>`);
 
-const block8 = ref(`<div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+const block8 = ref(` <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
     <div class="text-center mb-5">
         <img src="/demo/images/blocks/logos/hyper.svg" alt="Image" height="50" class="mb-3">
         <div class="text-900 text-3xl font-medium mb-3">Welcome Back</div>
@@ -332,9 +333,9 @@ const block8 = ref(`<div class="surface-card p-4 shadow-2 border-round w-full lg
 
         <Button label="Sign In" icon="pi pi-user" class="w-full"></Button>
     </div>
-</div>`);
+ </div>`);
 
-const block9 = ref(`<div class="surface-section">
+const block9 = ref(` <div class="surface-section">
     <div class="font-medium text-3xl text-900 mb-3">Movie Information</div>
     <div class="text-500 mb-5">Morbi tristique blandit turpis. In viverra ligula id nulla hendrerit rutrum.</div>
     <ul class="list-none p-0 m-0">
@@ -380,20 +381,20 @@ const block9 = ref(`<div class="surface-section">
             </div>
         </li>
     </ul>
-</div>`);
+ </div>`);
 
-const block10 = ref(`<div class="surface-card p-4 shadow-2 border-round">
+const block10 = ref(` <div class="surface-card p-4 shadow-2 border-round">
     <div class="text-3xl font-medium text-900 mb-3">Card Title</div>
     <div class="font-medium text-500 mb-3">Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.</div>
     <div style="height: 150px" class="border-2 border-dashed surface-border"></div>
-</div>`);
+ </div>`);
 
 const checked = ref(false);
 </script>
 
 <template>
     <div>
-        <BlockViewer header="Hero" :code="block1">
+        <BlockViewer header="Hero" :code="block1" free>
             <div class="grid grid-nogutter surface-section text-800">
                 <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center">
                     <section>
@@ -411,7 +412,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Feature" :code="block2">
+        <BlockViewer header="Feature" :code="block2" free>
             <div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
                 <div class="mb-3 font-bold text-2xl">
                     <span class="text-900">One Product, </span>
@@ -465,7 +466,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Pricing" :code="block3">
+        <BlockViewer header="Pricing" :code="block3" free>
             <div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
                 <div class="text-900 font-bold text-6xl mb-4 text-center">Pricing Plans</div>
                 <div class="text-700 text-xl mb-6 text-center line-height-3">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit numquam eligendi quos.</div>
@@ -583,7 +584,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Call to Action" :code="block4">
+        <BlockViewer header="Call to Action" :code="block4" free>
             <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
                 <div class="text-700 text-center">
                     <div class="text-blue-600 font-bold mb-3"><i class="pi pi-discord"></i>&nbsp;POWERED BY DISCORD</div>
@@ -594,7 +595,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Banner" :code="block5" containerClass="surface-section py-8">
+        <BlockViewer header="Banner" :code="block5" containerClass="surface-section py-8" free>
             <div class="bg-bluegray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap">
                 <div class="font-bold mr-8">🔥 Hot Deals!</div>
                 <div class="align-items-center hidden lg:flex">
@@ -609,7 +610,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Page Heading" :code="block6">
+        <BlockViewer header="Page Heading" :code="block6" free>
             <div class="surface-section px-4 py-5 md:px-6 lg:px-8">
                 <ul class="list-none p-0 m-0 flex align-items-center font-medium mb-3">
                     <li>
@@ -648,7 +649,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Stats" :code="block7">
+        <BlockViewer header="Stats" :code="block7" free>
             <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
                 <div class="grid">
                     <div class="col-12 md:col-6 lg:col-3">
@@ -715,7 +716,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Sign-In" :code="block8" containerClass="surface-ground px-4 py-8 md:px-6 lg:px-8 flex align-items-center justify-content-center">
+        <BlockViewer header="Sign-In" :code="block8" containerClass="surface-ground px-4 py-8 md:px-6 lg:px-8 flex align-items-center justify-content-center" free>
             <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
                 <div class="text-center mb-5">
                     <img src="/demo/images/blocks/logos/hyper.svg" alt="Image" height="50" class="mb-3" />
@@ -744,7 +745,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Description List" :code="block9" containerClass="surface-section px-4 py-8 md:px-6 lg:px-8">
+        <BlockViewer header="Description List" :code="block9" containerClass="surface-section px-4 py-8 md:px-6 lg:px-8" free>
             <div class="surface-section">
                 <div class="font-medium text-3xl text-900 mb-3">Movie Information</div>
                 <div class="text-500 mb-5">Morbi tristique blandit turpis. In viverra ligula id nulla hendrerit rutrum.</div>
@@ -792,7 +793,7 @@ const checked = ref(false);
             </div>
         </BlockViewer>
 
-        <BlockViewer header="Card" :code="block10" containerClass="px-4 py-8 md:px-6 lg:px-8">
+        <BlockViewer header="Card" :code="block10" containerClass="px-4 py-8 md:px-6 lg:px-8" free>
             <div class="surface-card p-4 shadow-2 border-round">
                 <div class="text-3xl font-medium text-900 mb-3">Card Title</div>
                 <div class="font-medium text-500 mb-3">Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.</div>

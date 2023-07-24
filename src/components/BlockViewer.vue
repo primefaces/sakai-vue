@@ -1,41 +1,39 @@
-<script>
-import CodeHighlight from './CodeHighlight.vue';
+<script setup>
+import { ref, reactive } from 'vue';
 
-export default {
-    props: {
-        header: {
-            type: String,
-            default: null
-        },
-        code: null,
-        recent: {
-            type: Boolean,
-            default: false
-        },
-        containerClass: null,
-        previewStyle: null
+const props = defineProps({
+    header: {
+        type: String,
+        default: null
     },
-    data() {
-        return {
-            BlockView: {
-                PREVIEW: 0,
-                CODE: 1
-            },
-            blockView: 0
-        };
+    code: null,
+    recent: {
+        type: Boolean,
+        default: false
     },
-    methods: {
-        activateView(event, blockView) {
-            this.blockView = blockView;
-            event.preventDefault();
-        },
-        async copyCode(event) {
-            await navigator.clipboard.writeText(this.code);
-            event.preventDefault();
-        }
+    free: {
+        type: Boolean,
+        default: false
     },
-    components: { CodeHighlight }
-};
+    containerClass: null,
+    previewStyle: null
+});
+
+const BlockView = reactive({
+    PREVIEW: 0,
+    CODE: 1
+});
+const blockView = ref(0);
+
+function activateView(event, blockViewValue) {
+    blockView.value = blockViewValue;
+    event.preventDefault();
+}
+
+async function copyCode(event) {
+    await navigator.clipboard.writeText(props.code);
+    event.preventDefault();
+}
 </script>
 
 <template>
@@ -44,6 +42,7 @@ export default {
             <span class="block-title">
                 <span>{{ header }}</span>
                 <span class="badge-new" v-if="recent">New</span>
+                <span class="badge-free" v-if="free">Free</span>
             </span>
             <div class="block-actions">
                 <a tabindex="0" :class="{ 'block-action-active': blockView === BlockView.PREVIEW }" @click="activateView($event, BlockView.PREVIEW)"><span>Preview</span></a>
@@ -58,7 +57,7 @@ export default {
                 <slot></slot>
             </div>
             <div v-if="blockView === BlockView.CODE">
-<CodeHighlight class="surface-card m-0">{{code}}</CodeHighlight>
+                <pre class="app-code"><code>{{code}}</code></pre>
             </div>
         </div>
     </div>

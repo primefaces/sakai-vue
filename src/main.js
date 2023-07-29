@@ -2,6 +2,8 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 
+import { createPinia } from 'pinia'
+
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
 import Accordion from 'primevue/accordion';
@@ -104,14 +106,40 @@ import CodeHighlight from '@/components/CodeHighlight.vue';
 import BlockViewer from '@/components/BlockViewer.vue';
 
 import '@/assets/styles.scss';
+import axios from 'axios';
+
+const pinia = createPinia()
+
+// setup fake backend
+// import { fakeBackend } from './helpers';
+// fakeBackend();
 
 const app = createApp(App);
 
+// app.use(cors())
+app.use(pinia)
 app.use(router);
 app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
+
+// Ase ta diatun own plugin
+app.provide('message', 'http://localhost:3000')
+
+app.use({
+    install: function (Vue, options) {
+        // Accessible ya ste globally by using "inject"
+        Vue.provide('$api', axios.create({
+            baseURL: 'http://localhost:3000'
+        }))
+
+        // Si kiere tu man provide global property
+        Vue.provide('nombreDelProp', { el: 'value' })
+    }
+})
+// amo tu este tan mention last time akel nakapublish l api? or reusable na otro app?
+// hinde. available lang ste na current project.
 
 app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);

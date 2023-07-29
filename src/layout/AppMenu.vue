@@ -34,6 +34,7 @@ const model = ref([
         label: 'Users',
         items: [
             { label: 'Register', icon: 'pi pi-fw pi-user-plus', to: '/auth/register' },
+            { label: 'Pinia Example', icon: 'pi pi-fw pi-check-square', to: '/pinia' },
             //{ label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/uikit/input' },
         ]
     },

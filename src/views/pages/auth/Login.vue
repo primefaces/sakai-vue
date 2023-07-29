@@ -1,7 +1,15 @@
 <script setup>
 // import { useLayout } from '@/layout/composables/layout';
-import { ref, computed } from 'vue';
+import { ref, computed, inject } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
+
+import { useUserStore } from '@/stores/user'
+// import axios from "axios";
+
+// const api = inject('$api')
+
+// const nombreDelProp = inject('nombreDelProp') // { el: 'value' }
+const userStore = useUserStore()
 
 // const { layoutConfig } = useLayout();
 const email = ref('');
@@ -12,6 +20,41 @@ const logoUrl = computed(() => {
     // return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
     return `layout/images/logo.png`;
 });
+
+
+async function signin() {
+    try{
+        const login = await userStore.signIn(
+            email.value,
+            password.value
+        )
+
+        // axios.post('https://reqres.in/api/login', {
+        //     email: 'eve.holt@reqres.in', password: 'cityslicka'
+        // })
+        // .then(response => {
+        //     console.log(response)
+        // })
+
+        if (login) {
+            // yan succeed el login
+            // either redirect or hide login modal, dipende na use case
+            console.log('Logged in!')
+        } else {
+            // yan failed el login
+            // man alert lng nu? or reload. Yes puede tamen.
+            // nccta pa extension para na documentation?
+            // no need ya ata.
+            // console.log('Else but tried')
+        }
+
+        // console.log("trying") 
+    } catch (error) {
+        console.log("catching")
+        // console.log('ERROR:', error)
+    }
+    
+}
 </script>
 
 <template>
@@ -27,20 +70,20 @@ const logoUrl = computed(() => {
                     </div>
 
                     <div>
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="email" />
+                        <label for="email" class="block text-900 text-xl font-medium mb-2">Email</label>
+                        <InputText id="email" v-model="email"  type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" />
 
-                        <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" inputStyle="padding:1rem"></Password>
+                        <label for="password" class="block text-900 font-medium text-xl mb-2">Password</label>
+                        <Password id="password" v-model="password" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" inputStyle="padding:1rem"></Password>
 
                         <div class="flex align-items-center justify-content-between mb-5 gap-5">
                             <div class="flex align-items-center">
-                                <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
+                                <Checkbox v-model="checked" id="rememberme" binary class="mr-2"></Checkbox>
                                 <label for="rememberme1">Remember me</label>
                             </div>
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
                         </div>
-                        <Button label="Sign In" class="w-full p-3 text-xl"></Button>
+                        <Button @click="signin"  label="Sign In" class="w-full p-3 text-xl"></Button>
                     </div>
                 </div>
             </div>

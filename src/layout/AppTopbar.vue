@@ -18,7 +18,8 @@ onBeforeUnmount(() => {
 });
 
 const logoUrl = computed(() => {
-    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+    // return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+    return `layout/images/logo.png`;
 });
 
 const onTopBarMenuButton = () => {
@@ -27,6 +28,11 @@ const onTopBarMenuButton = () => {
 const onSettingsClick = () => {
     topbarMenuActive.value = false;
     router.push('/documentation');
+};
+
+const onLoginClick = () => {
+    topbarMenuActive.value = !topbarMenuActive.value;
+    router.push('/auth/login');
 };
 const topbarMenuClasses = computed(() => {
     return {
@@ -80,7 +86,7 @@ const isOutsideClicked = (event) => {
                 <i class="pi pi-calendar"></i>
                 <span>Calendar</span>
             </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+            <button @click="onLoginClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-user"></i>
                 <span>Profile</span>
             </button>

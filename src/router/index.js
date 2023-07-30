@@ -14,6 +14,11 @@ const router = createRouter({
                     component: () => import('@/views/Portal.vue'),
                 },
                 {
+                    path: '/pinia',
+                    name: 'pinia',
+                    component: () => import('@/views/pages/PiniaExample.vue'),
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue'),

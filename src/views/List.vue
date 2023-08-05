@@ -19,7 +19,7 @@ const sortOptions = ref([
 
 import {inject} from "vue";
 // import moment from "moment";
-moment.lo// console('es-mx');
+moment.locale('es-mx');
 
 const dialogRef = inject('dialogRef');
 const modal = dialogRef.modal
@@ -32,7 +32,7 @@ onMounted(() => {
   console.log(modal)
 });
 const formatCurrency = (value) => {
-  return value?.toLo// consoleString('en-US', {style: 'currency', currency: 'USD'});
+  return value?.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 };
 const fetchCatalogos = () => {
   store.setOperaciones(moment().format('YYYY-MM-DD'), moment().add(1, 'day').format('YYYY-MM-DD'));
@@ -89,7 +89,6 @@ const formatDate = (date) => {
 </template>
 
 <style scoped lang="scss">
-@import 'badges';
 .p-dataview .p-dataview-content {
   background: #ffffff;
   color: #574949;

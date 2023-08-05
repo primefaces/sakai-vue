@@ -117,7 +117,7 @@ const formatCurrency = (value) => {
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">{{formatCurrency( store.getKltsDia | 0)}}</div>
+              <div class="text-900 font-medium text-xl">{{ store.getKltsDia | 0}}<small class="text-500">Klts</small> </div>
             </div>
             <span class="text-600 font-medium mb-3">Kilolitros</span>
             <span class="text-500"> del día</span>
@@ -132,8 +132,8 @@ const formatCurrency = (value) => {
 
     <div class="col-12 xl:col-6">
       <div class="card">
-        <h5>Ventas</h5>
-        <small class="text-primary"> Kilo-Litros</small>
+        <h5 class="mb-1">Ventas <small class="text-500">de la semana en curso</small></h5>
+        <b class="text-primary"> Kilo-Litros</b>
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">
 
@@ -147,8 +147,8 @@ const formatCurrency = (value) => {
     </div>
     <div class="col-12 xl:col-6">
       <div class="card">
-          <h5>Cierres</h5>
-        <small class="text-primary">cobrado $</small>
+          <h5 class="mb-1">Cierres <small class="text-500">de la semana en curso</small></h5>
+        <b class="text-primary">cobrado MXN$</b>
 
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">

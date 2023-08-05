@@ -56,6 +56,12 @@ setTimeout(() => {
     animation-timing-function: ease-in-out;
 
 }
+.p-button.p-button-sm .p-button-icon,
+.p1-button .p-button-icon
+
+{
+  font-size: 1.2rem;
+}
 
 @keyframes animLogo {
     0% {

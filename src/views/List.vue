@@ -19,7 +19,7 @@ const sortOptions = ref([
 
 import {inject} from "vue";
 // import moment from "moment";
-moment.locale('es-mx');
+moment.lo// console('es-mx');
 
 const dialogRef = inject('dialogRef');
 const modal = dialogRef.modal
@@ -32,7 +32,7 @@ onMounted(() => {
   console.log(modal)
 });
 const formatCurrency = (value) => {
-  return value?.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+  return value?.toLo// consoleString('en-US', {style: 'currency', currency: 'USD'});
 };
 const fetchCatalogos = () => {
   store.setOperaciones(moment().format('YYYY-MM-DD'), moment().add(1, 'day').format('YYYY-MM-DD'));
@@ -49,14 +49,14 @@ const formatDate = (date) => {
               :sortField="sortField">
       <template #list="slotProps">
         <div class="col-12">
-          <div class="flex flex-row align-items-center p-3 w-full">
+          <div class="flex flex-row align-items-center p-3 w-full hoverable" role="button"  @click="closeDialog(slotProps.data)">
             <div class="flex-1 text-left">
               <div class="font-bold text-l">Ruta {{ slotProps.data.no_ruta }} - <strong class="text-primary">{{formatCurrency( slotProps.data.cobro)}} </strong></div>
-              <div class="mb-0">{{ formatDate(slotProps.data.date) }}</div>
+              <div class="mb-0">{{slotProps.data.date }} {{ formatDate(slotProps.data.date) }}</div>
             </div>
             <div
                 class="flex flex-column justify-content-between w-auto align-items-center md:align-items-end mt-5 md:mt-0">
-              <Button text icon="pi pi-chevron-right" size="small" label="ver" @click="closeDialog(slotProps.data)" class="mb-2"></Button>
+              <Button text icon="pi pi-chevron-right" size="small" label="ver" class="mb-2"></Button>
             </div>
           </div>
         </div>
@@ -89,7 +89,7 @@ const formatDate = (date) => {
 </template>
 
 <style scoped lang="scss">
-@import '@/assets/demo/styles/badges.scss';
+@import 'badges';
 .p-dataview .p-dataview-content {
   background: #ffffff;
   color: #574949;

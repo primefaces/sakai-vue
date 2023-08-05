@@ -1,5 +1,4 @@
 import {defineStore} from "pinia";
-import json from "./../views/utilities/products.json";
 import {fetchWrapper} from "@/helpers";
 
 // const baseUrl = `http://localhost:3000/`;
@@ -138,13 +137,19 @@ export const useCaptuaraStore = defineStore("capturas", {
         },
         quitProd(product) {
                 const i = this.products.indexOf(product)
-            // console.log(                    this.products[i])
+// consolelog(i,this.products[i])
             this.products.splice(i,1)
+// consolecount('productQUIT');
             //
             // console.log('new length qui', this.products.length)
         },
         addProd(product) {
+// consolecount('productADD');
+
+// consolelog(this.products.length);
+// consolelog(product);
             this.products.unshift(product)// console.log('new length add', this.products.unshift(product))
+// consolelog(this.products.length);
         },
         async setRutas(frgm) {
             this.loading = true;
@@ -165,7 +170,7 @@ export const useCaptuaraStore = defineStore("capturas", {
             this.loading = true;
 
             try {
-                console.log(`${baseUrl}${frgm}`)
+    // consolelog(`${baseUrl}${frgm}`)
                 let data = await fetchWrapper.get(`${baseUrl}${frgm}`);
                 // console.log(data)|
                 this.repartidores = data
@@ -179,21 +184,21 @@ export const useCaptuaraStore = defineStore("capturas", {
         },
         async saveOperation(operation) {
             this.loading = true;
-            console.log(operation)
+// consolelog(operation)
             try {
                 let {data} = await fetchWrapper.post(`${baseUrl}operations/complete`, operation);
-                console.log('-',data)
+    // consolelog('-',data)
                 let resp
                 if(data){
                     resp = await fetchWrapper.get(`${baseUrl}operations/${data}`);
                 }
                 else
                     throw new Error('No se guardo')
-                    console.log(resp)
+        // consolelog(resp)
                 return true
             } catch (error) {
                 this.errord = {error};
-                console.log(error)
+    // consolelog(error)
             } finally {
                 setTimeout(()=>{
                 this.loading = false;
@@ -204,14 +209,14 @@ export const useCaptuaraStore = defineStore("capturas", {
         },
         async updateOperation(operation) {
             this.loading = true;
-            console.log(operation)
+// consolelog(operation)
             try {
                 let {data} = await fetchWrapper.put(`${baseUrl}operations/complete/${operation.id}`, operation);
-                console.log('-',data)
+    // consolelog('-',data)
                 return true
             } catch (error) {
                 this.errord = {error};
-                console.log(error)
+    // consolelog(error)
             } finally {
                 setTimeout(()=>{
                 this.loading = false;

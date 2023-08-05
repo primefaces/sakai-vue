@@ -3,6 +3,7 @@ import {defineStore} from 'pinia';
 import {fetchWrapper} from '@/helpers';
 // import moment from "moment";
 moment.locale('es-mx')
+console.log('----',moment().format());
 // const baseUrl = `http://localhost:3000/`;
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const documentStyle = getComputedStyle(document.documentElement);
@@ -165,13 +166,22 @@ export const useDashboardStore = defineStore({
         async setOperationsVentas() {
             const itmBase = []
             const startW = moment().startOf('week')
-            console.log('start', startW.format('L'))
+            console.log('Start of week   ', startW)
+
 
             const itemsOperations = await fetchWrapper.get(baseUrl + 'operations/ventas');
+        itemsOperations.forEach(it => {
+            console.log(it.dte);
+        });
             let agrupadoPorRepartidor = itemsOperations.reduce((result, {no_ruta, dte, klt}) => {
-                const dayPos = moment(dte).diff(startW, 'days');
+                const dayPos = moment(dte).add(1,'days').diff(startW, 'days');
+                console.log('dayPos',dayPos);
+                console.log('.weekday',moment(dte).add(1,'days').weekday());
+                console.log(dayPos);
                 if (!result[no_ruta])
-                    result[no_ruta] = [0, 0, 0, 0, 0, 0];
+                    result[no_ruta] = [0, 0, 0, 0, 0, 0, 0];
+                
+                console.log(dayPos);
                 result[no_ruta][dayPos] = klt;
                 return result;
             }, {});
@@ -202,14 +212,15 @@ export const useDashboardStore = defineStore({
             const cierres = await fetchWrapper.get(baseUrl + 'operations/cobros');
             const startW = moment().startOf('week')
 
+            console.log('Start of week   ', startW)
             console.log(baseUrl + 'operations/cobros')
             console.log('\t[dashboardStore::getOperationsCierres] ', cierres)
             let agrupadoPorRepartidor = cierres.reduce((result, elemento) => {
                 const {repartidor, DATE, cobro} = elemento;
-                const dayPos = moment(DATE).diff(startW, 'days');
+                const dayPos = moment(DATE).add(1,'days').diff(startW, 'days');
 
                 if (!result[repartidor])
-                    result[repartidor] = [0, 0, 0, 0, 0, 0];
+                    result[repartidor] = [0, 0, 0, 0, 0, 0, 0];
                 result[repartidor][dayPos] = cobro;
                 return result;
             }, {});

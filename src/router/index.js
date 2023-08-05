@@ -16,12 +16,12 @@ const router = createRouter({
                 {
                     path: '/captura_cobros',
                     name: 'capturaCobros',
-                    component: () => import('@/views/pages/CapturaCobros.vue')
+                    component: () => import('@/views/CapturaCobros.vue')
                 },
                 {
                     path: '/reportes',
                     name: 'reportes',
-                    component: () => import('@/views/pages/Reportes.vue')
+                    component: () => import('@/views/Reportes.vue')
                 },
                 {
                     path: '/uikit/invalidstate',
@@ -36,12 +36,12 @@ const router = createRouter({
                 {
                     path: '/uikit/report',
                     name: 'report',
-                    component: () => import('@/views/pages/Reportes.vue')
+                    component: () => import('@/views/Reportes.vue')
                 },
                 {
                     path: '/uikit/list',
                     name: 'list',
-                    component: () => import('@/views/uikit/List.vue')
+                    component: () => import('@/views/List.vue')
                 },
                 {
                     path: '/uikit/tree',
@@ -130,7 +130,7 @@ const router = createRouter({
                     path: '/pages/crud/:indx',
                     props: true,
                     name: 'crud',
-                    component: () => import('@/views/pages/Crud.vue')
+                    component: () => import('@/views/Crud.vue')
                 },
                 {
                     path: '/documentation',

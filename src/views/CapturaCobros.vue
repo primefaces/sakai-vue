@@ -1,6 +1,7 @@
 <!-- eslint-disable prettier/prettier -->
 <!-- eslint-disable prettier/prettier -->
 <script setup>
+moment.locale('es-mx');
 import AutoComplete from 'primevue/autocomplete';
 import {useToast} from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -18,11 +19,10 @@ const confirmPopup = useConfirm();
 import Button from 'primevue/button';
 // import {useConfirm} from "primevue/useconfirm";
 // import moment from "moment";
-moment.locale('es-mx');
 
 const router = useRouter();
-const ProductListDemo = defineAsyncComponent(() => import('../uikit/List.vue'));
-const FooterDemo = defineAsyncComponent(() => import('../uikit/FooterDemo.vue'));
+const ProductListDemo = defineAsyncComponent(() => import('./List.vue'));
+const FooterDemo = defineAsyncComponent(() => import('./uikit/FooterDemo.vue'));
 
 const dialog = useDialog();
 
@@ -114,7 +114,7 @@ const showProducts = () => {
     props: {
       header: 'Capturas de hoy',
       style: {
-        width: '25rem',
+        width: '40rem',
       },
       breakpoints: {
         '960px': '75vw',
@@ -267,6 +267,7 @@ const isPositiveInteger = (val) => {
 
 const selectOne = (event, field) => {
   const {key} = field;
+  console.log(event);
   if (typeof event.value === 'object') {
     const {originalEvent} = event;
     if (originalEvent) {
@@ -286,9 +287,9 @@ const selectOne = (event, field) => {
         detalleCobro.value[key].uC = cant_caja;
         detalleCobro.value[key].pL = precio_lista;
         filteredProducts.value = [...store.getProducts.slice(0, 5)]
-        // store.quitProd(event.value);
+        store.quitProd(event.value);
         showToast('info', 'Código añadido', `Se añadió ${description} al renglón correctamente.`, 2000)
-        // console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
+        console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
       }
     }
   } else {
@@ -351,6 +352,7 @@ const handleFocus = (e, inx) => {
   const {sourceCapabilities, relatedTarget} = e
   // console.log(e,value)
   let {code} = detalleCobro.value[inx]
+  console.log(code)
   let noneValid = ['focus p-toast-icon-close p-link', 'focus p-inputtext p-component p-inputnumber-input'].includes(e.relatedTarget?.className)
   // console.log('\tfocus', noneValid)
   if (typeof code === "object" && sourceCapabilities && !noneValid) {
@@ -359,7 +361,7 @@ const handleFocus = (e, inx) => {
 }
 const handleblur = (e, inx) => {
   let {code} = detalleCobro.value[inx]
-  // console.log('\tblur',value,code)
+  console.log('\tblur',code)
   if (typeof code === "object") {
     store.quitProd(code)
   }
@@ -788,6 +790,16 @@ const formatDate = (date) => {
 }
 
 
+::v-deep(.p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item .p-focus)
+  {
+   color: #574949;
+   background: #FFCDD2 !important;
+   font-weight: 700!important;
+ 
+ 
+}
+
+
 .container-digits {
   margin: 0;
   width: 7.5%;
@@ -819,4 +831,9 @@ const formatDate = (date) => {
 .p-disabled, .p-component:disabled {
   opacity: 0.5;
 }
+
+.pi {
+  font-size: 1.3rem!important;
+}
 </style>
+

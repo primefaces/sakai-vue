@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
-import {getCurrentColumns} from "./../../shared/control";
+import {getCurrentColumns} from "../shared/control";
 import {useCatalogosStore} from '@/stores'
 
 const frmat = txt => capitalize(txt).replaceAll('_', ' ')
@@ -58,7 +58,7 @@ const props = defineProps({
 
 
 const formatCurrency = (value) => {
-  return value?.toLocaleString('es-MX', {style: 'currency', currency: 'MXN'});
+  return value?.toLo// consoleString('es-MX', {style: 'currency', currency: 'MXN'});
 }
 
 onBeforeMount(() => {
@@ -97,8 +97,14 @@ const hideDialog = () => {
 
 const deleteProduct = async () => {
   console.log('delete', product.value)
-
-  await store.delete(currentP.routeApi, product.value.id)
+  let _id = '';
+  if(currentP.key === 'Rutas'){
+    _id = product.value.no_ruta
+  }
+  else{
+    _id = product.value.id
+  }
+  await store.delete(currentP.routeApi, _id)
   deleteProductDialog.value = false;
   setCurrentP(currentP.key)
 
@@ -243,11 +249,16 @@ watch(
         </DataTable>
 
 
-        <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Registrar nuevo" :modal="true"
+        <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" :header="product.id || product.no_ruta ? 'Editar':'Registrar nuevo'" :modal="true"
                 class="p-fluid">
           <img :src="'demo/images/product/' + product.image" :alt="product.image" v-if="product.image" width="150"
                class="mt-0 mx-auto mb-5 block shadow-2"/>
-
+          <div class="field" v-if="['Rutas'].includes(currentP.key)">
+            <label for="no_ruta"># de Ruta</label>
+            <InputText id="no_ruta" v-model.trim="product.no_ruta" required="true" autofocus
+                       :class="{ 'p-invalid': submitted && !product.no_ruta }"/>
+            <small class="p-invalid" v-if="submitted && !product.no_ruta">Ingresa el # ruta.</small>
+          </div>
           <div class="field" v-if="['Productos'].includes(currentP.key)">
             <label for="code">Codigo</label>
             <InputText id="code" :disabled="product.code" v-model.trim="product.code" required="true"
@@ -291,6 +302,7 @@ watch(
           </div>
 
 
+
           <div class="field" v-if="['grupos'].includes(currentP.key)">
             <label for="inventoryStatus" class="mb-3">Familia</label>
             <Dropdown id="inventoryStatus" v-model="product.familia" :options="store.getFamilias" optionLabel="label"
@@ -315,20 +327,20 @@ watch(
           <div class="formgrid grid" v-if="['Productos'].includes(currentP.key)">
             <div class="field col">
               <label for="precio">$ Compra</label>
-              <InputNumber id="precio" v-model="product.precio_compra" mode="currency" currency="USD" locale="en-US"
+              <InputNumber id="precio" v-model="product.precio_compra" mode="currency" currency="USD" lo// console="en-US"
                            :class="{ 'p-invalid': submitted && !product.precio_compra }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.precio_compra">Price is required.</small>
             </div>
             <div class="field col">
               <label for="costo">$ Venta</label>
-              <InputNumber id="costo" v-model="product.precio_lista" mode="currency" currency="USD" locale="en-US"
+              <InputNumber id="costo" v-model="product.precio_lista" mode="currency" currency="USD" lo// console="en-US"
                            :class="{ 'p-invalid': submitted && !product.precio_lista }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.precio_lista">Price is required.</small>
             </div>
             <div class="field col">
               <label for="comision">$ comision</label>
               <InputNumber id="comision" v-model="product.comision" mode="currency" currency="USD"
-                           :min-fraction-digits="3" locale="en-US"
+                           :min-fraction-digits="3" lo// console="en-US"
                            :class="{ 'p-invalid': submitted && !product.comision }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.comision">Price is required.</small>
               <small class="p-invalid" v-if="submitted && !product.comision">Price is required.</small>
@@ -457,7 +469,7 @@ watch(
                 </template>
               </Dropdown>
               <!--              <label for="um">um</label>-->
-              <!--              <InputNumber id="um" v-model="product.um" mode="currency" currency="USD" locale="en-US"-->
+              <!--              <InputNumber id="um" v-model="product.um" mode="currency" currency="USD" lo// console="en-US"-->
               <!--                           :class="{ 'p-invalid': submitted && !product.um }" :required="true"/>-->
               <small class="p-invalid" v-if="submitted && !product.um">Price is required.</small>
             </div>
@@ -530,13 +542,13 @@ watch(
         <!--          </div>-->
 
         <Dialog v-model:visible="deleteProductsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-          <div class="flex align-items-center justify-content-center">
+          <div class="flex align-items-center justify-content-center p-3">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"/>
             <span v-if="product">Are you sure you want to delete the selected products?</span>
           </div>
           <template #footer>
             <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProductsDialog = false"/>
-            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteSelectedProducts"/>
+            <Button label="Si" icon="pi pi-check" class="p-button-text" @click="deleteSelectedProducts"/>
           </template>
         </Dialog>
       </div>

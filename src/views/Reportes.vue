@@ -44,9 +44,9 @@ const getReport = () => {
   console.log(rutaSeleccionada.value.ruta, moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'))
   store.setOperaciones(moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'), rutaSeleccionada.value.ruta)
       .then(data => {
-        console.log('ddddddd',data)
+   // console.log('ddddddd',data)
         if(!data){
-        console.log('ddddddd',data)
+   // console.log('ddddddd',data)
           toast.add({severity: 'info', summary: 'No se encontraron cobros', detail: 'No se han registrado cobros del repartidor en estas fechas', life: 5000, closable:true});
 
         }
@@ -97,15 +97,20 @@ function exportFile() {
     for (var i = 0; i < data.length; i += 1) {
       // data[i].id = (i + 1).toString();/}}/
       for (const colK in data[i]) {
-        console.log(data[i])
+   // console.log(data[i])
         if (colK === 'create_time') {
+     // console.log('1')
           data[i][colK] = getDateF(_f, rangoDeReporte.value[0])
         } else if (['sCj', 'sPz', 'salTotalPz', 'rCj', 'rPz', 'regTotalPz', 'ventaPz'].includes(colK)) {
+     // console.log('2')
           data[i][colK] = data[i][colK].toString() + colK.split('').splice(colK.length - 2, 2).join('')
         } else if (['saldo', 'comision'].includes(colK)) {
+     // console.log('3')
+
           data[i][colK] = formatCurrency(data[i][colK]).toString()
 
         } else
+     // console.log(data[i])
           data[i][colK] = data[i][colK].toString()
 
       }
@@ -125,7 +130,7 @@ function exportFile() {
           id: keys[i],
           name: keys[i],
           prompt: keys[i],
-          width: 80,
+          width: ['saldo', 'comision', 'create_time', 'ventaPz'].includes(keys[i]) ? 30 : 20,
           align: "center",
           padding: 0
         });
@@ -145,24 +150,32 @@ function exportFile() {
   doc.setFontSize(22);
   doc.text(store.getOperaciones[0].repartidor + ' R-' + store.getOperaciones[0].no_ruta, 10, 10);
   doc.setFontSize(10);
-  doc.text(`Del: ${getDateF('L', rangoDeReporte.value[0])}`, 200, 10);
-  doc.text(`Al: ${getDateF('L', rangoDeReporte.value[1])}`, 200, 15);
+  doc.text(`Del: ${getDateF('L', rangoDeReporte.value[0])}`, 245, 10);
+  doc.text(`Al: ${getDateF('L', rangoDeReporte.value[1])}`, 245, 15);
   doc.setFontSize(10);
   doc.text(`Kilolitros: ${store.getTotalKlts.toFixed(4)}`, 20, 20);
   doc.text(`Comisiones: ${formatCurrency(store.getTotalOperacionesComision)}`, 20, 25);
 
-  doc.setFontSize(12);
-  store.getOperaciones.forEach(op => {
-
-    doc.text(`Comisiones: ${getDateF('dddd Do', op.date)}`, 5, 40);
+  let oprations = [...store.getOperaciones];
+  oprations.forEach((op, index) => {
+    let top = 40;
+    if(index < 1){
+ // console.log('first');
+    }else{
+ // console.log(oprations[index - 1 ]);
+      top = 40 + ((oprations[index - 1 ].items.length * 30) + 20 )
+    }
+    console.log(top);
+    doc.setFontSize(12);
+    doc.text(`Comisiones: ${getDateF('dddd Do', op.date)}: cobro = ${formatCurrency( op.cobro)}, (${op.klts}klts.)`, 5, top);
     doc.setFontSize(10);
-    doc.table(5, 45, generateData([...op.items]), headers, {fontSize: 8, autoSize: true, padding: 2, margins: 2});
+    doc.table(5, top + 5, generateData([...op.items]), headers, {fontSize: 8, padding: 2, margins: 2});
   })
   toast.add({severity: 'success', summary: 'Archivo creado', detail: getNamePdf(store.getOperaciones[0].repartidor), life: 3000});
   setTimeout(()=>{
 
   doc.save(getNamePdf(store.getOperaciones[0].repartidor));
-  }, 2000)
+  }, 500)
 
 
 }
@@ -234,7 +247,7 @@ const formatDate = (date) => {
                 <div class="field mb-0 mt-3">
                    <span class="p-float-label">
                     <Calendar hideOnRangeSelection dateFormat="yy-mm-dd" :hide="(e)=>{
-                      console.log('hide',e)
+                 // console.log('hide',e)
                     }" inputId="rango" v-model="rangoDeReporte"
                               selectionMode="range" :manualInput="false" :maxDate="maxDate"> </Calendar>
                     <label for="rango">Rengo de fechas</label>
@@ -270,7 +283,9 @@ const formatDate = (date) => {
 
           <Column field="cobro" header="Cobro">
             <template #body="slotProps">
+              <b>
               {{ formatCurrency(slotProps.data.cobro) }}
+              </b>
             </template>
           </Column>
           <Column field="comision" header="Comision">
@@ -369,7 +384,7 @@ const formatDate = (date) => {
   <!--  </div>-->
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 ::v-deep(.p-datatable-row-expansion > td) {
   background: #ffffff;
   padding: 4px 5px 0px 54px;
@@ -440,5 +455,10 @@ const formatDate = (date) => {
 .p-datatable .p-datatable-tbody > tr > td {
   text-align: left;
   padding: 1px 4px;
+}
+
+.p-button.p-button-sm .p-button-icon,
+.p-button-icon {
+  font-size: 1.2rem!important;
 }
 </style>

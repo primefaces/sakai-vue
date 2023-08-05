@@ -177,20 +177,20 @@ export const useDashboardStore = defineStore({
                 const dayPos = moment(dte).add(1,'days').diff(startW, 'days');
                 console.log('dayPos',dayPos);
                 console.log('.weekday',moment(dte).add(1,'days').weekday());
-                console.log(dayPos);
+            // console.log(dayPos);
                 if (!result[no_ruta])
                     result[no_ruta] = [0, 0, 0, 0, 0, 0, 0];
                 
-                console.log(dayPos);
+            // console.log(dayPos);
                 result[no_ruta][dayPos] = klt;
                 return result;
             }, {});
 
-            console.log('\t[dashboardStore::getOperationsVentas] ', itemsOperations)
-            console.log('\t[dashboardStore::getOperationsVentas->porRepartidor] ', agrupadoPorRepartidor)
+        // console.log('\t[dashboardStore::getOperationsVentas] ', itemsOperations)
+        // console.log('\t[dashboardStore::getOperationsVentas->porRepartidor] ', agrupadoPorRepartidor)
 
             for (const aKey in agrupadoPorRepartidor) {
-                console.log('aKey', aKey, agrupadoPorRepartidor[aKey])
+            // console.log('aKey', aKey, agrupadoPorRepartidor[aKey])
                 itmBase.push({
                     label: 'Ruta ' + aKey,
                     data: agrupadoPorRepartidor[aKey].filter((a, i) => i !== 1),
@@ -199,7 +199,7 @@ export const useDashboardStore = defineStore({
                     tension: 0.4
                 })
             }
-            console.log('\t[dashboardStore::getOperationsVentas->Final] ', itmBase)
+        // console.log('\t[dashboardStore::getOperationsVentas->Final] ', itmBase)
             setTimeout(() => {
             this.storeChartData = {
                 labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
@@ -212,9 +212,9 @@ export const useDashboardStore = defineStore({
             const cierres = await fetchWrapper.get(baseUrl + 'operations/cobros');
             const startW = moment().startOf('week')
 
-            console.log('Start of week   ', startW)
-            console.log(baseUrl + 'operations/cobros')
-            console.log('\t[dashboardStore::getOperationsCierres] ', cierres)
+        // console.log('Start of week   ', startW)
+        // console.log(baseUrl + 'operations/cobros')
+        // console.log('\t[dashboardStore::getOperationsCierres] ', cierres)
             let agrupadoPorRepartidor = cierres.reduce((result, elemento) => {
                 const {repartidor, DATE, cobro} = elemento;
                 const dayPos = moment(DATE).add(1,'days').diff(startW, 'days');
@@ -224,7 +224,7 @@ export const useDashboardStore = defineStore({
                 result[repartidor][dayPos] = cobro;
                 return result;
             }, {});
-            console.log('\t[dashboardStore::getOperationsCierres-agropF] ', agrupadoPorRepartidor)
+        // console.log('\t[dashboardStore::getOperationsCierres-agropF] ', agrupadoPorRepartidor)
             const info = []
             for (const aKey in agrupadoPorRepartidor) {
                 console.log('aKey', aKey, agrupadoPorRepartidor[aKey])

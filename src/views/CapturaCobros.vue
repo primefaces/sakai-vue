@@ -106,7 +106,7 @@ const clearViewInfo = () => {
     }
   ]
   fetchCatalogos()
-  toast.add({severity: 'info', detail: 'Listo', life: 3000});
+  toast.add({severity: 'Ruta ingresada', detail: 'Se han limpíado todos los datos', life: 3000});
 
 }
 const showProducts = () => {
@@ -230,6 +230,7 @@ const getPorcentajeVendido = () => {
 }
 const changeRuta = (event) => {
   rutaSeleccionada.value = event.value
+  clearViewInfo()
   console.log(event.value);
 }
 
@@ -468,12 +469,14 @@ const updateOperation = () => {
   const costos = detalleCobro.value.map(({code, venta}) => code ? code.precio_compra * venta : 0).reduce((a, b) => {
     return a + b
   }, 0)
+
   console.log({...operationEditing.value})
   let body = {
     ...operationEditing.value,
-    comision,
-    ventas,
+    utilidad: getPriceFormat(ventas - (costos + comision)),
     costos,
+    cobro: getPriceFormat(ventas),
+    comision: getPriceFormat(comision),
     items: detalleCobro.value.filter(d => d.code && d.salTotal && d.saldo).map(det => {
       return {
         id: det.id,

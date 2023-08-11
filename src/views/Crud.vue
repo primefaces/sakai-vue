@@ -2,7 +2,7 @@
 <script setup>
 import {getCurrentColumns} from "../shared/control";
 import {useCatalogosStore} from '@/stores'
-
+import { FilterMatchMode } from 'primevue/api';
 const frmat = txt => capitalize(txt).replaceAll('_', ' ')
 import {capitalize, onBeforeMount, onMounted, ref, watch} from 'vue';
 import {defineProps} from 'vue';
@@ -13,7 +13,10 @@ const deleteProductDialog = ref(false);
 const deleteProductsDialog = ref(false);
 
 const selectedProducts = ref(null);
-const filters = ref({});
+
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 const statuses = ref([
   {label: 'INSTOCK', value: 'instock'},
   {label: 'LOWSTOCK', value: 'lowstock'},
@@ -60,6 +63,16 @@ const props = defineProps({
 const formatCurrency = (value) => {
   return value?.toLocaleString('es-MX', {style: 'currency', currency: 'MXN'});
 }
+const formatDate = (value) => {
+    return value.toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+};
+// const formatCurrency = (value) => {
+//     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+// };
 
 onBeforeMount(() => {
   console.log('beforeMount')
@@ -200,6 +213,7 @@ watch(
         <h5>{{ currentP.title }}</h5>
 
         <DataTable
+            v-model:filters="filters"
             :value="store.dataCatalog"
             :paginator="true"
             ref="dt"
@@ -215,7 +229,7 @@ watch(
             <div class="flex flex-wrap justify-content-between gap-2">
                 <span class="p-input-icon-left">
             <i class="pi pi-search"/>
-            <InputText v-model="store.searching" placeholder="Busqueda"/>
+            <InputText v-model="filters['global'].value"  placeholder="Busqueda"/>
         </span>
               <div class="formgroup-inline align-items-baseline">
                 <span class="p-buttonset">
@@ -230,7 +244,7 @@ watch(
           </template>
           <template #empty> {{ currentP.title }} no tiene registros.</template>
           <template #loading> Cargando la información..</template>
-          <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
+          <Column v-for="col of columns"  dataType="numeric" :key="col.field" :field="col.field" :header="col.header">
             <template v-if="'precio_lista' === col.field " #body="slotProps">
               <b> {{ formatCurrency(slotProps.data.precio_lista) }}</b>
             </template>

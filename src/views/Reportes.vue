@@ -91,28 +91,17 @@ function exportFile() {
   console.log(store.getOperaciones)
   var generateData = function (data) {
     const _f = 'D-MMM-YY'
-
     var result = [];
-
     for (var i = 0; i < data.length; i += 1) {
-      // data[i].id = (i + 1).toString();/}}/
       for (const colK in data[i]) {
-   // console.log(data[i])
         if (colK === 'create_time') {
-     // console.log('1')
           data[i][colK] = getDateF(_f, rangoDeReporte.value[0])
         } else if (['sCj', 'sPz', 'salTotalPz', 'rCj', 'rPz', 'regTotalPz', 'ventaPz'].includes(colK)) {
-     // console.log('2')
           data[i][colK] = data[i][colK].toString() + colK.split('').splice(colK.length - 2, 2).join('')
         } else if (['saldo', 'comision'].includes(colK)) {
-     // console.log('3')
-
           data[i][colK] = formatCurrency(data[i][colK]).toString()
-
-        } else
-     // console.log(data[i])
+        } else  
           data[i][colK] = data[i][colK].toString()
-
       }
       result.push(Object.assign({}, data[i]));
     }
@@ -160,9 +149,7 @@ function exportFile() {
   oprations.forEach((op, index) => {
     let top = 40;
     if(index < 1){
- // console.log('first');
     }else{
- // console.log(oprations[index - 1 ]);
       top = 40 + ((oprations[index - 1 ].items.length * 30) + 20 )
     }
     console.log(top);
@@ -268,7 +255,7 @@ const formatDate = (date) => {
           </template>
 
           <template #empty>
-            <div class="text-gray-500 px-4 py-2">Genera tu reporte en el boton <b>+ Generar</b></div>
+            <div class="text-gray-500 px-4 py-2 my-4 text-center">Genera tu reporte en el boton <b>+ Generar</b></div>
           </template>
           <template #loading> Cargando la información..</template>
           <Column expander style="width: 5rem"/>

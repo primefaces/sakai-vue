@@ -8,6 +8,7 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 export const useCaptuaraStore = defineStore("capturas", {
     state: () => ({
         products: [],
+        productsSelected: [],
         rutas: [],
         loading: false,
         currentOperation:{},
@@ -32,7 +33,7 @@ export const useCaptuaraStore = defineStore("capturas", {
             return state.repartidores;
         },
         getProducts(state) {
-            return state.products;
+            return state.products.filter(({code})=> !this.productsSelected.map(s => s.code).includes(code))
         },
         getActive(state) {
             return state.products.length;
@@ -135,21 +136,10 @@ export const useCaptuaraStore = defineStore("capturas", {
                 // console.log(this.catalogos)
             }
         },
-        quitProd(product) {
-                const i = this.products.indexOf(product)
-// consolelog(i,this.products[i])
-            this.products.splice(i,1)
-// consolecount('productQUIT');
-            //
-            // console.log('new length qui', this.products.length)
-        },
-        addProd(product) {
-// consolecount('productADD');
-
-// consolelog(this.products.length);
-// consolelog(product);
-            this.products.unshift(product)// console.log('new length add', this.products.unshift(product))
-// consolelog(this.products.length);
+        setSelectedProducts(items) {
+            this.productsSelected = [...items.value.filter(f=> typeof f === 'object').map(d => d.code)]
+            
+            console.log(this.productsSelected);
         },
         async setRutas(frgm) {
             this.loading = true;

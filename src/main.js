@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 
-import { createPinia } from 'pinia'
+import { createPinia } from 'pinia';
 
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
@@ -108,7 +108,7 @@ import BlockViewer from '@/components/BlockViewer.vue';
 import '@/assets/styles.scss';
 import axios from 'axios';
 
-const pinia = createPinia()
+const pinia = createPinia();
 
 const app = createApp(App);
 
@@ -120,19 +120,35 @@ app.use(DialogService);
 app.use(ConfirmationService);
 
 // Ase ta diatun own plugin
-app.provide('message', 'http://localhost:3000')
+// app.provide('message', 'http://192.168.0.3:3000');
+const newLocal = 'http://192.168.0.3:3000';
+app.provide(
+    'api',
+    axios.create({
+        _baseURL: newLocal,
+        get baseURL() {
+            return this._baseURL;
+        },
+        set baseURL(value) {
+            this._baseURL = value;
+        },
+    }),
+);
 
-app.use({
-    install: function (Vue, options) {
-        // Accessible ya ste globally by using "inject"
-        Vue.provide('$api', axios.create({
-            baseURL: 'http://localhost:3000'
-        }))
+// app.use({
+//     install: function (Vue, options) {
+//         // Accessible ya ste globally by using "inject"
+//         Vue.provide(
+//             'api',
+//             axios.create({
+//                 baseURL: 'http://192.168.0.3:3000',
+//             }),
+//         );
 
-        // Si kiere tu man provide global property
-        Vue.provide('nombreDelProp', { el: 'value' })
-    }
-})
+//         // Si kiere tu man provide global property
+//         // Vue.provide('nombreDelProp', { el: 'value' });
+//     },
+// });
 // amo tu este tan mention last time akel nakapublish l api? or reusable na otro app?
 // hinde. available lang ste na current project.
 

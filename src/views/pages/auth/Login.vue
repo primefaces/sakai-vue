@@ -2,59 +2,39 @@
 // import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
+import { useUserStore } from '@/stores/user';
+// import { inject } from 'vue';
 
-// import { useUserStore } from '@/stores/user'
-// import { useUserStore } from '@/stores/user';
-import { useUserStore } from '@/stores/user'
-
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 // const { layoutConfig } = useLayout();
-const email = ref('');
-const password = ref('');
+const email = ref('arismoratalla@gmail.com');
+const password = ref('12345678');
 const checked = ref(false);
 
 const logoUrl = computed(() => {
-    // return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
     return `layout/images/logo.png`;
 });
-async function getdata() {
-    // const userStore = useUserStore();
-    alert('test');
-}
 
 async function signin() {
-    try{
-        const login = await userStore.signIn(
-            email.value,
-            password.value
-        )
-
-        // axios.post('https://reqres.in/api/login', {
-        //     email: 'eve.holt@reqres.in', password: 'cityslicka'
-        // })
-        // .then(response => {
-        //     console.log(response)
-        // })
-
+    try {
+        const login = await userStore.signIn(email.value, password.value);
+        // console.log(login);
         if (login) {
             // yan succeed el login
             // either redirect or hide login modal, dipende na use case
-            console.log('Logged in!')
+            console.log('Logged in!');
         } else {
             // yan failed el login
             // man alert lng nu? or reload. Yes puede tamen.
             // nccta pa extension para na documentation?
             // no need ya ata.
-            // console.log('Else but tried')
+            console.log('Else but not logged in.');
         }
-
-        // console.log("trying") 
     } catch (error) {
-        console.log("catching")
+        // console.log('catching');
         // console.log('ERROR:', error)
     }
-    
 }
 </script>
 
@@ -72,7 +52,7 @@ async function signin() {
 
                     <div>
                         <label for="email" class="block text-900 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email" v-model="email"  type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" />
+                        <InputText id="email" v-model="email" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" />
 
                         <label for="password" class="block text-900 font-medium text-xl mb-2">Password</label>
                         <Password id="password" v-model="password" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" inputStyle="padding:1rem"></Password>
@@ -84,7 +64,7 @@ async function signin() {
                             </div>
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
                         </div>
-                        <Button @click="getdata"  label="Sign In" class="w-full p-3 text-xl"></Button>
+                        <Button @click="signin" label="Sign In" class="w-full p-3 text-xl"></Button>
                     </div>
                 </div>
             </div>

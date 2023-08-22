@@ -9,10 +9,13 @@
 # "role":"admin"
 # }
 
-POST http://localhost:3000/api/auth/login
-Content-Type: application/json
+# POST http://192.168.0.6:3000/api/auth/login
+# Content-Type: application/json
 
-{
-"email":"arismoratalla@gmail.com",
-"password":"12345678"
-}
+# {
+# "email":"arismoratalla@gmail.com",
+# "password":"12345678"
+# }
+
+GET http://172.16.110.78:3001/api/hrmis/nightowls
+# GET http://localhost:3001/api/hrmis/earlybirds

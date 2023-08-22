@@ -1,39 +1,29 @@
-import axios from "axios";
-import { response } from "express";
-import { defineStore } from "pinia";
-// import { inject } from "vue";
+import axios from 'axios';
+import { defineStore } from 'pinia';
+// import { inject } from 'vue';
 
 // Si kiere tu usa kunel API na component, man inject lang.
-// const api = inject('$api') // try daw si tan work pa syempre todo
+// const api = inject('api'); // try daw si tan work pa syempre todo
 
-// console.log(api)
+const api = axios.create({
+    baseURL: 'http://192.168.0.3:3000',
+});
 
 export const useUserStore = defineStore('user', {
     state: () => ({
         // user: null,
-        // _id: null,
-        // email: null,
-        // password: null, 
-        // firstName: null, 
-        // lastName: null, 
-        // // gender: null, 
-        // role: null,
-        // accessToken: null
-        users: {},
-        user: {}
+        _id: null,
+        email: null,
+        password: null,
+        firstName: null,
+        lastName: null,
+        role: null,
+        accessToken: null,
     }),
 
     actions: {
-        async getAll() {
-            this.users = { loading: true };
-            try {
-                this.users = await fetch('https://reqres.in/api/users');    
-            } catch (error) {
-                this.users = { error };
-            }
-        },
         async fetchUser() {
-            const res = await fetch("https://localhost:3000/user");
+            const res = await fetch('https://localhost:3000/user');
 
             const user = await res.json();
             this.user = user;
@@ -41,40 +31,25 @@ export const useUserStore = defineStore('user', {
 
         async signUp(email, password, firstName, lastName, role) {
             try {
-                // const { data: user } = await api.post('/api/auth/register', { 
-                //     email, password, firstName, lastName, role 
-                // })
-                /*const res = await axios.post('http://localhost:3000/api/auth/register', {
-                    // 'aris@gmail.com', '12345678', 'Aris', 'Moratalla', 'male', 'admin'
-                    email: 'aris@gmail.com', password: '12345678', firstName: 'Aris', lastName: 'Moratalla', role: 'admin' 
-                })*/
-
                 const res = await axios.post('http://localhost:3000/api/auth/register', {
-                    // email: 'aris@gmail.com', password: '12345678', firstName: 'Aris', lastName: 'Moratalla', role: 'admin' 
-                    email, password, firstName, lastName, role
-                })
-                console.log('tried here')
-                this.user = res.data
-                // this.user = user
+                    email,
+                    password,
+                    firstName,
+                    lastName,
+                    role,
+                });
+
+                this.user = res;
             } catch (error) {
                 if (!error.response) {
                     // Problem na code
-                    console.log('Check code!!!')
+                    console.log('Check code!!!');
                 } else {
                     // Problem estaba na API
-                    const { data } = error.response
-                    console.log('JSON_RESPONSE_ERROR:', data)
+                    const { data } = error.response;
+                    console.log('JSON_RESPONSE_ERROR:', data);
                 }
             }
-            // const res = await fetch("http://localhost:3000/api/auth/register", {
-            //     method: "POST",
-            //     headers: {
-            //         "Content-Type": "application/json",
-            //     },
-            //     body: JSON.stringify({ email, password, firstName, lastName, role }),
-            // });
-            // const user = await res.json()
-            // this.user = user;
         },
 
         /**
@@ -85,58 +60,36 @@ export const useUserStore = defineStore('user', {
          */
         async signIn(email, password) {
             try {
-                // const { data: res } = await api.post('/api/auth/login', {
-                //     email, password
-                // })
+                const res = await axios.post('http://192.168.0.3:3000/api/auth/login', {
+                    email: email,
+                    password: password,
+                });
 
-                const res = await axios.post('http://localhost:3000/api/auth/login', {
-                    email: 'arismoratalla@gmail.com', password: '12345678'
-                })
+                console.log(res.data);
 
-                // axios.post('https://reqres.in/api/login', {
-                //     email: 'eve.holt@reqres.in', password: 'cityslicka'
-                // })
-                // .then(response => {
-                //     console.log(response)
-                // })
-                
-
-                if (!res.success) {
-                    // alert('Unable to sign in.')
-                    // console.log(email)
-                    // console.log(password)
-                    console.log('Unable to sign in.')   
-                    return false // yan fail el login
+                if (!res.data.success) {
+                    return false; // login failed
                 }
 
                 // Store accessToken from API to userState
-                this.accessToken = res.data.accessToken
+                this.accessToken = res.data.accessToken;
 
                 // Set access token in every HTTP request
-                api.defaults.headers.common.Authorization = 'Bearer ' + this.accessToken // Na next call detuyu tiene ya access token na headers
+                api.defaults.headers.common.Authorization = 'Bearer ' + this.accessToken; // Na next call detuyu tiene ya access token na headers
+                // api.defaults.headers.common['Authorization'] = this.accessToken;
 
-                // Store email from API to userState
-                this.email = res.data.email
-
-                return true // yan succeed el login
-                // const res = await fetch("http://localhost:3000/api/auth/login", {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json",
-                //     },
-                //     body: JSON.stringify({ email, password }),
-                // });
-                // const user = await res.json();
-                // this.user = user;
+                this.email = res.data.email;
+                // console.log(this.email);
+                return true;
             } catch (error) {
-                console.log('ERROR:', error)
+                console.log('ERROR:', error);
                 if (!error.response) {
-                    return false
+                    return false;
                 }
 
-                const { data } = error.response
-                alert(data.message) // na API
-             }
+                const { data } = error.response;
+                alert(data.message); // error on api API
+            }
         },
         // async getdata(){
         //   const response = axios.post('https://reqres.in/api/login', {

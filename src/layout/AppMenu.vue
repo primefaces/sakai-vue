@@ -30,6 +30,10 @@ const model = ref([
             { label: 'Maintenance   ', icon: 'pi pi-fw pi-desktop', url: 'https://docs.google.com/forms/d/e/1FAIpQLSdDiMSilOgFhI2_pgqkGKsATPOA8_FYSMDqxjv2krFVZ6SGhQ/viewform?pli=1', target: '_blank' },
         ],
     },
+    {
+        label: 'Links',
+        items: [{ label: 'Daily Time Record', icon: 'pi pi-fw pi-home', to: '/dtr' }],
+    },
 ]);
 </script>
 

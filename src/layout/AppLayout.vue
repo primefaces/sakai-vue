@@ -18,6 +18,9 @@ watch(isSidebarActive, (newVal) => {
     }
 });
 
+// layoutConfig.menuMode.value = 'static'; // or any value that corresponds to 'layout-static'
+// layoutState.staticMenuDesktopInactive.value = true;
+
 const containerClass = computed(() => {
     return {
         'layout-theme-light': layoutConfig.darkTheme.value === 'light',

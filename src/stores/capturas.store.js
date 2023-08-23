@@ -33,7 +33,7 @@ export const useCaptuaraStore = defineStore("capturas", {
             return state.repartidores;
         },
         getProducts(state) {
-            return state.products.filter(({code})=> !this.productsSelected.map(s => s.code).includes(code))
+            return state.products;
         },
         getActive(state) {
             return state.products.length;

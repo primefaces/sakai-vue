@@ -558,7 +558,7 @@ const formatDate = (date) => {
           </div>
           <div    class="field col-12 md:col-2">
             <label for="ruta">Ruta</label>
-            <Dropdown class="" autofocus :model-value="rutaSeleccionada" @change="changeRuta" placeholder="Selecciona una ruta"
+            <Dropdown class="" autofocus :model-value="rutaSeleccionada" :disabled="detalleCobro.length > 1"  @change="changeRuta" placeholder="Selecciona una ruta"
               id="ruta" :options="store.getRepartidores" optionLabel="no_ruta">
             </Dropdown>
           </div>

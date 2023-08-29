@@ -275,7 +275,7 @@ watch(
           </div>
           <div class="field" v-if="['Productos'].includes(currentP.key)">
             <label for="code">Codigo</label>
-            <InputText id="code" :disabled="product.code" v-model.trim="product.code" required="true"
+            <InputText id="code" v-model.trim="product.code" required="true"
                        :class="{ 'p-invalid': submitted && !product.code }"/>
             <small class="p-invalid" v-if="submitted && !product.code">code is required.</small>
           </div>

@@ -25,7 +25,7 @@ let commonProperties = {
     ],
     Productos: [
       {field: "code", header: "code"},
-      {field: "autoservicio", header: "Auto"},
+      {field: "autoservicio", header: "Aut.Serv."},
 
       {field: "description", header: "description"},
       {field: "precio_compra", header: "costo"},

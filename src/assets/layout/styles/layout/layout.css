@@ -493,6 +493,20 @@ a {
   top: 100px;
 }
 
+@font-face {
+  font-family: "Assistant";
+  src: url("src/assets/Assistant/Assistant-VariableFont_wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+* {
+  font-family: "Assistant", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+
+.pi {
+  font-family: "PrimeIcons", sans-serif !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
   margin: 1.5rem 0 1rem 0;
   font-family: inherit;

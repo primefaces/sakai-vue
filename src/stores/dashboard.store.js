@@ -3,7 +3,7 @@ import {defineStore} from 'pinia';
 import {fetchWrapper} from '@/helpers';
 // import moment from "moment";
 moment.locale('es-mx')
-console.log('----',moment().format());
+console.log('----', moment().format());
 // const baseUrl = `http://localhost:3000/`;
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const documentStyle = getComputedStyle(document.documentElement);
@@ -111,7 +111,7 @@ export const useDashboardStore = defineStore({
             }
         },
 
-        productsTop:[]
+        productsTop: []
     }),
     getters: {
         getDataFor(state) {
@@ -164,33 +164,29 @@ export const useDashboardStore = defineStore({
 
         },
         async setOperationsVentas() {
+            // console.clear()
             const itmBase = []
-            const startW = moment().startOf('week')
-            console.log('Start of week   ', startW)
-
+            const info = []
+            // const startW = moment().startOf('week')
 
             const itemsOperations = await fetchWrapper.get(baseUrl + 'operations/ventas');
-        itemsOperations.forEach(it => {
-            console.log(it.dte);
-        });
-            let agrupadoPorRepartidor = itemsOperations.reduce((result, {no_ruta, dte, klt}) => {
-                const dayPos = moment(dte).add(1,'days').diff(startW, 'days');
-                console.log('dayPos',dayPos);
-                console.log('.weekday',moment(dte).add(1,'days').weekday());
-            // console.log(dayPos);
+            // console.log('response ventas', itemsOperations);
+
+            let agrupadoPorRepartidor = itemsOperations.reduce((result, {no_ruta, dte, total_klt}) => {
+                const wd = moment(dte).weekday()
+                console.log('dayPos', no_ruta, wd, total_klt);
                 if (!result[no_ruta])
                     result[no_ruta] = [0, 0, 0, 0, 0, 0, 0];
-                
-            // console.log(dayPos);
-                result[no_ruta][dayPos] = klt;
+
+                result[no_ruta][wd] = total_klt;
                 return result;
             }, {});
 
-        // console.log('\t[dashboardStore::getOperationsVentas] ', itemsOperations)
-        // console.log('\t[dashboardStore::getOperationsVentas->porRepartidor] ', agrupadoPorRepartidor)
+            // console.log('\t[dashboardStore::getOperationsVentas] ', itemsOperations)
+            console.log('\t[dashboardStore::getOperationsVentas->porRepartidor] ', agrupadoPorRepartidor)
 
             for (const aKey in agrupadoPorRepartidor) {
-            // console.log('aKey', aKey, agrupadoPorRepartidor[aKey])
+                // console.log('aKey', aKey, agrupadoPorRepartidor[aKey])
                 itmBase.push({
                     label: 'Ruta ' + aKey,
                     data: agrupadoPorRepartidor[aKey].filter((a, i) => i !== 1),
@@ -198,36 +194,6 @@ export const useDashboardStore = defineStore({
                     borderColor: colors[itmBase.length],
                     tension: 0.4
                 })
-            }
-        // console.log('\t[dashboardStore::getOperationsVentas->Final] ', itmBase)
-            setTimeout(() => {
-            this.storeChartData = {
-                labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-                datasets: itmBase
-            }
-                this.isLoading = false
-            }, 1000)
-        },
-        async setOperationsCierres() {
-            const cierres = await fetchWrapper.get(baseUrl + 'operations/cobros');
-            const startW = moment().startOf('week')
-
-        // console.log('Start of week   ', startW)
-        // console.log(baseUrl + 'operations/cobros')
-        // console.log('\t[dashboardStore::getOperationsCierres] ', cierres)
-            let agrupadoPorRepartidor = cierres.reduce((result, elemento) => {
-                const {repartidor, DATE, cobro} = elemento;
-                const dayPos = moment(DATE).add(1,'days').diff(startW, 'days');
-
-                if (!result[repartidor])
-                    result[repartidor] = [0, 0, 0, 0, 0, 0, 0];
-                result[repartidor][dayPos] = cobro;
-                return result;
-            }, {});
-        // console.log('\t[dashboardStore::getOperationsCierres-agropF] ', agrupadoPorRepartidor)
-            const info = []
-            for (const aKey in agrupadoPorRepartidor) {
-                console.log('aKey', aKey, agrupadoPorRepartidor[aKey])
                 info.push({
                         label: 'Ruta ' + aKey,
                         data: agrupadoPorRepartidor[aKey].filter((a, i) => i !== 1),
@@ -236,15 +202,22 @@ export const useDashboardStore = defineStore({
                     }
                 )
             }
+
+            // console.log('\t[dashboardStore::getOperationsVentas->Final] ', itmBase)
             setTimeout(() => {
-                this.storeBarChartData =  {
+                this.storeChartData = {
+                    labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
+                    datasets: itmBase
+                }
+                this.storeBarChartData = {
                     labels: ['Sabado', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
                     datasets: info
                 }
                 this.isLoading = false
+                // console.log(this.storeBarChartData, this.st)
             }, 1000)
-
         },
+
         async getAll() {
             // const documentStyle = getComputedStyle(document.documentElement);
             this.isLoading = true;
@@ -380,7 +353,7 @@ export const useDashboardStore = defineStore({
             this.product = {loading: true};
             try {
                 const respons = await fetchWrapper.get(`${baseUrl}productos/top`);
-                    console.log('...')
+                console.log('...')
                 console.log('....<.')
                 console.log(respons)
                 this.productsTop = respons

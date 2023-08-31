@@ -417,7 +417,7 @@ const saveOperation = async () => {
     costos,
     cobro: getPriceFormat(ventas),
     comision: getPriceFormat(comision),
-    date: moment().format("YYYY-MM-DD HH:mm:ss"),
+    date: moment().subtract(1, 'days')  .format("YYYY-MM-DD HH:mm:ss"),
     // date: moment().format(),
     items: detalleCobro.value.filter(d => d.code).map(det => {
       return {

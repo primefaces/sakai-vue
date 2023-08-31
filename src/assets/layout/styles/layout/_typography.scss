@@ -1,63 +1,79 @@
-h1, h2, h3, h4, h5, h6 {
-    margin: 1.5rem 0 1rem 0;
-    font-family: inherit;
-    font-weight: 500;
-    line-height: 1.2;
-    color: var(--surface-900);
+@font-face {
+  font-family: 'Assistant';
+  src: url('src/assets/Assistant/Assistant-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
-    &:first-child {
-        margin-top: 0;
-    }
+* {
+  font-family: 'Assistant', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji' !important;
+
+}
+.pi {
+  font-family: 'PrimeIcons', sans-serif !important;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 1.5rem 0 1rem 0;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--surface-900);
+
+  &:first-child {
+    margin-top: 0;
+  }
 }
 
 h1 {
-    font-size: 2.5rem;
+  font-size: 2.5rem;
 }
 
 h2 {
-    font-size: 2rem;
+  font-size: 2rem;
 }
 
 h3 {
-    font-size: 1.75rem;
+  font-size: 1.75rem;
 }
 
 h4 {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
 h5 {
-    font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 
 h6 {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 
 mark {
-    background: #FFF8E1;
-    padding: .25rem .4rem;
-    border-radius: $borderRadius;
-    font-family: monospace;
+  background: #FFF8E1;
+  padding: .25rem .4rem;
+  border-radius: $borderRadius;
+  font-family: monospace;
 }
 
 blockquote {
-    margin: 1rem 0;
-    padding: 0 2rem;
-    border-left: 4px solid #90A4AE;
+  margin: 1rem 0;
+  padding: 0 2rem;
+  border-left: 4px solid #90A4AE;
 }
 
 hr {
-    border-top: solid var(--surface-border);
-    border-width: 1px 0 0 0;
-    margin: 1rem 0;
+  border-top: solid var(--surface-border);
+  border-width: 1px 0 0 0;
+  margin: 1rem 0;
 }
 
 p {
-    margin: 0 0 1rem 0;
-    line-height: 1.5;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
 
-    &:last-child {
-        margin-bottom: 0;
-    }
+  &:last-child {
+    margin-bottom: 0;
+  }
 }

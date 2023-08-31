@@ -30,7 +30,7 @@ moment.updateLocale("es-mx", { week: {
 
 const setData = (param) => {
   store.setOperationsVentas()
-  store.setOperationsCierres()
+  // store.setOperationsCierres()
   store.setProductsTOP()
   store.getAll();
   console.log('setCurrentP-> ', store.getOperations)
@@ -117,7 +117,7 @@ const formatCurrency = (value) => {
 
           <div class="px-3">
             <div>
-              <div class="text-900 font-medium text-xl">{{ store.getKltsDia | 0}}<small class="text-500">Klts</small> </div>
+              <div class="text-900 font-medium text-xl">{{ store.getKltsDia || 0}}<small class="text-500">Klts</small> </div>
             </div>
             <span class="text-600 font-medium mb-3">Kilolitros</span>
             <span class="text-500"> del día</span>
@@ -141,7 +141,7 @@ const formatCurrency = (value) => {
           </div>
         </template>
         <template v-else>
-          <Chart  type="line" :data="store.getLineData" :options="store.getLineOptions" class="h-20rem"/>
+          <Chart id="34"  type="line" :data="store.getLineData" :options="store.getLineOptions" class="h-20rem"/>
         </template>
       </div>
     </div>
@@ -157,7 +157,7 @@ const formatCurrency = (value) => {
           </div>
         </template>
         <template v-else>
-          <Chart  type="bar" :data="store.getBarData" :options="store.getBarOptions" class="h-20rem" />
+          <Chart id="456" type="bar" :data="store.getBarData" :options="store.getBarOptions" class="h-20rem" />
         </template>
       </div>
     </div>

@@ -2,7 +2,8 @@
 <script setup>
 import {getCurrentColumns} from "../shared/control";
 import {useCatalogosStore} from '@/stores'
-import { FilterMatchMode } from 'primevue/api';
+import {FilterMatchMode} from 'primevue/api';
+
 const frmat = txt => capitalize(txt).replaceAll('_', ' ')
 import {capitalize, onBeforeMount, onMounted, ref, watch} from 'vue';
 import {defineProps} from 'vue';
@@ -15,7 +16,7 @@ const deleteProductsDialog = ref(false);
 const selectedProducts = ref(null);
 
 const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  global: {value: null, matchMode: FilterMatchMode.CONTAINS},
 });
 const statuses = ref([
   {label: 'INSTOCK', value: 'instock'},
@@ -28,16 +29,16 @@ const dt = ref(null);
 const productDialog = ref(false);
 const product = ref({});
 const submitted = ref(false);
-
+const isEditing = ref(false);
 
 const route = useRoute();
 const store = useCatalogosStore()
 
 const currentP = {}
 const genders = ref([
-  { name: 'Hombre', code: 'H' },
-  { name: 'Mujer', code: 'M' },
-  { name: 'Otro', code: 'O' }
+  {name: 'Hombre', code: 'H'},
+  {name: 'Mujer', code: 'M'},
+  {name: 'Otro', code: 'O'}
 ]);
 let columns = [
   {field: 'code', header: 'Code'},
@@ -64,11 +65,11 @@ const formatCurrency = (value) => {
   return value?.toLocaleString('es-MX', {style: 'currency', currency: 'MXN'});
 }
 const formatDate = (value) => {
-    return value.toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
+  return value.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 };
 // const formatCurrency = (value) => {
 //     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -85,6 +86,7 @@ onMounted(() => {
 })
 const editProduct = (editProduct) => {
   product.value = {...editProduct};
+  isEditing.value = true
   console.log(product.value);
   productDialog.value = true;
 };
@@ -99,6 +101,7 @@ const confirmDeleteProduct = (editProduct) => {
   deleteProductDialog.value = true;
 };
 const openNew = () => {
+  isEditing.value = false
   product.value = {};
   submitted.value = false;
   productDialog.value = true;
@@ -111,10 +114,13 @@ const hideDialog = () => {
 const deleteProduct = async () => {
   console.log('delete', product.value)
   let _id = '';
-  if(currentP.key === 'Rutas'){
+  if (currentP.key === 'Rutas') {
     _id = product.value.no_ruta
+  }else if(currentP.key === 'Productos') {
+
+    _id = product.value.code
   }
-  else{
+  else {
     _id = product.value.id
   }
   await store.delete(currentP.routeApi, _id)
@@ -127,11 +133,13 @@ const saveProduct = async () => {
   console.log('saveProduct', product.value)
   if (product.value.id) {
     await store.update(currentP.routeApi, product.value.id, product.value)
-  }
-  else if (product.value.code && currentP.key === 'Productos') {
+  } else if (currentP.key === 'Productos') {
     const body = product.value;
     console.log(body)
     const cas = {
+
+      code: body.code,
+      autoservicio: body.autoservicio,
       description: body.description,
       precio_lista: body.precio_lista,
       precio_compra: body.precio_compra,
@@ -141,16 +149,29 @@ const saveProduct = async () => {
       um: body.um.id,
       grupo: body.grupo.id,
     }
-    console.log('-----',cas)
-    await store.update(currentP.routeApi, product.value.code, cas)
-
-  }
-  else if (product.value.no_ruta && currentP.key === 'Rutas') {
+    console.log('-----', isEditing.value, isEditing)
+    if (isEditing.value === true) {
+      console.log('editing')
+      await store.update(currentP.routeApi, product.value.code, cas)
+    }
+    else {
+      console.log('register', cas)
+      await store.register(currentP.routeApi, cas);
+    }
+  } else if (product.value.no_ruta && currentP.key === 'Rutas') {
     const body = product.value;
     console.log(body)
+
+    if (isEditing.value === true) {
+      console.log('editing')
     await store.update(currentP.routeApi, product.value.no_ruta, body)
-  }
-  else {
+
+    }
+    else {
+      console.log('register', body)
+      await store.register(currentP.routeApi, body);
+    }
+  } else {
     switch (currentP.key) {
       case 'grupos':
         const {familia} = product.value;
@@ -165,7 +186,7 @@ const saveProduct = async () => {
         break
       case 'Repartidores':
         const {ruta, sexo} = product.value;
-        console.log('--',ruta, sexo)
+        console.log('--', ruta, sexo)
         product.value.ruta = ruta.no_ruta
         product.value.sexo = sexo.code
         break
@@ -217,7 +238,7 @@ watch(
             :value="store.dataCatalog"
             :paginator="true"
             ref="dt"
-            :rows="10"
+            :rows="13"
             class="p-data-table-sm"
             dataKey="id"
             :rowHover="true"
@@ -229,7 +250,7 @@ watch(
             <div class="flex flex-wrap justify-content-between gap-2">
                 <span class="p-input-icon-left">
             <i class="pi pi-search"/>
-            <InputText v-model="filters['global'].value"  placeholder="Busqueda"/>
+            <InputText v-model="filters['global'].value" placeholder="Busqueda"/>
         </span>
               <div class="formgroup-inline align-items-baseline">
                 <span class="p-buttonset">
@@ -244,13 +265,19 @@ watch(
           </template>
           <template #empty> {{ currentP.title }} no tiene registros.</template>
           <template #loading> Cargando la información..</template>
-          <Column v-for="col of columns"  dataType="numeric" :key="col.field" :field="col.field" :header="col.header">
+          <Column v-for="col of columns" dataType="numeric" :key="col.field" :field="col.field" :header="col.header">
             <template v-if="'precio_lista' === col.field " #body="slotProps">
               <b> {{ formatCurrency(slotProps.data.precio_lista) }}</b>
             </template>
             <template v-if="'precio_compra' === col.field " #body="slotProps">
               <b> {{ formatCurrency(slotProps.data.precio_compra) }}</b>
             </template>
+            <template v-if="'autoservicio' === col.field " #body="slotProps">
+              <!--              <Checkbox :value="slotProps.data.autoservicio" readonly :binary="true"/>-->
+              <b> {{ slotProps.data.autoservicio ? 'Sí' : 'No' }}</b>
+
+            </template>
+
           </Column>
           <Column headerStyle="width:7em; min-width:fit-content;" class="btns-col">
             <template #body="slotProps">
@@ -263,7 +290,8 @@ watch(
         </DataTable>
 
 
-        <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" :header="product.id || product.no_ruta ? 'Editar':'Registrar nuevo'" :modal="true"
+        <Dialog v-model:visible="productDialog" :style="{ width: '450px' }"
+                :header="product.id || product.no_ruta ? 'Editar':'Registrar nuevo'" :modal="true"
                 class="p-fluid">
           <img :src="'demo/images/product/' + product.image" :alt="product.image" v-if="product.image" width="150"
                class="mt-0 mx-auto mb-5 block shadow-2"/>
@@ -273,11 +301,19 @@ watch(
                        :class="{ 'p-invalid': submitted && !product.no_ruta }"/>
             <small class="p-invalid" v-if="submitted && !product.no_ruta">Ingresa el # ruta.</small>
           </div>
-          <div class="field" v-if="['Productos'].includes(currentP.key)">
-            <label for="code">Codigo</label>
-            <InputText id="code" v-model.trim="product.code" required="true"
-                       :class="{ 'p-invalid': submitted && !product.code }"/>
-            <small class="p-invalid" v-if="submitted && !product.code">code is required.</small>
+          <div class="formgrid grid" v-if="['Productos'].includes(currentP.key)">
+            <div class="field col">
+
+              <label for="code">Codigo</label>
+              <InputText id="code" v-model.trim="product.code" required="true"
+                         :class="{ 'p-invalid': submitted && !product.code }"/>
+              <small class="p-invalid" v-if="submitted && !product.code">code is required.</small>
+            </div>
+            <div class="field col check-center">
+
+              <label for="autoservicio">Autoservicio</label>
+              <Checkbox id="autoservicio" v-model.trim="product.autoservicio" :binary="true"/>
+            </div>
           </div>
           <div class="field" v-if="currentP.key==='Repartidores'">
             <label for="nombres">Nombres</label>
@@ -316,7 +352,6 @@ watch(
           </div>
 
 
-
           <div class="field" v-if="['grupos'].includes(currentP.key)">
             <label for="inventoryStatus" class="mb-3">Familia</label>
             <Dropdown id="inventoryStatus" v-model="product.familia" :options="store.getFamilias" optionLabel="label"
@@ -341,13 +376,15 @@ watch(
           <div class="formgrid grid" v-if="['Productos'].includes(currentP.key)">
             <div class="field col">
               <label for="precio">$ Compra</label>
-              <InputNumber id="precio" v-model="product.precio_compra" mode="currency" currency="USD" lolocale="en-US" console="en-US"
+              <InputNumber id="precio" v-model="product.precio_compra" mode="currency" currency="USD" lolocale="en-US"
+                           console="en-US"
                            :class="{ 'p-invalid': submitted && !product.precio_compra }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.precio_compra">Price is required.</small>
             </div>
             <div class="field col">
               <label for="costo">$ Venta</label>
-              <InputNumber id="costo" v-model="product.precio_lista" mode="currency" currency="USD" lolocale="en-US" console="en-US"
+              <InputNumber id="costo" v-model="product.precio_lista" mode="currency" currency="USD" lolocale="en-US"
+                           console="en-US"
                            :class="{ 'p-invalid': submitted && !product.precio_lista }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.precio_lista">Price is required.</small>
             </div>
@@ -475,7 +512,7 @@ watch(
                   </div>
                   <div v-else-if="slotProps.value && !slotProps.value.value">
                   <span :class="'product-badge status-' + slotProps.value.toString().toLowerCase()">
-                    {{store.getUnidadesMedida.filter(f => f.id === slotProps.value)[0].codigo}}</span>
+                    {{ store.getUnidadesMedida.filter(f => f.id === slotProps.value)[0].codigo }}</span>
                   </div>
                   <span v-else>
                                     {{ slotProps.placeholder }}
@@ -505,7 +542,7 @@ watch(
                 </div>
                 <div v-else-if="slotProps.value && !slotProps.value.value">
                   <span :class="'product-badge status-' + slotProps.value.toString().toLowerCase()">
-                    {{store.getGrupos.filter(f => f.id === slotProps.value)[0].label}}
+                    {{ store.getGrupos.filter(f => f.id === slotProps.value)[0].label }}
                   </span>
                 </div>
                 <span v-else>
@@ -581,5 +618,13 @@ watch(
   border: 1px solid #f4f4f5;
   border-width: 0 0 1px 0;
   padding: .5rem 1rem;
+}
+
+.check-center {
+  display: inline-grid;
+  justify-content: center;
+  justify-items: center;
+  align-items: end;
+  align-content: center;
 }
 </style>

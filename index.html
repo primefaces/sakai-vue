@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -22,6 +23,8 @@
     <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
 
     <script>
+        console.log('MOMENT', moment().format('LLLL'))
+        console.log('MOMENT', moment('2023-08-05T05:00:00.000Z').format('LLLL'))
         moment.locale('es-mx');
         moment.updateLocale("es-mx", {
             week: {

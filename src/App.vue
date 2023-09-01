@@ -13,7 +13,7 @@ onBeforeMount(()=>{
 setTimeout(() => {
     store.setShowSplash(false);
     console.log('active', store.isShowSplash);
-}, 2000);
+}, 1500);
 </script>
 
 <template>
@@ -47,7 +47,7 @@ setTimeout(() => {
 }
 
 .animacionLogo {
-    animation-duration:2s;
+    animation-duration:1.5s;
     animation-delay: .2s;
     animation-iteration-count: 1;
     visibility: hidden;

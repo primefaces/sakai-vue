@@ -376,22 +376,23 @@ watch(
           <div class="formgrid grid" v-if="['Productos'].includes(currentP.key)">
             <div class="field col">
               <label for="precio">$ Compra</label>
-              <InputNumber id="precio" v-model="product.precio_compra" mode="currency" currency="USD" lolocale="en-US"
-                           console="en-US"
+              <InputNumber id="precio" v-model="product.precio_compra" mode="currency" currency="MXN" lolocale="es-MX"
+                           console="es-MX"
                            :class="{ 'p-invalid': submitted && !product.precio_compra }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.precio_compra">Price is required.</small>
             </div>
             <div class="field col">
               <label for="costo">$ Venta</label>
-              <InputNumber id="costo" v-model="product.precio_lista" mode="currency" currency="USD" lolocale="en-US"
-                           console="en-US"
+              <InputNumber id="costo" v-model="product.precio_lista" mode="currency" currency="MXN" lolocale="es-MX"
+                           console="es-MX"
                            :class="{ 'p-invalid': submitted && !product.precio_lista }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.precio_lista">Price is required.</small>
             </div>
             <div class="field col">
               <label for="comision">$ comision</label>
-              <InputNumber id="comision" v-model="product.comision" mode="currency" currency="USD"
-                           :min-fraction-digits="3" lolocale="en-US" console="en-US"
+              <InputNumber id="comision" v-model="product.comision" mode="currency"
+                           :min-fraction-digits="3"  currency="MXN" lolocale="es-MX"
+                           console="es-MX"
                            :class="{ 'p-invalid': submitted && !product.comision }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.comision">Price is required.</small>
               <small class="p-invalid" v-if="submitted && !product.comision">Price is required.</small>

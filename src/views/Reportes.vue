@@ -2,6 +2,7 @@
 <!-- eslint-disable prettier/prettier -->
 <script setup>
 import {ref, onMounted} from 'vue';
+
 import {useReportStore} from "@/stores";
 import {useToast} from 'primevue/usetoast';
 import XLSX from 'xlsx';
@@ -40,43 +41,33 @@ const fetchCatalogos = () => {
   store.setRepartidores();
 }
 
-const getReport = () => {
-  console.log(rutaSeleccionada.value.ruta, moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'))
-  store.setOperaciones(moment(rangoDeReporte.value[0]).format('YYYY-MM-DD'), moment(rangoDeReporte.value[1]).add(1, 'day').format('YYYY-MM-DD'), rutaSeleccionada.value.ruta)
-      .then(data => {
-   console.log('ddddddd',data)
-        if(!data){
-   // console.log('ddddddd',data)
-          toast.add({severity: 'info', summary: 'No se encontraron cobros', detail: 'No se han registrado cobros del repartidor en estas fechas', life: 5000, closable:true});
+const getDateInfo = (val, daysToAdd) => {
+  return moment(val).add(daysToAdd, 'days').format('YYYY-MM-DD')
+}
 
+const getReport = () => {
+  const {value} = rangoDeReporte;
+  console.log(rutaSeleccionada.value?.ruta, getDateInfo(value[0], 0), getDateInfo(value[1], 1))
+  store.setReport(getDateInfo(value[0], 0), getDateInfo(value[1], 1), rutaSeleccionada.value?.ruta)
+      .then(data => {
+        console.log('report ', data)
+        if (!data) {
+          toast.add({
+            severity: 'info',
+            summary: 'No se encontraron cobros',
+            detail: 'No se han registrado cobros del repartidor en estas fechas',
+            life: 5000,
+            closable: true
+          });
         }
       })
       .catch(er => {
-    console.log(er)
-  })
+        console.log(er)
+      })
 }
-const onRowExpand = (event) => {
-  console.log()
-  toast.add({severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000});
-  console.log(event)
-};
-const onRowCollapse = (event) => {
-  toast.add({severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000});
-};
-
-const expandAll = () => {
-  expandedRows.value = products.value.filter((p) => p.id);
-};
-const collapseAll = () => {
-  expandedRows.value = null;
-};
 const formatCurrency = (value) => {
-  return (Number (value) || 0).toLocaleString('en-MX', {style: 'currency', currency: 'MXN'});
+  return (Number(value) || 0).toLocaleString('en-MX', {style: 'currency', currency: 'MXN'});
 };
-
-const getLts = (mlts) => {
-  return mlts / 1000;
-}
 
 const getDateF = (mode, date) => {
   return moment(date).format(mode);
@@ -84,7 +75,9 @@ const getDateF = (mode, date) => {
 
 const getNamePdf = (ruta) => {
   const _f = 'D-MMM-YY'
-  return `ruta-${ruta}_${getDateF(_f, rangoDeReporte.value[0])}_${getDateF(_f, rangoDeReporte.value[0])}`
+  return selectedCity.value.code === 'GEN' ?
+      `General_${getDateF(_f, rangoDeReporte.value[0])}`
+      :`ruta-${ruta}_${getDateF(_f, rangoDeReporte.value[0])}_${getDateF(_f, rangoDeReporte.value[0])}`
 }
 
 function exportFile() {
@@ -92,15 +85,15 @@ function exportFile() {
   var generateData = function (data) {
     const _f = 'D-MMM-YY'
     var result = [];
-      console.log(data)
+    console.log(data)
     // let auxiliar = [...data]
     for (var i = 0; i < data.length; i += 1) {
       console.log(data[i])
-          data[i].id = i
+      data[i].id = i
       for (const colK in data[i]) {
-      // console.log(colK)
+        // console.log(colK)
 
-          data[i][colK] = data[i][colK].toString()
+        data[i][colK] = data[i][colK].toString()
       }
       console.log(Object.assign({}, data[i]))
 
@@ -116,13 +109,13 @@ function exportFile() {
     var result = [];
     console.log(keys)
     for (var i = 0; i < keys.length; i += 1) {
-      let nt = ['code','nombres', 'ruta', 'zona', 'date', 'precio_compra', 'um', 'grupo', 'cant_caja']
+      let nt = ['code', 'nombres', 'ruta', 'zona', 'date', 'precio_compra', 'um', 'grupo', 'cant_caja']
       if (!nt.includes(keys[i]))
         result.push({
           id: keys[i],
           name: keys[i],
           prompt: keys[i],
-          width: ['description'].includes(keys[i])   ? 90 : 30,
+          width: ['description'].includes(keys[i]) ? 90 : 30,
           align: "center",
           padding: 0
         });
@@ -134,81 +127,55 @@ function exportFile() {
   let keys = Object.keys(store.getOperaciones[0])
   console.log(keys)
   var headers = createHeaders(keys)
-  console.log('headers',headers)
+  console.log('headers', headers)
   const doc = new jsPDF({
     orientation: "landscape",
     putOnlyUsedFonts: true
   });
   doc.setFontSize(22);
-  doc.text(store.getOperaciones[0].nombres +   ' R-' + store.getOperaciones[0].ruta, 10, 10);
+  doc.setFont("helvetica", "normal");
+  
+  doc.setDrawColor('#445262')
+  doc.text(store.getOperaciones[0].nombres + ' R-' + store.getOperaciones[0].ruta, 10, 10);
   doc.setFontSize(10);
   doc.text(`Del: ${getDateF('L', rangoDeReporte.value[0])}`, 245, 10);
   doc.text(`Al: ${getDateF('L', rangoDeReporte.value[1])}`, 245, 15);
   doc.setFontSize(10);
-    doc.text(`Fecha de reporte: ${getDateF('dddd Do', new Date() )}`, 12, 20);
+  doc.text(`Fecha de reporte: ${getDateF('dddd Do', new Date())}`, 12, 20);
   doc.text(`Kilolitros: ${store.getTotalKlts.toFixed(4)}`, 20, 30);
   doc.text(`Comisiones: ${formatCurrency(store.getTotalOperacionesComision)}`, 20, 35);
   doc.text(`Utilidades: ${formatCurrency(store.getTotalOperacionesUtilidad)}`, 20, 40);
-    doc.text(`cobro = ${formatCurrency( store.getTotalOperacionesCobro)}`, 20, 45);
+  doc.text(`cobro = ${formatCurrency(store.getTotalOperacionesCobro)}`, 20, 45);
 
   let oprations = store.getOperaciones;
   let infop = generateData(oprations)
-  console.log('operations',oprations, infop);
+  doc.setFontSize(10);
+  doc.setFontSize(8);
+  doc.table(12, 55, generateData(oprations), headers, {fontSize: 8, padding: 2, margins: 2});
 
-
-    // console.log([...oprations]);
-    doc.setFontSize(10);
-    // doc.text(`(${store.getTotalKlts}klts.)`, 5, 35);
-    doc.setFontSize(8);
-    doc.table(12, 55, generateData(oprations), headers, {fontSize: 8, padding: 2, margins: 2});
-
-  toast.add({severity: 'success', summary: 'Archivo creado', detail: getNamePdf(store.getOperaciones[0].nombres), life: 3000});
-  setTimeout(()=>{
-
-  doc.save(getNamePdf(store.getOperaciones[0].nombres));
+  toast.add({
+    severity: 'success',
+    summary: 'Archivo creado',
+    detail: getNamePdf(store.getOperaciones[0].nombres),
+    life: 3000
+  });
+  setTimeout(() => {
+    doc.save(getNamePdf(store.getOperaciones[0].nombres));
   }, 500)
 
 
 }
 
 
-const getSeverity = (product) => {
-  switch (product.inventoryStatus) {
-    case 'INSTOCK':
-      return 'success';
-
-    case 'LOWSTOCK':
-      return 'warning';
-
-    case 'OUTOFSTOCK':
-      return 'danger';
-
-    default:
-      return null;
-  }
-};
-const getOrderSeverity = (order) => {
-  switch (order.status) {
-    case 'DELIVERED':
-      return 'success';
-
-    case 'CANCELLED':
-      return 'danger';
-
-    case 'PENDING':
-      return 'warning';
-
-    case 'RETURNED':
-      return 'info';
-
-    default:
-      return null;
-  }
-};
-
 const formatDate = (date) => {
   return moment(date).format('LLLL')
 }
+
+const selectedCity = ref( {name: 'Por ruta', code: 'RUT'});
+const cities = ref([
+  {name: 'General', code: 'GEN'},
+  {name: 'Por ruta', code: 'RUT'}
+]);
 </script>
 
 <template>
@@ -231,7 +198,15 @@ const formatDate = (date) => {
 
             class="p-datatable">
           <template #header>
-            <div class="flex flex-wrap justify-content-end gap-2">
+            <div class="flex flex-wrap justify-content-between gap-2">
+              <div class="field mb-0 mt-3">
+                   <span class="p-float-label">
+                <Dropdown input-id="report" v-model="selectedCity" :options="cities" optionLabel="name"
+                          placeholder="Selecciona el tipo de reporte" class="w-full md:w-14rem"/>
+                     <label for="report">Tipo de reporte</label>
+                </span>
+              </div>
+
               <div class="formgroup-inline align-items-baseline">
                 <div class="field mb-0 mt-3">
                    <span class="p-float-label">
@@ -242,15 +217,15 @@ const formatDate = (date) => {
                     <label for="rango">Rengo de fechas</label>
                 </span>
                 </div>
-                <div class="field mb-0 mt-3">
+                <div class="field mb-0 mt-3" v-if="selectedCity.code === 'RUT'">
                      <span class="p-float-label">
-                       <Dropdown v-model="rutaSeleccionada"  inputId="ruta" :options="store.getRepartidores"
+                       <Dropdown v-model="rutaSeleccionada" inputId="ruta" :options="store.getRepartidores"
                                  optionLabel="ruta" class="w-full md:w-14rem"
                                  placeholder="Selecciona una"></Dropdown>
                     <label for="ruta">Ruta</label>
                 </span>
                 </div>
-                <Button icon="pi pi-plus" :loading="store.isLoading" @click="getReport" :disabled="!rutaSeleccionada"
+                <Button icon="pi pi-plus" :loading="store.isLoading" @click="getReport" :disabled="selectedCity.code === 'RUT' && !rutaSeleccionada"
                         label="Generar"></Button>
               </div>
             </div>
@@ -260,7 +235,7 @@ const formatDate = (date) => {
             <div class="text-gray-500 px-4 py-2 my-4 text-center">Genera tu reporte en el boton <b>+ Generar</b></div>
           </template>
           <template #loading> Cargando la información..</template>
-<!--          <Column expander style="width: 5rem"/>-->
+          <!--          <Column expander style="width: 5rem"/>-->
           <Column field="description" header="Producto">
             <template #body="slotProps">
               <b class="">
@@ -273,7 +248,7 @@ const formatDate = (date) => {
           <Column field="sTotalPz" header="Salida Pz">
             <template #body="slotProps">
               <b>
-              {{ slotProps.data.sTotalPz }}
+                {{ slotProps.data.sTotalPz }}
               </b>
             </template>
           </Column>
@@ -312,42 +287,42 @@ const formatDate = (date) => {
               {{ formatCurrency(slotProps.data.utilidad) }}
             </template>
           </Column>
-<!--          <Column field="klts" header="k-Lts">-->
-<!--            <template #body="slotProps">-->
-<!--              <b class="text-primary"> {{ slotProps.data.klts }} </b>-->
-<!--            </template>-->
-<!--          </Column>-->
+          <!--          <Column field="klts" header="k-Lts">-->
+          <!--            <template #body="slotProps">-->
+          <!--              <b class="text-primary"> {{ slotProps.data.klts }} </b>-->
+          <!--            </template>-->
+          <!--          </Column>-->
 
           <!--          <Column field="descripcion" header="Category"></Column>-->
-<!--          <template #expansion="slotProps">-->
-<!--            <div class="pl-8 bg-light">-->
-<!--              <DataTable class="p-datatable-sm" showGridlines scrollable scrollHeight="160px"-->
-<!--                         :value="slotProps.data.items">-->
-<!--                <Column field="description" header="Producto"></Column>-->
-<!--                <Column field="sCj" header="S.Cj."></Column>-->
-<!--                <Column field="sPz" header="S.Pz."></Column>-->
-<!--                <Column field="sTotalPz" header="S.Total"></Column>-->
-<!--                <Column field="rCj" header="R.Cj."></Column>-->
-<!--                <Column field="rPz" header="R.Pz."></Column>-->
-<!--                <Column field="rTotalPz" header="R.Total"></Column>-->
-<!--                <Column field="ventaPz" header="ventaPz"></Column>-->
+          <!--          <template #expansion="slotProps">-->
+          <!--            <div class="pl-8 bg-light">-->
+          <!--              <DataTable class="p-datatable-sm" showGridlines scrollable scrollHeight="160px"-->
+          <!--                         :value="slotProps.data.items">-->
+          <!--                <Column field="description" header="Producto"></Column>-->
+          <!--                <Column field="sCj" header="S.Cj."></Column>-->
+          <!--                <Column field="sPz" header="S.Pz."></Column>-->
+          <!--                <Column field="sTotalPz" header="S.Total"></Column>-->
+          <!--                <Column field="rCj" header="R.Cj."></Column>-->
+          <!--                <Column field="rPz" header="R.Pz."></Column>-->
+          <!--                <Column field="rTotalPz" header="R.Total"></Column>-->
+          <!--                <Column field="ventaPz" header="ventaPz"></Column>-->
 
-<!--                &lt;!&ndash;                <Column field="ventaPz" header="Date"></Column>&ndash;&gt;-->
-<!--                <Column field="saldo" header="importe" sortable>-->
-<!--                  <template #body="slotProps">-->
-<!--                    {{ formatCurrency(slotProps.data.saldo) }}-->
-<!--                  </template>-->
-<!--                </Column>-->
-<!--                <Column field="klts" header="k-Lts">-->
-<!--                  <template #body="slotProps">-->
-<!--                    <b class="text-primary"> {{ slotProps.data.klts }} </b>-->
+          <!--                &lt;!&ndash;                <Column field="ventaPz" header="Date"></Column>&ndash;&gt;-->
+          <!--                <Column field="saldo" header="importe" sortable>-->
+          <!--                  <template #body="slotProps">-->
+          <!--                    {{ formatCurrency(slotProps.data.saldo) }}-->
+          <!--                  </template>-->
+          <!--                </Column>-->
+          <!--                <Column field="klts" header="k-Lts">-->
+          <!--                  <template #body="slotProps">-->
+          <!--                    <b class="text-primary"> {{ slotProps.data.klts }} </b>-->
 
-<!--                  </template>-->
-<!--                </Column>-->
+          <!--                  </template>-->
+          <!--                </Column>-->
 
-<!--              </DataTable>-->
-<!--            </div>-->
-<!--          </template>-->
+          <!--              </DataTable>-->
+          <!--            </div>-->
+          <!--          </template>-->
           <template #footer>
             <template v-if="store.getOperaciones.length > 0">
               <div class="footer-cont">
@@ -473,6 +448,6 @@ const formatDate = (date) => {
 
 .p-button.p-button-sm .p-button-icon,
 .p-button-icon {
-  font-size: 1.2rem!important;
+  font-size: 1.2rem !important;
 }
 </style>

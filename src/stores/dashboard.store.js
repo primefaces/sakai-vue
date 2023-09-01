@@ -6,6 +6,7 @@ moment.locale('es-mx')
 console.log('----', moment().format());
 // const baseUrl = `http://localhost:3000/`;
 const baseUrl = import.meta.env.VITE_BASE_URL;
+const isProduction = baseUrl.includes('localhost') ? 0 : 1;
 const documentStyle = getComputedStyle(document.documentElement);
 const textColor = documentStyle.getPropertyValue('--text-color');
 const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
@@ -173,7 +174,8 @@ export const useDashboardStore = defineStore({
             // console.log('response ventas', itemsOperations);
 
             let agrupadoPorRepartidor = itemsOperations.reduce((result, {no_ruta, dte, total_klt}) => {
-                const wd = moment(dte).add(1,'days').weekday()
+
+                const wd = moment(dte).add(isProduction,'days').weekday()
                 console.log('dayPos', no_ruta, wd, total_klt);
                 if (!result[no_ruta])
                     result[no_ruta] = [0, 0, 0, 0, 0, 0, 0];

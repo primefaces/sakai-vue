@@ -87,6 +87,26 @@ export const useReportStore = defineStore({
 
             }
         },
+        async setReport(start, end, idRepartidor) {
+            this.loading = true;
+            let URL = `${baseUrl}operations/report?start=${start}&end=${end}`
+            if (idRepartidor)
+                URL += `&idRuta=${idRepartidor}`;
+            try {
+                let s = await fetchWrapper.get(URL);
+                console.log('Reports response->',s)
+                this.operaciones = s
+            } catch (error) {
+                this.operaciones = []
+                this.errord = {error};
+                return false;
+            } finally {
+                this.loading = false;
+                console.log(!!this.operaciones.length, this.operaciones.length)
+                return !!this.operaciones.length;
+
+            }
+        },
         async setOperacionesCount(start, end, idRepartidor) {
             this.loading = true;
             let URL = `${baseUrl}operations/ruta/count?start=${start}&end=${end}`

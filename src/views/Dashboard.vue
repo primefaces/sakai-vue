@@ -149,7 +149,8 @@ const formatCurrency = (value) => {
       <div class="card">
           <h5 class="mb-1">Cierres <small class="text-500">de la semana en curso</small></h5>
         <b class="text-primary">cobrado MXN$</b>
-
+        <div class="ldBar" data-value="50">
+        </div>
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">
             <img :src="'demo/images/Vanilla-1s-234px.gif'" :alt="'Cargando'" class="product-image" />

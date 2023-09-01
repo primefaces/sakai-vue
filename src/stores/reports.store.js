@@ -19,25 +19,29 @@ export const useReportStore = defineStore({
         },
         getOperaciones(state) {
             console.log(state.operaciones)
-            return state.operaciones;
+            return [...state.operaciones];
         },
         getOperacionesCount(state) {
             return state.operaciones_hoy;
         },
         getTotalOperacionesUtilidad(state) {
-            return state.operaciones.map(o => o.utilidad).reduce((a, b) => {
+            return state.operaciones.map(o => Number( o.utilidad)).reduce((a, b) => {
                 return a + b;
             }, 0)
-        },getTotalOperacionesCobro(state) {
-            return state.operaciones.map(o => o.cobro).reduce((a, b) => {
+        },
+        getTotalOperacionesCobro(state) {
+            console.log(state.operaciones.map(o => o.saldo))
+            return state.operaciones.map(o => Number(o.saldo)).reduce((a, b) => {
                 return a + b;
             }, 0)
-        },getTotalKlts(state) {
-            return state.operaciones.map(o => o.klts).reduce((a, b) => {
+        },
+        getTotalKlts(state) {
+            return state.operaciones.map(o => Number(o.klts)).reduce((a, b) => {
                 return a + b;
             }, 0)
-        },getTotalOperacionesComision(state) {
-            return state.operaciones.map(o => o.comision).reduce((a, b) => {
+        },
+        getTotalOperacionesComision(state) {
+            return state.operaciones.map(o => Number(o.comision)).reduce((a, b) => {
                 return a + b;
             }, 0)
         },
@@ -78,9 +82,9 @@ export const useReportStore = defineStore({
                 return false;
             } finally {
                 this.loading = false;
+                console.log(!!this.operaciones.length, this.operaciones.length)
                 return !!this.operaciones.length;
 
-                // console.log(this.catalogos)
             }
         },
         async setOperacionesCount(start, end, idRepartidor) {

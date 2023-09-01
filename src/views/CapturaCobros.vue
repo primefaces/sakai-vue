@@ -158,7 +158,7 @@ const showProducts = () => {
 const fetchCatalogos = () => {
   store.setProducts('productos');
   store.setRepartidores('repartidores/aviables');
-  storeReport.setOperacionesCount(moment().format('YYYY-MM-DD'), moment().add(1, 'day').format('YYYY-MM-DD'))
+  storeReport.setOperacionesCount(moment().format('YYYY-MM-DD'), moment().add(2, 'day').format('YYYY-MM-DD'))
 }
 
 /**

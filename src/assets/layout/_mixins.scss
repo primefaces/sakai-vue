@@ -1,13 +1,13 @@
 @mixin focused() {
     outline: 0 none;
     outline-offset: 0;
-    transition: box-shadow .2s;
+    transition: box-shadow 0.2s;
     box-shadow: var(--focus-ring);
 }
 
 @mixin focused-inset() {
     outline: 0 none;
     outline-offset: 0;
-    transition: box-shadow .2s;
+    transition: box-shadow 0.2s;
     box-shadow: inset var(--focus-ring);
 }

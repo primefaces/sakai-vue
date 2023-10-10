@@ -1,0 +1,64 @@
+@font-face {
+  font-family: KanitLight;
+  src: url('/src/assets/fonts/Kanit-Light.ttf');
+}
+
+@font-face {
+  font-family: KanitExtraLight;
+  src: url('/src/assets/fonts/Kanit-ExtraLight.ttf');
+}
+
+@font-face {
+  font-family: KanitRegular;
+  src: url('/src/assets/fonts/Kanit-Regular.ttf');
+}
+
+@font-face {
+  font-family: KanitMedium;
+  src: url('/src/assets/fonts/Kanit-Medium.ttf');
+}
+
+@font-face {
+  font-family: KanitSemiBold;
+  src: url('/src/assets/fonts/Kanit-SemiBold.ttf');
+}
+
+@font-face {
+  font-family: KanitBold;
+  src: url('/src/assets/fonts/Kanit-Bold.ttf');
+}
+
+.font-light {
+  font-family: KanitLight, Serif !important;
+  font-weight: 0 !important;
+}
+
+.font-extra-light {
+  font-family: KanitExtraLight, Serif !important;
+  font-weight: 0 !important;
+}
+
+.font-regular {
+  font-family: KanitRegular, Serif !important;
+  font-weight: 0 !important;
+}
+
+.font-medium {
+  font-family: KanitMedium, Serif !important;
+  font-weight: 0 !important;
+}
+
+.font-semi-bold {
+  font-weight: 0 !important;
+  font-family: KanitSemiBold, Serif !important;
+}
+
+.font-bold {
+  font-weight: 0 !important;
+  font-family: KanitBold, Serif !important;
+}
+html,
+body {
+  font-family: KanitLight, Serif;
+  font-size: 10pt;
+}

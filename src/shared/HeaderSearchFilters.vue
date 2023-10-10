@@ -57,28 +57,8 @@ const dropdownItem = ref(null);
 
         <div class="field col-12 md:col-2">
           <label for="state">Acciones</label>
-          <!--          <Button type="button" class="mr-2 mb-2" label="Search" icon="pi pi-search" />-->
-          <!--          <Button type="button" class="mr-2 mb-2" label="Search" icon="pi pi-search" />-->
-          <!--          <Button type="button" class="mr-2 mb-2" icon="pi pi-search" />-->
           <SplitButton label="Filtrar" icon="pi pi-check" :model="itensButton" class="p-button-info mr-2 mb-2"></SplitButton>
         </div>
-
-        <!--        <div class="field col-12">-->
-        <!--          <label for="address">Address</label>-->
-        <!--          <Textarea id="address" rows="4" />-->
-        <!--        </div>-->
-        <!--        <div class="field col-12 md:col-6">-->
-        <!--          <label for="city">City</label>-->
-        <!--          <InputText id="city" type="text" />-->
-        <!--        </div>-->
-        <!--        <div class="field col-12 md:col-3">-->
-        <!--          <label for="state">State</label>-->
-        <!--          <Dropdown id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Select One"></Dropdown>-->
-        <!--        </div>-->
-        <!--        <div class="field col-12 md:col-3">-->
-        <!--          <label for="zip">Zip</label>-->
-        <!--          <InputText id="zip" type="text" />-->
-        <!--        </div>-->
       </div>
     </div>
   </div>

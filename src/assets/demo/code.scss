@@ -1,15 +1,15 @@
 pre.app-code {
-    background-color: var(--surface-ground);
-    margin: 0 0 1rem 0;
-    padding: 0;
-    border-radius: var(--border-radius);
-    overflow: auto;
+  background-color: var(--surface-ground);
+  margin: 0 0 1rem 0;
+  padding: 0;
+  border-radius: var(--border-radius);
+  overflow: auto;
 
-    code {
-        color: var(--surface-900);
-        padding: 1rem;
-        line-height: 1.5;
-        display: block;
-        font-family: monaco, Consolas, monospace;
-    }
+  code {
+    color: var(--surface-900);
+    padding: 1rem;
+    line-height: 1.5;
+    display: block;
+    font-family: monaco, Consolas, monospace;
+  }
 }

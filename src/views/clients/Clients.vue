@@ -1,3 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import HeaderSearchFilters from '@/shared/HeaderSearchFilters.vue';
+</script>
 
-<template>clientes</template>
+<template>
+  <div class="grid">
+    <HeaderSearchFilters title="Clientes"></HeaderSearchFilters>
+  </div>
+</template>

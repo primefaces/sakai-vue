@@ -9,6 +9,7 @@
     --text-color-secondary: #6c757d;
     --primary-color: #00beb0;
     --primary-highlight-color: #1bc4b9;
+    --primary-hover-background-highlight-color: #00AB9E;
     --primary-color-text: #ffffff;
     --font-family: Kanit -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
     /* --font-family:-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol; */
@@ -1110,7 +1111,7 @@
     background: #ffffff;
 }
 .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
-    background: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
 }
 .p-inputswitch.p-invalid .p-inputswitch-slider {
     border-color: #e24c4c;
@@ -1610,8 +1611,8 @@
     color: #ffffff;
 }
 .p-selectbutton .p-button.p-highlight:hover {
-    background: #4f46e5;
-    border-color: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
+    border-color: var(--primary-hover-background-highlight-color);
     color: #ffffff;
 }
 .p-selectbutton .p-button.p-highlight:hover .p-button-icon-left,
@@ -1783,8 +1784,8 @@
     color: #ffffff;
 }
 .p-togglebutton.p-button.p-highlight:hover {
-    background: #4f46e5;
-    border-color: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
+    border-color: var(--primary-hover-background-highlight-color);
     color: #ffffff;
 }
 .p-togglebutton.p-button.p-highlight:hover .p-button-icon-left,
@@ -1809,9 +1810,9 @@
     border-radius: 6px;
 }
 .p-button:enabled:hover {
-    background: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
     color: #ffffff;
-    border-color: #4f46e5;
+    border-color: var(--primary-hover-background-highlight-color);
 }
 .p-button:enabled:active {
     background: var(--primary-highlight-color);
@@ -3262,8 +3263,8 @@
     border-right: 1px solid #dee2e6;
 }
 .fc.fc-unthemed .fc-view-container .fc-event {
-    background: #4f46e5;
-    border: 1px solid #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
+    border: 1px solid var(--primary-hover-background-highlight-color);
     color: #ffffff;
 }
 .fc.fc-unthemed .fc-view-container .fc-divider {
@@ -3285,9 +3286,9 @@
     align-items: center;
 }
 .fc.fc-unthemed .fc-toolbar .fc-button:enabled:hover {
-    background: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
     color: #ffffff;
-    border-color: #4f46e5;
+    border-color: var(--primary-hover-background-highlight-color);
 }
 .fc.fc-unthemed .fc-toolbar .fc-button:enabled:active {
     background: var(--primary-highlight-color);
@@ -3349,8 +3350,8 @@
 .fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active:hover,
 .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active:hover,
 .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active:hover {
-    background: #4f46e5;
-    border-color: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
+    border-color: var(--primary-hover-background-highlight-color);
     color: #ffffff;
 }
 .fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button:focus,
@@ -3438,15 +3439,15 @@
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-block-event {
     color: #ffffff;
-    background: #4f46e5;
-    border-color: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
+    border-color: var(--primary-hover-background-highlight-color);
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-block-event .fc-event-main {
     color: #ffffff;
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-dot-event .fc-daygrid-event-dot {
-    background: #4f46e5;
-    border-color: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
+    border-color: var(--primary-hover-background-highlight-color);
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-dot-event:hover {
     background: #e9ecef;
@@ -3468,9 +3469,9 @@
     border-radius: 6px;
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button:enabled:hover {
-    background: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
     color: #ffffff;
-    border-color: #4f46e5;
+    border-color: var(--primary-hover-background-highlight-color);
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button:enabled:active {
     background: var(--primary-highlight-color);
@@ -3538,8 +3539,8 @@
 .fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active:hover,
 .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active:hover,
 .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active:hover {
-    background: #4f46e5;
-    border-color: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
+    border-color: var(--primary-hover-background-highlight-color);
     color: #ffffff;
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button:not(:disabled):focus,
@@ -4585,7 +4586,7 @@
     right: -1rem;
 }
 .p-overlaypanel .p-overlaypanel-close:enabled:hover {
-    background: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
     color: #ffffff;
 }
 .p-overlaypanel:after {
@@ -4716,9 +4717,9 @@
 }
 
 .p-fileupload-choose:not(.p-disabled):hover {
-    background: #4f46e5;
+    background: var(--primary-hover-background-highlight-color);
     color: #ffffff;
-    border-color: #4f46e5;
+    border-color: var(--primary-hover-background-highlight-color);
 }
 .p-fileupload-choose:not(.p-disabled):active {
     background: var(--primary-highlight-color);

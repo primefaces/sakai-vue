@@ -1,5 +1,13 @@
 <script setup lang="ts">
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import Column from 'primevue/column';
+import MultiSelect from 'primevue/multiselect';
+import DataTable from 'primevue/datatable';
+import TriStateCheckbox from 'primevue/tristatecheckbox';
+import Slider from 'primevue/slider';
+import InputNumber from 'primevue/inputnumber';
+import ProgressBar from 'primevue/progressbar';
+
 import CustomerService from '@/service/CustomerService';
 import ProductService from '@/service/ProductService';
 import { ref, onBeforeMount } from 'vue';
@@ -10,9 +18,7 @@ const customer3 = ref(null);
 const filters1 = ref(null);
 const loading1 = ref(null);
 const loading2 = ref(null);
-const idFrozen = ref(false);
 const products = ref(null);
-const expandedRows = ref([]);
 const statuses = ref(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
 const representatives = ref([
   { name: 'Amy Elsner', image: 'amyelsner.png' },
@@ -61,12 +67,7 @@ const initFilters1 = () => {
 const clearFilter1 = () => {
   initFilters1();
 };
-const expandAll = () => {
-  expandedRows.value = products.value.filter((p) => p.id);
-};
-const collapseAll = () => {
-  expandedRows.value = null;
-};
+
 const formatCurrency = (value) => {
   return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 };
@@ -77,18 +78,6 @@ const formatDate = (value) => {
     month: '2-digit',
     year: 'numeric'
   });
-};
-const calculateCustomerTotal = (name) => {
-  let total = 0;
-  if (customer3.value) {
-    for (let customer of customer3.value) {
-      if (customer.representative.name === name) {
-        total++;
-      }
-    }
-  }
-
-  return total;
 };
 </script>
 

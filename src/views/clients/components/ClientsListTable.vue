@@ -21,7 +21,7 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  console.log('-payload', props.payload[0].owner);
+  console.log('-payload', props.payload[0]);
 });
 
 const props = defineProps(['title', 'payload']);
@@ -35,7 +35,7 @@ const initFilters1 = () => {
     date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
     balance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
     status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-    activity: { value: [0, 50], matchMode: FilterMatchMode.BETWEEN },
+    // activity: { value: [0, 50], matchMode: FilterMatchMode.BETWEEN },
     verified: { value: null, matchMode: FilterMatchMode.EQUALS }
   };
 };
@@ -49,11 +49,17 @@ const formatCurrency = (value) => {
 };
 
 const formatDate = (value) => {
-  return value.toLocaleDateString('en-US', {
+  const dated = new Date(value);
+  return dated.toLocaleDateString('en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
   });
+  // return value.toLocaleDateString('en-US', {
+  //   day: '2-digit',
+  //   month: '2-digit',
+  //   year: 'numeric'
+  // });
 };
 </script>
 
@@ -96,10 +102,43 @@ const formatDate = (value) => {
             <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name" />
           </template>
         </Column>
+
+        <Column header="Email" filterField="owner.email" style="min-width: 12rem">
+          <template #body="{ data }">
+            <!--            <img src="/demo/images/flag/flag_placeholder.png" :alt="data.owner.email" :class="'flag flag-' + data.owner.email" width="30" />-->
+            <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.owner.email }}</span>
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by emal" />
+          </template>
+          <template #filterclear="{ filterCallback }">
+            <Button type="button" icon="pi pi-times" @click="filterCallback()" class="p-button-secondary"></Button>
+          </template>
+          <template #filterapply="{ filterCallback }">
+            <Button type="button" icon="pi pi-check" @click="filterCallback()" class="p-button-success"></Button>
+          </template>
+        </Column>
+
+        <Column header="Tipo de cuenta" filterField="natureAccount" style="min-width: 12rem">
+          <template #body="{ data }">
+            <!--            <img src="/demo/images/flag/flag_placeholder.png" :alt="data.owner.email" :class="'flag flag-' + data.owner.email" width="30" />-->
+            <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.natureAccount === 'natural_person' ? 'Personal' : 'Empresarial' }}</span>
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by emal" />
+          </template>
+          <template #filterclear="{ filterCallback }">
+            <Button type="button" icon="pi pi-times" @click="filterCallback()" class="p-button-secondary"></Button>
+          </template>
+          <template #filterapply="{ filterCallback }">
+            <Button type="button" icon="pi pi-check" @click="filterCallback()" class="p-button-success"></Button>
+          </template>
+        </Column>
+
         <Column header="Country" filterField="country.name" style="min-width: 12rem">
           <template #body="{ data }">
-            <img src="/demo/images/flag/flag_placeholder.png" :alt="data.owner.name" :class="'flag flag-' + data.country.code" width="30" />
-            <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.owner.name }}</span>
+            <!--            <img src="/demo/images/flag/flag_placeholder.png" :alt="data.owner.country" :class="'flag flag-' + data.owner.country" width="30" />-->
+            <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.owner.country }}</span>
           </template>
           <template #filter="{ filterModel }">
             <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by country" />
@@ -112,59 +151,77 @@ const formatDate = (value) => {
           </template>
         </Column>
 
-        <Column header="Date" filterField="date" dataType="date" style="min-width: 10rem">
+        <Column header="Date" filterField="createdAt" dataType="date" style="min-width: 10rem">
           <template #body="{ data }">
-            {{ formatDate(data.owner.name) }}
+            {{ formatDate(data.createdAt) }}
           </template>
           <template #filter="{ filterModel }">
             <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
           </template>
         </Column>
 
-        <Column header="Balance" filterField="balance" dataType="numeric" style="min-width: 10rem">
+        <Column header="Aprobacion" filterField="approvedAt" dataType="date" style="min-width: 10rem">
           <template #body="{ data }">
-            {{ formatCurrency(data.owner.name) }}
+            {{ formatDate(data.approvedAt) }}
           </template>
           <template #filter="{ filterModel }">
-            <InputNumber v-model="filterModel.value" mode="currency" currency="USD" locale="en-US" />
+            <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
           </template>
         </Column>
-        <Column field="status" header="Status" :filterMenuStyle="{ width: '14rem' }" style="min-width: 12rem">
+
+        <Column header="Estatus" filterField="status" dataType="date" style="min-width: 10rem">
           <template #body="{ data }">
-            <span :class="'customer-badge status-' + data.owner.name">{{ data.owner.name }}</span>
+            {{ data.status }}
           </template>
           <template #filter="{ filterModel }">
-            <Dropdown v-model="filterModel.value" :options="statuses" placeholder="Any" class="p-column-filter" :showClear="true">
-              <template #value="slotProps">
-                <span :class="'customer-badge status-' + slotProps.value" v-if="slotProps.value">{{ slotProps.value }}</span>
-                <span v-else>{{ slotProps.placeholder }}</span>
-              </template>
-              <template #option="slotProps">
-                <span :class="'customer-badge status-' + slotProps.option">{{ slotProps.option }}</span>
-              </template>
-            </Dropdown>
+            <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
           </template>
         </Column>
-        <Column field="activity" header="Activity" :showFilterMatchModes="false" style="min-width: 12rem">
-          <template #body="{ data }">
-            <ProgressBar :value="data.owner.name" :showValue="false" style="height: 0.5rem"></ProgressBar>
-          </template>
-          <template #filter="{ filterModel }">
-            <Slider v-model="filterModel.value" :range="true" class="m-3"></Slider>
-            <div class="flex align-items-center justify-content-between px-2">
-              <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>
-              <span>{{ filterModel.value ? filterModel.value[1] : 100 }}</span>
-            </div>
-          </template>
-        </Column>
-        <Column field="verified" header="Verified" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
-          <template #body="{ data }">
-            <i class="pi" :class="{ 'text-green-500 pi-check-circle': data.owner.name, 'text-pink-500 pi-times-circle': !data.owner.name }"></i>
-          </template>
-          <template #filter="{ filterModel }">
-            <TriStateCheckbox v-model="filterModel.value" />
-          </template>
-        </Column>
+
+        <!--        <Column header="Balance" filterField="balance" dataType="numeric" style="min-width: 10rem">-->
+        <!--          <template #body="{ data }">-->
+        <!--            {{ formatCurrency(data.balance) }}-->
+        <!--          </template>-->
+        <!--          <template #filter="{ filterModel }">-->
+        <!--            <InputNumber v-model="filterModel.value" mode="currency" currency="USD" locale="en-US" />-->
+        <!--          </template>-->
+        <!--        </Column>-->
+        <!--        <Column field="status" header="Status" :filterMenuStyle="{ width: '14rem' }" style="min-width: 12rem">-->
+        <!--          <template #body="{ data }">-->
+        <!--            <span :class="'customer-badge status-' + data.status">{{ data.status }}</span>-->
+        <!--          </template>-->
+        <!--          <template #filter="{ filterModel }">-->
+        <!--            <Dropdown v-model="filterModel.value" :options="statuses" placeholder="Any" class="p-column-filter" :showClear="true">-->
+        <!--              <template #value="slotProps">-->
+        <!--                <span :class="'customer-badge status-' + slotProps.value" v-if="slotProps.value">{{ slotProps.value }}</span>-->
+        <!--                <span v-else>{{ slotProps.placeholder }}</span>-->
+        <!--              </template>-->
+        <!--              <template #option="slotProps">-->
+        <!--                <span :class="'customer-badge status-' + slotProps.option">{{ slotProps.option }}</span>-->
+        <!--              </template>-->
+        <!--            </Dropdown>-->
+        <!--          </template>-->
+        <!--        </Column>-->
+        <!--        <Column field="activity" header="Activity" :showFilterMatchModes="false" style="min-width: 12rem">-->
+        <!--          <template #body="{ data }">-->
+        <!--            <ProgressBar :value="data.activity" :showValue="false" style="height: 0.5rem"></ProgressBar>-->
+        <!--          </template>-->
+        <!--          <template #filter="{ filterModel }">-->
+        <!--            <Slider v-model="filterModel.value" :range="true" class="m-3"></Slider>-->
+        <!--            <div class="flex align-items-center justify-content-between px-2">-->
+        <!--              <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>-->
+        <!--              <span>{{ filterModel.value ? filterModel.value[1] : 100 }}</span>-->
+        <!--            </div>-->
+        <!--          </template>-->
+        <!--        </Column>-->
+        <!--        <Column field="verified" header="Verified" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">-->
+        <!--          <template #body="{ data }">-->
+        <!--            <i class="pi" :class="{ 'text-green-500 pi-check-circle': data.verified, 'text-pink-500 pi-times-circle': !data.verified }"></i>-->
+        <!--          </template>-->
+        <!--          <template #filter="{ filterModel }">-->
+        <!--            <TriStateCheckbox v-model="filterModel.value" />-->
+        <!--          </template>-->
+        <!--        </Column>-->
       </DataTable>
     </div>
   </div>

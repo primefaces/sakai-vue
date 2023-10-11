@@ -1,54 +1,66 @@
 <script setup lang="ts">
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import Column from 'primevue/column';
-import MultiSelect from 'primevue/multiselect';
 import DataTable from 'primevue/datatable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import Slider from 'primevue/slider';
 import InputNumber from 'primevue/inputnumber';
 import ProgressBar from 'primevue/progressbar';
-
-import CustomerService from '@/service/CustomerService';
-import ProductService from '@/service/ProductService';
 import { ref, onBeforeMount } from 'vue';
 
 const customer1 = ref(null);
-const customer2 = ref(null);
-const customer3 = ref(null);
 const filters1 = ref(null);
 const loading1 = ref(null);
 const loading2 = ref(null);
-const products = ref(null);
 const statuses = ref(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
-const representatives = ref([
-  { name: 'Amy Elsner', image: 'amyelsner.png' },
-  { name: 'Anna Fali', image: 'annafali.png' },
-  { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-  { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-  { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-  { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-  { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-  { name: 'Onyama Limba', image: 'onyamalimba.png' },
-  { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-  { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-]);
-
-const customerService = new CustomerService();
-const productService = new ProductService();
 
 onBeforeMount(() => {
-  productService.getProductsWithOrdersSmall().then((data) => (products.value = data));
-  customerService.getCustomersLarge().then((data) => {
-    customer1.value = data;
-    loading1.value = false;
-    customer1.value.forEach((customer) => (customer.date = new Date(customer.date)));
-  });
-  customerService.getCustomersLarge().then((data) => (customer2.value = data));
-  customerService.getCustomersMedium().then((data) => (customer3.value = data));
+  customer1.value = [
+    {
+      id: 1000,
+      name: 'James Butt',
+      country: {
+        name: 'Algeria',
+        code: 'dz'
+      },
+      company: 'Benton, John B Jr',
+      status: 'unqualified',
+      verified: true,
+      activity: 17,
+      representative: {
+        name: 'Ioni Bowcher',
+        image: 'ionibowcher.png'
+      },
+      balance: 70663,
+      date: new Date()
+    },
+    {
+      id: 1000,
+      name: 'James Butt',
+      country: {
+        name: 'Algeria',
+        code: 'dz'
+      },
+      company: 'Benton, John B Jr',
+      status: 'unqualified',
+      verified: true,
+      activity: 17,
+      representative: {
+        name: 'Ioni Bowcher',
+        image: 'ionibowcher.png'
+      },
+      balance: 70663,
+      date: new Date()
+    }
+  ];
+
   loading2.value = false;
+  loading1.value = false;
 
   initFilters1();
 });
+
+const props = defineProps(['title']);
 
 const initFilters1 = () => {
   filters1.value = {
@@ -84,12 +96,12 @@ const formatDate = (value) => {
 <template>
   <div class="col-12">
     <div class="card">
-      <h5>Filter Menu</h5>
+      <h5>{{ props.title }}</h5>
       <DataTable
         :value="customer1"
         :paginator="true"
         class="p-datatable-gridlines"
-        :rows="10"
+        :rows="7"
         dataKey="id"
         :rowHover="true"
         v-model:filters="filters1"
@@ -135,23 +147,7 @@ const formatDate = (value) => {
             <Button type="button" icon="pi pi-check" @click="filterCallback()" class="p-button-success"></Button>
           </template>
         </Column>
-        <Column header="Agent" filterField="representative" :showFilterMatchModes="false" :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
-          <template #body="{ data }">
-            <img :alt="data.representative.name" :src="'demo/images/avatar/' + data.representative.image" width="32" style="vertical-align: middle" />
-            <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.representative.name }}</span>
-          </template>
-          <template #filter="{ filterModel }">
-            <div class="mb-3 text-bold">Agent Picker</div>
-            <MultiSelect v-model="filterModel.value" :options="representatives" optionLabel="name" placeholder="Any" class="p-column-filter">
-              <template #option="slotProps">
-                <div class="p-multiselect-representative-option">
-                  <img :alt="slotProps.option.name" :src="'demo/images/avatar/' + slotProps.option.image" width="32" style="vertical-align: middle" />
-                  <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ slotProps.option.name }}</span>
-                </div>
-              </template>
-            </MultiSelect>
-          </template>
-        </Column>
+
         <Column header="Date" filterField="date" dataType="date" style="min-width: 10rem">
           <template #body="{ data }">
             {{ formatDate(data.date) }}
@@ -160,6 +156,7 @@ const formatDate = (value) => {
             <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
           </template>
         </Column>
+
         <Column header="Balance" filterField="balance" dataType="numeric" style="min-width: 10rem">
           <template #body="{ data }">
             {{ formatCurrency(data.balance) }}

@@ -7,6 +7,6 @@ import TableList from '@/shared/TableList.vue';
   <div class="grid">
     <HeaderSearchFilters title="Clientes"></HeaderSearchFilters>
 
-    <TableList></TableList>
+    <TableList title="Clientes"></TableList>
   </div>
 </template>

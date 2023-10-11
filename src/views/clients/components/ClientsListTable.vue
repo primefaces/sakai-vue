@@ -21,7 +21,7 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  console.log('-payload', props.payload[0]);
+  console.log('-client list data', props.payload);
 });
 
 const props = defineProps(['title', 'payload']);

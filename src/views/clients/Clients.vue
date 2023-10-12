@@ -216,26 +216,6 @@ const clientsNoba = [
   }
 ];
 const isLoading = ref(true);
-const clientes = ref([
-  {
-    id: 1000,
-    name: 'nameee is what',
-    // country: {
-    //   name: 'Algeria',
-    //   code: 'dz'
-    // },
-    // company: 'Benton, John B Jr',
-    // status: 'unqualified',
-    // verified: true,
-    activity: 17
-    // representative: {
-    //   name: 'Ioni Bowcher',
-    //   image: 'ionibowcher.png'
-    // }
-    // balance: 70663,
-    // date: new Date()
-  }
-]);
 
 isLoading.value = false;
 </script>

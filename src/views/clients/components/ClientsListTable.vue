@@ -2,10 +2,6 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
-import TriStateCheckbox from 'primevue/tristatecheckbox';
-import Slider from 'primevue/slider';
-import InputNumber from 'primevue/inputnumber';
-import ProgressBar from 'primevue/progressbar';
 import { ref, onBeforeMount } from 'vue';
 
 const filters = ref();
@@ -42,22 +38,17 @@ const clearFilter1 = () => {
   initFilters1();
 };
 
-const formatCurrency = (value) => {
-  return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-};
-
-const formatDate = (value) => {
+const formatDate = (value: any) => {
   const dated = new Date(value);
   return dated.toLocaleDateString('en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
   });
-  // return value.toLocaleDateString('en-US', {
-  //   day: '2-digit',
-  //   month: '2-digit',
-  //   year: 'numeric'
-  // });
+};
+
+const showClient = (client: any) => {
+  console.log('data', client.id);
 };
 </script>
 
@@ -72,7 +63,6 @@ const formatDate = (value) => {
         :rows="7"
         dataKey="id"
         :rowHover="true"
-        v-model:filters="filters"
         filterDisplay="menu"
         :loading="isLoading"
         :filters="filters"
@@ -178,50 +168,11 @@ const formatDate = (value) => {
           </template>
         </Column>
 
-        <!--        <Column header="Balance" filterField="balance" dataType="numeric" style="min-width: 10rem">-->
-        <!--          <template #body="{ data }">-->
-        <!--            {{ formatCurrency(data.balance) }}-->
-        <!--          </template>-->
-        <!--          <template #filter="{ filterModel }">-->
-        <!--            <InputNumber v-model="filterModel.value" mode="currency" currency="USD" locale="en-US" />-->
-        <!--          </template>-->
-        <!--        </Column>-->
-        <!--        <Column field="status" header="Status" :filterMenuStyle="{ width: '14rem' }" style="min-width: 12rem">-->
-        <!--          <template #body="{ data }">-->
-        <!--            <span :class="'customer-badge status-' + data.status">{{ data.status }}</span>-->
-        <!--          </template>-->
-        <!--          <template #filter="{ filterModel }">-->
-        <!--            <Dropdown v-model="filterModel.value" :options="statuses" placeholder="Any" class="p-column-filter" :showClear="true">-->
-        <!--              <template #value="slotProps">-->
-        <!--                <span :class="'customer-badge status-' + slotProps.value" v-if="slotProps.value">{{ slotProps.value }}</span>-->
-        <!--                <span v-else>{{ slotProps.placeholder }}</span>-->
-        <!--              </template>-->
-        <!--              <template #option="slotProps">-->
-        <!--                <span :class="'customer-badge status-' + slotProps.option">{{ slotProps.option }}</span>-->
-        <!--              </template>-->
-        <!--            </Dropdown>-->
-        <!--          </template>-->
-        <!--        </Column>-->
-        <!--        <Column field="activity" header="Activity" :showFilterMatchModes="false" style="min-width: 12rem">-->
-        <!--          <template #body="{ data }">-->
-        <!--            <ProgressBar :value="data.activity" :showValue="false" style="height: 0.5rem"></ProgressBar>-->
-        <!--          </template>-->
-        <!--          <template #filter="{ filterModel }">-->
-        <!--            <Slider v-model="filterModel.value" :range="true" class="m-3"></Slider>-->
-        <!--            <div class="flex align-items-center justify-content-between px-2">-->
-        <!--              <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>-->
-        <!--              <span>{{ filterModel.value ? filterModel.value[1] : 100 }}</span>-->
-        <!--            </div>-->
-        <!--          </template>-->
-        <!--        </Column>-->
-        <!--        <Column field="verified" header="Verified" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">-->
-        <!--          <template #body="{ data }">-->
-        <!--            <i class="pi" :class="{ 'text-green-500 pi-check-circle': data.verified, 'text-pink-500 pi-times-circle': !data.verified }"></i>-->
-        <!--          </template>-->
-        <!--          <template #filter="{ filterModel }">-->
-        <!--            <TriStateCheckbox v-model="filterModel.value" />-->
-        <!--          </template>-->
-        <!--        </Column>-->
+        <Column header="Acciones" style="min-width: 10rem">
+          <template #body="{ data }">
+            <Button @click="showClient(data)" icon="pi pi-eye" aria-label="Submit" />
+          </template>
+        </Column>
       </DataTable>
     </div>
   </div>

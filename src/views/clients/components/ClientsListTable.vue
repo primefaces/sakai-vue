@@ -3,16 +3,16 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import { ref, onBeforeMount } from 'vue';
-
+import { useRouter } from 'vue-router';
 const filters = ref();
 const isLoading = ref(true);
 const statuses = ref(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
+const router = useRouter();
 
 onBeforeMount(() => {
   isLoading.value = false;
 
   initFilters1();
-  console.log('-client list data', props.payload);
 });
 
 const props = defineProps(['title', 'payload']);
@@ -48,7 +48,7 @@ const formatDate = (value: any) => {
 };
 
 const showClient = (client: any) => {
-  console.log('data', client.id);
+  router.push({ name: 'clientDetail', params: { clientId: client.id } });
 };
 </script>
 

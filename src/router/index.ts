@@ -24,9 +24,14 @@ const router = createRouter({
           component: () => import('@/views/clients/ClientsWithoutAccount.vue')
         },
         {
-          path: '/clientes',
+          path: '/clients',
           name: 'clients',
           component: () => import('@/views/clients/Clients.vue')
+        },
+        {
+          path: 'clientDetail/:clientId',
+          name: 'clientDetail',
+          component: () => import('@/views/clients/ClientDetail.vue')
         },
         {
           path: '/business-allies',

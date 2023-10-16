@@ -3,13 +3,35 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import InputSwitch from 'primevue/inputswitch';
 import { ref } from 'vue';
+import Dialog from 'primevue/dialog';
 
-const checked = ref(false);
+const isReceivingSMS = ref(false);
+const isKYCVisible = ref(false);
+const isPhotosVisible = ref(false);
 </script>
 
 <template>
   <div class="col-12">
     <div class="card">
+      <!-- KYC -->
+      <Dialog v-model:visible="isKYCVisible" modal header="Información de la cuenta" :style="{ width: '50vw' }">
+        <p>CIP/AML</p>
+        <p>KYC ACTIONS</p>
+
+        <template #footer>
+          <Button label="Cerrar" @click="isKYCVisible = false" />
+        </template>
+      </Dialog>
+
+      <!--  Fotos -->
+      <Dialog v-model:visible="isPhotosVisible" modal header="Imagenes de los documentos" :style="{ width: '50vw' }">
+        <p></p>
+
+        <template #footer>
+          <Button label="Cerrar" @click="isPhotosVisible = false" />
+        </template>
+      </Dialog>
+
       <TabView>
         <TabPanel header="Datos del cliente">
           <div class="p-fluid formgrid grid">
@@ -17,10 +39,10 @@ const checked = ref(false);
               <h4>Datos personales</h4>
             </div>
             <div class="field col-12 md:col-2">
-              <Button label="KYC" outlined size="small" />
+              <Button @click="isKYCVisible = true" label="KYC" outlined size="small" />
             </div>
             <div class="field col-12 md:col-2">
-              <Button label="FOTOS" outlined size="small" />
+              <Button @click="isPhotosVisible = true" label="FOTOS" outlined size="small" />
             </div>
 
             <div class="field col-12 md:col-2">
@@ -50,7 +72,7 @@ const checked = ref(false);
 
             <div class="field col-12 md:col-2">
               <label for="state">recibe sms: </label>
-              <InputSwitch v-model="checked" />
+              <InputSwitch disabled v-model="isReceivingSMS" />
             </div>
 
             <div class="field col-12 md:col-2">

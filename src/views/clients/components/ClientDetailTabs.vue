@@ -66,7 +66,7 @@ const isSwapEnable = ref(false);
 
             <div class="field col-12 md:col-2">
               <label for="state">Módulo de swap habilitado?: </label>
-              <InputSwitch disabled v-model="isSwapEnable" />
+              <InputSwitch v-model="isSwapEnable" />
             </div>
           </div>
         </TabPanel>

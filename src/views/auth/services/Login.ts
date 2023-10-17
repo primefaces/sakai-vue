@@ -5,7 +5,6 @@ export class LoginService extends HttpService {
 
   constructor() {
     // @ts-ignore
-    // todo
     super(import.meta.env.VITE_BASE_ENDPOINT);
   }
 
@@ -19,8 +18,8 @@ export class LoginService extends HttpService {
     return this._instance;
   }
 
-  async login(email: string, password: string): Promise<any> {
-    const resp = await this.post<any>(`user/login/`, { email, password }, false);
+  async login(username: string, password: string): Promise<any> {
+    const resp = await this.post<any>(`auth/`, { username, password }, false);
     this.setToken(resp.data.token);
     return resp;
   }

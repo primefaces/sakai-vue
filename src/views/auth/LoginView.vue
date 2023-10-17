@@ -1,20 +1,36 @@
 <script setup lang="ts">
 import { useLayout } from '@/layouts/composables/layout';
 // import { useLayout } from '@/layout/composables/layout';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
+import { useRouter } from 'vue-router';
+import { LoginService } from '@/views/auth/services/Login';
 
 const { layoutConfig } = useLayout();
-const email = ref('');
+const username = ref('');
 const password = ref('');
 const checked = ref(false);
+const router = useRouter();
+const loginService = LoginService.instance();
 
-// const logoUrl = computed(() => {
-//     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
-// });
+const handleLogin = () => {
+  console.log('login');
+  loginService
+    .login(username.value, password.value)
+    .then((res) => {
+      console.log('res', res);
+      if (res) {
+        router.push('/');
+      }
+    })
+    .catch((e) => {
+      console.log('e', e);
+    });
+  // $router.push('/')
+};
 </script>
 
 <template>
@@ -31,7 +47,7 @@ const checked = ref(false);
 
           <div>
             <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-            <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="email" />
+            <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="username" />
 
             <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
             <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
@@ -43,7 +59,7 @@ const checked = ref(false);
               </div>
               <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Olvide la clave</a>
             </div>
-            <Button @click="$router.push('/')" label="Inciar" class="w-full p-3 text-xl"></Button>
+            <Button @click="handleLogin" label="Inciar" class="w-full p-3 text-xl"></Button>
           </div>
         </div>
       </div>

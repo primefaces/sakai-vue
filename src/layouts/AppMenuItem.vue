@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onBeforeMount, watch } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLayout } from '@/layouts/composables/layout';
 
@@ -68,10 +68,18 @@ const itemClick = (event: any, item: any) => {
 const checkActiveRoute = (item: any) => {
   return route.path === item.to;
 };
+
+const handleClick = () => {
+  const item = ref(props.item);
+
+  if (item.value.click) {
+    item.value.click();
+  }
+};
 </script>
 
 <template>
-  <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
+  <li @click="handleClick" :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
     <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">
       {{ item.label }}
     </div>

@@ -34,6 +34,11 @@ const router = createRouter({
           component: () => import('@/views/clients/ClientDetail.vue')
         },
         {
+          path: '/transactions',
+          name: 'transactions',
+          component: () => import('@/views/transactions/Transactions.vue')
+        },
+        {
           path: '/business-allies',
           name: 'business-allies',
           component: () => import('@/views/business-allie/BusinessAllie.vue')

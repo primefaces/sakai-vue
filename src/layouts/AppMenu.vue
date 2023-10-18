@@ -25,6 +25,7 @@ const menuOptions = ref<MenuItemDashboard[]>([
         to: '/clients-without-account'
       },
       { label: 'Clientes', icon: 'pi pi-fw pi-users', to: '/clients' },
+      { label: 'Transacciones', icon: 'pi pi-fw pi-money-bill', to: '/transactions' },
       { label: 'Aliados de Negocios', icon: 'pi pi-fw pi-sitemap', to: '/business-allies' },
       { label: 'Consolidado', icon: 'pi pi-fw pi-chart-bar', to: '/general-balance' },
       { label: 'Salir', icon: 'pi pi-fw pi-sign-out', to: '/logout' }

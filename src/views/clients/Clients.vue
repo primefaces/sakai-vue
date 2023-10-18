@@ -215,6 +215,7 @@ const clientsNoba = [
     }
   }
 ];
+
 const isLoading = ref(true);
 
 isLoading.value = false;

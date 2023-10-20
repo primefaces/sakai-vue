@@ -10,7 +10,8 @@ const model = ref([
         items: [
             { label: 'Mi día', icon: 'pi pi-fw pi-home', to: '/' },
             { label: 'Capturar', icon: 'pi pi-fw pi-id-card', to: '/captura_cobros' },
-            { label: 'Reportes', icon: 'pi pi-fw pi-id-card', to: '/reportes' },
+            { label: 'Registros', icon: 'pi pi-fw pi-book', to: '/capturas_list' },
+            { label: 'Reportes', icon: 'pi pi-fw pi-file-export', to: '/reportes' },
         ]
     },
     {

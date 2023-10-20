@@ -413,12 +413,11 @@ const saveOperation = async () => {
 
   const body = {
     repartidor: rutaSeleccionada.value.no_ruta,
-    utilidad: getPriceFormat(ventas - (costos + comision)),
-    costos,
-    cobro: getPriceFormat(ventas),
-    comision: getPriceFormat(comision),
+    utilidad: ventas - (costos + comision),
+    costos: costos,
+    cobro: ventas,
+    comision: comision,
     date: moment().format("YYYY-MM-DD HH:mm:ss"),
-    // date: moment().format(),
     items: detalleCobro.value.filter(d => d.code).map(det => {
       return {
         id: det.id,
@@ -461,10 +460,10 @@ const updateOperation = () => {
   console.log({ ...operationEditing.value })
   let body = {
     ...operationEditing.value,
-    utilidad: getPriceFormat(ventas - (costos + comision)),
+    utilidad: ventas - (costos + comision),
     costos,
-    cobro: getPriceFormat(ventas),
-    comision: getPriceFormat(comision),
+    cobro: ventas,
+    comision: comision,
     items: detalleCobro.value.filter(d => d.code && d.salTotal && d.saldo).map(det => {
       return {
         id: det.id,
@@ -480,7 +479,7 @@ const updateOperation = () => {
       }
     })
   }
-  console.log(body)
+  console.log('body',body)
   store.updateOperation(body).then(dat => {
     showToast('success', 'Operación actualizada!', `Captura de la ruta ${body.no_ruta} se actualizó correctamente.`, 8000)
     fetchCatalogos()

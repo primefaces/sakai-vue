@@ -11,7 +11,8 @@ export const useOperacionStore = defineStore({
     id: 'operacions',
     state: () => ({
         operacions: {},
-        operacion: {}
+        operacion: {},
+        itemsOperacion:[]
     }),
     actions: {
         async register(operacion) {
@@ -19,10 +20,24 @@ export const useOperacionStore = defineStore({
         },
         async getAll() {
             this.operacions = { loading: true };
+            this.itemsOperacion = [];
+
             try {
                 this.operacions = await fetchWrapper.get(`${baseUrl}operations` );
             } catch (error) {
                 this.operacions = { error };
+            }
+        },
+
+        async getItemsById(opn) {
+            this.operacion = opn
+            this.itemsOperacion = [];
+            try {
+                // this.itemsOperacion = await fetchWrapper.get(`${baseUrl}item_operacion/byOperacion/${opn.id}`);
+                this.itemsOperacion = this.operacions.find(o => o.id === opn.id).items;
+            console.log( this.itemsOperacion)
+            } catch (error) {
+                this.itemsOperacion = [];
             }
         },
         async getById(id) {

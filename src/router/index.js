@@ -19,6 +19,11 @@ const router = createRouter({
                     component: () => import('@/views/CapturaCobros.vue')
                 },
                 {
+                    path: '/capturas_list',
+                    name: 'capturaList',
+                    component: () => import('@/views/CapturasList.vue')
+                },
+                {
                     path: '/reportes',
                     name: 'reportes',
                     component: () => import('@/views/Reportes.vue')

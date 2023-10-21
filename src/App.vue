@@ -60,7 +60,7 @@ setTimeout(() => {
 .p1-button .p-button-icon
 
 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 @keyframes animLogo {

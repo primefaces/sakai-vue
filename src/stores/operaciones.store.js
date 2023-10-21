@@ -10,16 +10,25 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 export const useOperacionStore = defineStore({
     id: 'operacions',
     state: () => ({
-        operacions: {},
+        selectedFilter: '',
+        operacions: [],
         operacion: {},
         itemsOperacion:[]
     }),
+    getters:{
+        getOpFiltered(state) {
+            return state.operacions.filter(it => state.selectedFilter ? it.repartidor === state.selectedFilter : true );
+        },
+    },
     actions: {
         async register(operacion) {
             await fetchWrapper.post(`${baseUrl}`, operacion);
         },
+        setFilter(id){
+          this.selectedFilter = id
+        },
         async getAll() {
-            this.operacions = { loading: true };
+            this.operacions = [];
             this.operacion = {}
             this.itemsOperacion = [];
 
@@ -29,7 +38,7 @@ export const useOperacionStore = defineStore({
                     this.operacions
                 )
             } catch (error) {
-                this.operacions = { error };
+                this.operacions = [];
             }
         },
 

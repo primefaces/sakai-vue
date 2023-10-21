@@ -283,6 +283,11 @@ const onChange = (data) => {
   setValue(data)
 };
 const handleBlurInputNumber = (event, index, field) => {
+  console.log(detalleCobro.value[index][`${field}`],field,event)
+  if(!event)
+    detalleCobro.value[index][`${field}`] = 0
+  console.log(detalleCobro.value[index][`${field}`],field,event)
+
   const { uC } = detalleCobro.value[index];
   switch (field) {
     case 'salCj':
@@ -626,8 +631,9 @@ const formatDate = (date) => {
 
               <!--SALIDAS-->
               <template v-else-if="['salCj', 'salPz'].includes(field)">
-                <InputNumber type="decimal" @update:modelValue="handleBlurInputNumber($event, data.key, field)"
-                  class="p-inputnumber-sm" :min="0" :max="field === 'salPz' ? data.uC : null" v-model="data[field]"
+                <InputNumber type="decimal" @blur="(e)=> {console.log(e)}" @update:modelValue="handleBlurInputNumber($event, data.key, field)"
+                  class="p-inputnumber-sm" :min="0" :max="field === 'salPz' ? data.uC : null"
+                             v-model="data[field]"
                   :disabled="rutaSeleccionada === null || data['pL'] === 0" />
               </template>
 

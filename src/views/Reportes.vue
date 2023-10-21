@@ -193,7 +193,7 @@ const cities = ref([
             :value="store.getOperaciones"
             dataKey="id"
             ref="dt"
-
+scroll-height="55vh"
             :tableProps="{ style: { minWidth: '650px' } }" style="overflow: auto"
 
             class="p-datatable">
@@ -328,8 +328,6 @@ const cities = ref([
               <div class="footer-cont">
                 <div class="d-flex">
                   <div>
-                    <p class="m-0"><span class="font-500 text-400">Cobro total: </span>
-                      {{ formatCurrency(store.getTotalOperacionesCobro) }}. </p>
                     <p class="m-0"><span
                         class="font-500 text-400">Comision total:  </span>{{
                         formatCurrency(store.getTotalOperacionesComision)
@@ -350,6 +348,10 @@ const cities = ref([
                         }}.
                       </b>
                     </p>
+                  </div>
+                  <div class="border-top-1 border-gray-200">
+                    <p class="m-0"><span class="font-500 text-400">Cobro total: </span>
+                      <span class="text-xl">{{ formatCurrency(store.getTotalOperacionesCobro) }}</span>. </p>
                   </div>
                 </div>
                 <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"

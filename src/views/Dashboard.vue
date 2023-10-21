@@ -19,7 +19,9 @@ let textColor = documentStyle.getPropertyValue('--text-color');
 const {isDarkTheme} = useLayout();
 
 const products = ref(null);
+const semanaAtras = ref(0);
 
+const _f = 'D MMM'
 
 
 // moment.locale('es-mx')
@@ -29,7 +31,7 @@ moment.updateLocale("es-mx", { week: {
   }});
 
 const setData = (param) => {
-  store.setOperationsVentas()
+  store.setOperationsVentas(semanaAtras.value)
   // store.setOperationsCierres()
   store.setProductsTOP()
   store.getAll();
@@ -48,6 +50,16 @@ const formatCurrency = (value) => {
   return value?.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 };
 
+const getTextSem = (dias)=>{
+  if(!dias)
+    return 'Semana actual'
+
+  const baseDate = moment().subtract((Number(dias) || 0), 'weeks')
+  const start = baseDate.startOf('week').format(_f), end = baseDate.endOf('week').format(_f);
+  console.log(start, end)
+  return start + ' - ' + end
+}
+
 
 
 </script>
@@ -60,7 +72,6 @@ const formatCurrency = (value) => {
     <div class="col-6  lg:col-6 xl:col-3">
       <div class="card mb-0 px-3 py-3 ">
         <div class="flex  justify-content-between">
-
           <div class="px-3">
             <div>
               <div class="text-900 font-medium text-xl">{{formatCurrency( store.getCobrosDia | 0)}}</div>
@@ -69,7 +80,7 @@ const formatCurrency = (value) => {
             <span class="text-500"> del día</span>
           </div>
           <div class="flex ms-4 align-items-center justify-content-center bg-red-100 border-round"
-               style="width: 2.5rem; height: 2.5rem">
+               style="width: 1.4rem; height: 1.4rem">
             <i class="pi pi-shopping-cart text-red-500 text-xl"></i>
           </div>
         </div>
@@ -87,7 +98,7 @@ const formatCurrency = (value) => {
             <span class="text-500"> del día</span>
           </div>
           <div class="flex ms-4 align-items-center justify-content-center bg-cyan-100 border-round"
-               style="width: 2.5rem; height: 2.5rem">
+               style="width: 1.4rem; height: 1.4rem">
             <i class="pi pi-shopping-cart text-cyan-500 text-xl"></i>
           </div>
         </div>
@@ -105,7 +116,7 @@ const formatCurrency = (value) => {
             <span class="text-500"> del día</span>
           </div>
           <div class="flex ms-4 align-items-center justify-content-center bg-green-100 border-round"
-               style="width: 2.5rem; height: 2.5rem">
+               style="width: 1.4rem; height: 1.4rem">
             <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
           </div>
         </div>
@@ -123,7 +134,7 @@ const formatCurrency = (value) => {
             <span class="text-500"> del día</span>
           </div>
           <div class="flex ms-4 align-items-center justify-content-center bg-orange-100 border-round"
-               style="width: 2.5rem; height: 2.5rem">
+               style="width: 1.4rem; height: 1.4rem">
             <i class="pi pi-shopping-cart text-orange-500 text-xl"></i>
           </div>
         </div>
@@ -131,9 +142,12 @@ const formatCurrency = (value) => {
     </div>
 
     <div class="col-12 xl:col-6">
-      <div class="card">
+      <div class="card p-2">
+      <div class="card-header p-2 d-inline-flex">
+
         <h5 class="mb-1">Ventas <small class="text-500">de la semana en curso</small></h5>
         <b class="text-primary"> Kilo-Litros</b>
+      </div>
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">
 
@@ -141,25 +155,66 @@ const formatCurrency = (value) => {
           </div>
         </template>
         <template v-else>
-          <Chart id="34"  type="line" :data="store.getLineData" :options="store.getLineOptions" class="h-20rem"/>
+          <Chart id="34"  type="line" :data="store.getLineData" :options="store.getLineOptions" class="h-25rem"/>
         </template>
+      <div class="ctrl-box">
+        <button @click="(e)=>{
+          semanaAtras = semanaAtras + 1
+          store.setOperationsVentas(semanaAtras)
+        }" class="btn-dire">
+          <i class="pi pi-chevron-left" ></i>
+        </button>
+        <div :class="semanaAtras ?  'text-black-alpha-90 bold' : 'text-muted'">
+          {{getTextSem(semanaAtras)}}
+        </div>
+        <button class="btn-dire" @click="(e)=>{
+          semanaAtras > 0 ? semanaAtras = semanaAtras - 1 : null
+          store.setOperationsVentas(semanaAtras)
+        }">
+
+          <i class="pi pi-chevron-right" ></i>
+        </button>
       </div>
+      </div>
+
     </div>
     <div class="col-12 xl:col-6">
-      <div class="card">
+      <div class="card p-2">
+        <div class="card-header p-2 d-inline-flex">
+
           <h5 class="mb-1">Cierres <small class="text-500">de la semana en curso</small></h5>
-        <b class="text-primary">cobrado MXN$</b>
+          <b class="text-primary">cobrado MXN$</b>
+
+        </div>
         <div class="ldBar" data-value="50">
         </div>
         <template v-if="store.getLoading === true">
           <div class="card flex bg-light justify-content-center">
             <img :src="'demo/images/Vanilla-1s-234px.gif'" :alt="'Cargando'" class="product-image" />
-
           </div>
         </template>
         <template v-else>
-          <Chart id="456" type="bar" :data="store.getBarData" :options="store.getBarOptions" class="h-20rem" />
+          <Chart id="456" type="bar" :data="store.getBarData" :options="store.getBarOptions" class="h-25rem" />
         </template>
+        <div class="ctrl-box">
+          <button @click="(e)=>{
+          semanaAtras = semanaAtras + 1
+          store.setOperationsVentas(semanaAtras)
+        }" class="btn-dire">
+            <i class="pi pi-chevron-left" ></i>
+          </button>
+          <div :class="semanaAtras ?  'text-black-alpha-90 bold' : 'text-muted'">
+            {{getTextSem(semanaAtras)}}
+          </div>
+          <button class="btn-dire" @click="(e)=>{
+          semanaAtras > 0 ? semanaAtras = semanaAtras - 1 : null
+          store.setOperationsVentas(semanaAtras)
+        }">
+
+            <i class="pi pi-chevron-right" ></i>
+          </button>
+        </div>
+
       </div>
     </div>
 
@@ -283,4 +338,38 @@ const formatCurrency = (value) => {
   width:3rem
 }
 
+.d-inline-flex{
+  display: inline-flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.btn-dire{
+  color: grey;
+  border: none;
+ cursor:pointer;
+  background: #8585851f;
+  border-radius: 6px;
+  padding:.5rem 2rem;
+  transition: all .2s ease-out;
+}
+.btn-dire:hover {
+  background: rgba(45, 37, 37, 0.12);
+
+}
+
+.ctrl-box {
+  background: #f7f7f736;
+  width: 100%;
+  display: inline-flex;
+  /* grid-auto-flow: column; */
+  align-items: baseline;
+  margin-top: 1rem;
+  padding: .4rem;
+  flex-direction: row;
+  border-top: 1px solid #f7f7f7;
+  align-content: center;
+  justify-content: space-evenly;
+}
 </style>

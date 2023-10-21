@@ -20,10 +20,14 @@ export const useOperacionStore = defineStore({
         },
         async getAll() {
             this.operacions = { loading: true };
+            this.operacion = {}
             this.itemsOperacion = [];
 
             try {
                 this.operacions = await fetchWrapper.get(`${baseUrl}operations` );
+                console.log(
+                    this.operacions
+                )
             } catch (error) {
                 this.operacions = { error };
             }

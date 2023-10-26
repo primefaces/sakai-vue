@@ -1,7 +1,7 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
-import AppConfig from '@/layout/AppConfig.vue';
+// import AppConfig from '@/layout/AppConfig.vue';
 
 const { layoutConfig } = useLayout();
 const email = ref('');
@@ -45,7 +45,7 @@ const logoUrl = computed(() => {
             </div>
         </div>
     </div>
-    <AppConfig simple />
+    <!-- <AppConfig simple /> -->
 </template>
 
 <style scoped>

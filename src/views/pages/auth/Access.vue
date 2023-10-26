@@ -1,5 +1,5 @@
 <script setup>
-import AppConfig from '@/layout/AppConfig.vue';
+// import AppConfig from '@/layout/AppConfig.vue';
 </script>
 
 <template>
@@ -24,5 +24,5 @@ import AppConfig from '@/layout/AppConfig.vue';
             </div>
         </div>
     </div>
-    <AppConfig simple />
+    <!-- <AppConfig simple /> -->
 </template>

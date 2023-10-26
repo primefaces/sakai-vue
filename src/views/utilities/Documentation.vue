@@ -39,7 +39,7 @@
         </div>
 
         <h5>PrimeVue Theme</h5>
-        <p>Sakai theming is based on the PrimeVue theme being used. Default theme is <b>lara-light-indigo</b>.</p>
+        <p>Sakai theming is based on the PrimeVue theme being used. Default theme is <b>tailwind-light</b>.</p>
 
         <h5>SASS Variables</h5>
         <p>In case you&apos;d like to customize the main layout variables, open <b>_variables.scss</b> file under src/layout folder. Saving the changes will be reflected instantly at your browser.</p>

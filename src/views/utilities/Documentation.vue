@@ -46,13 +46,14 @@
 
         <h6>src/layout/_variables.scss</h6>
         <pre class="app-code">
-            /* General */
-            <br />
-            $scale:14px; /* main font size */
-            <br />
-            $borderRadius:12px; /* border radius of layout element e.g. card, sidebar */
-            <br />
-            $transitionDuration:.2s; /* transition duration of layout elements e.g. sidebar, overlay menus */
+            
+ /* General */
+ <br />
+ $scale:14px; /* main font size */
+ <br />
+ $borderRadius:12px; /* border radius of layout element e.g. card, sidebar */
+ <br />
+ $transitionDuration:.2s; /* transition duration of layout elements e.g. sidebar, overlay menus */
         </pre>
     </div>
 </template>

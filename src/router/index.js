@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
+import { getCurrentUser } from '../firebase/db/users';
 import AppLayout from '@/layout/AppLayout.vue';
 
 const router = createRouter({
@@ -7,6 +8,9 @@ const router = createRouter({
         {
             path: '/',
             component: AppLayout,
+            meta: {
+                requiresAuth: true,
+            },
             children: [
                 {
                     path: '/',
@@ -170,6 +174,20 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Error.vue')
         }
     ]
+});
+
+// NOTE:  Borrar para navegación sin problemas
+router.beforeEach(async (to, from, next) => {
+	if (to.matched.some((record) => record.meta.requiresAuth)) {
+		if (await getCurrentUser()) {
+			next();
+		} else {
+			alert("No tienes acceso a esta página. Por favor inicia sesión");
+			next("/auth/login");
+		}
+	} else {
+		next();
+	}
 });
 
 export default router;

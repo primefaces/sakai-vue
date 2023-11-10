@@ -20,7 +20,7 @@ const onSignIn = () => {
     signInWithEmailAndPassword(auth, email.value, password.value)
         .then(async (data) => {
             if (auth.currentUser.emailVerified) {
-                router.push('/');
+                router.push('/inicio');
             }
             else {
                 toast.add({ severity: 'info', summary: 'Por favor verifica tu correo para continuar', detail: 'Revisa tu bandeja de entrada y spam' });
@@ -69,13 +69,13 @@ const onSignIn = () => {
 
                         <Message v-if="errorMsg" severity="error" class="mt-3"> {{ errorMsg }} </Message>
 
-                        <div class="flex align-items-center justify-content-between mb-5 mt-3 gap-5">
+                        <!-- <div class="flex align-items-center justify-content-between mb-5 mt-3 gap-5">
                             <div class="flex align-items-center">
                                 <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
                                 <label for="rememberme1">Recuerdame</label>
                             </div>
-                            <!-- <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Olvidaste tu contraseña?</a> -->
-                        </div>
+                            <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Olvidaste tu contraseña?</a>
+                        </div> -->
                         <Divider />
                         <Button @click="onSignIn" label="Inicar sesión" class="w-full p-3 mb-3 text-xl"></Button>
                         <Button label="Registrarse" disabled class="w-full p-3 text-xl"></Button>

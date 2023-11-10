@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { getCurrentUser } from '../firebase/db/users';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import AppLayout from '@/layout/AppLayout.vue';
 
 const router = createRouter({
@@ -13,7 +14,27 @@ const router = createRouter({
             },
             children: [
                 {
-                    path: '/',
+                    path: '/inicio',
+                    name: 'inicio',
+                    component: () => import('@/views/Inicio.vue')
+                },
+                {
+                    path: '/admin',
+                    name: 'admin',
+                    component: () => import('@/views/Admin.vue')
+                },
+                {
+                    path: '/coordi',
+                    name: 'coordi',
+                    component: () => import('@/views/Coordi.vue')
+                },
+                {
+                    path: '/horarios',
+                    name: 'horarios',
+                    component: () => import('@/views/Horarios.vue')
+                },
+                {
+                    path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },
@@ -177,17 +198,25 @@ const router = createRouter({
 });
 
 // NOTE:  Borrar para navegación sin problemas
-router.beforeEach(async (to, from, next) => {
-	if (to.matched.some((record) => record.meta.requiresAuth)) {
-		if (await getCurrentUser()) {
-			next();
-		} else {
-			alert("No tienes acceso a esta página. Por favor inicia sesión");
-			next("/auth/login");
-		}
-	} else {
-		next();
-	}
+router.beforeEach((to, from, next) => {
+    if (!to.matched.some((record) => record.meta.requiresAuth)) {
+        // Route does not require authentication
+        return next();
+    }
+
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe(); // Unsubscribe to avoid memory leaks
+
+        if (user) {
+            // User is signed in
+            return next();
+        }
+
+        // User is not signed in
+        alert("No tienes acceso a esta página. Por favor inicia sesión");
+        return next("/auth/login");
+    });
 });
 
 export default router;

@@ -1,4 +1,5 @@
 <script setup>
+import { getAuth, signOut } from "firebase/auth";
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
@@ -28,6 +29,20 @@ const onSettingsClick = () => {
     topbarMenuActive.value = false;
     router.push('/documentation');
 };
+
+const onLogOut = () => {
+    const auth = getAuth();
+    topbarMenuActive.value = false;
+
+    signOut(auth).then(() => {
+        router.push('/auth/login');
+    }).catch((error) => {
+        alert('Ocurrió un error al tratar de cerrar su sesión');
+        console.error(error)
+    });
+    
+};
+
 const topbarMenuClasses = computed(() => {
     return {
         'layout-topbar-menu-mobile-active': topbarMenuActive.value
@@ -76,17 +91,13 @@ const isOutsideClicked = (event) => {
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-calendar"></i>
-                <span>Calendar</span>
-            </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-user"></i>
-                <span>Profile</span>
-            </button>
             <button @click="onSettingsClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>
+            </button>
+            <button @click="onLogOut()" class="p-link layout-topbar-button">
+                <i class="pi pi-sign-out"></i>
+                <span>Log out</span>
             </button>
         </div>
     </div>

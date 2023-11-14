@@ -1,7 +1,7 @@
 <script setup>
 import Button from 'primevue/button';
+import Panel from 'primevue/panel';
 </script>
-
 <template>
     <div class="container">
         <div class="content">
@@ -15,11 +15,18 @@ import Button from 'primevue/button';
                 </div>
             </div>
         </div>
-        <div class="active-maes">
-            <b>Maes Activos</b>
-        </div>
-        <div class="pending-maes">
-            <b>Maes Pendientes</b>
+        <div class="maes-section">
+            <div class="active-maes">
+                <b>Maes Activos</b>
+            </div>
+            <div class="panels-container">
+                <Panel header="Bernardo ITC" class="custom-panel"> </Panel>
+                <Panel header="Panel 2"></Panel>
+                <Panel header="Panel 3"></Panel>
+            </div>
+            <div class="pending-maes">
+                <b>Maes Pendientes</b>
+            </div>
         </div>
     </div>
 </template>
@@ -40,8 +47,6 @@ import Button from 'primevue/button';
 .content {
     display: flex;
     align-items: flex-start;
-    padding-left: 50px;
-    padding-right: 50px;
     position: relative;
 }
 
@@ -51,13 +56,15 @@ import Button from 'primevue/button';
 
 .title {
     font-size: 48px;
-    margin-top: 3%;
+    margin-bottom: 20px;
+    margin-left: 2.4%;
 }
 
 .separator {
-    border-bottom: 2px solid #d6d6d6; /* Agregar la línea con el color deseado */
-    width: 100%; /* Ancho completo */
-    margin-top: 10px; /* Espacio entre el título y la línea */
+    border-bottom: 2px solid #d6d6d6;
+    width: 100%;
+    margin-bottom: 20px;
+    margin-left: 2.4%;
 }
 
 .right-content {
@@ -67,7 +74,6 @@ import Button from 'primevue/button';
 .button-container {
     display: flex;
     justify-content: flex-end;
-    margin-top: 3%;
 }
 
 .custom-button {
@@ -77,6 +83,7 @@ import Button from 'primevue/button';
     overflow: hidden;
     font-size: 24px;
     color: #fff;
+    margin-top: 20px;
 }
 
 .custom-button .p-button-label {
@@ -87,11 +94,112 @@ import Button from 'primevue/button';
     transform: translate(-50%, -50%);
 }
 
+.maes-section {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
 .active-maes,
 .pending-maes {
     color: #000;
-    margin-top: 4%;
-    margin-left: 4%;
+    margin-left: 2.4%;
+}
+
+.panels-container {
+    display: flex;
+    align-items: stretch;
+    margin-top: 20px;
+    margin-left: 2.4%;
+}
+
+.p-panel {
+    flex: 1;
+    margin-right: 20px;
+    border-radius: 20px;
+    padding: 1%;
+}
+.custom-panel {
+    border-radius: 20px;
+    margin-right: 20px;
+    padding: 1%;
+
+    text-align: center;
+}
+
+.panel-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.panels-container {
+    display: flex;
+    align-items: stretch;
+    margin-top: 20px;
+    margin-left: 2.4%;
+}
+.custom-panel {
+    position: relative;
+    border-radius: 20px;
+    background-color: #fff;
+
+    box-sizing: border-box;
+    width: 329px;
+    height: 158px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.header {
+    position: absolute;
+    top: 0;
+    left: 11.5px;
+    border-radius: 20px 20px 0px 0px;
+    background-color: rgba(8, 20, 79, 0.56);
+    width: 329px;
+    height: 53px;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.circle,
+.small-circle {
+    position: absolute;
+    border-radius: 50%;
+    width: 83px;
+    height: 83px;
+}
+
+.circle {
+    top: 61px;
+    left: 14.5px;
+}
+
+.small-circle {
+    top: 77px;
+    left: 299.5px;
+}
+
+.gradient-bar {
+    position: absolute;
+    top: 114px;
+    left: 114.5px;
+    border-radius: 30px;
+    width: 88px;
+    height: 30px;
+    overflow: hidden;
+    display: flex;
+}
+
+.gradient-segment {
+    flex: 1;
+    background: linear-gradient(#e4ffea, #e4ffea);
+}
+
+.solid-bar {
+    background-color: #4dbd65;
 }
 </style>
 

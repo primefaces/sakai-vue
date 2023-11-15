@@ -1,6 +1,4 @@
-<script setup>
-
-</script>
+<script setup></script>
 
 <template>
     <div class="flex align-content-center h-full" style="min-height: 300px">

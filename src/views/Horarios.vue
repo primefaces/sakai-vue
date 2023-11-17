@@ -1,37 +1,95 @@
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { FilterMatchMode } from 'primevue/api';
-import { CustomerService } from '@/service/CustomerService';
+import { ref, onMounted, computed } from 'vue';
+import { FilterMatchMode, FilterService } from 'primevue/api';
+import { MaeInfoService } from '@/service/MaeInfoService';
 
 const customers = ref();
+const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
+const ARRAY_CONTAINS_ANY = ref('ARRAY_CONTAINS_ANY');
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    'country.name': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    representative: { value: null, matchMode: FilterMatchMode.IN },
+    name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    horario: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
+    "materias": { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    verified: { value: null, matchMode: FilterMatchMode.EQUALS }
+    modalidad: { value: null, matchMode: FilterMatchMode.EQUALS }
 });
-const representatives = ref([
-    { name: 'Amy Elsner', image: 'amyelsner.png' },
-    { name: 'Anna Fali', image: 'annafali.png' },
-    { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-    { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-    { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-    { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-    { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-    { name: 'Onyama Limba', image: 'onyamalimba.png' },
-    { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-    { name: 'XuXue Feng', image: 'xuxuefeng.png' }
+
+const horario = ref([
+    "Lunes", "Martes", "Miercoles", "Jueves", "Viernes"
 ]);
-const statuses = ref(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
+
+const statuses = ref(['Remota', 'Presencial', 'Híbrida']);
 const loading = ref(true);
 
 onMounted(() => {
-    CustomerService.getCustomersMedium().then((data) => {
+    MaeInfoService.getCustomersMedium().then((data) => {
         customers.value = getCustomers(data);
         loading.value = false;
+    });
+
+    // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
+    FilterService.register(ARRAY_CONTAINS.value, (value, filter) => {
+        // Filter -> value entered by user
+        // Value -> array of objects, where each object represents a subject given by a mae
+
+        if (filter === undefined || filter === null || filter.trim() === '') {
+            return true;
+        }
+
+        if (value === undefined || value === null) {
+            return false;
+        }
+
+        // Remove accents and special characters from filter 
+        const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+        for (let i = 0; i < value.length; i++) {
+            for (const property in value[i]) {
+                // Remove accents and special characters from property of value
+                const propertyNormalized = value[i][property].toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                if (propertyNormalized.indexOf(filterNormalized) !== -1) {
+                    // window.console.log("TRUE:", propertyNormalized, "contains", filterNormalized);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    });
+
+    // Custom filter for mae schedules. Returns true if any of the filter values in found within value.
+    FilterService.register(ARRAY_CONTAINS_ANY.value, (value, filter) => {
+        // Filter -> value entered by user
+        // Value -> array of strings, where each string represents a day selected by the user from the dropwdown menu
+
+        if (filter === undefined || filter === null || filter.length === 0) {
+            return true;
+        }
+
+        if (value === undefined || value === null) {
+            return false;
+        }
+
+        window.console.log("value:", value);
+        window.console.log("filter:", filter);
+
+        for (let i = 0; i < filter.length; i++) {
+            window.console.log("filter:", filter[i]);
+            for (let j = 0; j < value.length; j++) {
+                const dayNorm = value[j][0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                const filterNorm = filter[i].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+                if (dayNorm === filterNorm) {
+                    window.console.log("TRUE:", dayNorm, "is", filterNorm);
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
     });
 });
 
@@ -42,34 +100,38 @@ const getCustomers = (data) => {
         return d;
     });
 };
-const formatDate = (value) => {
-    return value.toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-};
-const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-};
+
 const getSeverity = (status) => {
     switch (status) {
-        case 'unqualified':
-            return 'danger';
-
-        case 'qualified':
+        case 'Remota':
             return 'success';
-
-        case 'new':
+        case 'Presencial':
             return 'info';
-
-        case 'negotiation':
+        case 'Hibrido':
             return 'warning';
-
         case 'renewal':
             return null;
     }
 }
+
+// TODO: adjust colors to figma design
+const getDayColor = (day) => {
+    const dayLC = day.toLowerCase();
+    switch (dayLC) {
+        case 'lunes':
+            return 'bg-blue-300';
+        case 'martes':
+            return 'bg-green-300';
+        case 'miercoles':
+            return 'bg-yellow-300';
+        case 'jueves':
+            return 'bg-red-300';
+        case 'viernes':
+            return 'bg-purple-300';
+    }
+}
+
+
 </script>
 
 
@@ -77,10 +139,11 @@ const getSeverity = (status) => {
     <div class="flex flex-col flex-wrap">
 
         <h1 class="w-full text-blue-800 h-fit">Horario</h1>
-
         <div class="card">
+            <!-- TODO: Adjust row sizing -->
+            <!-- TODO: implement responsive resizing -->
             <DataTable v-model:filters="filters" :value="customers" paginator :rows="10" dataKey="id" filterDisplay="row"
-                :loading="loading" :globalFilterFields="['name', 'country.name', 'representative.name', 'status']">
+                :loading="loading" :globalFilterFields="['name', 'horario', 'materias', 'modalidad']">
                 <template #header>
                     <div class="flex justify-content-end">
                         <span class="p-input-icon-left">
@@ -89,9 +152,9 @@ const getSeverity = (status) => {
                         </span>
                     </div>
                 </template>
-                <template #empty> No se encontraron Maes. </template>
-                <template #loading> Cargando información. Por favor espera.</template>
-                <Column header="Nombre" field="name"  style="min-width: 12rem">
+                <template #empty>No se encontraron Maes. </template>
+                <template #loading>Cargando información. Por favor espera.</template>
+                <Column header="Nombre" field="name" style="min-width: 12rem">
                     <template #body="{ data }">
                         {{ data.name }}
                     </template>
@@ -100,12 +163,14 @@ const getSeverity = (status) => {
                             placeholder="Busca por nombre" />
                     </template>
                 </Column>
-                <Column header="Materias" filterField="country.name" style="min-width: 12rem">
+                <Column header="Materias" filterField="materias" :showFilterMenu="false" style="min-width: 12rem">
                     <template #body="{ data }">
-                        <div class="flex align-items-center gap-2">
-                            <img alt="flag" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
-                                :class="`flag flag-mx`" style="width: 24px" />
-                            <span>{{ data.country.name }}</span>
+                        <div class="flex align-items-center flex-column">
+                            <!-- TODO: ask for handling when data.materias.length > x -->
+                            <p class="m-0 p-1 bg-blue-300 text-black-alpha-90 font-semibold border-round-3xl my-1"
+                                v-for="item in data.materias">
+                                {{ item.id }}
+                            </p>
                         </div>
                     </template>
                     <template #filter="{ filterModel, filterCallback }">
@@ -113,35 +178,40 @@ const getSeverity = (status) => {
                             placeholder="Busca por materia" />
                     </template>
                 </Column>
-                <Column header="Horario" filterField="representative" :showFilterMenu="false"
-                    :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
+                <Column header="Horario" filterField="horario" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
+                    style="min-width: 14rem">
                     <template #body="{ data }">
                         <div class="flex align-items-center gap-2">
-                            <img :alt="data.representative.name"
-                                :src="`https://primefaces.org/cdn/primevue/images/avatar/${data.representative.image}`"
-                                style="width: 32px" />
-                            <span>{{ data.representative.name }}</span>
+                            <!-- TODO: ask for hour display implementation -->
+                            <div class="flex flex-row flex-wrap column-gap-3">
+
+                                <p class=" h-fit w-fit py-2 px-3 bg-blue-300 border-round-3xl font-semibold"
+                                    v-for="item in data.horario" :class="getDayColor(item[0])">
+                                    {{ item[0] }}
+                                </p>
+
+                            </div>
                         </div>
                     </template>
                     <template #filter="{ filterModel, filterCallback }">
-                        <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="representatives"
-                            optionLabel="name" placeholder="Cualquiera" class="p-column-filter" style="min-width: 14rem"
+                        <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="horario"
+                            placeholder="Cualquiera" class="p-column-filter" style="min-width: 14rem"
                             :maxSelectedLabels="1">
                             <template #option="slotProps">
                                 <div class="flex align-items-center gap-2">
-                                    <img :alt="slotProps.option.name"
-                                        :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.option.image}`"
-                                        style="width: 32px" />
-                                    <span>{{ slotProps.option.name }}</span>
+                                    <span>{{ slotProps.option }}</span>
                                 </div>
                             </template>
                         </MultiSelect>
                     </template>
                 </Column>
-                <Column field="status" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
+                <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
                     style="min-width: 12rem">
                     <template #body="{ data }">
-                        <Tag :value="data.status" :severity="getSeverity(data.status)" />
+                        <div class="flex justify-content-center">
+                            <Tag :value="data.modalidad" class="text-2xl text-center"
+                                :severity="getSeverity(data.modalidad)" />
+                        </div>
                     </template>
                     <template #filter="{ filterModel, filterCallback }">
                         <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"

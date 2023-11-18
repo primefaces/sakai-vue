@@ -12,7 +12,6 @@ const maesData = [
     { nombre: 'Angela Gonzalez', carrera: 'IRS', matricula: 'A01733824', horaInicio: '12:30', horaFin: '13:30', activo: false },
     { nombre: 'Fernando Lopez', carrera: 'IRS', matricula: 'A01733824', horaInicio: '12:30', horaFin: '13:30', activo: false },
     { nombre: 'Nepomuceno Vargas', carrera: 'IRS', matricula: 'A01733824', horaInicio: '12:30', horaFin: '13:30', activo: false }
-    // Agrega más objetos según sea necesario
 ];
 // Propiedad computada para filtrar maesData
 const maesActivos = computed(() => maesData.filter((mae) => mae.activo));

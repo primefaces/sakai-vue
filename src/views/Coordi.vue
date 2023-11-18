@@ -1,5 +1,4 @@
 <script setup>
-import Button from 'primevue/button';
 import MaeCard from '../components/MaeCard.vue';
 import { computed } from 'vue';
 
@@ -20,7 +19,7 @@ const maesPendientes = computed(() => maesData.filter((mae) => !mae.activo));
 </script>
 
 <template>
-    <div class="flex relative mt-5">
+    <div class="flex relative">
         <div class="flex-1">
             <h1 class="text-black text-6xl font-bold mb-5">Coordinación</h1>
         </div>

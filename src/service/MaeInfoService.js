@@ -8,9 +8,9 @@ export const MaeInfoService = {
                 name: 'Oscar Arreola',
                 modalidad: 'Remota',
                 horario: [
-                    ['lunes', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
-                    ['jueves', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
-                    ['viernes', [9]]
+                    ['Lunes', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
+                    ['Jueves', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
+                    ['Viernes', [9]]
                 ],
                 materias: [{ area: 'ING', id: 'TC1030', intensiva: false, name: 'Programación orientada a objetos', semester: 2, top: true }]
             },
@@ -19,9 +19,8 @@ export const MaeInfoService = {
                 name: 'Juan Perez',
                 modalidad: 'Presencial',
                 horario: [
-                    ['lunes', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
-                    ['jueves', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
-                    ['viernes', [9]]
+                    ['Lunes', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
+                    ['Viernes', [9]]
                 ],
                 materias: [
                     { area: 'ING', id: 'TC1030', intensiva: false, name: 'Programación orientada a objetos', semester: 2, top: true },

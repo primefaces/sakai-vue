@@ -5,7 +5,7 @@ console.log(props);
 </script>
 
 <template>
-    <div class="relative sm:w-30% md:w-30% lg:w-30% shrink-0 text-black ml-2 mt-3 mb-3" style="border-radius: 15px; overflow: hidden; border: 1px solid #ccc">
+    <div class="relative sm:w-30% md:w-30% lg:w-30% shrink-0 text-black ml-2 mt-3 mb-3" style="border-radius: 25px; overflow: hidden; border: 1px solid #ccc">
         <div class="flex" style="background-color: #09144f; border-radius: 25px 25px 0 0">
             <div class="pl-2 p-2">
                 <p class="text-4xl font-semibold text-white">{{ nombre }}</p>

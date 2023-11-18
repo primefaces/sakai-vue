@@ -32,11 +32,11 @@ const maesPendientes = computed(() => maesData.filter((mae) => !mae.activo));
             </div>
         </div>
         <div class="mt-5">
-            <div class="text-5xl"><b>Maes Activos</b></div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3">
+            <div class="text-5xl mb-5"><b>Maes Activos</b></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5">
                 <MaeCard v-for="mae in maesActivos" :key="mae.matricula" :nombre="mae.nombre" :carrera="mae.carrera" :matricula="mae.matricula" :horaInicio="mae.horaInicio" :horaFin="mae.horaFin" />
             </div>
-            <div class="text-5xl"><b>Maes Pendientes</b></div>
+            <div class="text-5xl mb-5"><b>Maes Pendientes</b></div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5">
                 <MaeCard v-for="mae in maesPendientes" :key="mae.matricula" :nombre="mae.nombre" :carrera="mae.carrera" :matricula="mae.matricula" :horaInicio="mae.horaInicio" :horaFin="mae.horaFin" />
             </div>

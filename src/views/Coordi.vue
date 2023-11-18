@@ -24,7 +24,7 @@ const maesPendientes = computed(() => maesData.filter((mae) => !mae.activo));
         <div class="flex-1">
             <h1 class="text-black text-6xl font-bold mb-5">Coordinación</h1>
         </div>
-        <div class="justify-end">
+        <div class="justify-end hidden md:block">
             <Button label="Generar Reporte" icon="pi pi-file-export" size="large"/>
         </div>
     </div>
@@ -46,5 +46,24 @@ const maesPendientes = computed(() => maesData.filter((mae) => !mae.activo));
     grid-template-columns: repeat(4, 1fr);
     grid-column-gap: 2rem;
     grid-row-gap: 2rem;
-} 
+}
+
+@media (max-width: 1600px) {
+    .grid-cols-4 {
+        grid-template-columns: repeat(3, 1fr); /* Set it to three columns for screens between 769px and 1200px */
+    }
+}
+
+@media (max-width: 976px) {
+    .grid-cols-4 {
+        grid-template-columns: 2fr; /* Set it to one column for screens 768px and below */
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr; /* Set it to one column for screens 768px and below */
+    }
+}
+ 
 </style>

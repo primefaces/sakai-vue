@@ -22,7 +22,7 @@ const checked = ref(null)
             <Skeleton shape="circle" size="5rem"></Skeleton>
             <div>
                 <p class="font-semibold text-xl text-overflow-ellipsis" style="max-width: 10px;"> {{ matricula }} </p>
-                <span class="bg-green-500 border-round-xl p-2 text-white font-bold"> {{ horaInicio }} - {{ horaFin }} </span>
+                <Tag class="text-md" severity="success" :value='`${horaInicio} - ${horaFin}`' rounded />
             </div>
             <Button v-if="checked == null" @click="checked = false" icon="pi pi-check" class="p-button-rounded p-button-success ml-auto" />
             <Button v-if="checked == false" @click="checked = true" icon="pi pi-check" class="p-button-rounded p-button-warning ml-auto" />

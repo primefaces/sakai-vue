@@ -35,6 +35,10 @@ onBeforeMount(() => {
     const activeItem = layoutState.activeMenuItem;
 
     isActiveMenu.value = activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
+
+    if (route.path === props.item.to) {
+        setActiveMenuItem(itemKey.value);
+    }
 });
 
 watch(

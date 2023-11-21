@@ -107,15 +107,15 @@ const model = ref([
                         label: 'Submenu 1.1',
                         icon: 'pi pi-fw pi-bookmark',
                         items: [
-                            { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
+                            { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark', to: '/pages/submenu/1.1.1' },
+                            { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark', to: '/pages/submenu/1.1.2' },
+                            { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark', to: '/pages/submenu/1.1.3' }
                         ]
                     },
                     {
                         label: 'Submenu 1.2',
                         icon: 'pi pi-fw pi-bookmark',
-                        items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
+                        items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark', to: '/pages/submenu/1.2.1' }]
                     }
                 ]
             },
@@ -127,14 +127,14 @@ const model = ref([
                         label: 'Submenu 2.1',
                         icon: 'pi pi-fw pi-bookmark',
                         items: [
-                            { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' }
+                            { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark', to: '/pages/submenu/2.1.1' },
+                            { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark', to: '/pages/submenu/2.1.2' }
                         ]
                     },
                     {
                         label: 'Submenu 2.2',
                         icon: 'pi pi-fw pi-bookmark',
-                        items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
+                        items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark', to: '/pages/submenu/2.2.1' }]
                     }
                 ]
             }

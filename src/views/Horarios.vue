@@ -137,75 +137,78 @@ const getDayColor = (day) => {
 
 <template>
     <h1 class="text-black text-6xl font-bold mb-5">Horarios</h1>
+    <div class="card mb-0">
+
     <!-- TODO: Adjust row sizing -->
     <!-- TODO: implement responsive resizing -->
-    <DataTable v-model:filters="filters" :value="customers" paginator :rows="10" dataKey="id" filterDisplay="row"
-        :loading="loading" :globalFilterFields="['name', 'horario', 'materias', 'modalidad']" class="border-round-xl">
-        <template #header>
-            <div class="flex justify-content-end">
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search" />
-                    <InputText v-model="filters['global'].value" placeholder="Busqueda general" />
-                </span>
-            </div>
-        </template>
-        <template #empty>No se encontraron Maes. </template>
-        <template #loading>Cargando información. Por favor espera.</template>
-        <Column header="Nombre" field="name" style="min-width: 12rem">
-            <template #body="{ data }">
-                <p class="text-lg font-semibold">{{ data.name }}</p>
-            </template>
-            <template #filter="{ filterModel, filterCallback }">
-                <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                    placeholder="Busca por nombre" />
-            </template>
-        </Column>
-        <Column header="Materias" filterField="materias" :showFilterMenu="false" style="min-width: 12rem">
-            <template #body="{ data }">
-                <!-- TODO: ask for handling when data.materias.length > x -->
-                <div class="flex flex-row flex-wrap column-gap-3">
-                    <Tag class="bg-blue-300 text-md" :value="item.id" rounded v-for="item in data.materias"/>
+        <DataTable v-model:filters="filters" :value="customers" paginator :rows="10" dataKey="id" filterDisplay="row"
+            :loading="loading" :globalFilterFields="['name', 'horario', 'materias', 'modalidad']" class="border-round-xl">
+            <!-- <template #header>
+                <div class="flex justify-content-end">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search" />
+                        <InputText v-model="filters['global'].value" placeholder="Busqueda general" />
+                    </span>
                 </div>
-            </template>
-            <template #filter="{ filterModel, filterCallback }">
-                <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                    placeholder="Busca por materia" />
-            </template>
-        </Column>
-        <Column header="Horario" filterField="horario" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
-            style="min-width: 14rem">
-            <template #body="{ data }">
-                <!-- TODO: ask for hour display implementation -->
-                <div class="flex flex-row flex-wrap column-gap-3">
-                    <Tag class="text-lg" :class="getDayColor(item[0])" :value="item[0]" rounded v-for="item in data.horario"/>
-                </div>
-            </template>
-            <template #filter="{ filterModel, filterCallback }">
-                <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="horario"
-                    placeholder="Cualquiera" class="p-column-filter" style="min-width: 14rem" :maxSelectedLabels="1">
-                    <template #option="slotProps">
-                        <div class="flex align-items-center gap-2">
-                            <span>{{ slotProps.option }}</span>
-                        </div>
-                    </template>
-                </MultiSelect>
-            </template>
-        </Column>
-        <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
-            style="min-width: 12rem">
-            <template #body="{ data }">
-                <div class="flex justify-content-center">
-                    <Tag :value="data.modalidad" class="text-lg text-center" :severity="getSeverity(data.modalidad)" />
-                </div>
-            </template>
-            <template #filter="{ filterModel, filterCallback }">
-                <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
-                    placeholder="Cualquiera" class="p-column-filter" style="min-width: 12rem" :showClear="true">
-                    <template #option="slotProps">
-                        <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
-                    </template>
-                </Dropdown>
-            </template>
-        </Column>
-    </DataTable>
+            </template> -->
+            <template #empty>No se encontraron Maes. </template>
+            <template #loading>Cargando información. Por favor espera.</template>
+            <Column header="Nombre" field="name" style="min-width: 12rem">
+                <template #body="{ data }">
+                    <p class="text-lg font-semibold">{{ data.name }}</p>
+                </template>
+                <template #filter="{ filterModel, filterCallback }">
+                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
+                        placeholder="Busca por nombre" />
+                </template>
+            </Column>
+            <Column header="Materias" filterField="materias" :showFilterMenu="false" style="min-width: 12rem">
+                <template #body="{ data }">
+                    <!-- TODO: ask for handling when data.materias.length > x -->
+                    <div class="flex flex-wrap column-gap-2">
+                        <Tag class="bg-blue-300 text-md mx-auto" :value="item.id" rounded v-for="item in data.materias"/>
+                    </div>
+                </template>
+                <template #filter="{ filterModel, filterCallback }">
+                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
+                        placeholder="Busca por materia" />
+                </template>
+            </Column>
+            <Column header="Horario" filterField="horario" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
+                style="min-width: 14rem">
+                <template #body="{ data }">
+                    <!-- TODO: ask for hour display implementation -->
+                    <div class="flex flex-wrap column-gap-2">
+                        <Tag class="text-lg text-md mx-auto" :class="getDayColor(item[0])" :value="item[0]" rounded v-for="item in data.horario"/>
+                    </div>
+                </template>
+                <template #filter="{ filterModel, filterCallback }">
+                    <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="horario"
+                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 14rem" :maxSelectedLabels="1">
+                        <template #option="slotProps">
+                            <div class="flex align-items-center gap-2">
+                                <span>{{ slotProps.option }}</span>
+                            </div>
+                        </template>
+                    </MultiSelect>
+                </template>
+            </Column>
+            <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
+                style="min-width: 12rem">
+                <template #body="{ data }">
+                    <div class="flex justify-content-center">
+                        <Tag :value="data.modalidad" class="text-lg text-center" :severity="getSeverity(data.modalidad)" />
+                    </div>
+                </template>
+                <template #filter="{ filterModel, filterCallback }">
+                    <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
+                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 12rem" :showClear="true">
+                        <template #option="slotProps">
+                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                        </template>
+                    </Dropdown>
+                </template>
+            </Column>
+        </DataTable>
+    </div>
 </template>

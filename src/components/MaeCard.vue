@@ -8,10 +8,10 @@ const checked = ref(null)
 </script>
 
 <template>
-    <div class="w-full p-0 border-round-xl bg-white">
+    <div class="w-full p-0 border-round-xl bg-white shadow-1">
         <div class="flex border-round-top-xl bg-primary">
             <div class="pl-4 p-2">
-                <p class="text-2xl font-semibold">{{ nombre }}</p>
+                <p class="text-2xl font-semibold">{{ matricula }}</p>
             </div>
             <div class="ml-auto pr-4 p-2">
                 <p class="text-2xl font-semibold text-end">{{ carrera }}</p>
@@ -21,7 +21,7 @@ const checked = ref(null)
         <div class="flex p-3 gap-3">
             <Skeleton shape="circle" size="5rem"></Skeleton>
             <div>
-                <p class="font-semibold text-xl text-overflow-ellipsis" style="max-width: 10px;"> {{ matricula }} </p>
+                <p class="font-semibold text-xl text-overflow-ellipsis" style="max-width: 10px;"> {{ nombre }} </p>
                 <Tag class="text-md" severity="success" :value='`${horaInicio} - ${horaFin}`' rounded />
             </div>
             <Button v-if="checked == null" @click="checked = false" icon="pi pi-check" class="p-button-rounded p-button-success ml-auto" />

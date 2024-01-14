@@ -12,7 +12,7 @@ export const MaeInfoService = {
                     ['Jueves', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
                     ['Viernes', [9]]
                 ],
-                materias: [{ area: 'ING', id: 'TC1030', intensiva: false, name: 'Programación orientada a objetos', semester: 2, top: true }]
+                subjects: [{ area: 'ING', id: 'TC1030', intensiva: false, name: 'Programación orientada a objetos', semester: 2, top: true }]
             },
             {
                 id: 1001,
@@ -22,7 +22,7 @@ export const MaeInfoService = {
                     ['Lunes', [9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5]],
                     ['Viernes', [9]]
                 ],
-                materias: [
+                subjects: [
                     { area: 'ING', id: 'TC1030', intensiva: false, name: 'Programación orientada a objetos', semester: 2, top: true },
                     { area: 'ING', id: 'TC1030', intensiva: false, name: 'Programación 2', semester: 2, top: true },
                     { area: 'ING', id: 'TC1030', intensiva: false, name: 'Programación 3', semester: 3, top: true }

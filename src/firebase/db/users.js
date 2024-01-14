@@ -2,7 +2,11 @@ import { firestoreDB } from "../../main";
 import { getAuth } from 'firebase/auth';
 import {
     doc,
-    getDoc
+    collection,
+    query,
+    where,
+    getDoc,
+    getDocs
 } from 'firebase/firestore';
 
 function getEmailUsername(email) {
@@ -15,8 +19,8 @@ function getEmailUsername(email) {
   
 
 export async function getUser(uid) {
-    const docRef = doc(firestoreDB, "users", uid);
-    const docSnap = await getDoc(docRef);
+    const userRef = doc(firestoreDB, "users", uid);
+    const docSnap = await getDoc(userRef);
 
     if (docSnap.exists()) {
         return docSnap.data();
@@ -32,4 +36,18 @@ export async function getCurrentUser() {
         return getUser(uid);
     }
     return null;
+}
+
+export async function getMaes() {
+    const usersRef = collection(firestoreDB, "users");
+    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi']));
+
+    const querySnapshot = await getDocs(q);
+
+
+    if (querySnapshot) {
+        return querySnapshot.docs.map(doc => doc.data());
+    } else {
+        return null;
+    }
 }

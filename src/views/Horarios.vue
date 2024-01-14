@@ -3,6 +3,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { MaeInfoService } from '@/service/MaeInfoService';
+import { getMaes } from '@/firebase/db/users';
 
 const customers = ref();
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
@@ -24,9 +25,16 @@ const statuses = ref(['Remota', 'Presencial', 'Híbrida']);
 const loading = ref(true);
 
 onMounted(() => {
-    MaeInfoService.getCustomersMedium().then((data) => {
-        customers.value = getCustomers(data);
+
+    getMaes().then((data) => {
+        console.log(data[0]['weekSchedule'])
+        customers.value = data;
         loading.value = false;
+    })
+
+    MaeInfoService.getCustomersMedium().then((data) => {
+        // customers.value = getCustomers(data);
+        // loading.value = false;
     });
 
     // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
@@ -114,20 +122,46 @@ const getSeverity = (status) => {
     }
 }
 
+function translateDayToSpanish(day) {
+  const daysMapping = {
+    'monday': 'Lunes',
+    'tuesday': 'Martes',
+    'wednesday': 'Miércoles',
+    'thursday': 'Jueves',
+    'friday': 'Viernes',
+    'saturday': 'Sábado',
+    'sunday': 'Domingo'
+  };
+
+  // Check if the provided day is in the mapping
+  if (day in daysMapping) {
+    return daysMapping[day];
+  } else {
+    // If the day is not found in the mapping, return an error message
+    return 'Invalid day';
+  }
+}
+
+// Example usage:
+const englishDay = 'monday';
+const spanishDay = translateDayToSpanish(englishDay);
+console.log(`${englishDay} in Spanish is ${spanishDay}`);
+
+
 // TODO: adjust colors to figma design
 const getDayColor = (day) => {
     const dayLC = day.toLowerCase();
     switch (dayLC) {
-        case 'lunes':
-            return 'bg-blue-300';
-        case 'martes':
-            return 'bg-green-300';
-        case 'miercoles':
-            return 'bg-yellow-300';
-        case 'jueves':
-            return 'bg-red-300';
-        case 'viernes':
-            return 'bg-purple-300';
+        case 'monday':
+            return 'bg-blue-600';
+        case 'tuesday':
+            return 'bg-green-600';
+        case 'wednesday':
+            return 'bg-yellow-600';
+        case 'thursday':
+            return 'bg-red-600';
+        case 'friday':
+            return 'bg-purple-600';
     }
 }
 
@@ -165,8 +199,8 @@ const getDayColor = (day) => {
             <Column header="Materias" filterField="materias" :showFilterMenu="false" style="min-width: 12rem">
                 <template #body="{ data }">
                     <!-- TODO: ask for handling when data.materias.length > x -->
-                    <div class="flex flex-wrap column-gap-2">
-                        <Tag class="bg-blue-300 text-md mx-auto" :value="item.id" rounded v-for="item in data.materias"/>
+                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
+                        <Tag class="bg-blue-600 text-md" :value="item.id" v-tooltip.top="item.name" rounded v-for="item in data.subjects"/>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
@@ -178,8 +212,8 @@ const getDayColor = (day) => {
                 style="min-width: 14rem">
                 <template #body="{ data }">
                     <!-- TODO: ask for hour display implementation -->
-                    <div class="flex flex-wrap column-gap-2">
-                        <Tag class="text-lg text-md mx-auto" :class="getDayColor(item[0])" :value="item[0]" rounded v-for="item in data.horario"/>
+                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
+                        <Tag class="text-md mx-auto" :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top="value.toString()" rounded v-for="(value, key) in data.weekSchedule"/>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
@@ -197,7 +231,7 @@ const getDayColor = (day) => {
                 style="min-width: 12rem">
                 <template #body="{ data }">
                     <div class="flex justify-content-center">
-                        <Tag :value="data.modalidad" class="text-lg text-center" :severity="getSeverity(data.modalidad)" />
+                        <Tag :value="data.modalidad ?? 'Híbrida'" class="text-lg text-center" :severity="getSeverity(data.modalidad)" />
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">

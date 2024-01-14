@@ -2,7 +2,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { FilterMatchMode, FilterService } from 'primevue/api';
-import { MaeInfoService } from '@/service/MaeInfoService';
 import { getMaes } from '@/firebase/db/users';
 
 const customers = ref();
@@ -11,7 +10,7 @@ const ARRAY_CONTAINS_ANY = ref('ARRAY_CONTAINS_ANY');
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    horario: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
+    weekSchedule: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
     materias: { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
     modalidad: { value: null, matchMode: FilterMatchMode.EQUALS }
@@ -31,11 +30,6 @@ onMounted(() => {
         customers.value = data;
         loading.value = false;
     })
-
-    MaeInfoService.getCustomersMedium().then((data) => {
-        // customers.value = getCustomers(data);
-        // loading.value = false;
-    });
 
     // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
     FilterService.register(ARRAY_CONTAINS.value, (value, filter) => {
@@ -80,8 +74,10 @@ onMounted(() => {
             return false;
         }
 
-        window.console.log("value:", value);
-        window.console.log("filter:", filter);
+        value = translateDayToEnglish(value);
+
+        console.log("value:", value);
+        console.log("filter:", filter);
 
         for (let i = 0; i < filter.length; i++) {
             window.console.log("filter:", filter[i]);
@@ -100,14 +96,6 @@ onMounted(() => {
         return false;
     });
 });
-
-const getCustomers = (data) => {
-    return [...(data || [])].map((d) => {
-        d.date = new Date(d.date);
-
-        return d;
-    });
-};
 
 const getSeverity = (status) => {
     switch (status) {
@@ -142,11 +130,25 @@ function translateDayToSpanish(day) {
   }
 }
 
-// Example usage:
-const englishDay = 'monday';
-const spanishDay = translateDayToSpanish(englishDay);
-console.log(`${englishDay} in Spanish is ${spanishDay}`);
+function translateDayToEnglish(day) {
+  const daysMapping = {
+    'Lunes': 'monday',
+    'Martes': 'tuesday',
+    'Miércoles': 'wednesday',
+    'Jueves': 'thursday',
+    'Viernes': 'friday',
+    'Sábado': 'saturday',
+    'Domingo': 'sunday'
+  };
 
+  // Check if the provided day is in the mapping
+  if (day in daysMapping) {
+    return daysMapping[day];
+  } else {
+    // If the day is not found in the mapping, return an error message
+    return 'Invalid day';
+  }
+}
 
 // TODO: adjust colors to figma design
 const getDayColor = (day) => {
@@ -187,16 +189,16 @@ const getDayColor = (day) => {
             </template> -->
             <template #empty>No se encontraron Maes. </template>
             <template #loading>Cargando información. Por favor espera.</template>
-            <Column header="Nombre" field="name" style="min-width: 12rem">
+            <Column header="Nombre" field="name" :showFilterMenu="false" style="min-width: 20rem">
                 <template #body="{ data }">
                     <p class="text-lg font-semibold">{{ data.name }}</p>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
+                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter w-full"
                         placeholder="Busca por nombre" />
                 </template>
             </Column>
-            <Column header="Materias" filterField="materias" :showFilterMenu="false" style="min-width: 12rem">
+            <Column header="Materias" filterField="materias" :showFilterMenu="false" style="min-width: 14rem">
                 <template #body="{ data }">
                     <!-- TODO: ask for handling when data.materias.length > x -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
@@ -208,8 +210,8 @@ const getDayColor = (day) => {
                         placeholder="Busca por materia" />
                 </template>
             </Column>
-            <Column header="Horario" filterField="horario" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
-                style="min-width: 14rem">
+            <Column header="Horario" filterField="weekSchedule" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
+                style="min-width: 6rem">
                 <template #body="{ data }">
                     <!-- TODO: ask for hour display implementation -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
@@ -218,7 +220,7 @@ const getDayColor = (day) => {
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="horario"
-                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 14rem" :maxSelectedLabels="1">
+                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 6rem" :maxSelectedLabels="1">
                         <template #option="slotProps">
                             <div class="flex align-items-center gap-2">
                                 <span>{{ slotProps.option }}</span>
@@ -227,8 +229,8 @@ const getDayColor = (day) => {
                     </MultiSelect>
                 </template>
             </Column>
-            <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }"
-                style="min-width: 12rem">
+            <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
+                style="min-width: 6rem">
                 <template #body="{ data }">
                     <div class="flex justify-content-center">
                         <Tag :value="data.modalidad ?? 'Híbrida'" class="text-lg text-center" :severity="getSeverity(data.modalidad)" />
@@ -236,7 +238,7 @@ const getDayColor = (day) => {
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
-                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 12rem" :showClear="true">
+                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 6rem" :showClear="true">
                         <template #option="slotProps">
                             <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
                         </template>

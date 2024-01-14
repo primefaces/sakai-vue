@@ -215,7 +215,7 @@ const getDayColor = (day) => {
                 <template #body="{ data }">
                     <!-- TODO: ask for hour display implementation -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
-                        <Tag class="text-md mx-auto" :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top="value.toString()" rounded v-for="(value, key) in data.weekSchedule"/>
+                        <Tag class="text-md mx-auto" :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top="value.toString()" rounded v-for="(value, key) in data.weekSchedule" style="min-width: 3rem"/>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">

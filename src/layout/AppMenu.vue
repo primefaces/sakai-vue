@@ -1,32 +1,57 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { getCurrentUser } from '../firebase/db/users'
 
 import AppMenuItem from './AppMenuItem.vue';
 
-const model = ref([
-    {
-        label: 'Estudiante',
-        items: [
-            { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
-            { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
-            
-        ]
-    },
-    {
-        label: 'MAE',
-        items: [
-            { label: 'Coordinador', icon: 'pi pi-fw pi-users', to: '/coordi' },
-            { label: 'Dashboard (Template)', icon: 'pi pi-fw pi-home', to: '/dashboard' }
-        ]
-    },
-    {
-        label: 'Administrador',
-        items: [
-            { label: 'Asesorías', icon: 'pi pi-fw pi-cog', to: '/admin' },
-            { label: 'Usuarios', icon: 'pi pi-fw pi-cog', to: '/admin' },
-            { label: 'Materias', icon: 'pi pi-fw pi-cog', to: '/admin' },
-        ]
-    },
+const model = ref([{
+    label: 'Estudiante',
+    items: [
+        { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
+        { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
+        
+    ]
+}]);
+
+onMounted(async () => {
+    const { role } = await getCurrentUser();
+
+    // if (['user', 'mae', 'Academic', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
+    //     console.log('A: 1')
+    //     model.value.push({
+    //         label: 'Estudiante',
+    //         items: [
+    //             { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
+    //             { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
+                
+    //         ]
+    //     })
+    // }
+
+    if (['mae', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
+        console.log('A: 2')
+        model.value.push({
+            label: 'MAE',
+            items: [
+                { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
+                { label: 'Dashboard (Template)', icon: 'pi pi-fw pi-home', to: '/dashboard' }
+            ]
+        })
+    }
+
+    if (['admin'].includes(role)) {
+        console.log('A: 3')
+        model.value.push({
+            label: 'Administrador',
+            items: [
+                { label: 'Asesorías', icon: 'pi pi-fw pi-list', to: '/admin/asesorias' },
+                { label: 'Usuarios', icon: 'pi pi-fw pi-users', to: '/admin/usuarios' },
+                { label: 'Materias', icon: 'pi pi-fw pi-book', to: '/admin/materias' },
+            ]
+        })
+    }
+
+    // model.value = [
     // {
     //     label: 'UI Components',
     //     items: [
@@ -180,7 +205,8 @@ const model = ref([
     //         }
     //     ]
     // }
-]);
+// ]
+})
 </script>
 
 <template>

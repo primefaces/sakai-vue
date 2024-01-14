@@ -10,7 +10,7 @@ const router = createRouter({
             path: '/',
             component: AppLayout,
             meta: {
-                requiresAuth: true,
+                requiresAuth: true
             },
             children: [
                 {
@@ -19,20 +19,45 @@ const router = createRouter({
                     component: () => import('@/views/Inicio.vue')
                 },
                 {
-                    path: '/admin',
-                    name: 'admin',
-                    component: () => import('@/views/Admin.vue')
-                },
-                {
-                    path: '/coordi',
-                    name: 'coordi',
-                    component: () => import('@/views/Coordi.vue')
-                },
-                {
                     path: '/horarios',
                     name: 'horarios',
                     component: () => import('@/views/Horarios.vue')
                 },
+                {
+                    path: '/coordi',
+                    name: 'coordi',
+                    component: () => import('@/views/Coordi.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi']
+                    }
+                },
+                {
+                    path: '/admin/asesorias',
+                    name: 'adminasesorias',
+                    component: () => import('@/views/AdminAsesorias.vue'),
+                    meta: {
+                        roles: ['admin']
+                    }
+                },
+                {
+                    path: '/admin/usuarios',
+                    name: 'adminusuarios',
+                    component: () => import('@/views/AdminUsers.vue'),
+                    meta: {
+                        roles: ['admin']
+                    }
+                },
+                {
+                    path: '/admin/materias',
+                    name: 'adminmaterias',
+                    component: () => import('@/views/AdminSubjects.vue'),
+                    meta: {
+                        roles: ['admin']
+                    }
+                },
+                /* 
+                    TEMPLATE
+                */
                 {
                     path: '/dashboard',
                     name: 'dashboard',
@@ -205,17 +230,32 @@ router.beforeEach((to, from, next) => {
     }
 
     const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
         unsubscribe(); // Unsubscribe to avoid memory leaks
 
-        if (user) {
-            // User is signed in
+        if (!user) {
+            // User is not signed in
+            
+            alert("No tienes acceso a esta página. Por favor inicia sesión");
+            return next("/auth/login");
+        }
+
+        // User is signed in
+        const { role } = await getCurrentUser()
+
+        if (!to.meta.roles) {
+            // Route does not require roles
             return next();
         }
 
-        // User is not signed in
-        alert("No tienes acceso a esta página. Por favor inicia sesión");
-        return next("/auth/login");
+        if (to.meta.roles.includes(role)) {
+            // User has roule privilege
+            return next();
+        }
+        else {
+            // User does not have roule privilege
+            alert("No tienes acceso a esta página");
+        }
     });
 });
 

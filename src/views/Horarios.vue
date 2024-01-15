@@ -167,6 +167,24 @@ const getDayColor = (day) => {
     }
 }
 
+const getSubjectColor = (area) => {
+    switch (area) {
+        case 'ING':
+            return 'bg-cyan-600';
+        case 'NEG':
+            return 'bg-blue-600';
+        case 'SLD':
+            return 'bg-teal-600';
+        case 'CIS':
+            return 'bg-red-600';
+        case 'AMC':
+            return 'bg-green-600';
+        case 'ART':
+            return 'bg-purple-600';
+        default:
+            return 'bg-yellow-600';
+    }
+}
 
 </script>
 
@@ -202,7 +220,7 @@ const getDayColor = (day) => {
                 <template #body="{ data }">
                     <!-- TODO: ask for handling when data.materias.length > x -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
-                        <Tag class="bg-blue-600 text-md" :value="item.id" v-tooltip.top="item.name" rounded v-for="item in data.subjects"/>
+                        <Tag class="text-md" :class="getSubjectColor(item.area)" :value="item.id" v-tooltip.top="item.name" rounded v-for="item in data.subjects"/>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">

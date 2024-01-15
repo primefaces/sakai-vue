@@ -38,7 +38,20 @@ function refreshPoints() {
 
 
 function downloadTable() {
+    const csv = jsonToCSV(points.value)
+    let link = document.createElement('a');
+    link.setAttribute('href', 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURI(csv));
+    link.setAttribute('download', `${new Date().getTime()}.csv`)
+    link.click();
+}
 
+function jsonToCSV(data) {
+    var csv = [Object.keys(data[0]).join(",")]
+    for (const row of data) {
+        const csvRow = Object.values(row).join(",")
+        csv.push(csvRow)
+    }
+    return csv.join("\n")
 }
 
 </script>

@@ -4,14 +4,23 @@ import { getCurrentUser } from '../firebase/db/users'
 
 import AppMenuItem from './AppMenuItem.vue';
 
-const model = ref([{
-    label: 'Estudiante',
-    items: [
-        { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
-        { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
-        
-    ]
-}]);
+const model = ref([
+    {
+        label: 'Estudiante',
+        items: [
+            { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
+            { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
+            { label: 'MAE', icon: 'pi pi-fw pi-user', to: '/mae' },
+            // { label: 'Dashboard (Template)', icon: 'pi pi-fw pi-home', to: '/dashboard' }
+        ]
+    },
+    {
+        label: 'Biblioteca',
+        items: [
+            { label: 'Biblioteca', icon: 'pi pi-fw pi-desktop', to: '/biblioteca' },
+        ]
+    }
+]);
 
 onMounted(async () => {
     const { role } = await getCurrentUser();
@@ -29,18 +38,16 @@ onMounted(async () => {
     // }
 
     if (['mae', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
-        console.log('A: 2')
         model.value.push({
             label: 'MAE',
             items: [
+                { label: 'Perfil', icon: 'pi pi-fw pi-user-edit', to: '/profile' },
                 { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
-                { label: 'Dashboard (Template)', icon: 'pi pi-fw pi-home', to: '/dashboard' }
             ]
         })
     }
 
     if (['admin'].includes(role)) {
-        console.log('A: 3')
         model.value.push({
             label: 'Administrador',
             items: [

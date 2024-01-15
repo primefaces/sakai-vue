@@ -24,6 +24,24 @@ const router = createRouter({
                     component: () => import('@/views/Horarios.vue')
                 },
                 {
+                    path: '/mae',
+                    name: 'perfil',
+                    component: () => import('@/views/PerfilMAE.vue')
+                },
+                {
+                    path: '/biblioteca',
+                    name: 'biblioteca',
+                    component: () => import('@/views/Biblioteca.vue')
+                },
+                {
+                    path: '/profile',
+                    name: 'maeprofile',
+                    component: () => import('@/views/ConfiguracionMAE.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae']
+                    }
+                },
+                {
                     path: '/coordi',
                     name: 'coordi',
                     component: () => import('@/views/Coordi.vue'),

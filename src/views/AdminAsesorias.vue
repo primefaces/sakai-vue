@@ -1,4 +1,5 @@
 <script setup>
+    import InfoCard from "../components/InformacionMae.vue"
     const fecha = "Martes 14 de Noviembre de 2023"
 </script>
 
@@ -21,13 +22,12 @@
     <p class="text-4xl">{{fecha}} </p>
     <div class="border-b-2 border-d6d6d6 w-full mb-5 ml-2.4%"></div>
 
-    <div class="flex flex-col">
-        <div class="w-full p-0 border-round-xl bg-white shadow-1">
-            <div class="text-black text-4xl">Aserias</div>
-            <div class="text-0D294C text-4xl">22,000 totales</div>
-        </div>
+    
+    <div class="grid-cols-4 gap-5">
+        <InfoCard :tema="'Asesorías Totales'" :datos="'22,000 totales'" />
+        <InfoCard :tema="'Asesorías de hoy'" :datos="'129 Asesorías'" />
+        <InfoCard :tema="'Usuarios'" :datos="'15,000 usuarios'" />
     </div>
-
     
   </div>
 </template>
@@ -36,6 +36,7 @@
 /* Estilo de colores */
 .text-0D294C {
   color: #0D294C;
+  font-weight: bold;
 }
 
 /* Estilo del botón */
@@ -63,13 +64,30 @@
   }
 }
 
-/* Contenedor blanco con borde gris */
-.w-full.border-round-xl.bg-white.shadow-1 {
-  border: 1px solid #D6D6D6;
+.grid-cols-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
 }
 
-/* Estilo de los textos internos centrados */
-.text-black, .text-0D294C {
-  text-align: center;
+@media (max-width: 1600px) {
+    .grid-cols-4 {
+        grid-template-columns: repeat(3, 1fr); /* Set it to three columns for screens between 769px and 1200px */
+    }
 }
+
+@media (max-width: 976px) {
+    .grid-cols-4 {
+        grid-template-columns: 2fr; /* Set it to one column for screens 768px and below */
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr; /* Set it to one column for screens 768px and below */
+    }
+}
+ 
+
 </style>

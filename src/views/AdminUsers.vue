@@ -1,7 +1,12 @@
-<script setup></script>
+<script setup>
+    import TituloAdmin from "../components/TituloAdmin.vue"
+</script>
+
 
 <template>
-    <div class="flex align-content-center h-full" style="min-height: 300px">
-        <h1 class="flex align-items-center justify-content-center w-full">Admin Usuarios: !En construcción! ✌</h1>
-    </div>
+  <div class="overflow-hidden font-lato px-4">
+    <TituloAdmin></TituloAdmin>
+
+    
+  </div>
 </template>

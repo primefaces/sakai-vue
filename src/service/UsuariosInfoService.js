@@ -6,9 +6,9 @@ export const UsuariosInfoService = {
             { 
                 id: 1,
                 rol: 'Mae', 
-                matricula: '123', 
+                matricula: 'A01735722', 
                 nombre: 'Juan', 
-                asesorias: 5, 
+                asesorias: 15, 
                 horas: 10, 
                 actHorario: true 
             },
@@ -17,8 +17,8 @@ export const UsuariosInfoService = {
                 rol: 'Estudiante', 
                 matricula: '123', 
                 nombre: 'Pedro Lopez', 
-                asesorias: 5, 
-                horas: 10, 
+                asesorias: 2, 
+                horas: 12, 
                 actHorario: false
             },
             { 

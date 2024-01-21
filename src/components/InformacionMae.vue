@@ -6,10 +6,10 @@
 <template>
   <div class="flex items-center justify-center">
     <div class="w-full p-0 border-round-2xl bg-white shadow-1 contenedor" style="width: 80%; height: 100%;">
-      <div class="text-black text-5xl mt-7">
+      <div class="text-black text-5xl mt-3">
         {{tema}}
       </div>
-      <div class="text-0D294C text-5xl mb-7">
+      <div class="text-0D294C text-5xl mb-3">
         {{datos}}
       </div>
     </div>

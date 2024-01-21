@@ -128,7 +128,7 @@ const getTipo = (rol) => {
         </template>
       </Column>
 
-      <Column  field="asesorias" header="Asesorías" style="min-width: 13rem" >
+      <Column  field="asesorias" header="Asesorías" style="min-width: 15rem" >
         <template #body="{ data }">
           <p class="text-lg font-semibold">{{ data.asesorias}}</p>
         </template>
@@ -148,7 +148,7 @@ const getTipo = (rol) => {
         </template>
       </Column>
 
-      <Column field="actHorario" header="Act. Horario"  style="min-width: 5rem">
+      <Column field="actHorario" header="Act. Horario"  style="min-width: 3rem">
         <template #body="{ data }">
           <div class="p-d-flex p-jc-center p-ai-center">
             <Button v-if="data.actHorario == true" @click="checked = false" icon="pi pi-check" class="p-button-rounded p-button-success ml-auto" />

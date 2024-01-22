@@ -83,7 +83,7 @@ function jsonToCSV(data) {
                 <div class="formgroup-inline">
 
                     <div class="field">
-                        <Button label="Submit" @click="refreshPoints"></Button>
+                        <Button label="Search" @click="refreshPoints"></Button>
                     </div>
                 </div>
             </div>

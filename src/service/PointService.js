@@ -1,4 +1,4 @@
-const HOST = 'http://127.0.0.1:5000'
+const HOST = window.BACKEND_HOST
 
 export const getPoints = async (platformID = null, from = null, to = null, limit = null) => {
     var url = new URL(`${HOST}/api/points`)

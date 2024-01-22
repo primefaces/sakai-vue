@@ -64,7 +64,7 @@ onMounted(() => {
 });
 
 const getTipo = (rol) => {
-  console.log(rol);
+
   switch (rol) {
     case 'Mae':
       return 'bg-blue-600'; 
@@ -93,13 +93,13 @@ const getTipo = (rol) => {
       <template #empty>No se encontraron Usuarios. </template>
       <template #loading>Cargando información. Por favor espera.</template>
       
-      <Column field="id" style="min-width: 2rem">
+      <Column field="id" style="min-width: 1rem">
         <template #body="{ data }">
           <Button icon="pi pi-pencil" @click="editarUsuario(data.id)"></Button> 
         </template>
       </Column>
        
-      <Column field="rol" header="Roles" style="min-width: 10rem">
+      <Column field="rol" header="Roles" style="min-width: 8rem">
         <template #body="{ data }">
             <Tag rounded class="w-10 h-4 text-lg font-semibold" :value="data.rol" :class="getTipo(data.rol)" v-tooltip.top="data.rol" style="color: white;"></Tag>
         </template>
@@ -118,7 +118,7 @@ const getTipo = (rol) => {
         </template>
       </Column>
 
-      <Column field="nombre" header="Nombre" :showFilterMenu="false" style="min-width: 20rem">
+      <Column field="nombre" header="Nombre" :showFilterMenu="false" style="min-width: 18rem">
         <template #body="{ data }">
           <p class="text-lg font-semibold">{{ data.nombre}}</p>
         </template>
@@ -148,7 +148,7 @@ const getTipo = (rol) => {
         </template>
       </Column>
 
-      <Column field="actHorario" header="Act. Horario"  style="min-width: 3rem">
+      <Column field="actHorario" header="Act. Horario"  style="min-width: 2rem">
         <template #body="{ data }">
           <div class="p-d-flex p-jc-center p-ai-center">
             <Button v-if="data.actHorario == true" @click="checked = false" icon="pi pi-check" class="p-button-rounded p-button-success ml-auto" />
@@ -161,7 +161,7 @@ const getTipo = (rol) => {
         
       </Column>
 
-      <Column style="min-width: 2rem">
+      <Column style="min-width: 1rem">
         <template #body="data">
           <Button icon="pi pi-chevron-right" class="p-button-success" @click="verPerfil(data.id)"></Button>
         </template>

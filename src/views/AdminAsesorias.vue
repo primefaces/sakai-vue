@@ -11,9 +11,7 @@
         <InfoCard :tema="'Asesorías Totales'" :datos="'22,000 totales'" />
         <InfoCard :tema="'Asesorías de hoy'" :datos="'129 Asesorías'" />
         <InfoCard :tema="'Usuarios'" :datos="'15,000 usuarios'" />
-        
     </div>
-    
   </div>
 </template>
 

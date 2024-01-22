@@ -9,6 +9,8 @@ const usuarios = ref();
 const loading = ref(true);
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
 const ARRAY_CONTAINS_ANY = ref('ARRAY_CONTAINS_ANY');
+const isDialogVisible = ref(false);
+
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -57,6 +59,8 @@ onMounted(() => {
 
         return false;
     });
+
+
 });
 
 
@@ -80,6 +84,10 @@ const getAbreviacion = (abreviacion) => {
             return 'bg-blue-600';
     }
 }
+
+const verIntensiva = (userId) => {
+  isDialogVisible.value = true;
+};
 
 </script>
 
@@ -130,19 +138,21 @@ const getAbreviacion = (abreviacion) => {
             
             <Column style="min-width: 5rem" header="Usuarios">
                 <template #body="data">
-                    <Button icon="pi pi-chevron-right" class="p-button-success" @click="verPerfil(data.id)"></Button>
+                    <Button icon="pi pi-chevron-right" class="p-button-success" @click="verIntensiva(data.id)"></Button>
+                    <Dialog v-model="isDialogVisible">
+                        <MateriasIntensivas />
+                    </Dialog>
                 </template>
             </Column> 
 
-
         </DataTable>
     </div>
-
+   
     <div class="flex relative mt-3">
         <div class="flex-1"></div>
         <div class="justify-end">
         <Button label="Agregar Usuario" icon="pi pi-plus-circle" severity="info" size="large" class="ml-5 bg-0D294C" />
         </div>
     </div>
-
+   
 </template>

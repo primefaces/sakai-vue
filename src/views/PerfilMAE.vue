@@ -9,14 +9,17 @@ const materias = [
   "tc2005b","tc2005b","tc2005b","tc2005b","tc2005b","tc2005b",
 ];
 
+
 const horario = [
-  { dia: 'Día', lunes: 'Lunes', martes: 'Martes', miercoles: 'Miércoles', jueves: 'Jueves', viernes: 'Viernes', horas: 'Horas' },
-  { lunesInicio: '11:00', lunesFin: '12:00', martesInicio: '11:00', martesFin: '12:00', miercolesInicio: '11:00', miercolesFin: '12:00', juevesInicio: '11:00', juevesFin: '12:00', viernesInicio: '11:00', viernesFin: '12:00' },
+  ["11:00", "11:00", "11:00", "11:00", "11:00"],
+  ["12:00", "12:00", "12:00", "12:00", "12:00"],
+
 ];
 </script>
 
 <template>
   <div class="overflow-hidden font-lato px-4">
+
     <div class="flex relative mt-5">
       <div class="flex-1">
         <div class="text-0D294C text-6xl  ml-2.4%">Perfil</div>
@@ -24,9 +27,9 @@ const horario = [
 
       <div class="justify-end">
         <i class="pi pi-bell text-6xl"></i>
-        <!-- <Button label="Generar Reporte" icon="pi pi-file-export" severity="info" size="large" class="ml-5 bg-0D294C" /> -->
       </div>
     </div>
+
     <hr class="width-5 border-t-2 border-D6D6D6 mb-2 ml-2.4%" />
     <div class="border-b-2 border-d6d6d6 w-full mb-5 ml-2.4%"></div>
     <p class="text-4xl">{{fecha}} </p>
@@ -38,7 +41,7 @@ const horario = [
      class="width-2 h-2 p-4">
         <Tag
     rounded
-    class="w-full h-12 text-lg font-semibold bg-FF69B4 text-white"  
+    class="w-full h-4rem text-lg font-semibold bg-0D294Ctext-white"  
   >
         {{ materia }}
       </Tag>
@@ -51,8 +54,8 @@ const horario = [
             <div class="justify-end">
                 <Button
                     :class="{'pi pi-plus-circle': !showMoreTags, 'pi pi-minus-circle': showMoreTags}" 
-                     size="large" class="ml-5 bg-FF69B4"
-                    label="Etiquetas"
+                     size="large" class="ml-5 bg-0D294C"
+                    label="   Etiquetas"
                 />
             </div>
         </div>
@@ -61,31 +64,36 @@ const horario = [
 
     <hr class=" border-t-2 border-D6D6D6 " />
     <div class="text-0D294C text-4xl  ml-2.4%">Horario</div>
+    
+    <div class="p-grid">
+    <!-- Días de la semana -->
+    <div class="flex flex-wrap">
+      <div v-for="(dia, index) in ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']" :key="index" class="p-row">
+        <div class="text-0D294C text-4xl width-3 h-2 p-5 bg-F4F4F4">{{ dia }}</div>
 
-    <DataTable :value="horario" class="p-datatable-striped">
-    <Column field="dia" header="Día" :headerStyle="{ 'background': '#E2F4E4', 'font-weight': 'bold' }" />
-    <Column field="lunes" header="Lunes" />
-    <Column field="martes" header="Martes" />
-    <Column field="miercoles" header="Miércoles" />
-    <Column field="jueves" header="Jueves" />
-    <Column field="viernes" header="Viernes" />
+        <!-- Horas -->
+        <div v-for="(hora, rowIndex) in horario" :key="rowIndex" class="width-3 text-4xl p-5">
+          <div
+            :class="{
+              'rounded bg-E2F4E4 text-black p-3 width-3': rowIndex % 2 !== 0,
+              'rounded bg-16591D text-white p-3 width-3': rowIndex % 2 === 0
+            }"
+          >
+            {{ hora[index] }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <Column field="horas" header="Horas" :headerStyle="{ 'background': '#E2F4E4', 'font-weight': 'bold' }" />
-    <Column field="lunesInicio" />
-    <Column field="lunesFin" />
+  <div class="flex relative mt-3">
+        <div class="flex-1"></div>
+        <div class="justify-end">
+          <Button label="Modificar Materias" icon="pi pi-pencil" severity="info" size="large" class="ml-5 bg-0D294C" />
+        <Button label="Modificar Horario" icon="pi pi-pencil" severity="info" size="large" class="ml-5 bg-0D294C" />
+        </div>
+    </div>
 
-    <Column field="martesInicio" />
-    <Column field="martesFin" />
-
-    <Column field="miercolesInicio" />
-    <Column field="miercolesFin" />
-
-    <Column field="juevesInicio" />
-    <Column field="juevesFin" />
-
-    <Column field="viernesInicio" />
-    <Column field="viernesFin" />
-  </DataTable>
 
   </div>
 </template>
@@ -121,6 +129,16 @@ const horario = [
     width: 16.6667%;
 }
 
+width-3{
+  width: 25%;
+}
+
+@media (max-width: 768px) {
+  .width-3 {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .width-2 {
     width: 25%; 
@@ -133,11 +151,23 @@ const horario = [
   }
 }
 
-.p-datatable-striped tbody tr:nth-child(odd) {
-  background-color: #16591D !important;
+/* Redondear las horas */
+.rounded {
+  border-radius: 20px;
 }
 
-.p-datatable-striped .p-datatable-thead th {
-  color: #fff !important;
+/* Estilo de colores */
+.bg-F4F4F4 {
+  background-color: #d8d6d6;
+}
+
+.bg-E2F4E4 {
+  background-color: #a5eba5;
+  color: #000;
+}
+
+.bg-16591D {
+  background-color: #16591D;
+  color: #fff;
 }
 </style>

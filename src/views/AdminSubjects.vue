@@ -86,6 +86,7 @@ const getAbreviacion = (abreviacion) => {
 }
 
 const verIntensiva = (userId) => {
+    console.log(userId)
   isDialogVisible.value = true;
 };
 

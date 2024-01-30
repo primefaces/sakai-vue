@@ -1,20 +1,26 @@
 <script setup>
-import { ref } from 'vue';
+import { ref , computed} from 'vue';
 const fecha = "Martes 14 de Noviembre de 2023"
 const showMoreTags = ref(false);
 const materias = [
-  "tc2005b","tc2005b","tc2005b","tc2005b","tc2005b","tc2005b",
+  "tc2005b","tc2005b","papa","tc2005b","tc2005b","tc2005b",
   "tc2005b","tc2005b","tc2005b","tc2005b","tc2005b","tc2005b",
   "tc2005b","tc2005b","tc2005b","tc2005b","tc2005b","tc2005b",
   "tc2005b","tc2005b","tc2005b","tc2005b","tc2005b","tc2005b",
 ];
 
-
+const searchQuery = ref('');
 const horario = [
   ["11:00", "11:00", "11:00", "11:00", "11:00"],
   ["12:00", "12:00", "12:00", "12:00", "12:00"],
 
 ];
+const filteredMaterias = computed(() => {
+  return materias.filter(materia => materia.toLowerCase().includes(searchQuery.value.toLowerCase()));
+});
+
+
+
 </script>
 
 <template>
@@ -35,17 +41,22 @@ const horario = [
     <p class="text-4xl">{{fecha}} </p>
     <div class="border-b-2 border-d6d6d6 w-full mb-5 ml-2.4%"></div>
     <div class="text-0D294C text-4xl  ml-2.4%">Materias</div>
+
+    <div class="width-3 mb-2" style="margin-top: 20px;">
+  <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" 
+    style="font-size: 1.5rem; background-color: #c2c2c2; color: #fff;::placeholder { color: white; }" />
+</div>
     <div class="flex flex-wrap">
     <!-- Mostrar las primeras dos filas de etiquetas -->
-    <div v-for="(materia, index) in materias.slice(0, showMoreTags ? Infinity : 12)" :key="index"
-     class="width-2 h-2 p-4">
-        <Tag
+<div v-for="(materia, index) in filteredMaterias.slice(0, showMoreTags ? Infinity : 12)" :key="index"
+  class="width-2 h-2 p-4">
+  <Tag
     rounded
-    class="w-full h-4rem text-lg font-semibold bg-0D294Ctext-white"  
+    class="w-full h-4rem text-lg font-semibold bg-0D294C text-white"
   >
-        {{ materia }}
-      </Tag>
-    </div>
+    {{ materia }}
+  </Tag>
+</div>
 
     <!-- Mostrar el botón "más/menos" si hay más etiquetas -->
     <div v-if="materias.length > 12" @click="showMoreTags = !showMoreTags" class="w-full p-2 cursor-pointer ">

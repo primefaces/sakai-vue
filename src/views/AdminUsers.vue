@@ -79,6 +79,8 @@ const getTipo = (rol) => {
   }
 }
 
+
+
 </script>
 
 
@@ -173,7 +175,8 @@ const getTipo = (rol) => {
   <div class="flex relative mt-3">
     <div class="flex-1"></div>
     <div class="justify-end">
-      <Button label="Agregar Usuario" icon="pi pi-plus-circle" severity="info" size="large" class="ml-5 bg-0D294C" />
+      <Button label="Agregar Usuario" icon="pi pi-plus-circle" severity="info" 
+      size="large" class="ml-5 bg-0D294C" />
     </div>
   </div>
   

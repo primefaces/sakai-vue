@@ -2,6 +2,7 @@
 import { ref , computed} from 'vue';
 const fecha = "Martes 14 de Noviembre de 2023"
 const showMoreTags = ref(false);
+const showMoreTags2 = ref(false);
 const materias = [
   "tc2005b","tc2005b","papa","tc2005b","tc2005b","tc2005b",
   "tc2005b","tc2005b","tc2005b","tc2005b","tc2005b","tc2005b",
@@ -20,6 +21,25 @@ const filteredMaterias = computed(() => {
 });
 
 
+const showDialog = ref(false);
+
+const openDialog = () => {
+  showDialog.value = true;
+};
+
+const closeDialog = () => {
+  showDialog.value = false;
+};
+
+const showDialog2 = ref(false);
+
+const openDialog2 = () => {
+  showDialog2.value = true;
+};
+
+const closeDialog2 = () => {
+  showDialog2.value = false;
+};
 
 </script>
 
@@ -44,7 +64,7 @@ const filteredMaterias = computed(() => {
 
     <div class="width-3 mb-2" style="margin-top: 20px;">
   <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" 
-    style="font-size: 1.5rem; background-color: #c2c2c2; color: #fff;::placeholder { color: white; }" />
+    style="font-size: 1.5rem; background-color: #c2c2c2; color: #000000;::placeholder { color: black; }" />
 </div>
     <div class="flex flex-wrap">
     <!-- Mostrar las primeras dos filas de etiquetas -->
@@ -66,7 +86,7 @@ const filteredMaterias = computed(() => {
                 <Button
                     :class="{'pi pi-plus-circle': !showMoreTags, 'pi pi-minus-circle': showMoreTags}" 
                      size="large" class="ml-5 bg-0D294C"
-                    label="   Etiquetas"
+                    label="Etiquetas"
                 />
             </div>
         </div>
@@ -100,13 +120,132 @@ const filteredMaterias = computed(() => {
   <div class="flex relative mt-3">
         <div class="flex-1"></div>
         <div class="justify-end">
-          <Button label="Modificar Materias" icon="pi pi-pencil" severity="info" size="large" class="ml-5 bg-0D294C" />
-        <Button label="Modificar Horario" icon="pi pi-pencil" severity="info" size="large" class="ml-5 bg-0D294C" />
+          <Button label="Modificar Materias" icon="pi pi-pencil" severity="info" size="large" class="ml-5 bg-0D294C" @click="openDialog2" />
+          <Button label="Modificar Horario" icon="pi pi-pencil" severity="info" size="large" class="ml-5 bg-0D294C" @click="openDialog" />
         </div>
     </div>
 
 
   </div>
+  <Dialog v-model="showDialog" header="Horario" :visible="showDialog" 
+  class="text-0D294C text-4xl  ml-2.4%">
+  <div class="flex flex-wrap">
+      <div v-for="(dia, index) in ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']" :key="index" class="p-row">
+        <!-- Horas -->
+        <div v-for="(hora, rowIndex) in horario" :key="rowIndex" class="width-3 text-3xl p-5">
+          <div
+            :class="{
+              'rounded bg-E2F4E4 text-black p-3 width-3': rowIndex % 2 !== 0,
+              'rounded bg-16591D text-white p-3 width-3': rowIndex % 2 === 0
+            }"
+          >
+            {{ hora[index] }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+  <div v-for="(dia, index) in ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']" :key="index" class="p-row flex items-center">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr);">
+
+    <div class="width-3 text-3xl p-2 font-bold m-4">{{ dia }}</div>
+
+    <div class="width-3 p-4 m-4 font-semibold bg-0D294C text-3xl rounded">
+      Hora de Inicio
+    </div>
+
+    <div style="display: flex; gap: 5px; align-items: center;" class="width-3 p-4 m-4 font-semibold bg-0D294C text-3xl rounded">
+      Hora de Fin
+    </div>
+
+    <div class="w-1 text-3xl m-4">
+      <i class="pi pi-plus" ></i>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+
+    <div class="flex justify-end mt-2">
+      <div class="flex-1"></div>
+        <div class="justify-end">
+      <Button label="Listo" icon="pi pi-check" @click="closeDialog"
+      severity="info" size="large" class="ml-5 bg-0D294C"/>
+    </div>
+    </div>
+  </Dialog>
+
+
+  <Dialog v-model="showDialog2" header="Materias" :visible="showDialog2" class="text-0D294C text-4xl ml-2.4%">
+    <div class="flex flex-col">
+      <!-- Etiquetas de materias -->
+      <div class="flex flex-wrap">
+        <div v-for="(materia, index) in filteredMaterias.slice(0, showMoreTags2 ? Infinity : 12)" :key="index" class="w-2 h-2 p-4">
+          <Tag
+            rounded
+            class="w-full h-4rem text-lg font-semibold bg-0D294C text-white"
+          >
+            {{ materia }}
+          </Tag>
+        </div>
+
+        <!-- Mostrar más/ocultar etiquetas -->
+        <div v-if="materias.length > 12" @click="showMoreTags2 = !showMoreTags2" class="w-full p-2 cursor-pointer">
+          <div class="flex relative mt-3">
+            <div class="flex-1"></div>
+            <div class="justify-end">
+              <Button
+                :class="{'pi pi-plus-circle': !showMoreTags2, 'pi pi-minus-circle': showMoreTags2}" 
+                size="large" class="ml-5 bg-0D294C"
+                label="Etiquetas"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de búsqueda de materias -->
+        <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" 
+          style="font-size: 1.5rem; background-color: #c2c2c2; color: #000000;::placeholder { color: black; }" />
+       <!-- Componentes en una fila -->
+       <div class="flex flex-wrap">
+        <!-- Componente a la izquierda -->
+        <div class="w-4">
+          <p class="text-4xl">Modelación Matematica</p>
+        </div>
+
+        <!-- Componente al centro -->
+        <div class="w-4">
+          <Tag
+            rounded
+            class="h-4rem text-lg font-semibold bg-0D294C text-white"
+          >
+            Ejemplo
+          </Tag>
+        </div>
+
+        <!-- Componente a la derecha -->
+        <div class="w-4">
+          <Button icon="pi pi-plus" class="p-button-rounded p-button-success ml-2" />
+          <Button icon="pi pi-times" class="p-button-rounded p-button-danger" />
+        </div>
+      </div>
+
+     
+    </div>
+      
+        </div>
+
+     
+     <!-- Botón "Listo" -->
+     <div class="flex justify-end mt-2">
+        <div class="flex-1"></div>
+        <div class="justify-end">
+          <Button label="Listo" icon="pi pi-check" @click="closeDialog2" severity="info" size="large" class="ml-5 bg-0D294C"/>
+        </div>
+      </div>
+  </Dialog>
 </template>
 
 <style scoped>
@@ -140,9 +279,11 @@ const filteredMaterias = computed(() => {
     width: 16.6667%;
 }
 
-width-3{
-  width: 25%;
+
+.widthDialog-3{
+    width: 25%;
 }
+
 
 @media (max-width: 768px) {
   .width-3 {
@@ -155,6 +296,12 @@ width-3{
     width: 25%; 
   }
 }
+@media (max-width: 768px) {
+  .widthDialog-3 {
+    width: 37.5%; 
+  }
+}
+
 
 @media (max-width: 768px) {
   .width-5 {

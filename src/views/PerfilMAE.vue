@@ -125,10 +125,13 @@ const closeDialog2 = () => {
         </div>
     </div>
 
-
   </div>
+
+
+  <!-- Dialogos -->
+
   <Dialog v-model="showDialog" header="Horario" :visible="showDialog" 
-  class="text-0D294C text-4xl  ml-2.4%">
+  class="text-0D294C text-4xl ml-2.4%" style="width: 75%">
   <div class="flex flex-wrap">
       <div v-for="(dia, index) in ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']" :key="index" class="p-row">
         <!-- Horas -->
@@ -151,13 +154,11 @@ const closeDialog2 = () => {
 
     <div class="width-3 text-3xl p-2 font-bold m-4">{{ dia }}</div>
 
-    <div class="width-3 p-4 m-4 font-semibold bg-0D294C text-3xl rounded">
-      Hora de Inicio
-    </div>
+    <input class="width-3 p-4 m-4 font-semibold bg-0D294C text-3xl rounded" placeholder="Hora de Inicio"/>
 
-    <div style="display: flex; gap: 5px; align-items: center;" class="width-3 p-4 m-4 font-semibold bg-0D294C text-3xl rounded">
-      Hora de Fin
-    </div>
+    <input style="display: flex; gap: 5px; align-items: center;" 
+      class="width-3 p-4 m-4 font-semibold bg-0D294C text-3xl rounded"
+     placeholder="Hora de Fin"/>
 
     <div class="w-1 text-3xl m-4">
       <i class="pi pi-plus" ></i>
@@ -165,9 +166,6 @@ const closeDialog2 = () => {
   </div>
   </div>
 </div>
-
-
-
     <div class="flex justify-end mt-2">
       <div class="flex-1"></div>
         <div class="justify-end">
@@ -178,74 +176,71 @@ const closeDialog2 = () => {
   </Dialog>
 
 
-  <Dialog v-model="showDialog2" header="Materias" :visible="showDialog2" class="text-0D294C text-4xl ml-2.4%">
-    <div class="flex flex-col">
-      <!-- Etiquetas de materias -->
-      <div class="flex flex-wrap">
-        <div v-for="(materia, index) in filteredMaterias.slice(0, showMoreTags2 ? Infinity : 12)" :key="index" class="w-2 h-2 p-4">
-          <Tag
-            rounded
-            class="w-full h-4rem text-lg font-semibold bg-0D294C text-white"
-          >
-            {{ materia }}
-          </Tag>
-        </div>
+  <Dialog v-model="showDialog2" header="Materias" :visible="showDialog2" class="text-0D294C text-4xl ml-1.4%" 
+  style="width: 75%">
+  <div class="flex flex-col">
+    <!-- Etiquetas de materias -->
+    <div class="flex flex-wrap">
+      <div v-for="(materia, index) in filteredMaterias.slice(0, showMoreTags2 ? Infinity : 8)" :key="index" class="w-3 h-3 p-4">
+        <Tag
+          rounded
+          class="w-full h-4rem text-lg font-semibold bg-0D294C text-white"
+        >
+          {{ materia }}
+        </Tag>
+      </div>
 
-        <!-- Mostrar más/ocultar etiquetas -->
-        <div v-if="materias.length > 12" @click="showMoreTags2 = !showMoreTags2" class="w-full p-2 cursor-pointer">
-          <div class="flex relative mt-3">
-            <div class="flex-1"></div>
-            <div class="justify-end">
-              <Button
-                :class="{'pi pi-plus-circle': !showMoreTags2, 'pi pi-minus-circle': showMoreTags2}" 
-                size="large" class="ml-5 bg-0D294C"
-                label="Etiquetas"
-              />
-            </div>
+      <!-- Mostrar más/ocultar etiquetas -->
+      <div v-if="materias.length > 8" @click="showMoreTags2 = !showMoreTags2" class="w-12 p-2 cursor-pointer">
+        <div class="flex relative mt-3">
+          <div class="flex-1"></div>
+          <div class="justify-end">
+            <Button
+              :class="{'pi pi-plus-circle': !showMoreTags2, 'pi pi-minus-circle': showMoreTags2}" 
+              size="large" class="ml-5 bg-0D294C"
+              label="Etiquetas"
+            />
           </div>
         </div>
-
-        <!-- Barra de búsqueda de materias -->
-        <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" 
-          style="font-size: 1.5rem; background-color: #c2c2c2; color: #000000;::placeholder { color: black; }" />
-       <!-- Componentes en una fila -->
-       <div class="flex flex-wrap">
-        <!-- Componente a la izquierda -->
-        <div class="w-4">
-          <p class="text-4xl">Modelación Matematica</p>
-        </div>
-
-        <!-- Componente al centro -->
-        <div class="w-4">
-          <Tag
-            rounded
-            class="h-4rem text-lg font-semibold bg-0D294C text-white"
-          >
-            Ejemplo
-          </Tag>
-        </div>
-
-        <!-- Componente a la derecha -->
-        <div class="w-4">
-          <Button icon="pi pi-plus" class="p-button-rounded p-button-success ml-2" />
-          <Button icon="pi pi-times" class="p-button-rounded p-button-danger" />
-        </div>
       </div>
 
-     
+      <!-- Barra de búsqueda de materias -->
+      <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-11 mb-6 mt-6" 
+        style="font-size: 1.5rem; background-color: #c2c2c2; color: #000000;::placeholder 
+        { color: black; }" />
+
+      <!-- Componente a la izquierda -->
+      <div class="width-media">
+        <p class="text-4xl">Modelación Matematica</p>
+      </div>
+
+      <!-- Componente al centro -->
+      <div class="width-30">
+        <Tag
+          rounded
+          class="h-4rem text-lg font-semibold bg-0D294C text-white"
+        >
+          Ejemplo
+        </Tag>
+      </div>
+
+      <!-- Componente a la derecha -->
+      <div class="width-20">
+        <Button icon="pi pi-plus" class="p-button-rounded p-button-success ml-2" />
+        <Button icon="pi pi-times" class="p-button-rounded p-button-danger" />
+      </div>
     </div>
-      
-        </div>
+  </div>
 
-     
-     <!-- Botón "Listo" -->
-     <div class="flex justify-end mt-2">
-        <div class="flex-1"></div>
-        <div class="justify-end">
-          <Button label="Listo" icon="pi pi-check" @click="closeDialog2" severity="info" size="large" class="ml-5 bg-0D294C"/>
-        </div>
-      </div>
-  </Dialog>
+  <!-- Botón "Listo" -->
+  <div class="flex justify-end mt-2">
+    <div class="flex-1"></div>
+    <div class="justify-end">
+      <Button label="Listo" icon="pi pi-check" @click="closeDialog2" severity="info" size="large" class="ml-5 bg-0D294C"/>
+    </div>
+  </div>
+</Dialog>
+
 </template>
 
 <style scoped>
@@ -327,5 +322,14 @@ const closeDialog2 = () => {
 .bg-16591D {
   background-color: #16591D;
   color: #fff;
+}
+.width-media{
+  width: 50%; 
+}
+.width-30{
+  width: 30%; 
+}
+.width-20{
+  width: 20%; 
 }
 </style>

@@ -16,8 +16,9 @@
     </div>
     <hr class="width-5 border-t-2 border-D6D6D6 mb-2 ml-2.4%" />
     <div class="border-b-2 border-d6d6d6 w-full mb-5 ml-2.4%"></div>
-    <p class="text-4xl">{{fecha}} </p>
+      <p class="text-4xl">{{fecha}} </p>
     <div class="border-b-2 border-d6d6d6 w-full mb-5 ml-2.4%"></div> 
+    
 </template>
 
 <style scoped>

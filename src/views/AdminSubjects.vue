@@ -86,6 +86,7 @@ const getAbreviacion = (abreviacion) => {
 }
 
 const verIntensiva = (userId) => {
+    console.log(userId)
   isDialogVisible.value = true;
 };
 
@@ -151,7 +152,7 @@ const verIntensiva = (userId) => {
     <div class="flex relative mt-3">
         <div class="flex-1"></div>
         <div class="justify-end">
-        <Button label="Agregar Usuario" icon="pi pi-plus-circle" severity="info" size="large" class="ml-5 bg-0D294C" />
+        <Button label="Agregar Materia" icon="pi pi-plus-circle" severity="info" size="large" class="ml-5 bg-0D294C" />
         </div>
     </div>
    

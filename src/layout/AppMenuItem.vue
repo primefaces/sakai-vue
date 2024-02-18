@@ -65,7 +65,7 @@ const itemClick = (event, item) => {
 };
 
 const checkActiveRoute = (item) => {
-    return route.path === item.to;
+    return route.path.includes(item.to);
 };
 </script>
 

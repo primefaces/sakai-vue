@@ -24,7 +24,7 @@ const router = createRouter({
                     component: () => import('@/views/Horarios.vue')
                 },
                 {
-                    path: '/mae',
+                    path: '/mae/:id',
                     name: 'perfil',
                     component: () => import('@/views/PerfilMAE.vue')
                 },

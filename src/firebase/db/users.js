@@ -6,7 +6,8 @@ import {
     query,
     where,
     getDoc,
-    getDocs
+    getDocs,
+    updateDoc
 } from 'firebase/firestore';
 
 function getEmailUsername(email) {
@@ -50,4 +51,26 @@ export async function getMaes() {
     } else {
         return null;
     }
+}
+
+export async function updateUserSubjects(userId, newSubjects) {
+    const userRef = doc(firestoreDB, "users", userId);
+    return await updateDoc(userRef, {
+        subjects: newSubjects
+    });
+}
+
+export async function updateUserSchedule(userId, newSchedule) {
+    const userRef = doc(firestoreDB, "users", userId);
+    // Iterate over object keys
+    for (const day in newSchedule) {
+        // Check if the value is an empty array
+        if (Array.isArray(newSchedule[day]) && newSchedule[day].length === 0) {
+        // Delete the key with an empty array value
+        delete newSchedule[day];
+        }
+    }
+    return await updateDoc(userRef, {
+        weekSchedule: newSchedule
+    });
 }

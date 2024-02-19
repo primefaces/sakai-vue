@@ -1,22 +1,41 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { getUser, updateUserSubjects, updateUserSchedule } from '../firebase/db/users';
+import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser } from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
+import { addAsesoria } from '../firebase/db/asesorias';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 
 const toast = useToast();
 const route = useRoute();
 
+
+const maeInfo = ref(null);
 const userInfo = ref(null);
+
+const selectedSubjects = ref([]);
+const subjects = ref([]);
+
+const newSchedule = ref({});
+
+onMounted(async () => {
+  userInfo.value = await getCurrentUser();
+
+  maeInfo.value = await getUser(route.params.id);
+  selectedSubjects.value = maeInfo.value.subjects
+  subjects.value = await getSubjects();
+
+  // JSON Parse es para que pase por valor en lugar de referencia
+  newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
+})
 
 const showMoreTags = ref(false);
 
 const filteredSubjects = computed(() => {
-  console.log(userInfo.value.subjects)
-  if (userInfo.value) {
-    return userInfo.value.subjects.filter(
+  console.log(maeInfo.value.subjects)
+  if (maeInfo.value) {
+    return maeInfo.value.subjects.filter(
       subject => 
       subject.name.toLowerCase().includes(searchQuery.value.toLowerCase())
       || subject.id.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -26,19 +45,28 @@ const filteredSubjects = computed(() => {
   return []
 });
 
+const getSubjectColor = (area) => {
+    switch (area) {
+        case 'ING':
+            return 'bg-cyan-600';
+        case 'NEG':
+            return 'bg-blue-600';
+        case 'SLD':
+            return 'bg-teal-600';
+        case 'CIS':
+            return 'bg-red-600';
+        case 'AMC':
+            return 'bg-green-600';
+        case 'ART':
+            return 'bg-purple-600';
+        default:
+            return 'bg-yellow-600';
+    }
+}
+
 const searchQuery = ref('');
-const horario = [
-  ["11:00", "11:00", "11:00", "11:00", "11:00"],
-  ["12:00", "12:00", "12:00", "12:00", "12:00"],
-];
-
-const showExtraTime = ref(false)
-
-const showDialogHorarios = ref(false);
 
 const showDialogMaterias = ref(false);
-const subjects = ref([]);
-const selectedSubjects = ref([]);
 const subjectTableFilter = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
@@ -46,18 +74,15 @@ const subjectTableFilter = ref({
 const saveSubjectChanges = async () => {
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tus materias', life: 3000 });
   try {
-   await updateUserSubjects(userInfo.value.uid, selectedSubjects.value); 
-   userInfo.value = await getUser(route.params.id);
+   await updateUserSubjects(maeInfo.value.uid, selectedSubjects.value); 
+   maeInfo.value = await getUser(route.params.id);
    toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tus materias se guardaron con éxito', life: 3000 });
   } catch (error) {
     console.log(error)
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios' });
   }
-  showDialogMaterias.value = false;  
-  
+  showDialogMaterias.value = false;    
 }
-
-const newSchedule = ref({});
 
 const daysArray = [
   { en: 'monday', es: 'Lunes' },
@@ -97,6 +122,8 @@ const showExtraSlots = ref({
   'friday': false
 })
 
+const showDialogHorarios = ref(false);
+
 const addTimeSlot = (day, start, end) => {
   if (!newSchedule.value[day]) {
     newSchedule.value[day] = [{ start, end }]
@@ -108,8 +135,8 @@ const addTimeSlot = (day, start, end) => {
 const saveScheduleChanges = async () => {
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tu horario', life: 3000 });
   try {
-   await updateUserSchedule(userInfo.value.uid, newSchedule.value); 
-   userInfo.value = await getUser(route.params.id);
+   await updateUserSchedule(maeInfo.value.uid, newSchedule.value); 
+   maeInfo.value = await getUser(route.params.id);
    toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tus materias se guardaron con éxito', life: 3000 });
   } catch (error) {
     console.log(error)
@@ -119,14 +146,28 @@ const saveScheduleChanges = async () => {
   
 }
 
-onMounted(async () => {
-  userInfo.value = await getUser(route.params.id);
-  selectedSubjects.value = userInfo.value.subjects
-  subjects.value = await getSubjects();
+const showDialogAsesoria = ref(false);
 
-  // JSON Parse es para que pase por valor en lugar de referencia
-  newSchedule.value = JSON.parse(JSON.stringify(userInfo.value.weekSchedule));
-})
+const ratingAsesoria = ref(null);
+const comentarioAsesoria = ref('');
+const materiaAsesoria = ref(null);
+
+const saveAsesoria = async () => {
+  toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se está registrando la asesoría', life: 3000 });
+  try {
+    await addAsesoria(maeInfo.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value); 
+    maeInfo.value = await getUser(route.params.id);
+    toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'La asesoría se registró con éxito', life: 3000 });
+    ratingAsesoria.value = null;
+    comentarioAsesoria.value = '';
+    materiaAsesoria.value = null;
+  } catch (error) {
+    console.log(error)
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
+  }
+  showDialogAsesoria.value = false;  
+  
+}
 
 </script>
 
@@ -140,22 +181,24 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div v-if="userInfo" class="card mb-0">
+  <div v-if="maeInfo && userInfo" class="card mb-0">
     <div class="flex">
       <div class="flex flex-1">
         <img src="https://i.pinimg.com/originals/b1/44/f5/b144f535fb1878b7bdc57aedc14dfc24.jpg" alt="Foto de perfil" class="border-circle h-11rem w-11rem mr-5">
         <div>
-          <p class="text-3xl font-bold"> {{ userInfo.name }} </p>
-          <p class="text-lg font-medium"> <i class="pi pi-envelope font-medium"></i> {{ userInfo.email }} </p>
-          <p class="text-lg font-medium"> <i class="pi pi-book font-medium"></i> {{ userInfo.career }} </p>
-          <p class="text-lg font-medium"> <i class="pi pi-building font-medium"></i> Campus {{ userInfo.campus }} </p>
+          <p class="text-3xl font-bold"> {{ maeInfo.name }} </p>
+          <p class="text-lg font-medium"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>
+          <p class="text-lg font-medium"> <i class="pi pi-book font-medium"></i> {{ maeInfo.career }} </p>
+          <p class="text-lg font-medium"> <i class="pi pi-building font-medium"></i> Campus {{ maeInfo.campus }} </p>
         </div>
       </div>
       <div class="justify-end space-x">
-        <Button label="Materias" icon="pi pi-pencil" size="large"
+        <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-pencil" size="large" severity="secondary"
           @click="showDialogMaterias = true" />
-        <Button label="Horario" icon="pi pi-pencil" size="large"
+        <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-pencil" size="large" severity="secondary"
           @click="showDialogHorarios = true" />
+        <Button v-else label="Registrar asesoría" icon="pi pi-star" size="large"
+          @click="showDialogAsesoria = true" />
       </div>
     </div>
     <h2 class="font-bold"> Materias </h2>
@@ -164,10 +207,10 @@ onMounted(async () => {
     </div>
     <div class="flex flex-wrap">
       <!-- Mostrar las primeras dos filas de etiquetas -->
-        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.name" :key="index" rounded class="text-lg font-semibold text-white mx-2 my-1 p-3">
+        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.name" :key="index" rounded class="text-lg font-semibold text-white mx-2 my-1 p-3" :class="getSubjectColor(subject.area)">
           {{ subject.id }}
         </Tag>
-        <Button v-if="userInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
+        <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
           severity="secondary" rounded class="text-lg font-semibold text-white mx-2 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
     </div>
 
@@ -177,10 +220,10 @@ onMounted(async () => {
     <div>
       <div class="grid">
         <div v-for="day in daysArray" class="col">
-          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }} <Button v-if="userInfo.weekSchedule[day['en']] && userInfo.weekSchedule[day['en']].length > 1" @click="showExtraSlots[day['en']] = !showExtraSlots[day['en']]" :icon="showExtraSlots['wednesday'] ? 'pi pi-chevron-up' : 'pi pi-chevron-down'" class="text-sm h-1rem w-1rem ml-2"  severity="secondary" text rounded/></div>
-            <div v-if="userInfo.weekSchedule[day['en']]" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2"> {{ `${userInfo.weekSchedule[day['en']][0]['start']} - ${userInfo.weekSchedule[day['en']][0]['end']}` }} </div>
+          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }} <Button v-if="maeInfo.weekSchedule[day['en']] && maeInfo.weekSchedule[day['en']].length > 1" @click="showExtraSlots[day['en']] = !showExtraSlots[day['en']]" :icon="showExtraSlots['wednesday'] ? 'pi pi-chevron-up' : 'pi pi-chevron-down'" class="text-sm h-1rem w-1rem ml-2"  severity="secondary" text rounded/></div>
+            <div v-if="maeInfo.weekSchedule[day['en']]" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2"> {{ `${maeInfo.weekSchedule[day['en']][0]['start']} - ${maeInfo.weekSchedule[day['en']][0]['end']}` }} </div>
             <div v-else class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
-            <div v-if="showExtraSlots[day['en']]" v-for="(slot, index) in userInfo.weekSchedule[day['en']].slice(1)" :key="`${day['en']}-${index}`" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
+            <div v-if="showExtraSlots[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']].slice(1)" :key="`${day['en']}-${index}`" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
         </div>
     </div>
     </div>
@@ -223,6 +266,22 @@ onMounted(async () => {
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogMaterias = false"></Button>
       <Button type="button" label="Guardar cambios " @click="saveSubjectChanges"></Button>
+    </div>
+  </Dialog>
+
+  <Dialog v-model:visible="showDialogAsesoria" modal header="Registrar asesoría" class="w-4">
+    
+    <p class="font-bold">Materia</p>
+    <Dropdown v-model="materiaAsesoria" :options="subjects" filter optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false" class="w-12 mb-2" />
+
+    <p class="font-bold">Comentario</p>
+    <Textarea v-model="comentarioAsesoria" placeholder="Agrega un comentario" variant="filled" rows="5" cols="30" class="w-12" />
+
+    <p class="font-bold mt-3">Califica tu asesoría</p>
+    <Rating v-model="ratingAsesoria" :cancel="false"/>
+    <div class="flex justify-content-end gap-2">
+      <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
+      <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null && comentarioAsesoria !== '' && ratingAsesoria !== null)" @click="saveAsesoria"></Button>
     </div>
   </Dialog>
 </template>

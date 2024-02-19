@@ -1,8 +1,11 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { getMaes } from '@/firebase/db/users';
+
+const router = useRouter();
 
 const customers = ref();
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
@@ -111,6 +114,7 @@ const getSeverity = (status) => {
 }
 
 function translateDayToSpanish(day) {
+    console.log(day)
   const daysMapping = {
     'monday': 'Lunes',
     'tuesday': 'Martes',
@@ -186,6 +190,10 @@ const getSubjectColor = (area) => {
     }
 }
 
+const onRowSelect = (event) => {
+    router.push(`/mae/${event.data.uid}`);
+}
+
 </script>
 
 
@@ -196,7 +204,8 @@ const getSubjectColor = (area) => {
     <!-- TODO: Adjust row sizing -->
     <!-- TODO: implement responsive resizing -->
         <DataTable v-model:filters="filters" :value="customers" paginator :rows="10" dataKey="id" filterDisplay="row"
-            :loading="loading" :globalFilterFields="['name', 'horario', 'materias', 'modalidad']" class="border-round-xl">
+            :loading="loading" :globalFilterFields="['name', 'horario', 'materias', 'modalidad']" class="border-round-xl"
+            @rowSelect="onRowSelect" selectionMode="single">
             <!-- <template #header>
                 <div class="flex justify-content-end">
                     <span class="p-input-icon-left">
@@ -233,7 +242,7 @@ const getSubjectColor = (area) => {
                 <template #body="{ data }">
                     <!-- TODO: ask for hour display implementation -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
-                        <Tag class="text-md mx-auto" :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top="value.toString()" rounded v-for="(value, key) in data.weekSchedule" style="min-width: 3rem"/>
+                        <Tag v-for="(value, key) in data.weekSchedule" class="text-md mx-auto" :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top=" value[0].start ? `${value[0].start} - ${value[0].end}` : value.toString()" rounded style="min-width: 3rem"/>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">

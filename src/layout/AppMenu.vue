@@ -10,7 +10,7 @@ const model = ref([
         items: [
             { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
             { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
-            { label: 'MAE', icon: 'pi pi-fw pi-user', to: '/mae' },
+            // { label: 'MAE', icon: 'pi pi-fw pi-user', to: '/mae' },
             // { label: 'Dashboard (Template)', icon: 'pi pi-fw pi-home', to: '/dashboard' }
         ]
     },
@@ -41,7 +41,7 @@ onMounted(async () => {
         model.value.push({
             label: 'MAE',
             items: [
-                { label: 'Perfil', icon: 'pi pi-fw pi-user-edit', to: '/profile' },
+                // { label: 'Perfil', icon: 'pi pi-fw pi-user-edit', to: '/profile' },
                 { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
             ]
         })

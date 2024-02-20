@@ -184,7 +184,7 @@ const saveAsesoria = async () => {
   <div v-if="maeInfo && userInfo" class="card mb-0">
     <div class="flex">
       <div class="flex flex-1">
-        <img src="https://i.pinimg.com/originals/b1/44/f5/b144f535fb1878b7bdc57aedc14dfc24.jpg" alt="Foto de perfil" class="border-circle h-11rem w-11rem mr-5">
+        <img src="https://randomuser.me/api/portraits/lego/5.jpg" alt="Foto de perfil" class="border-circle h-11rem w-11rem mr-5">
         <div>
           <p class="text-3xl font-bold"> {{ maeInfo.name }} </p>
           <p class="text-lg font-medium"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>

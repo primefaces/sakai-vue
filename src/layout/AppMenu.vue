@@ -23,7 +23,7 @@ const model = ref([
 ]);
 
 onMounted(async () => {
-    const { role } = await getCurrentUser();
+    const { role, uid } = await getCurrentUser();
 
     // if (['user', 'mae', 'Academic', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
     //     console.log('A: 1')
@@ -41,7 +41,7 @@ onMounted(async () => {
         model.value.push({
             label: 'MAE',
             items: [
-                // { label: 'Perfil', icon: 'pi pi-fw pi-user-edit', to: '/profile' },
+                { label: 'Perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
                 { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
             ]
         })

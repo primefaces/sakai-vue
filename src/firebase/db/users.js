@@ -53,6 +53,31 @@ export async function getMaes() {
     }
 }
 
+export async function getUsersWithActiveSession() {
+    try {
+        // Get a reference to the users collection
+        const usersRef = collection(firestoreDB, "users");
+
+        // Use where clause to filter users with 'activeSession' object
+        const q = query(usersRef, where('activeSession', '!=', null));
+        const querySnapshot = await getDocs(q);
+
+        // Process the query results
+        if (querySnapshot) {
+            const users = querySnapshot.docs.map(doc => doc.data());
+
+            // Calculate the time 5 hours ago in seconds (18000 is 5hrs in seconds)
+            const fiveHoursAgoTimestampSeconds = Math.floor(Date.now() / 1000) - 18000;
+
+            return users.filter((user) => user.activeSession.startTime.seconds > fiveHoursAgoTimestampSeconds);
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error('Error retrieving users:', error);
+    }
+};
+
 export async function updateUserSubjects(userId, newSubjects) {
     const userRef = doc(firestoreDB, "users", userId);
     return await updateDoc(userRef, {

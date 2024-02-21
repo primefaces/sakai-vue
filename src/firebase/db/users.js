@@ -78,6 +78,12 @@ export async function getUsersWithActiveSession() {
     }
 };
 
+export async function updateUserInfo(userId, userInfo) {
+    userInfo['name'] = userInfo['firstname'].trim() + ' ' + userInfo['lastname'].trim()
+    const userRef = doc(firestoreDB, "users", userId);
+    return await updateDoc(userRef, userInfo);
+}
+
 export async function updateUserSubjects(userId, newSubjects) {
     const userRef = doc(firestoreDB, "users", userId);
     return await updateDoc(userRef, {

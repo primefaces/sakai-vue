@@ -41,7 +41,7 @@ onMounted(async () => {
         model.value.push({
             label: 'MAE',
             items: [
-                { label: 'Perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
+                { label: 'Mi perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
                 { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
             ]
         })

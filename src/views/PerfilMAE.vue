@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser } from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
@@ -23,10 +23,16 @@ onMounted(async () => {
   userInfo.value = await getCurrentUser();
 
   maeInfo.value = await getUser(route.params.id);
-  selectedSubjects.value = maeInfo.value.subjects
+  selectedSubjects.value = maeInfo.value.subjects;
   subjects.value = await getSubjects();
 
   // JSON Parse es para que pase por valor en lugar de referencia
+  newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
+})
+
+watch(route, async (newroute, oldroute) => {
+  maeInfo.value = await getUser(route.params.id);
+  selectedSubjects.value = maeInfo.value.subjects;
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
 })
 
@@ -181,7 +187,7 @@ const saveAsesoria = async () => {
     </div>
   </div>
 
-  <div v-if="maeInfo && userInfo" class="card mb-0">
+  <div v-if="maeInfo && userInfo" class="card mb-0 w-full">
     <div class="flex">
       <div class="flex flex-1">
         <img src="https://randomuser.me/api/portraits/lego/5.jpg" alt="Foto de perfil" class="border-circle h-11rem w-11rem mr-5">
@@ -219,7 +225,7 @@ const saveAsesoria = async () => {
 
     <div>
       <div class="grid">
-        <div v-for="day in daysArray" class="col">
+        <div v-for="day in daysArray" class="md:col col-12">
           <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }} <Button v-if="maeInfo.weekSchedule[day['en']] && maeInfo.weekSchedule[day['en']].length > 1" @click="showExtraSlots[day['en']] = !showExtraSlots[day['en']]" :icon="showExtraSlots['wednesday'] ? 'pi pi-chevron-up' : 'pi pi-chevron-down'" class="text-sm h-1rem w-1rem ml-2"  severity="secondary" text rounded/></div>
             <div v-if="maeInfo.weekSchedule[day['en']]" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2"> {{ `${maeInfo.weekSchedule[day['en']][0]['start']} - ${maeInfo.weekSchedule[day['en']][0]['end']}` }} </div>
             <div v-else class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>

@@ -14,7 +14,7 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.CONTAINS },
     weekSchedule: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
-    materias: { value: null, matchMode: ARRAY_CONTAINS.value },
+    subjects: { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
     modalidad: { value: null, matchMode: FilterMatchMode.EQUALS }
 });
@@ -34,36 +34,40 @@ onMounted(() => {
         loading.value = false;
     })
 
+    
     // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
     FilterService.register(ARRAY_CONTAINS.value, (value, filter) => {
-        // Filter -> value entered by user
-        // Value -> array of objects, where each object represents a subject given by a mae
-       
-        if (filter === undefined || filter === null || filter.trim() === '') {
+    // Filter -> valor ingresado por el usuario
+    // Value -> array de objetos, donde cada objeto representa una materia dada por un mae
+    console.log(value);
+    console.log(filter);
+    
+    if (filter === undefined || filter === null || filter.trim() === '') {
+        return true;
+    }
+
+    if (value === undefined || value === null) {
+        return false;
+    }
+   
+    // Normalizar el filtro para comparación sin distinción entre mayúsculas y minúsculas
+    const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    for (let i = 0; i < value.length; i++) {
+        const id = value[i].id.toString().toLowerCase();
+        const name = value[i].name.toString().toLowerCase(); 
+        
+        // Verificar si el filtro coincide con el ID o el nombre
+        if (id.includes(filterNormalized) || name.includes(filterNormalized)) {
+            window.console.log("TRUE:", id, "o", name, "contiene", filterNormalized);
             return true;
         }
+    }
 
-        if (value === undefined || value === null) {
-            return false;
-        }
-        console.log(value)
-        console.log(filter)
-        // Remove accents and special characters from filter 
-        const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return false; // Ninguna coincidencia encontrada
+});
 
-        for (let i = 0; i < value.length; i++) {
-            for (const property in value[i]) {
-                // Remove accents and special characters from property of value
-                const propertyNormalized = value[i][property].toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-                if (propertyNormalized.indexOf(filterNormalized) !== -1) {
-                    // window.console.log("TRUE:", propertyNormalized, "contains", filterNormalized);
-                    return true;
-                }
-            }
-        }
 
-        return false;
-    });
 
     // Función para normalizar días
 function normalizeDay(day) {
@@ -92,11 +96,9 @@ FilterService.register(ARRAY_CONTAINS_ANY.value, (value, filter) => {
         const filterDay = normalizedFilter[i];
         for (let j = 0; j < Object.keys(value).length; j++) {
             const dayArrays = Object.keys(value); // Obtener los nombres de los arrays (días)
-            console.log(filterDay[i],dayArrays)
             for (let k = 0; k < dayArrays.length; k++) {
                 const dayArray = dayArrays[k];
                 const dayNorm = normalizeDay(dayArray);
-                console.log(dayNorm)
                 if (dayNorm === filterDay) {
                     return true; // Al menos un día coincide, mostrar este valor
                 }
@@ -212,7 +214,7 @@ const onRowSelect = (event) => {
     <!-- TODO: Adjust row sizing -->
     <!-- TODO: implement responsive resizing -->
         <DataTable v-model:filters="filters" :value="customers" paginator :rows="10" dataKey="id" filterDisplay="row"
-            :loading="loading" :globalFilterFields="['name', 'horario', 'materias', 'modalidad']" class="border-round-xl"
+            :loading="loading" :globalFilterFields="['name', 'horario', 'subjects', 'modalidad']" class="border-round-xl"
             @rowSelect="onRowSelect" selectionMode="single">
             <!-- <template #header>
                 <div class="flex justify-content-end">
@@ -224,30 +226,30 @@ const onRowSelect = (event) => {
             </template> -->
             <template #empty>No se encontraron Maes. </template>
             <template #loading>Cargando información. Por favor espera.</template>
-            <Column header="Nombre" field="name" :showFilterMenu="false" style="min-width: 20rem">
+            <Column header="Nombre" field="name" :showFilterMenu="false" style="min-width: 13rem">
                 <template #body="{ data }">
                     <p class="text-lg font-semibold">{{ data.name }}</p>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter w-full"
-                        placeholder="Busca por nombre" />
+                        placeholder="Nombre" />
                 </template>
             </Column>
-            <Column header="Materias" filterField="materias" :showFilterMenu="false" style="min-width: 14rem">
+            <Column header="Materias" filterField="subjects" :showFilterMenu="false" style="min-width: 12rem">
                 <template #body="{ data }">
-                    <!-- TODO: ask for handling when data.materias.length > x -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
                         <Tag class="text-md" :class="getSubjectColor(item.area)"
-                         :value="item.id" v-tooltip.top="item.name" rounded v-for="item in data.subjects"/>
+                            :value="item.id" v-tooltip.top="item.name" rounded v-for="item in data.subjects"/>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" 
-                    class="p-column-filter" placeholder="Busca por materia" />
+                    <InputText v-model="filterModel.value" @input="filterCallback()" 
+                        class="p-column-filter" placeholder="Materia " />
                 </template>
             </Column>
 
-            <Column header="Horario" filterField="weekSchedule" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
+
+            <Column header="Horario" filterField="weekSchedule" :showFilterMenu="false" :filterMenuStyle="{ width: '2rem' }"
                 style="min-width: 6rem">
                 <template #body="{ data }">
                     <!-- TODO: ask for hour display implementation -->

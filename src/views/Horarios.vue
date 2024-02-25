@@ -1,6 +1,6 @@
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { getMaes } from '@/firebase/db/users';
@@ -29,7 +29,7 @@ const loading = ref(true);
 onMounted(() => {
 
     getMaes().then((data) => {
-        console.log(data[0]['weekSchedule'])
+        //console.log(data[0])
         customers.value = data;
         loading.value = false;
     })
@@ -38,7 +38,7 @@ onMounted(() => {
     FilterService.register(ARRAY_CONTAINS.value, (value, filter) => {
         // Filter -> value entered by user
         // Value -> array of objects, where each object represents a subject given by a mae
-
+       
         if (filter === undefined || filter === null || filter.trim() === '') {
             return true;
         }
@@ -46,7 +46,8 @@ onMounted(() => {
         if (value === undefined || value === null) {
             return false;
         }
-
+        console.log(value)
+        console.log(filter)
         // Remove accents and special characters from filter 
         const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -64,40 +65,47 @@ onMounted(() => {
         return false;
     });
 
-    // Custom filter for mae schedules. Returns true if any of the filter values in found within value.
-    FilterService.register(ARRAY_CONTAINS_ANY.value, (value, filter) => {
-        // Filter -> value entered by user
-        // Value -> array of strings, where each string represents a day selected by the user from the dropwdown menu
+    // Función para normalizar días
+function normalizeDay(day) {
+    return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
 
-        if (filter === undefined || filter === null || filter.length === 0) {
-            return true;
-        }
+// Función de filtrado
+FilterService.register(ARRAY_CONTAINS_ANY.value, (value, filter) => {
+    
+    if (!filter || filter.length === 0) {
+        return true; // Si no hay filtro, mostrar todos
+    }
+    if (!value || value.length === 0) {
+        return false; // No hay valores para comparar
+    }
 
-        if (value === undefined || value === null) {
-            return false;
-        }
-
-        value = translateDayToEnglish(value);
-
-        console.log("value:", value);
-        console.log("filter:", filter);
-
-        for (let i = 0; i < filter.length; i++) {
-            window.console.log("filter:", filter[i]);
-            for (let j = 0; j < value.length; j++) {
-                const dayNorm = value[j][0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-                const filterNorm = filter[i].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-                if (dayNorm === filterNorm) {
-                    window.console.log("TRUE:", dayNorm, "is", filterNorm);
-                    return true;
+    // Normalizar y traducir los días del filtro
+    const normalizedFilter = filter.map(day => translateDayToEnglish(day));
+    
+    // Checar las llaves
+    // const numDias = Object.keys(value).length;
+    // console.log("Número de días:", numDias);
+    // Comprobar si algún día del filtro coincide con los días en los valores
+    
+    for (let i = 0; i < normalizedFilter.length; i++) {
+        const filterDay = normalizedFilter[i];
+        for (let j = 0; j < Object.keys(value).length; j++) {
+            const dayArrays = Object.keys(value); // Obtener los nombres de los arrays (días)
+            console.log(filterDay[i],dayArrays)
+            for (let k = 0; k < dayArrays.length; k++) {
+                const dayArray = dayArrays[k];
+                const dayNorm = normalizeDay(dayArray);
+                console.log(dayNorm)
+                if (dayNorm === filterDay) {
+                    return true; // Al menos un día coincide, mostrar este valor
                 }
             }
-
         }
+    }
 
-        return false;
-    });
+    return false; // Ningún día coincide
+});
 });
 
 const getSeverity = (status) => {
@@ -114,7 +122,7 @@ const getSeverity = (status) => {
 }
 
 function translateDayToSpanish(day) {
-    console.log(day)
+    //console.log(day)
   const daysMapping = {
     'monday': 'Lunes',
     'tuesday': 'Martes',
@@ -229,20 +237,26 @@ const onRowSelect = (event) => {
                 <template #body="{ data }">
                     <!-- TODO: ask for handling when data.materias.length > x -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
-                        <Tag class="text-md" :class="getSubjectColor(item.area)" :value="item.id" v-tooltip.top="item.name" rounded v-for="item in data.subjects"/>
+                        <Tag class="text-md" :class="getSubjectColor(item.area)"
+                         :value="item.id" v-tooltip.top="item.name" rounded v-for="item in data.subjects"/>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                        placeholder="Busca por materia" />
+                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" 
+                    class="p-column-filter" placeholder="Busca por materia" />
                 </template>
             </Column>
+
             <Column header="Horario" filterField="weekSchedule" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
                 style="min-width: 6rem">
                 <template #body="{ data }">
                     <!-- TODO: ask for hour display implementation -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
-                        <Tag v-for="(value, key) in data.weekSchedule" class="text-md mx-auto" :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top=" value[0].start ? `${value[0].start} - ${value[0].end}` : value.toString()" rounded style="min-width: 3rem"/>
+                        <Tag v-for="(value, key) in data.weekSchedule" class="text-md mx-auto"
+                         :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top="
+                          value[0].start ? `${value[0].start} - ${value[0].end}` : value.toString()"
+                           rounded style="min-width: 3rem"/>
+                       
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">

@@ -52,21 +52,56 @@ const saveProfileChanges = async () => {
     }
     showDialogPerfil.value = false;
 }
+
+const announcements = ref([
+    {titulo: 'Hello World!'},
+    {titulo: 'Hello World!'},
+    {titulo: 'Hello World!'},
+    {titulo: 'Hello World!'},
+    {titulo: 'Hello World!'},
+    {titulo: 'Hello World!'},
+])
 </script>
 
 <template>
-    <h1 class="text-black text-6xl font-bold">Bienvenid@</h1>
-    <div v-if="userInfo">
-        <h2 class="text-black text-4xl font-semibold">{{ userInfo.name }}</h2>
-        <div class="md:flex md:justify-content-between">
-            <p class="text-lg font-medium vertical-align-middle md:mb-0 md:pt-3">
-                <i class="pi pi-envelope font-medium" />
-                {{ userInfo.email }}
-                <i class="pi pi-book font-medium ml-5" />
-                {{ userInfo.career }} @ {{ userInfo.campus }}
-            </p>
-            <Button @click="showDialogPerfil = !showDialogPerfil" icon="pi pi-pencil" label="Editar perfil" class="mb-0 w-full md:w-fit text-center" />
+    <div class="flex">
+        <div>
+            <h1 class="text-black text-6xl font-bold">Bienvenid@</h1>
+            <div v-if="userInfo">
+                <h2 class="text-black text-4xl font-semibold">{{ userInfo.name }}</h2>
+                <div class="">
+                    <p class="text-lg font-medium">
+                        <i class="pi pi-envelope font-medium" />
+                        {{ userInfo.email }}
+                    </p>
+                    <p>
+                        <i class="pi pi-book font-medium" />
+                        {{ userInfo.career }} @ {{ userInfo.campus }}
+                        <Button @click="showDialogPerfil = !showDialogPerfil" link icon="pi pi-pencil" label="Editar" class="mb-0 ml-2 p-1" />
+                    </p>
+                </div>
+            </div>
         </div>
+        <div class="w-9">
+            <Carousel :value="announcements" :numVisible="3" :numScroll="1" class="w-full">
+                <template #item="slotProps">
+                    <div class="border-1 surface-border border-round m-2 p-3 bg-white">
+                        <div class="mb-3 font-medium">Asesoría grupal</div>
+                        <div class="flex justify-content-between align-items-center">
+                            <Skeleton size="5rem" class="mr-2"></Skeleton>
+                            <div>
+                                <p>Aulas 4 - 304</p>
+                                <p>27/02/2004</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-content-center mt-3">
+                            <Button label="Registrarse" icon="pi pi-user-plus" raised />
+                        </div>
+                    </div>
+                </template>
+            </Carousel>
+        </div>
+
     </div>
     <Dialog v-if="newUserInfo" v-model:visible="showDialogPerfil" modal header="Editar perfil" class="w-3">
         <label for="email">Correo</label>

@@ -36,78 +36,83 @@ onMounted(() => {
 
     
     // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
+    // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
     FilterService.register(ARRAY_CONTAINS.value, (value, filter) => {
-    // Filter -> valor ingresado por el usuario
-    // Value -> array de objetos, donde cada objeto representa una materia dada por un mae
-    console.log(value);
-    console.log(filter);
-    
-    if (filter === undefined || filter === null || filter.trim() === '') {
-        return true;
-    }
-
-    if (value === undefined || value === null) {
-        return false;
-    }
-   
-    // Normalizar el filtro para comparación sin distinción entre mayúsculas y minúsculas
-    const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-    for (let i = 0; i < value.length; i++) {
-        const id = value[i].id.toString().toLowerCase();
-        const name = value[i].name.toString().toLowerCase(); 
+        // Filter -> valor ingresado por el usuario
+        // Value -> array de objetos, donde cada objeto representa una materia dada por un mae
+        console.log(value);
+        console.log(filter);
         
-        // Verificar si el filtro coincide con el ID o el nombre
-        if (id.includes(filterNormalized) || name.includes(filterNormalized)) {
-            window.console.log("TRUE:", id, "o", name, "contiene", filterNormalized);
+        if (filter === undefined || filter === null || filter.trim() === '') {
             return true;
         }
-    }
 
-    return false; // Ninguna coincidencia encontrada
-});
+        if (value === undefined || value === null) {
+            return false;
+        }
+    
+        // Normalizar el filtro para comparación sin distinción entre mayúsculas y minúsculas y considerando los acentos
+        const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        for (let i = 0; i < value.length; i++) {
+            const id = value[i].id.toString();
+            const name = value[i].name.toString(); 
+            
+            // Normalizar el ID y el nombre para comparación sin distinción entre mayúsculas y minúsculas y considerando los acentos
+            const idNormalized = id.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const nameNormalized = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            // Verificar si el filtro coincide con el ID o el nombre
+            if (idNormalized.toLowerCase().includes(filterNormalized.toLowerCase()) || nameNormalized.toLowerCase().includes(filterNormalized.toLowerCase())) {
+                window.console.log("TRUE:", id, "o", name, "contiene", filterNormalized);
+                return true;
+            }
+        }
+
+        return false; // Ninguna coincidencia encontrada
+    });
 
 
 
     // Función para normalizar días
-function normalizeDay(day) {
-    return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-}
-
-// Función de filtrado
-FilterService.register(ARRAY_CONTAINS_ANY.value, (value, filter) => {
-    
-    if (!filter || filter.length === 0) {
-        return true; // Si no hay filtro, mostrar todos
-    }
-    if (!value || value.length === 0) {
-        return false; // No hay valores para comparar
+    function normalizeDay(day) {
+        return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
-    // Normalizar y traducir los días del filtro
-    const normalizedFilter = filter.map(day => translateDayToEnglish(day));
-    
-    // Checar las llaves
-    // const numDias = Object.keys(value).length;
-    // console.log("Número de días:", numDias);
-    // Comprobar si algún día del filtro coincide con los días en los valores
-    
-    for (let i = 0; i < normalizedFilter.length; i++) {
-        const filterDay = normalizedFilter[i];
-        for (let j = 0; j < Object.keys(value).length; j++) {
-            const dayArrays = Object.keys(value); // Obtener los nombres de los arrays (días)
-            for (let k = 0; k < dayArrays.length; k++) {
-                const dayArray = dayArrays[k];
-                const dayNorm = normalizeDay(dayArray);
-                if (dayNorm === filterDay) {
-                    return true; // Al menos un día coincide, mostrar este valor
+    // Función de filtrado
+    FilterService.register(ARRAY_CONTAINS_ANY.value, (value, filter) => {
+        
+        if (!filter || filter.length === 0) {
+            return true; // Si no hay filtro, mostrar todos
+        }
+        if (!value || value.length === 0) {
+            return false; // No hay valores para comparar
+        }
+
+        // Normalizar y traducir los días del filtro
+        const normalizedFilter = filter.map(day => translateDayToEnglish(day));
+        
+        // Checar las llaves
+        // const numDias = Object.keys(value).length;
+        // console.log("Número de días:", numDias);
+        // Comprobar si algún día del filtro coincide con los días en los valores
+        
+        for (let i = 0; i < normalizedFilter.length; i++) {
+            const filterDay = normalizedFilter[i];
+            for (let j = 0; j < Object.keys(value).length; j++) {
+                const dayArrays = Object.keys(value); // Obtener los nombres de los arrays (días)
+                for (let k = 0; k < dayArrays.length; k++) {
+                    const dayArray = dayArrays[k];
+                    const dayNorm = normalizeDay(dayArray);
+                    if (dayNorm === filterDay) {
+                        return true; // Al menos un día coincide, mostrar este valor
+                    }
                 }
             }
         }
-    }
 
-    return false; // Ningún día coincide
-});
+        return false; // Ningún día coincide
+    });
 });
 
 const getSeverity = (status) => {
@@ -226,7 +231,7 @@ const onRowSelect = (event) => {
             </template> -->
             <template #empty>No se encontraron Maes. </template>
             <template #loading>Cargando información. Por favor espera.</template>
-            <Column header="Nombre" field="name" :showFilterMenu="false" style="min-width: 13rem">
+            <Column header="Nombre" field="name" :showFilterMenu="false" style="min-width: 15rem">
                 <template #body="{ data }">
                     <p class="text-lg font-semibold">{{ data.name }}</p>
                 </template>
@@ -235,7 +240,7 @@ const onRowSelect = (event) => {
                         placeholder="Nombre" />
                 </template>
             </Column>
-            <Column header="Materias" filterField="subjects" :showFilterMenu="false" style="min-width: 12rem">
+            <Column header="Materias" filterField="subjects" :showFilterMenu="false" style="min-width: 14rem">
                 <template #body="{ data }">
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
                         <Tag class="text-md" :class="getSubjectColor(item.area)"

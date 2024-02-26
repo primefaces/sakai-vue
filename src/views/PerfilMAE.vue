@@ -39,16 +39,17 @@ watch(route, async (newroute, oldroute) => {
 const showMoreTags = ref(false);
 
 const filteredSubjects = computed(() => {
-  console.log(maeInfo.value.subjects)
   if (maeInfo.value) {
+    const searchQueryNormalized = searchQuery.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     return maeInfo.value.subjects.filter(
-      subject => 
-      subject.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      || subject.id.toLowerCase().includes(searchQuery.value.toLowerCase())
+      subject => {
+        const nameNormalized = subject.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        const idNormalized = subject.id.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        return nameNormalized.includes(searchQueryNormalized) || idNormalized.includes(searchQueryNormalized);
+      }
     );
   }
-
-  return []
+  return [];
 });
 
 const getSubjectColor = (area) => {

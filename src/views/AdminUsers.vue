@@ -103,10 +103,12 @@ const getTipo = (rol) => {
        
       <Column field="rol" header="Roles" style="min-width: 8rem">
         <template #body="{ data }">
-            <Tag rounded class="w-10 h-4 text-lg font-semibold" :value="data.rol" :class="getTipo(data.rol)" v-tooltip.top="data.rol" style="color: white;"></Tag>
+            <Tag rounded class="w-10 h-4 text-lg font-semibold" :value="data.rol"
+             :class="getTipo(data.rol)" v-tooltip.top="data.rol" style="color: white;"></Tag>
         </template>
         <template #filter="{ filterModel, filterCallback }">
-          <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="roles" placeholder="Rol" class="p-column-filter" />
+          <Dropdown v-model="filterModel.value" @change="filterCallback()"
+           :options="roles" placeholder="Rol" class="p-column-filter" />
         </template>
       </Column>
       

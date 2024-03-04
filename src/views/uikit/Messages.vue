@@ -42,23 +42,20 @@ const showError = () => {
         <div class="col-12 lg:col-6">
             <div class="card">
                 <h5>Toast</h5>
-
-                <Toast />
-                <Button @click="showSuccess()" label="Success" class="p-button-success mr-2" />
-                <Button @click="showInfo()" label="Info" class="p-button-info mr-2" />
-                <Button @click="showWarn()" label="Warn" class="p-button-warning mr-2" />
-                <Button @click="showError()" label="Error" class="p-button-danger mr-2" />
+                <Button @click="showSuccess()" label="Success" class="mr-2" severity="success" />
+                <Button @click="showInfo()" label="Info" class="mr-2" severity="info" />
+                <Button @click="showWarn()" label="Warn" class="mr-2" severity="warning" />
+                <Button @click="showError()" label="Error" class="mr-2" severity="danger" />
             </div>
         </div>
 
         <div class="col-12 lg:col-6">
             <div class="card">
                 <h5>Messages</h5>
-
-                <Button label="Success" @click="addMessage('success')" class="p-button-success mr-2" />
-                <Button label="Info" @click="addMessage('info')" class="p-button-info mr-2" />
-                <Button label="Warn" @click="addMessage('warn')" class="p-button-warning mr-2" />
-                <Button label="Error" @click="addMessage('error')" class="p-button-danger mr-2" />
+                <Button label="Success" @click="addMessage('success')" class="mr-2" severity="success" />
+                <Button label="Info" @click="addMessage('info')" class="mr-2" severity="info" />
+                <Button label="Warn" @click="addMessage('warn')" class="mr-2" severity="warning" />
+                <Button label="Error" @click="addMessage('error')" class="mr-2" severity="danger" />
 
                 <transition-group name="p-message" tag="div">
                     <Message v-for="msg of message" :severity="msg.severity" :key="msg.content">{{ msg.content }}</Message>
@@ -72,14 +69,14 @@ const showError = () => {
                 <div class="field grid">
                     <label for="username1" class="col-fixed w-9rem">Username</label>
                     <div class="col">
-                        <InputText id="username1" v-model="username" :required="true" class="p-invalid mr-2"></InputText>
+                        <InputText id="username1" v-model="username" :required="true" invalid class="mr-2"></InputText>
                         <InlineMessage>Username is required</InlineMessage>
                     </div>
                 </div>
                 <div class="field grid">
                     <label for="email" class="col-fixed w-9rem">Email</label>
                     <div class="col">
-                        <InputText id="email" v-model="email" :required="true" class="p-invalid mr-2"></InputText>
+                        <InputText id="email" v-model="email" :required="true" invalid class="mr-2"></InputText>
                         <InlineMessage />
                     </div>
                 </div>

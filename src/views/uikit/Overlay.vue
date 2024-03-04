@@ -179,7 +179,6 @@ const confirm = (event) => {
             <div class="card">
                 <h5>ConfirmPopup</h5>
                 <ConfirmPopup></ConfirmPopup>
-                <Toast />
                 <Button ref="popup" @click="confirm($event)" icon="pi pi-check" label="Confirm" class="mr-2"></Button>
             </div>
         </div>

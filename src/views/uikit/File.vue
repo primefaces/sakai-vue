@@ -19,6 +19,5 @@ const onUpload = () => {
                 <FileUpload mode="basic" name="demo[]" accept="image/*" :maxFileSize="1000000" @uploader="onUpload" customUpload />
             </div>
         </div>
-        <Toast />
     </div>
 </template>

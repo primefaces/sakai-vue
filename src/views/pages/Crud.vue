@@ -23,6 +23,19 @@ const statuses = ref([
 
 const productService = new ProductService();
 
+const getBadgeSeverity = (inventoryStatus) => {
+    switch (inventoryStatus.toLowerCase()) {
+        case 'instock':
+            return 'success';
+        case 'lowstock':
+            return 'warning';
+        case 'outofstock':
+            return 'danger';
+        default:
+            return 'info';
+    }
+};
+
 onBeforeMount(() => {
     initFilters();
 });
@@ -66,7 +79,6 @@ const saveProduct = () => {
 
 const editProduct = (editProduct) => {
     product.value = { ...editProduct };
-    console.log(product);
     productDialog.value = true;
 };
 
@@ -127,18 +139,17 @@ const initFilters = () => {
     <div class="grid">
         <div class="col-12">
             <div class="card">
-                <Toast />
                 <Toolbar class="mb-4">
                     <template v-slot:start>
                         <div class="my-2">
-                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2" @click="openNew" />
-                            <Button label="Delete" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected" :disabled="!selectedProducts || !selectedProducts.length" />
+                            <Button label="New" icon="pi pi-plus" class="mr-2" severity="success" @click="openNew" />
+                            <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected" :disabled="!selectedProducts || !selectedProducts.length" />
                         </div>
                     </template>
 
                     <template v-slot:end>
                         <FileUpload mode="basic" accept="image/*" :maxFileSize="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block" />
-                        <Button label="Export" icon="pi pi-upload" class="p-button-help" @click="exportCSV($event)" />
+                        <Button label="Export" icon="pi pi-upload" severity="help" @click="exportCSV($event)" />
                     </template>
                 </Toolbar>
 
@@ -153,16 +164,13 @@ const initFilters = () => {
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     :rowsPerPageOptions="[5, 10, 25]"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
-                    responsiveLayout="scroll"
                 >
                     <template #header>
                         <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                             <h5 class="m-0">Manage Products</h5>
-                            <IconField iconPosition="left">
-                                <InputIcon>
-                                    <i class="pi pi-search" />
-                                </InputIcon>
-                                <InputText v-model="filters['global'].value" placeholder="Search..." />
+                            <IconField iconPosition="left" class="block mt-2 md:mt-0">
+                                <InputIcon class="pi pi-search" />
+                                <InputText class="w-full sm:w-auto" v-model="filters['global'].value" placeholder="Search..." />
                             </IconField>
                         </div>
                     </template>
@@ -183,7 +191,7 @@ const initFilters = () => {
                     <Column header="Image" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <span class="p-column-title">Image</span>
-                            <img :src="'demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
+                            <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image" class="shadow-2" width="100" />
                         </template>
                     </Column>
                     <Column field="price" header="Price" :sortable="true" headerStyle="width:14%; min-width:8rem;">
@@ -207,22 +215,22 @@ const initFilters = () => {
                     <Column field="inventoryStatus" header="Status" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <span class="p-column-title">Status</span>
-                            <span :class="'product-badge status-' + (slotProps.data.inventoryStatus ? slotProps.data.inventoryStatus.toLowerCase() : '')">{{ slotProps.data.inventoryStatus }}</span>
+                            <Tag :severity="getBadgeSeverity(slotProps.data.inventoryStatus)">{{ slotProps.data.inventoryStatus }}</Tag>
                         </template>
                     </Column>
                     <Column headerStyle="min-width:10rem;">
                         <template #body="slotProps">
-                            <Button icon="pi pi-pencil" rounded severity="success" class="mr-2" @click="editProduct(slotProps.data)" />
-                            <Button icon="pi pi-trash" rounded severity="warning" class="mt-2" @click="confirmDeleteProduct(slotProps.data)" />
+                            <Button icon="pi pi-pencil" class="mr-2" severity="success" rounded @click="editProduct(slotProps.data)" />
+                            <Button icon="pi pi-trash" class="mt-2" severity="warning" rounded @click="confirmDeleteProduct(slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>
 
                 <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Product Details" :modal="true" class="p-fluid">
-                    <img :src="'demo/images/product/' + product.image" :alt="product.image" v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" />
+                    <img :src="'/demo/images/product/' + product.image" :alt="product.image" v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" />
                     <div class="field">
                         <label for="name">Name</label>
-                        <InputText id="name" v-model.trim="product.name" required="true" autofocus :class="{ 'p-invalid': submitted && !product.name }" />
+                        <InputText id="name" v-model.trim="product.name" required="true" autofocus :invalid="submitted && !product.name" />
                         <small class="p-invalid" v-if="submitted && !product.name">Name is required.</small>
                     </div>
                     <div class="field">
@@ -272,7 +280,7 @@ const initFilters = () => {
                     <div class="formgrid grid">
                         <div class="field col">
                             <label for="price">Price</label>
-                            <InputNumber id="price" v-model="product.price" mode="currency" currency="USD" locale="en-US" :class="{ 'p-invalid': submitted && !product.price }" :required="true" />
+                            <InputNumber id="price" v-model="product.price" mode="currency" currency="USD" locale="en-US" :invalid="submitted && !product.price" :required="true" />
                             <small class="p-invalid" v-if="submitted && !product.price">Price is required.</small>
                         </div>
                         <div class="field col">
@@ -281,8 +289,8 @@ const initFilters = () => {
                         </div>
                     </div>
                     <template #footer>
-                        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                        <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
+                        <Button label="Cancel" icon="pi pi-times" text="" @click="hideDialog" />
+                        <Button label="Save" icon="pi pi-check" text="" @click="saveProduct" />
                     </template>
                 </Dialog>
 
@@ -295,8 +303,8 @@ const initFilters = () => {
                         >
                     </div>
                     <template #footer>
-                        <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProductDialog = false" />
-                        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteProduct" />
+                        <Button label="No" icon="pi pi-times" text @click="deleteProductDialog = false" />
+                        <Button label="Yes" icon="pi pi-check" text @click="deleteProduct" />
                     </template>
                 </Dialog>
 
@@ -306,13 +314,11 @@ const initFilters = () => {
                         <span v-if="product">Are you sure you want to delete the selected products?</span>
                     </div>
                     <template #footer>
-                        <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProductsDialog = false" />
-                        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteSelectedProducts" />
+                        <Button label="No" icon="pi pi-times" text @click="deleteProductsDialog = false" />
+                        <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedProducts" />
                     </template>
                 </Dialog>
             </div>
         </div>
     </div>
 </template>
-
-<style scoped lang="scss"></style>

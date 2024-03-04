@@ -88,7 +88,7 @@ const searchCountry = (event) => {
                         <InputText type="text" placeholder="Disabled" :disabled="true"></InputText>
                     </div>
                     <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                        <InputText type="text" placeholder="Invalid" class="p-invalid" />
+                        <InputText type="text" placeholder="Invalid" invalid />
                     </div>
                 </div>
 
@@ -109,10 +109,10 @@ const searchCountry = (event) => {
                 </div>
 
                 <h5>Float Label</h5>
-                <span class="p-float-label">
+                <FloatLabel>
                     <InputText id="username" type="text" v-model="floatValue" />
                     <label for="username">Username</label>
-                </span>
+                </FloatLabel>
 
                 <h5>Textarea</h5>
                 <Textarea placeholder="Your Message" :autoResize="true" rows="3" cols="30" />

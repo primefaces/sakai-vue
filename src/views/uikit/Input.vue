@@ -94,24 +94,17 @@ const searchCountry = (event) => {
 
                 <h5>Icons</h5>
                 <div class="grid formgrid">
-                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-user" />
+                    <div class="col-12 mb-2 lg:col-6 lg:mb-0">
+                        <IconField>
+                            <InputIcon class="pi pi-user" />
                             <InputText type="text" placeholder="Username" />
-                        </span>
+                        </IconField>
                     </div>
-                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                        <span class="p-input-icon-right">
+                    <div class="col-12 mb-2 lg:col-6 lg:mb-0">
+                        <IconField iconPosition="left">
                             <InputText type="text" placeholder="Search" />
-                            <i class="pi pi-search" />
-                        </span>
-                    </div>
-                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                        <span class="p-input-icon-left p-input-icon-right">
-                            <i class="pi pi-user" />
-                            <InputText type="text" placeholder="Search" />
-                            <i class="pi pi-search" />
-                        </span>
+                            <InputIcon class="pi pi-search" />
+                        </IconField>
                     </div>
                 </div>
 
@@ -257,38 +250,42 @@ const searchCountry = (event) => {
                 <h5>Input Groups</h5>
                 <div class="grid p-fluid">
                     <div class="col-12 md:col-6">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
+                        <InputGroup>
+                            <InputGroupAddon>
                                 <i class="pi pi-user"></i>
-                            </span>
+                            </InputGroupAddon>
                             <InputText placeholder="Username" />
-                        </div>
+                        </InputGroup>
                     </div>
 
                     <div class="col-12 md:col-6">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon"><i class="pi pi-shopping-cart"></i></span>
-                            <span class="p-inputgroup-addon"><i class="pi pi-globe"></i></span>
-                            <InputText placeholder="Price" />
-                            <span class="p-inputgroup-addon">$</span>
-                            <span class="p-inputgroup-addon">.00</span>
-                        </div>
+                        <InputGroup>
+                            <InputGroupAddon>
+                                <i class="pi pi-clock"></i>
+                            </InputGroupAddon>
+                            <InputGroupAddon>
+                                <i class="pi pi-star-fill"></i>
+                            </InputGroupAddon>
+                            <InputNumber placeholder="Price" />
+                            <InputGroupAddon>$</InputGroupAddon>
+                            <InputGroupAddon>.00</InputGroupAddon>
+                        </InputGroup>
                     </div>
 
                     <div class="col-12 md:col-6">
-                        <div class="p-inputgroup">
+                        <InputGroup>
                             <Button label="Search" />
                             <InputText placeholder="Keyword" />
-                        </div>
+                        </InputGroup>
                     </div>
 
                     <div class="col-12 md:col-6">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon p-inputgroup-addon-checkbox">
+                        <InputGroup>
+                            <InputGroupAddon>
                                 <Checkbox v-model="inputGroupValue" :binary="true" />
-                            </span>
+                            </InputGroupAddon>
                             <InputText placeholder="Confirm" />
-                        </div>
+                        </InputGroup>
                     </div>
                 </div>
             </div>

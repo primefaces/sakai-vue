@@ -113,11 +113,13 @@ const calculateCustomerTotal = (name) => {
                 >
                     <template #header>
                         <div class="flex justify-content-between flex-column sm:flex-row">
-                            <Button type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2" @click="clearFilter1()" />
-                            <span class="p-input-icon-left mb-2">
-                                <i class="pi pi-search" />
-                                <InputText v-model="filters1['global'].value" placeholder="Keyword Search" style="width: 100%" />
-                            </span>
+                            <Button type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined" @click="clearFilter1()" />
+                            <IconField iconPosition="left">
+                                <InputIcon>
+                                    <i class="pi pi-search" />
+                                </InputIcon>
+                                <InputText v-model="filters1['global'].value" placeholder="Keyword Search" />
+                            </IconField>
                         </div>
                     </template>
                     <template #empty> No customers found. </template>

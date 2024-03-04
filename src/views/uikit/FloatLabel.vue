@@ -82,15 +82,15 @@ const searchCountry = (event) => {
                 </span>
             </div>
             <div class="field col-12 md:col-4">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
+                <InputGroup>
+                    <InputGroupAddon>
                         <i class="pi pi-user"></i>
-                    </span>
-                    <span class="p-float-label">
+                    </InputGroupAddon>
+                    <FloatLabel>
                         <InputText type="text" id="inputgroup" v-model="value7" />
                         <label for="inputgroup">InputGroup</label>
-                    </span>
-                </div>
+                    </FloatLabel>
+                </InputGroup>
             </div>
             <div class="field col-12 md:col-4">
                 <span class="p-float-label">

@@ -39,53 +39,59 @@ const load = (index) => {
 
             <div class="card">
                 <h5>Severities</h5>
-                <Button label="Primary" class="mr-2 mb-2" />
-                <Button label="Secondary" class="p-button-secondary mr-2 mb-2" />
-                <Button label="Success" class="p-button-success mr-2 mb-2" />
-                <Button label="Info" class="p-button-info mr-2 mb-2" />
-                <Button label="Warning" class="p-button-warning mr-2 mb-2" />
-                <Button label="Danger" class="p-button-danger mr-2 mb-2" />
+                <Button label="Primary" class="mb-2 mr-2" />
+                <Button label="Secondary" severity="secondary" class="mb-2 mr-2" />
+                <Button label="Success" severity="success" class="mb-2 mr-2" />
+                <Button label="Info" severity="info" class="mb-2 mr-2" />
+                <Button label="Warning" severity="warning" class="mb-2 mr-2" />
+                <Button label="Help" severity="help" class="mb-2 mr-2" />
+                <Button label="Danger" severity="danger" class="mb-2 mr-2" />
+                <Button label="Contrast" severity="contrast" class="mb-2 mr-2" />
             </div>
 
             <div class="card">
                 <h5>Text</h5>
-                <Button label="Primary" class="p-button-text mr-2 mb-2" />
-                <Button label="Secondary" class="p-button-secondary p-button-text mr-2 mb-2" />
-                <Button label="Success" class="p-button-success p-button-text mr-2 mb-2" />
-                <Button label="Info" class="p-button-info p-button-text mr-2 mb-2" />
-                <Button label="Warning" class="p-button-warning p-button-text mr-2 mb-2" />
-                <Button label="Help" class="p-button-help p-button-text mr-2 mb-2" />
-                <Button label="Danger" class="p-button-danger p-button-text mr-2 mb-2" />
-                <Button label="Plain" class="p-button-plain p-button-text mr-2 mb-2" />
+                <Button label="Primary" text class="mb-2 mr-2" />
+                <Button label="Secondary" severity="secondary" text class="mb-2 mr-2" />
+                <Button label="Success" severity="success" text class="mb-2 mr-2" />
+                <Button label="Info" severity="info" text class="mb-2 mr-2" />
+                <Button label="Warning" severity="warning" text class="mb-2 mr-2" />
+                <Button label="Help" severity="help" text class="mb-2 mr-2" />
+                <Button label="Danger" severity="danger" text class="mb-2 mr-2" />
+                <Button label="Plain" plain text class="mb-2 mr-2" />
             </div>
 
             <div class="card">
                 <h5>Outlined</h5>
-                <Button label="Primary" class="p-button-outlined mr-2 mb-2" />
-                <Button label="Secondary" class="p-button-outlined p-button-secondary mr-2 mb-2" />
-                <Button label="Success" class="p-button-outlined p-button-success mr-2 mb-2" />
-                <Button label="Info" class="p-button-outlined p-button-info mr-2 mb-2" />
-                <Button label="Warning" class="p-button-outlined p-button-warning mr-2 mb-2" />
-                <Button label="Help" class="p-button-outlined p-button-help mr-2 mb-2" />
-                <Button label="Danger" class="p-button-outlined p-button-danger mr-2 mb-2" />
+                <Button label="Primary" outlined class="mb-2 mr-2" />
+                <Button label="Secondary" severity="secondary" outlined class="mb-2 mr-2" />
+                <Button label="Success" severity="success" outlined class="mb-2 mr-2" />
+                <Button label="Info" severity="info" outlined class="mb-2 mr-2" />
+                <Button label="Warning" severity="warning" outlined class="mb-2 mr-2" />
+                <Button label="Help" severity="help" outlined class="mb-2 mr-2" />
+                <Button label="Danger" severity="danger" outlined class="mb-2 mr-2" />
+                <Button label="Contrast" severity="contrast" outlined class="mb-2 mr-2" />
             </div>
 
             <div class="card">
                 <h5>Button Group</h5>
-                <span class="p-buttonset">
+                <ButtonGroup>
                     <Button label="Save" icon="pi pi-check" />
                     <Button label="Delete" icon="pi pi-trash" />
                     <Button label="Cancel" icon="pi pi-times" />
-                </span>
+                </ButtonGroup>
             </div>
 
             <div class="card">
                 <h5>SplitButton</h5>
-                <SplitButton label="Save" icon="pi pi-check" :model="items" class="p-button-secondary mr-2 mb-2"></SplitButton>
-                <SplitButton label="Save" icon="pi pi-check" :model="items" class="p-button-success mr-2 mb-2"></SplitButton>
-                <SplitButton label="Save" icon="pi pi-check" :model="items" class="p-button-info mr-2 mb-2"></SplitButton>
-                <SplitButton label="Save" icon="pi pi-check" :model="items" class="p-button-warning mr-2 mb-2"></SplitButton>
-                <SplitButton label="Save" icon="pi pi-check" :model="items" class="p-button-danger mr-2 mb-2"></SplitButton>
+                <SplitButton label="Save" :model="items" class="mb-2 mr-2"></SplitButton>
+                <SplitButton label="Save" :model="items" severity="secondary" class="mb-2 mr-2"></SplitButton>
+                <SplitButton label="Save" :model="items" severity="success" class="mb-2 mr-2"></SplitButton>
+                <SplitButton label="Save" :model="items" severity="info" class="mb-2 mr-2"></SplitButton>
+                <SplitButton label="Save" :model="items" severity="warning" class="mb-2 mr-2"></SplitButton>
+                <SplitButton label="Save" :model="items" severity="help" class="mb-2 mr-2"></SplitButton>
+                <SplitButton label="Save" :model="items" severity="danger" class="mb-2 mr-2"></SplitButton>
+                <SplitButton label="Save" :model="items" severity="contrast" class="mb-2 mr-2"></SplitButton>
             </div>
 
             <div class="card">
@@ -93,21 +99,21 @@ const load = (index) => {
                 <div class="flex flex-wrap gap-2">
                     <Button type="button" class="google">
                         <span class="flex align-items-center px-2 bg-purple-700 text-white">
-                            <i className="pi pi-google"></i>
+                            <i class="pi pi-google"></i>
                         </span>
-                        <span className="px-3 py-2 flex align-items-center text-white">Google</span>
+                        <span class="px-3 py-2 flex align-items-center text-white">Google</span>
                     </Button>
                     <Button type="button" class="twitter">
                         <span class="flex align-items-center px-2 bg-blue-500 text-white">
-                            <i className="pi pi-twitter"></i>
+                            <i class="pi pi-twitter"></i>
                         </span>
-                        <span className="px-3 py-2 flex align-items-center text-white">Twitter</span>
+                        <span class="px-3 py-2 flex align-items-center text-white">Twitter</span>
                     </Button>
                     <Button type="button" class="discord">
                         <span class="flex align-items-center px-2 bg-bluegray-800 text-white">
-                            <i className="pi pi-discord"></i>
+                            <i class="pi pi-discord"></i>
                         </span>
-                        <span className="px-3 py-2 flex align-items-center text-white">Discord</span>
+                        <span class="px-3 py-2 flex align-items-center text-white">Discord</span>
                     </Button>
                 </div>
             </div>
@@ -123,55 +129,59 @@ const load = (index) => {
 
             <div class="card">
                 <h5>Raised</h5>
-                <Button label="Primary" class="p-button-raised mr-2 mb-2" />
-                <Button label="Secondary" class="p-button-raised p-button-secondary mr-2 mb-2" />
-                <Button label="Success" class="p-button-raised p-button-success mr-2 mb-2" />
-                <Button label="Info" class="p-button-raised p-button-info mr-2 mb-2" />
-                <Button label="Warning" class="p-button-raised p-button-warning mr-2 mb-2" />
-                <Button label="Danger" class="p-button-raised p-button-danger mr-2 mb-2" />
+                <Button label="Primary" raised class="mb-2 mr-2" />
+                <Button label="Secondary" severity="secondary" raised class="mb-2 mr-2" />
+                <Button label="Success" severity="success" raised class="mb-2 mr-2" />
+                <Button label="Info" severity="info" raised class="mb-2 mr-2" />
+                <Button label="Warning" severity="warning" raised class="mb-2 mr-2" />
+                <Button label="Help" severity="help" raised class="mb-2 mr-2" />
+                <Button label="Danger" severity="danger" raised class="mb-2 mr-2" />
+                <Button label="Contrast" severity="contrast" raised class="mb-2 mr-2" />
             </div>
 
             <div class="card">
                 <h5>Rounded</h5>
-                <Button label="Primary" class="p-button-rounded mr-2 mb-2" />
-                <Button label="Secondary" class="p-button-rounded p-button-secondary mr-2 mb-2" />
-                <Button label="Success" class="p-button-rounded p-button-success mr-2 mb-2" />
-                <Button label="Info" class="p-button-rounded p-button-info mr-2 mb-2" />
-                <Button label="Warning" class="p-button-rounded p-button-warning mr-2 mb-2" />
-                <Button label="Danger" class="p-button-rounded p-button-danger mr-2 mb-2" />
+                <Button label="Primary" rounded class="mb-2 mr-2" />
+                <Button label="Secondary" severity="secondary" rounded class="mb-2 mr-2" />
+                <Button label="Success" severity="success" rounded class="mb-2 mr-2" />
+                <Button label="Info" severity="info" rounded class="mb-2 mr-2" />
+                <Button label="Warning" severity="warning" rounded class="mb-2 mr-2" />
+                <Button label="Help" severity="help" rounded class="mb-2 mr-2" />
+                <Button label="Danger" severity="danger" rounded class="mb-2 mr-2" />
+                <Button label="Contrast" severity="contrast" rounded class="mb-2 mr-2" />
             </div>
 
             <div class="card">
                 <h5>Rounded Icons</h5>
-                <Button icon="pi pi-star-fill" class="p-button-rounded mr-2 mb-2" />
-                <Button icon="pi pi-bookmark" class="p-button-rounded p-button-secondary mr-2 mb-2" />
-                <Button icon="pi pi-check" class="p-button-rounded p-button-success mr-2 mb-2" />
-                <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2" />
-                <Button icon="pi pi-user" class="p-button-rounded p-button-warning mr-2 mb-2" />
-                <Button icon="pi pi-sign-out" class="p-button-rounded p-button-danger mr-2 mb-2" />
+                <Button icon="pi pi-check" rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-bookmark" severity="secondary" rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-search" severity="success" rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-user" severity="info" rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-bell" severity="warning" rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-heart" severity="help" rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-times" severity="danger" rounded class="mb-2 mr-2" />
             </div>
 
             <div class="card">
                 <h5>Rounded Text</h5>
-                <Button icon="pi pi-check" class="p-button-rounded p-button-text mr-2 mb-2" />
-                <Button icon="pi pi-bookmark" class="p-button-rounded p-button-secondary p-button-text mr-2 mb-2" />
-                <Button icon="pi pi-search" class="p-button-rounded p-button-success p-button-text mr-2 mb-2" />
-                <Button icon="pi pi-user" class="p-button-rounded p-button-info p-button-text mr-2 mb-2" />
-                <Button icon="pi pi-bell" class="p-button-rounded p-button-warning p-button-text mr-2 mb-2" />
-                <Button icon="pi pi-heart" class="p-button-rounded p-button-help p-button-text mr-2 mb-2" />
-                <Button icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text mr-2 mb-2" />
-                <Button icon="pi pi-filter" class="p-button-rounded p-button-plain p-button-text mr-2 mb-2" />
+                <Button icon="pi pi-check" text raised rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-bookmark" severity="secondary" text raised rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-search" severity="success" text raised rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-user" severity="info" text raised rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-bell" severity="warning" text raised rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-heart" severity="help" text raised rounded class="mb-2 mr-2" />
+                <Button icon="pi pi-times" severity="danger" text raised rounded class="mb-2 mr-2" />
             </div>
 
             <div class="card">
                 <h5>Rounded Outlined</h5>
-                <Button icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2" />
-                <Button icon="pi pi-bookmark" class="p-button-rounded p-button-secondary p-button-outlined mr-2 mb-2" />
-                <Button icon="pi pi-search" class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2" />
-                <Button icon="pi pi-user" class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2" />
-                <Button icon="pi pi-bell" class="p-button-rounded p-button-warning p-button-outlined mr-2 mb-2" />
-                <Button icon="pi pi-heart" class="p-button-rounded p-button-help p-button-outlined mr-2 mb-2" />
-                <Button icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2" />
+                <Button icon="pi pi-check" rounded outlined class="mb-2 mr-2" />
+                <Button icon="pi pi-bookmark" severity="secondary" rounded outlined class="mb-2 mr-2" />
+                <Button icon="pi pi-search" severity="success" rounded outlined class="mb-2 mr-2" />
+                <Button icon="pi pi-user" severity="info" rounded outlined class="mb-2 mr-2" />
+                <Button icon="pi pi-bell" severity="warning" rounded outlined class="mb-2 mr-2" />
+                <Button icon="pi pi-heart" severity="help" rounded outlined class="mb-2 mr-2" />
+                <Button icon="pi pi-times" severity="danger" rounded outlined class="mb-2 mr-2" />
             </div>
 
             <div class="card">

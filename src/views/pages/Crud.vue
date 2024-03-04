@@ -158,10 +158,12 @@ const initFilters = () => {
                     <template #header>
                         <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                             <h5 class="m-0">Manage Products</h5>
-                            <span class="block mt-2 md:mt-0 p-input-icon-left">
-                                <i class="pi pi-search" />
+                            <IconField iconPosition="left">
+                                <InputIcon>
+                                    <i class="pi pi-search" />
+                                </InputIcon>
                                 <InputText v-model="filters['global'].value" placeholder="Search..." />
-                            </span>
+                            </IconField>
                         </div>
                     </template>
 
@@ -210,8 +212,8 @@ const initFilters = () => {
                     </Column>
                     <Column headerStyle="min-width:10rem;">
                         <template #body="slotProps">
-                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" @click="editProduct(slotProps.data)" />
-                            <Button icon="pi pi-trash" class="p-button-rounded p-button-warning mt-2" @click="confirmDeleteProduct(slotProps.data)" />
+                            <Button icon="pi pi-pencil" rounded severity="success" class="mr-2" @click="editProduct(slotProps.data)" />
+                            <Button icon="pi pi-trash" rounded severity="warning" class="mt-2" @click="confirmDeleteProduct(slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>

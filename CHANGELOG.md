@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.10.0 (2024-03-11)
+
+**Migration Guide**
+
+-   Update theme files.
+
+**Implemented New Features and Enhancements**
+
+-   Upgrade to PrimeVue 3.49.1
+
 ## 3.9.0 (2023-11-01)
 
 **Migration Guide**

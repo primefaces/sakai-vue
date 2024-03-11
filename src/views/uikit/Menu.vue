@@ -446,10 +446,10 @@ const onContextRightClick = (event) => {
                 <h5>Menubar</h5>
                 <Menubar :model="nestedMenuitems">
                     <template #end>
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
+                        <IconField iconPosition="left">
+                            <InputIcon class="pi pi-search" />
                             <InputText type="text" placeholder="Search" />
-                        </span>
+                        </IconField>
                     </template>
                 </Menubar>
             </div>

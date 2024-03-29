@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import CountryService from '@/service/CountryService';
+import { CountryService } from '@/service/CountryService';
 
 const countries = ref(null);
 const filteredCountries = ref(null);

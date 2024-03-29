@@ -1,32 +1,18 @@
-export default class CustomerService {
+export class CustomerService {
     getCustomersSmall() {
-        return fetch('demo/data/customers-small.json')
+        return fetch('/demo/data/customers-small.json', { headers: { 'Cache-Control': 'no-cache' } })
             .then((res) => res.json())
             .then((d) => d.data);
     }
-
     getCustomersMedium() {
-        return fetch('demo/data/customers-medium.json')
+        return fetch('/demo/data/customers-medium.json', { headers: { 'Cache-Control': 'no-cache' } })
             .then((res) => res.json())
             .then((d) => d.data);
     }
 
     getCustomersLarge() {
-        return fetch('demo/data/customers-large.json')
+        return fetch('/demo/data/customers-large.json', { headers: { 'Cache-Control': 'no-cache' } })
             .then((res) => res.json())
             .then((d) => d.data);
-    }
-
-    getCustomersXLarge() {
-        return fetch('demo/data/customers-xlarge.json')
-            .then((res) => res.json())
-            .then((d) => d.data);
-    }
-
-    getCustomers(params) {
-        const queryParams = Object.keys(params)
-            .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
-            .join('&');
-        return fetch('https://www.primefaces.org//demo/data/customers?' + queryParams).then((res) => res.json());
     }
 }

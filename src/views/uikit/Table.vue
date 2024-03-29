@@ -1,8 +1,8 @@
 <script setup>
+import { ref, onBeforeMount, reactive } from 'vue';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import CustomerService from '@/service/CustomerService';
-import ProductService from '@/service/ProductService';
-import { ref, onBeforeMount } from 'vue';
+import { CustomerService } from '@/service/CustomerService';
+import { ProductService } from '@/service/ProductService';
 
 const customer1 = ref(null);
 const customer2 = ref(null);
@@ -13,8 +13,8 @@ const loading2 = ref(null);
 const idFrozen = ref(false);
 const products = ref(null);
 const expandedRows = ref([]);
-const statuses = ref(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
-const representatives = ref([
+const statuses = reactive(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
+const representatives = reactive([
     { name: 'Amy Elsner', image: 'amyelsner.png' },
     { name: 'Anna Fali', image: 'annafali.png' },
     { name: 'Asiya Javayant', image: 'asiyajavayant.png' },

@@ -1,8 +1,8 @@
 <script setup>
-import ProductService from '@/service/ProductService';
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
+import { ProductService } from '@/service/ProductService';
 
 const display = ref(false);
 const displayConfirmation = ref(false);

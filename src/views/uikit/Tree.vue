@@ -1,6 +1,6 @@
 <script setup>
-import NodeService from '@/service/NodeService';
 import { onMounted, ref } from 'vue';
+import { NodeService } from '@/service/NodeService';
 
 const treeValue = ref(null);
 const selectedTreeValue = ref(null);

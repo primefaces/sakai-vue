@@ -1,68 +1,111 @@
-<script setup>
-import MaeCard from '../components/MaeCard.vue';
-import { computed } from 'vue';
 
-const maesData = [
-    { nombre: 'Juan Perez', carrera: 'ITC', matricula: 'A01733822', horaInicio: '11:00', horaFin: '12:00', activo: true, checked: true },
-    { nombre: 'Luis Guzmán', carrera: 'ITC', matricula: 'A01733822', horaInicio: '11:00', horaFin: '12:00', activo: true, checked: false },
-    { nombre: 'María Rodriguez', carrera: 'ELE', matricula: 'A01733823', horaInicio: '10:00', horaFin: '11:30', activo: true, checked: true },
-    { nombre: 'Genoveva Flores', carrera: 'ELE', matricula: 'A01733823', horaInicio: '10:00', horaFin: '11:30', activo: true, checked: false },
-    { nombre: 'Maria Garza', carrera: 'ELE', matricula: 'A01733823', horaInicio: '10:00', horaFin: '11:30', activo: true, checked: true },
-    { nombre: 'Carlos Gonzalez', carrera: 'MAT', matricula: 'A01733824', horaInicio: '09:30', horaFin: '10:45', activo: false, checked: false },
-    { nombre: 'Angela Gonzalez', carrera: 'IRS', matricula: 'A01733824', horaInicio: '12:30', horaFin: '13:30', activo: false, checked: true },
-    { nombre: 'Fernando Lopez', carrera: 'IRS', matricula: 'A01733824', horaInicio: '12:30', horaFin: '13:30', activo: false, checked: false },
-    { nombre: 'Nepomuceno Vargas', carrera: 'IRS', matricula: 'A01733824', horaInicio: '12:30', horaFin: '13:30', activo: false, checked: true },
-];
-// Propiedad computada para filtrar maesData
-const maesActivos = computed(() => maesData.filter((mae) => mae.activo));
-const maesPendientes = computed(() => maesData.filter((mae) => !mae.activo));
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+import { getTodaysMae } from '@/firebase/db/users';
+import { getTodaysReport, updateReport } from '../firebase/db/attendance';
+
+
+const loading = ref(true);
+const maes = ref(null);
+const report = ref(null);
+const selectedId = ref(null);
+
+const currentDay = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
+const options = ref([
+    { name: 'Asistencia', code: 'A' },
+    { name: 'Falta', code: 'F' },
+    { name: 'Retraso', code: 'R' },
+    { name: 'Justificado', code: 'J' },
+]);
+
+onMounted(() => {
+
+    getTodaysMae()
+        .then((data) => {
+            //console.log(data[0])
+            maes.value = data;
+            
+        })
+        .finally(() => {
+            getTodaysReport()
+                .then((data) => {
+                    report.value = data;
+                    console.log(report.value)
+                    loading.value = false;
+                })
+        })
+});
+
+watch(report, (newValue, oldValue) => {
+    if (oldValue) {
+        const maeInfo = maes.value.find(mae => mae['uid'] === selectedId.value);
+        console.log(maeInfo)
+        updateReport(maeInfo, newValue[selectedId.value])
+    }
+  },
+  { deep: true }
+)
+
 </script>
 
+
 <template>
-    <div class="flex relative">
-        <div class="flex-1">
-            <h1 class="text-black text-6xl font-bold mb-5">Coordinación</h1>
-        </div>
-        <div class="justify-end hidden md:block">
-            <Button label="Generar Reporte" icon="pi pi-file-export" size="large"/>
-        </div>
-    </div>
-    <div class="mt-5">
-        <h2 class="text-3xl font-bold">Maes Activos</h2>
-        <div class="grid-cols-4">
-            <MaeCard v-for="mae in maesActivos" :key="mae.matricula" :nombre="mae.nombre" :carrera="mae.carrera" :matricula="mae.matricula" :horaInicio="mae.horaInicio" :horaFin="mae.horaFin" />
-        </div>
-        <h2 class="text-3xl font-bold">Maes Pendientes</h2>
-        <div class="grid-cols-4 gap-5">
-            <MaeCard v-for="mae in maesPendientes" :key="mae.matricula" :nombre="mae.nombre" :carrera="mae.carrera" :matricula="mae.matricula" :horaInicio="mae.horaInicio" :horaFin="mae.horaFin" />
-        </div>
+    <h1 class="text-black text-6xl font-bold mb-5">Coordinador</h1>
+    <div class="card mb-0">
+
+    <!-- TODO: Adjust row sizing -->
+    <!-- TODO: implement responsive resizing -->
+        <DataTable :value="maes" paginator :rows="50" dataKey="id" 
+            :loading="loading" class="border-round-xl"
+            >
+            <!-- @rowSelect="onRowSelect" selectionMode="single" -->
+            <template #empty>No se encontraron Maes. </template>
+            <template #loading>Cargando información. Por favor espera.</template>
+            <Column header="Matricula" field="uid" style="min-width: 15rem">
+                <template #body="{ data }">
+                    <a :href="`#/mae/${data.uid}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.uid }}</a>
+                </template>
+            </Column>
+
+            <Column header="Nombre" field="name" style="min-width: 15rem">
+                <template #body="{ data }">
+                    <p class="text-lg font-semibold">{{ data.name }}</p>
+                </template>
+            </Column>
+
+            <Column header="Horario"
+                style="min-width: 6rem">
+                <template #body="{ data }">
+                    <!-- TODO: ask for hour display implementation -->
+                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
+                        <Tag v-for="(value, key) in data.weekSchedule[currentDay]" class="text-md mx-auto"
+                         :value="`${value.start} - ${value.end} `"
+                           rounded style="min-width: 3rem"/>
+                    </div>
+                </template>
+            </Column>
+
+            <Column header="Asistencia" style="min-width:8rem">
+                <template #body="{ data }">
+                    <Dropdown @click="selectedId = data.uid" v-if="report" v-model="report[data.uid]" :options="options" optionLabel="name" optionValue="code" placeholder="Selecciona asistencia" class="w-full" />
+                </template>
+            </Column>
+            <!-- <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
+                style="min-width: 6rem">
+                <template #body="{ data }">
+                    <div class="flex justify-content-center">
+                        <Tag :value="data.modalidad ?? 'Híbrida'" class="text-lg text-center" :severity="getSeverity(data.modalidad)" />
+                    </div>
+                </template>
+                <template #filter="{ filterModel, filterCallback }">
+                    <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
+                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 6rem" :showClear="true">
+                        <template #option="slotProps">
+                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                        </template>
+                    </Dropdown>
+                </template>
+            </Column> -->
+        </DataTable>
     </div>
 </template>
-
-<style scoped>
-.grid-cols-4 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-column-gap: 2rem;
-    grid-row-gap: 2rem;
-}
-
-@media (max-width: 1600px) {
-    .grid-cols-4 {
-        grid-template-columns: repeat(3, 1fr); /* Set it to three columns for screens between 769px and 1200px */
-    }
-}
-
-@media (max-width: 976px) {
-    .grid-cols-4 {
-        grid-template-columns: 2fr; /* Set it to one column for screens 768px and below */
-    }
-}
-
-@media (max-width: 768px) {
-    .grid-cols-4 {
-        grid-template-columns: 1fr; /* Set it to one column for screens 768px and below */
-    }
-}
- 
-</style>

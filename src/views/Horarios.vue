@@ -7,7 +7,7 @@ import { getMaes } from '@/firebase/db/users';
 
 const router = useRouter();
 
-const customers = ref();
+const maes = ref();
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
 const ARRAY_CONTAINS_ANY = ref('ARRAY_CONTAINS_ANY');
 const filters = ref({
@@ -16,7 +16,7 @@ const filters = ref({
     weekSchedule: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
     subjects: { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    modalidad: { value: null, matchMode: FilterMatchMode.EQUALS }
+    // modalidad: { value: null, matchMode: FilterMatchMode.EQUALS }
 });
 
 const horario = ref([
@@ -30,7 +30,7 @@ onMounted(() => {
 
     getMaes().then((data) => {
         //console.log(data[0])
-        customers.value = data;
+        maes.value = data;
         loading.value = false;
     })
 
@@ -115,18 +115,18 @@ onMounted(() => {
     });
 });
 
-const getSeverity = (status) => {
-    switch (status) {
-        case 'Remota':
-            return 'success';
-        case 'Presencial':
-            return 'info';
-        case 'Hibrido':
-            return 'warning';
-        case 'renewal':
-            return null;
-    }
-}
+// const getSeverity = (status) => {
+//     switch (status) {
+//         case 'Remota':
+//             return 'success';
+//         case 'Presencial':
+//             return 'info';
+//         case 'Hibrido':
+//             return 'warning';
+//         case 'renewal':
+//             return null;
+//     }
+// }
 
 function translateDayToSpanish(day) {
     //console.log(day)
@@ -218,8 +218,8 @@ const onRowSelect = (event) => {
 
     <!-- TODO: Adjust row sizing -->
     <!-- TODO: implement responsive resizing -->
-        <DataTable v-model:filters="filters" :value="customers" paginator :rows="10" dataKey="id" filterDisplay="row"
-            :loading="loading" :globalFilterFields="['name', 'horario', 'subjects', 'modalidad']" class="border-round-xl"
+        <DataTable v-model:filters="filters" :value="maes" paginator :rows="10" dataKey="id" filterDisplay="row"
+            :loading="loading" :globalFilterFields="['name', 'horario', 'subjects'/*, 'modalidad'*/]" class="border-round-xl"
             @rowSelect="onRowSelect" selectionMode="single">
             <!-- <template #header>
                 <div class="flex justify-content-end">
@@ -277,7 +277,7 @@ const onRowSelect = (event) => {
                     </MultiSelect>
                 </template>
             </Column>
-            <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
+            <!-- <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
                 style="min-width: 6rem">
                 <template #body="{ data }">
                     <div class="flex justify-content-center">
@@ -292,7 +292,7 @@ const onRowSelect = (event) => {
                         </template>
                     </Dropdown>
                 </template>
-            </Column>
+            </Column> -->
         </DataTable>
     </div>
 </template>

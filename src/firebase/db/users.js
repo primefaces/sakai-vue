@@ -105,3 +105,37 @@ export async function updateUserSchedule(userId, newSchedule) {
         weekSchedule: newSchedule
     });
 }
+
+export async function getTodaysMae() {
+    try {
+        // Step 1: Define the query to get users with a role different from 'user'
+        const usersRef = collection(firestoreDB, "users");
+        const roleQuery = query(usersRef, where("role", "!=", "user"));
+    
+        // Step 2: Execute the role query
+        const querySnapshot = await getDocs(roleQuery);
+
+        // Step 3: Get current day of the week
+        const daysOfWeek = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+        const currentDayIndex = new Date().getDay();
+        const curretDay = daysOfWeek[currentDayIndex]
+
+    
+        // Step 4: Filter results client-side to include only those with 'wednesday' in 'weekSchedule'
+        const users = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          //   if (data.weekSchedule && data.weekSchedule["thursday"]) {
+          if (data.weekSchedule && data.weekSchedule[curretDay]) {
+            users.push(data);
+          }
+        });
+    
+        return users;
+      } catch (error) {
+        console.error("Error fetching filtered users: ", error);
+        return [];
+      }
+    
+  }
+  

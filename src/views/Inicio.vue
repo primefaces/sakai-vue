@@ -53,18 +53,58 @@ const saveProfileChanges = async () => {
     showDialogPerfil.value = false;
 }
 
+const showDialogAnnouncement = ref(false);
+const selectedAnnouncement = ref(null);
+
+const openAnnouncementDialog = (announcement) => {
+    showDialogAnnouncement.value = true;
+    selectedAnnouncement.value = announcement;
+}
+
+const responsiveOptions = ref([
+    {
+        breakpoint: '1300px',
+        numVisible: 2,
+        numScroll: 1
+    },
+    {
+        breakpoint: '1199px',
+        numVisible: 3,
+        numScroll: 1
+    },
+    {
+        breakpoint: '767px',
+        numVisible: 2,
+        numScroll: 1
+    },
+    {
+        breakpoint: '575px',
+        numVisible: 1,
+        numScroll: 1
+    }
+]);
+
 const announcements = ref([
-    {titulo: 'Hello World!'},
-    {titulo: 'Hello World!'},
-    {titulo: 'Hello World!'},
-    {titulo: 'Hello World!'},
-    {titulo: 'Hello World!'},
-    {titulo: 'Hello World!'},
+    // {
+    //     title: 'Asesoría grupal',
+    //     location: 'Aulas 4 - 304',
+    //     date: '27/02/2024',
+    // },
+    // {
+    //     title: 'Asesoría grupal',
+    //     location: 'Aulas 4 - 304',
+    //     date: '27/02/2024',
+    // },
+    // {
+    //     title: 'Asesoría grupal',
+    //     location: 'Aulas 4 - 304',
+    //     date: '27/02/2024',
+    // },
 ])
 </script>
 
 <template>
-    <div class="flex">
+    <div class="md:flex">
         <div>
             <h1 class="text-black text-6xl font-bold">Bienvenid@</h1>
             <div v-if="userInfo">
@@ -82,28 +122,54 @@ const announcements = ref([
                 </div>
             </div>
         </div>
-        <div class="w-9">
-            <Carousel :value="announcements" :numVisible="3" :numScroll="1" class="w-full">
+        <div v-if="announcements.length > 0" class="md:w-9">
+            <Carousel :value="announcements" :numVisible="3" :numScroll="1" class="w-full" :autoplayInterval="announcements.length > 3 ? 5000 : null " :responsiveOptions="responsiveOptions" circular>
                 <template #item="slotProps">
-                    <div class="border-1 surface-border border-round m-2 p-3 bg-white">
-                        <div class="mb-3 font-medium">Asesoría grupal</div>
+                    <div class="border-1 surface-border border-round-2xl m-2 p-3 bg-white">
+                        <div class="mb-3 font-medium">{{slotProps.data.title}}</div>
                         <div class="flex justify-content-between align-items-center">
                             <Skeleton size="5rem" class="mr-2"></Skeleton>
                             <div>
-                                <p>Aulas 4 - 304</p>
-                                <p>27/02/2004</p>
+                                <p>{{slotProps.data.location}}</p>
+                                <p>{{slotProps.data.date}}</p>
                             </div>
                         </div>
                         <div class="flex justify-content-center mt-3">
-                            <Button label="Registrarse" icon="pi pi-user-plus" raised />
+                            <Button @click="openAnnouncementDialog(slotProps.data)" label="Registrarse" icon="pi pi-user-plus" raised />
                         </div>
                     </div>
                 </template>
             </Carousel>
         </div>
+        <div v-else class="md:w-9 flex justify-content-center align-items-center">
+            <Card class="md:w-4 my-2 sm:my-0">
+                <template #content>
+                    <p class="m-0 text-center text-xl font-semibold">
+                        Espera nuevos avisos pronto!
+                    </p>
+                </template>
+            </Card>
+        </div>
 
     </div>
     <Dialog v-if="newUserInfo" v-model:visible="showDialogPerfil" modal header="Editar perfil" class="w-3">
+        <label for="email">Correo</label>
+        <InputText id="email" v-model="newUserInfo.email" disabled filled placeholder="Disabled" class="w-full mb-4" />
+        <label for="firstname">Nombre</label>
+        <InputText id="firstname" v-model="newUserInfo.firstname" placeholder="Nombre" class="w-full mb-4" />
+        <label for="lastname">Apellido</label>
+        <InputText id="lastname" v-model="newUserInfo.lastname" placeholder="Nombre" class="w-full mb-4" />
+        <label for="career">Carrera</label>
+        <Dropdown v-model="newUserInfo.career" :options="majors" optionValue="id" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
+        <label for="campus">Campus</label>
+        <Dropdown v-model="newUserInfo.campus" :options="campuses" optionValue="id" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
+
+        <div class="flex justify-content-end gap-2">
+            <Button type="button" label="Cerrar" severity="secondary" @click="showDialogPerfil = false"></Button>
+            <Button type="button" label="Guardar cambios " @click="saveProfileChanges"></Button>
+        </div>
+    </Dialog>
+    <Dialog v-model:visible="showDialogAnnouncement" modal header="Registrarse" class="w-3">
         <label for="email">Correo</label>
         <InputText id="email" v-model="newUserInfo.email" disabled filled placeholder="Disabled" class="w-full mb-4" />
         <label for="firstname">Nombre</label>

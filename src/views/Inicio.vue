@@ -108,15 +108,15 @@ const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", 
 <template>
     <div class="md:flex">
         <div>
-            <h1 class="text-black text-6xl font-bold">Bienvenid@</h1>
+            <h1 class="text-black text-6xl font-bold text-center sm:text-left">Bienvenid@</h1>
             <div v-if="userInfo">
-                <h2 class="text-black text-4xl font-semibold">{{ userInfo.name }}</h2>
+                <h2 class="text-black text-4xl font-semibold text-center sm:text-left">{{ userInfo.name }}</h2>
                 <div class="">
-                    <p class="text-lg font-medium">
+                    <p class="text-lg font-medium text-center sm:text-left">
                         <i class="pi pi-envelope font-medium" />
                         {{ userInfo.email }}
                     </p>
-                    <p>
+                    <p class="text-center sm:text-left">
                         <i class="pi pi-book font-medium" />
                         {{ userInfo.career }} @ {{ userInfo.campus }}
                         <Button @click="showDialogPerfil = !showDialogPerfil" link icon="pi pi-pencil" label="Editar" class="mb-0 ml-2 p-1" />
@@ -154,7 +154,7 @@ const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", 
         </div>
 
     </div>
-    <Dialog v-if="newUserInfo" v-model:visible="showDialogPerfil" modal header="Editar perfil" class="w-3">
+    <Dialog v-if="newUserInfo" v-model:visible="showDialogPerfil" modal header="Editar perfil" class="md:w-3">
         <label for="email">Correo</label>
         <InputText id="email" v-model="newUserInfo.email" disabled filled placeholder="Disabled" class="w-full mb-4" />
         <label for="firstname">Nombre</label>

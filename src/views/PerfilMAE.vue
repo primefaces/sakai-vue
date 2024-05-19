@@ -193,9 +193,11 @@ const saveAsesoria = async () => {
         </div>
       </div>
       <div class="sm:justify-end">
-        <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-pencil" size="large" severity="secondary"
+        <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-book" size="large" severity="secondary"
           @click="showDialogMaterias = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
-        <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-pencil" size="large" severity="secondary"
+        <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-clock" size="large" severity="secondary"
+          @click="showDialogHorarios = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
+        <Button v-if="userInfo.uid == maeInfo.uid" label="Iniciar sesión" icon="pi pi-clock" size="large"
           @click="showDialogHorarios = true" class="w-full sm:w-fit"/>
         <Button v-else label="Registrar asesoría" icon="pi pi-star" size="large"
           @click="showDialogAsesoria = true" class="w-full sm:w-fit"/>

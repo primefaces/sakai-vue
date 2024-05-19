@@ -50,13 +50,14 @@ watch(report, (newValue, oldValue) => {
 
 
 <template>
-    <h1 class="text-black text-6xl font-bold mb-5">Coordinador</h1>
+    <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Coordinador</h1>
     <div class="card mb-0">
 
     <!-- TODO: Adjust row sizing -->
     <!-- TODO: implement responsive resizing -->
         <DataTable :value="maes" paginator :rows="50" dataKey="id" 
             :loading="loading" class="border-round-xl"
+            responsiveLayout="stack" breakpoint="640px"
             >
             <!-- @rowSelect="onRowSelect" selectionMode="single" -->
             <template #empty>No se encontraron Maes. </template>
@@ -87,7 +88,7 @@ watch(report, (newValue, oldValue) => {
 
             <Column header="Asistencia" style="min-width:8rem">
                 <template #body="{ data }">
-                    <Dropdown @click="selectedId = data.uid" v-if="report" v-model="report[data.uid]" :options="options" optionLabel="name" optionValue="code" placeholder="Selecciona asistencia" class="w-full" />
+                    <Dropdown @click="selectedId = data.uid" v-if="report" v-model="report[data.uid]" :options="options" optionLabel="name" optionValue="code" placeholder="Selecciona asistencia" class="md:w-full max-w-1" />
                 </template>
             </Column>
             <!-- <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"

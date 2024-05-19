@@ -211,14 +211,14 @@ const onRowSelect = (event) => {
 
 
 <template>
-    <h1 class="text-black text-6xl font-bold mb-5">Horarios</h1>
+    <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
     <div class="card mb-0">
-
+        <Tag icon="pi pi-info-circle" severity="warning" value="Cambia al modo horizontal para usar los filtros" class="sm:hidden text-center"></Tag>
     <!-- TODO: Adjust row sizing -->
     <!-- TODO: implement responsive resizing -->
         <DataTable v-model:filters="filters" :value="maes" paginator :rows="10" dataKey="id" filterDisplay="row"
             :loading="loading" :globalFilterFields="['name', 'horario', 'subjects'/*, 'modalidad'*/]" class="border-round-xl"
-            @rowSelect="onRowSelect" selectionMode="single">
+            @rowSelect="onRowSelect" selectionMode="single" responsiveLayout="stack" breakpoint="640px">
             <!-- <template #header>
                 <div class="flex justify-content-end">
                     <span class="p-input-icon-left">
@@ -231,7 +231,7 @@ const onRowSelect = (event) => {
             <template #loading>Cargando información. Por favor espera.</template>
             <Column header="Nombre" field="name" :showFilterMenu="false" style="min-width: 15rem">
                 <template #body="{ data }">
-                    <p class="text-lg font-semibold">{{ data.name }}</p>
+                    <p class="md:text-lg md:font-semibold md:text-left text-right">{{ data.name }}</p>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter w-full"
@@ -240,8 +240,8 @@ const onRowSelect = (event) => {
             </Column>
             <Column header="Materias" filterField="subjects" :showFilterMenu="false" style="min-width: 14rem">
                 <template #body="{ data }">
-                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
-                        <Tag class="text-md" :class="getSubjectColor(item.area)"
+                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2 ml-2 md:ml-0">
+                        <Tag class="md:text-md text-xs text-center w-full md:w-fit" :class="getSubjectColor(item.area)"
                             :value="item.name" v-tooltip.top="item.id" rounded v-for="item in data.subjects"/>
                     </div>
                 </template>
@@ -256,7 +256,7 @@ const onRowSelect = (event) => {
                 style="min-width: 6rem">
                 <template #body="{ data }">
                     <!-- TODO: ask for hour display implementation -->
-                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
+                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap- ml-2 md:ml-0">
                         <Tag v-for="(value, key) in data.weekSchedule" class="text-md mx-auto"
                          :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top="
                           value[0].start ? `${value[0].start} - ${value[0].end}` : value.toString()"

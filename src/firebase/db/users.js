@@ -7,18 +7,20 @@ import {
     where,
     getDoc,
     getDocs,
-    updateDoc
+    updateDoc,
+    serverTimestamp,
+    deleteField
 } from 'firebase/firestore';
 import { getUserProfilePicture } from "../img/users";
 
 function getEmailUsername(email) {
     var atIndex = email.indexOf('@');
     if (atIndex !== -1) {
-      return email.slice(0, atIndex);
+        return email.slice(0, atIndex);
     }
     return null; // Return null if there is no "@" symbol in the email
-  }
-  
+}
+
 
 export async function getUser(uid) {
     const userRef = doc(firestoreDB, "users", uid);
@@ -27,7 +29,7 @@ export async function getUser(uid) {
     if (docSnap.exists()) {
         const data = docSnap.data()
         const profilePictureUrl = await getUserProfilePicture(data.email);
-        return {...data, profilePictureUrl};
+        return { ...data, profilePictureUrl };
     } else {
         return null;
     }
@@ -54,7 +56,7 @@ export async function getMaes(getProfilePicture = false) {
                 const data = doc.data();
                 const profilePictureUrl = await getUserProfilePicture(data.email);
                 return { ...data, profilePictureUrl };
-            }));            
+            }));
         }
         else {
             return querySnapshot.docs.map(doc => doc.data());
@@ -120,8 +122,8 @@ export async function updateUserSchedule(userId, newSchedule) {
     for (const day in newSchedule) {
         // Check if the value is an empty array
         if (Array.isArray(newSchedule[day]) && newSchedule[day].length === 0) {
-        // Delete the key with an empty array value
-        delete newSchedule[day];
+            // Delete the key with an empty array value
+            delete newSchedule[day];
         }
     }
     return await updateDoc(userRef, {
@@ -134,31 +136,83 @@ export async function getTodaysMae() {
         // Step 1: Define the query to get users with a role different from 'user'
         const usersRef = collection(firestoreDB, "users");
         const roleQuery = query(usersRef, where("role", "!=", "user"));
-    
+
         // Step 2: Execute the role query
         const querySnapshot = await getDocs(roleQuery);
-
+        
         // Step 3: Get current day of the week
         const daysOfWeek = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
         const currentDayIndex = new Date().getDay();
         const curretDay = daysOfWeek[currentDayIndex]
 
-    
+
         // Step 4: Filter results client-side to include only those with 'wednesday' in 'weekSchedule'
         const users = [];
         querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          //   if (data.weekSchedule && data.weekSchedule["thursday"]) {
-          if (data.weekSchedule && data.weekSchedule[curretDay]) {
-            users.push(data);
-          }
+            const data = doc.data();
+            //   if (data.weekSchedule && data.weekSchedule["thursday"]) {
+            if (data.weekSchedule && data.weekSchedule[curretDay]) {
+                users.push(data);
+            }
         });
-    
+
         return users;
-      } catch (error) {
+    } catch (error) {
         console.error("Error fetching filtered users: ", error);
         return [];
-      }
-    
-  }
-  
+    }
+
+}
+
+export async function startActiveSession(userId, userInfo, location) {
+    try {
+        const userRef = doc(firestoreDB, "users", userId);
+        return await updateDoc(userRef, {
+            activeSession: {
+                peerInfo: userInfo,
+                location,
+                status: 'PENDING',
+                startTime: serverTimestamp(),
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching filtered users: ", error);
+        return [];
+    }
+}
+
+export async function stopActiveSession(userId) {
+    try {
+        const userRef = doc(firestoreDB, "users", userId);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            throw new Error("User not found");
+        }
+
+        // Gets start time from current Active Session
+        const userData = userDoc.data();
+        const startTime = userData.activeSession?.startTime?.toDate();
+
+        if (!startTime) {
+            throw new Error("Active session start time not found");
+        }
+
+        // Calculates and adds the duration of the current session to the total time
+        const currentTime = new Date();
+        const differenceInMinutes = Math.floor((currentTime - startTime) / (1000 * 60));
+
+        const totalTime = (userData.totalTime || 0) + differenceInMinutes;
+
+        // Updates the total time and stops current session
+        await updateDoc(userRef, {
+            totalTime: totalTime,
+            activeSession: deleteField()
+        });
+
+        return { totalTime, differenceInMinutes, activeSessionDeleted: true };
+    } catch (error) {
+        console.error("Error stopping active session: ", error);
+        return null;
+    }
+}

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser } from '../firebase/db/users';
+import { useRoute, useRouter } from 'vue-router';
+import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, stopActiveSession } from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria } from '../firebase/db/asesorias';
 import { FilterMatchMode } from 'primevue/api';
@@ -9,6 +9,7 @@ import { useToast } from 'primevue/usetoast';
 
 const toast = useToast();
 const route = useRoute();
+const router = useRouter();
 
 const maeInfo = ref(null);
 const userInfo = ref(null);
@@ -167,6 +168,37 @@ const saveAsesoria = async () => {
   
 }
 
+const showDialogSession = ref(false);
+const location = ref('')
+
+const startSession = async () => {
+  // Crea field de activeSession con id, location, peerInfo, startTime, status
+  try {
+    const res = await startActiveSession(userInfo.value.uid, userInfo.value, location.value);
+    toast.add({ severity: 'success', summary: 'Inicio de sesión exitoso', life: 3000 });
+    userInfo.value = await getCurrentUser();
+    maeInfo.value = await getUser(route.params.id);
+    showDialogSession.value = false;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de iniciar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+  }
+}
+
+const stopSession = async () => {
+  // Borra field de activeSession, saca la diferencia en minutos de startTime y actual para agregarla a totalTime del usuario
+  try {
+    const res = await stopActiveSession(userInfo.value.uid);
+    if (!res.activeSessionDeleted) {
+      throw new Error("Active session was not deleted");
+    }
+    toast.add({ severity: 'success', summary: 'Sesión cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
+    userInfo.value = await getCurrentUser();
+    maeInfo.value = await getUser(route.params.id);
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+  }
+}
+
 </script>
 
 <template>
@@ -183,22 +215,27 @@ const saveAsesoria = async () => {
     <div class="sm:flex">
       <div class="sm:flex sm:flex-1 justify-center w-full">
         <div class="flex">
-          <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-11rem w-11rem sm:mr-5 mx-auto">
+          <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-14rem w-14rem sm:mr-5 mx-auto">
         </div>
         <div>
           <p class="text-3xl font-bold text-center sm:text-left"> {{ maeInfo.name }} </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-book font-medium"></i> {{ maeInfo.career }} </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-building font-medium"></i> Campus {{ maeInfo.campus }} </p>
+          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-clock font-medium"></i> {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas de servicio </p>
         </div>
       </div>
       <div class="sm:justify-end">
+        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2">
+          <Button v-if="userInfo['activeSession']" label="Cerrar sesión" icon="pi pi-user-minus" size="large"
+            @click="stopSession" class="w-full" severity="danger"/>
+          <Button v-else label="Iniciar sesión" icon="pi pi-user-plus" size="large"
+            @click="showDialogSession = true" class="w-full"/>
+        </div>
         <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-book" size="large" severity="secondary"
           @click="showDialogMaterias = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
         <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-clock" size="large" severity="secondary"
           @click="showDialogHorarios = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
-        <Button v-if="userInfo.uid == maeInfo.uid" label="Iniciar sesión" icon="pi pi-clock" size="large"
-          @click="showDialogHorarios = true" class="w-full sm:w-fit"/>
         <Button v-else label="Registrar asesoría" icon="pi pi-star" size="large"
           @click="showDialogAsesoria = true" class="w-full sm:w-fit"/>
       </div>
@@ -237,8 +274,8 @@ const saveAsesoria = async () => {
       <div v-for="day in daysArray" class="md:col-4 col-12">
         <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold mb-2">{{day['es']}} <Button @click="addTimeSlot(day['en'], '09:00', '10:00')" icon="pi pi-plus" class="text-sm h-1rem w-1rem ml-2"  severity="secondary" text rounded/></div>
         <span v-for="(slot, index) in newSchedule[day['en']]" :key="`editor-${day['en']}-${index}`" class="flex justify-content-around flex-wrap">
-          <Dropdown v-model="newSchedule[day['en']][index]['start']" optionValue="code" :options="timeSlots" optionLabel="name" placeholder="Entrada" checkmark :highlightOnSelect="false" class="w-5 mb-2" />
-          <Dropdown v-model="newSchedule[day['en']][index]['end']" optionValue="code" :options="timeSlots" optionLabel="name" placeholder="Salida" checkmark :highlightOnSelect="false" class="w-5 mb-2" />
+          <Dropdown v-model="newSchedule[day['en']][index]['start']" optionValue="code" :options="timeSlots" optionLabel="name" placeholder="Entrada" checkmark :highlightOnSelect="false" class="md:w-5 w-4 mb-2" />
+          <Dropdown v-model="newSchedule[day['en']][index]['end']" optionValue="code" :options="timeSlots" optionLabel="name" placeholder="Salida" checkmark :highlightOnSelect="false" class="md:w-5 w-4 mb-2" />
           <Button @click="newSchedule[day['en']].splice(index, 1); newSchedule[day['en']] = newSchedule[day['en']] ?? []; console.log(newSchedule[day['en']])" icon="pi pi-times" severity="danger" text rounded aria-label="Cancel"  />
         </span>
       </div>
@@ -249,7 +286,7 @@ const saveAsesoria = async () => {
     </div>
   </Dialog>
 
-  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias" class="w-9">
+  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias" class="md:w-9">
     <DataTable :value="subjects" paginator :rows="10" :rowsPerPageOptions="[10, 25, 50, 100]"
     v-model:filters="subjectTableFilter"  :globalFilterFields="['id', 'name']"
     v-model:selection="selectedSubjects" responsiveLayout="stack" >
@@ -270,7 +307,7 @@ const saveAsesoria = async () => {
     </div>
   </Dialog>
 
-  <Dialog v-model:visible="showDialogAsesoria" modal header="Registrar asesoría" class="w-4">
+  <Dialog v-model:visible="showDialogAsesoria" modal header="Registrar asesoría" class="md:w-4">
     
     <p class="font-bold">Materia</p>
     <Dropdown v-model="materiaAsesoria" :options="subjects" filter optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false" class="w-12 mb-2" />
@@ -283,6 +320,15 @@ const saveAsesoria = async () => {
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
       <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null && comentarioAsesoria !== '' && ratingAsesoria !== null)" @click="saveAsesoria"></Button>
+    </div>
+  </Dialog>
+
+  <Dialog v-model:visible="showDialogSession" modal header="Iniciar sesión" class="md:w-4">
+    <label for="location">Por favor indica donde te encuentras</label>
+    <InputText id="email" v-model="location" placeholder="Biblioteca piso 4" class="w-full mb-4" />
+    <div class="flex justify-content-end gap-2">
+      <Button type="button" label="Cerrar" severity="secondary" @click="showDialogSession = false"></Button>
+      <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>
     </div>
   </Dialog>
 </template>

@@ -101,6 +101,8 @@ const announcements = ref([
     //     date: '27/02/2024',
     // },
 ])
+
+currentDay =  ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
 </script>
 
 <template>
@@ -145,7 +147,7 @@ const announcements = ref([
             <Card class="md:w-4 my-2 sm:my-0">
                 <template #content>
                     <p class="m-0 text-center text-xl font-semibold">
-                        Espera nuevos avisos pronto!
+                        ¡Espera nuevos avisos pronto!
                     </p>
                 </template>
             </Card>
@@ -202,7 +204,7 @@ const announcements = ref([
                 </div>
 
                 <div class="flex p-3 gap-3">
-                    <img v-if="true" src="https://randomuser.me/api/portraits/lego/5.jpg" alt="Foto de perfil"
+                    <img v-if="true" :src="mae.profilePictureUrl" alt="Foto de perfil"
                         class="border-circle h-6rem w-6rem">
                     <Skeleton v-else shape="circle" size="5rem"></Skeleton>
                     <div class="relative w-full">
@@ -212,7 +214,7 @@ const announcements = ref([
                             style="max-width: 75%;"> {{ mae.name }} </a>
                         <div class="md:absolute md:bottom-0 w-full">
                             <p v-if="mae.activeSession.location" class="mb-0"> {{ mae.activeSession.location }} </p>
-                            <Tag class="text-md w-6rem" severity="success" :value="`${'11:00'} - ${'13:00'}`" />
+                            <Tag v-if="mae.weekSchedule[currentDay]" class="text-md w-6rem" severity="success" :value="`${mae.weekSchedule[currentDay][0]['start']} - ${mae.weekSchedule[currentDay][0]['end']}`" />
                             <!-- <Tag v-if="mae.activeSession.location" class="white-space-nowrap overflow-hidden text-overflow-elipsis" style="max-width: 50%;" :value="mae.activeSession.location"/> -->
                         </div>
                     </div>

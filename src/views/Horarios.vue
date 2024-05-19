@@ -39,9 +39,7 @@ onMounted(() => {
     // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
     FilterService.register(ARRAY_CONTAINS.value, (value, filter) => {
         // Filter -> valor ingresado por el usuario
-        // Value -> array de objetos, donde cada objeto representa una materia dada por un mae
-        console.log(value);
-        console.log(filter);
+        // Value -> array de objetos, donde cada objeto representa una materia dada por un mae;
         
         if (filter === undefined || filter === null || filter.trim() === '') {
             return true;

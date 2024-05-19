@@ -232,7 +232,7 @@ const saveAsesoria = async () => {
 
   <Dialog v-model:visible="showDialogHorarios" modal header="Editar horario" class="w-9">
     <div class="grid">
-      <div v-for="day in daysArray" class="col-4">
+      <div v-for="day in daysArray" class="md:col-4 col-12">
         <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold mb-2">{{day['es']}} <Button @click="addTimeSlot(day['en'], '09:00', '10:00')" icon="pi pi-plus" class="text-sm h-1rem w-1rem ml-2"  severity="secondary" text rounded/></div>
         <span v-for="(slot, index) in newSchedule[day['en']]" :key="`editor-${day['en']}-${index}`" class="flex justify-content-around flex-wrap">
           <Dropdown v-model="newSchedule[day['en']][index]['start']" optionValue="code" :options="timeSlots" optionLabel="name" placeholder="Entrada" checkmark :highlightOnSelect="false" class="w-5 mb-2" />

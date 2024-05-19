@@ -42,24 +42,29 @@ export async function getCurrentUser() {
     return null;
 }
 
-export async function getMaes() {
+export async function getMaes(getProfilePicture = false) {
     const usersRef = collection(firestoreDB, "users");
     const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi']));
 
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot) {
-        return querySnapshot.docs.map(async (doc) => {
-            const data = doc.data()
-            const profilePictureUrl = await getUserProfilePicture(data.email);
-            return {...data, profilePictureUrl};
-        });
+        if (getProfilePicture) {
+            return Promise.all(querySnapshot.docs.map(async (doc) => {
+                const data = doc.data();
+                const profilePictureUrl = await getUserProfilePicture(data.email);
+                return { ...data, profilePictureUrl };
+            }));            
+        }
+        else {
+            return querySnapshot.docs.map(doc => doc.data());
+        }
     } else {
         return null;
     }
 }
 
-export async function getUsersWithActiveSession() {
+export async function getUsersWithActiveSession(getProfilePicture = false) {
     try {
         // Get a reference to the users collection
         const usersRef = collection(firestoreDB, "users");
@@ -70,16 +75,21 @@ export async function getUsersWithActiveSession() {
 
         // Process the query results
         if (querySnapshot) {
-            const users = querySnapshot.docs.map(async (doc) => {
-                const data = doc.data()
+            // Map the docs to an array of promises
+            const usersPromises = querySnapshot.docs.map(async (doc) => {
+                const data = doc.data();
                 const profilePictureUrl = await getUserProfilePicture(data.email);
-                return {...data, profilePictureUrl};
+                return { ...data, profilePictureUrl };
             });
 
             // Calculate the time 5 hours ago in seconds (18000 is 5hrs in seconds)
             const fiveHoursAgoTimestampSeconds = Math.floor(Date.now() / 1000) - 18000;
 
-            return users.filter((user) => user.activeSession.startTime.seconds > fiveHoursAgoTimestampSeconds);
+            // Wait for all promises to resolve and then filter the users
+            return Promise.all(usersPromises).then(users => {
+                return users.filter(user => user.activeSession.startTime.seconds > fiveHoursAgoTimestampSeconds);
+            });
+
         } else {
             return null;
         }

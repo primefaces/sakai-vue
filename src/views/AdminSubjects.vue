@@ -117,7 +117,7 @@ const verIntensiva = (userId) => {
                 </template>
             </Column>
             
-            <Column field="abreviacion" header="Abreviaciones" style="min-width:8rem">
+            <Column field="abreviacion" header="Clave" style="min-width:8rem">
                 <template #body="{ data }">
                     <Tag rounded class="w-10 h-4 text-lg font-semibold" :value="data.abreviacion" :class="getAbreviacion(data.abreviacion)" v-tooltip.top="data.abreviacion" style="color: white;"></Tag>
                 </template>

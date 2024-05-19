@@ -10,7 +10,6 @@ import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 const route = useRoute();
 
-
 const maeInfo = ref(null);
 const userInfo = ref(null);
 
@@ -121,14 +120,6 @@ const timeSlots = [
   { name: '06:00 PM', code: '18:00' }
 ];
 
-const showExtraSlots = ref({
-  'monday': false,
-  'tuesday': false,
-  'wednesday': false,
-  'thursday': false,
-  'friday': false
-})
-
 const showDialogHorarios = ref(false);
 
 const addTimeSlot = (day, start, end) => {
@@ -181,7 +172,7 @@ const saveAsesoria = async () => {
 <template>
   <div class="flex relative">
     <div class="flex-1">
-      <h1 class="text-black text-6xl font-bold mb-5">Perfil</h1>
+      <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Perfil</h1>
     </div>
     <div class="justify-end hidden md:block">
       <!-- <i class="pi pi-bell text-4xl"></i> -->
@@ -189,48 +180,49 @@ const saveAsesoria = async () => {
   </div>
 
   <div v-if="maeInfo && userInfo" class="card mb-0 w-full">
-    <div class="flex">
-      <div class="flex flex-1">
-        <img src="https://randomuser.me/api/portraits/lego/5.jpg" alt="Foto de perfil" class="border-circle h-11rem w-11rem mr-5">
+    <div class="sm:flex">
+      <div class="sm:flex sm:flex-1 justify-center w-full">
+        <div class="flex">
+          <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-11rem w-11rem sm:mr-5 mx-auto">
+        </div>
         <div>
-          <p class="text-3xl font-bold"> {{ maeInfo.name }} </p>
-          <p class="text-lg font-medium"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>
-          <p class="text-lg font-medium"> <i class="pi pi-book font-medium"></i> {{ maeInfo.career }} </p>
-          <p class="text-lg font-medium"> <i class="pi pi-building font-medium"></i> Campus {{ maeInfo.campus }} </p>
+          <p class="text-3xl font-bold text-center sm:text-left"> {{ maeInfo.name }} </p>
+          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>
+          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-book font-medium"></i> {{ maeInfo.career }} </p>
+          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-building font-medium"></i> Campus {{ maeInfo.campus }} </p>
         </div>
       </div>
-      <div class="justify-end space-x">
+      <div class="sm:justify-end">
         <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-pencil" size="large" severity="secondary"
-          @click="showDialogMaterias = true" />
+          @click="showDialogMaterias = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
         <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-pencil" size="large" severity="secondary"
-          @click="showDialogHorarios = true" />
+          @click="showDialogHorarios = true" class="w-full sm:w-fit"/>
         <Button v-else label="Registrar asesoría" icon="pi pi-star" size="large"
-          @click="showDialogAsesoria = true" />
+          @click="showDialogAsesoria = true" class="w-full sm:w-fit"/>
       </div>
     </div>
-    <h2 class="font-bold"> Materias </h2>
+    <h2 class="font-bold text-center sm:text-left"> Materias </h2>
     <div class="mb-2">
       <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" />
     </div>
     <div class="flex flex-wrap">
       <!-- Mostrar las primeras dos filas de etiquetas -->
-        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.name" :key="index" rounded class="text-lg font-semibold text-white mx-2 my-1 p-3" :class="getSubjectColor(subject.area)">
-          {{ subject.id }}
+        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-2 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
+          {{ subject.name }}
         </Tag>
         <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
           severity="secondary" rounded class="text-lg font-semibold text-white mx-2 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
     </div>
 
     <hr />
-    <h2 class="font-bold"> Horario </h2>
+    <h2 class="font-bold text-center sm:text-left"> Horario </h2>
 
     <div>
       <div class="grid">
         <div v-for="day in daysArray" class="md:col col-12">
-          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }} <Button v-if="maeInfo.weekSchedule[day['en']] && maeInfo.weekSchedule[day['en']].length > 1" @click="showExtraSlots[day['en']] = !showExtraSlots[day['en']]" :icon="showExtraSlots['wednesday'] ? 'pi pi-chevron-up' : 'pi pi-chevron-down'" class="text-sm h-1rem w-1rem ml-2"  severity="secondary" text rounded/></div>
-            <div v-if="maeInfo.weekSchedule[day['en']]" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2"> {{ `${maeInfo.weekSchedule[day['en']][0]['start']} - ${maeInfo.weekSchedule[day['en']][0]['end']}` }} </div>
+          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
+            <div v-if="maeInfo.weekSchedule[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']]" :key="`${day['en']}-${index}`" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
             <div v-else class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
-            <div v-if="showExtraSlots[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']].slice(1)" :key="`${day['en']}-${index}`" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
         </div>
     </div>
     </div>

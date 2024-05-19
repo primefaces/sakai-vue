@@ -9,6 +9,7 @@ import {
     getDocs,
     updateDoc
 } from 'firebase/firestore';
+import { getUserProfilePicture } from "../img/users";
 
 function getEmailUsername(email) {
     var atIndex = email.indexOf('@');
@@ -24,7 +25,9 @@ export async function getUser(uid) {
     const docSnap = await getDoc(userRef);
 
     if (docSnap.exists()) {
-        return docSnap.data();
+        const data = docSnap.data()
+        const profilePictureUrl = await getUserProfilePicture(data.email);
+        return {...data, profilePictureUrl};
     } else {
         return null;
     }
@@ -45,9 +48,12 @@ export async function getMaes() {
 
     const querySnapshot = await getDocs(q);
 
-
     if (querySnapshot) {
-        return querySnapshot.docs.map(doc => doc.data());
+        return querySnapshot.docs.map(async (doc) => {
+            const data = doc.data()
+            const profilePictureUrl = await getUserProfilePicture(data.email);
+            return {...data, profilePictureUrl};
+        });
     } else {
         return null;
     }
@@ -64,7 +70,11 @@ export async function getUsersWithActiveSession() {
 
         // Process the query results
         if (querySnapshot) {
-            const users = querySnapshot.docs.map(doc => doc.data());
+            const users = querySnapshot.docs.map(async (doc) => {
+                const data = doc.data()
+                const profilePictureUrl = await getUserProfilePicture(data.email);
+                return {...data, profilePictureUrl};
+            });
 
             // Calculate the time 5 hours ago in seconds (18000 is 5hrs in seconds)
             const fiveHoursAgoTimestampSeconds = Math.floor(Date.now() / 1000) - 18000;

@@ -244,7 +244,7 @@ const onRowSelect = (event) => {
                 <template #body="{ data }">
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
                         <Tag class="text-md" :class="getSubjectColor(item.area)"
-                            :value="item.id" v-tooltip.top="item.name" rounded v-for="item in data.subjects"/>
+                            :value="item.name" v-tooltip.top="item.id" rounded v-for="item in data.subjects"/>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">

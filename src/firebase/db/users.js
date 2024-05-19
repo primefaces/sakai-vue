@@ -75,21 +75,24 @@ export async function getUsersWithActiveSession(getProfilePicture = false) {
 
         // Process the query results
         if (querySnapshot) {
-            // Map the docs to an array of promises
-            const usersPromises = querySnapshot.docs.map(async (doc) => {
+            // Calculate the time 5 hours ago in seconds (18000 is 5hrs in seconds)
+            const fiveHoursAgoTimestampSeconds = Math.floor(Date.now() / 1000) - 18000;
+
+            // Filter the docs before mapping to get profile pictures
+            const filteredDocs = querySnapshot.docs.filter(doc => {
+                const data = doc.data();
+                return data.activeSession.startTime.seconds > fiveHoursAgoTimestampSeconds;
+            });
+
+            // Map the filtered docs to an array of promises
+            const usersPromises = filteredDocs.map(async (doc) => {
                 const data = doc.data();
                 const profilePictureUrl = await getUserProfilePicture(data.email);
                 return { ...data, profilePictureUrl };
             });
 
-            // Calculate the time 5 hours ago in seconds (18000 is 5hrs in seconds)
-            const fiveHoursAgoTimestampSeconds = Math.floor(Date.now() / 1000) - 18000;
-
-            // Wait for all promises to resolve and then filter the users
-            return Promise.all(usersPromises).then(users => {
-                return users.filter(user => user.activeSession.startTime.seconds > fiveHoursAgoTimestampSeconds);
-            });
-
+            // Wait for all promises to resolve and return the users
+            return Promise.all(usersPromises);
         } else {
             return null;
         }

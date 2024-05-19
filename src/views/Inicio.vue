@@ -102,7 +102,7 @@ const announcements = ref([
     // },
 ])
 
-currentDay =  ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
+const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()]);
 </script>
 
 <template>

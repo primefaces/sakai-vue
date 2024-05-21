@@ -228,6 +228,11 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Login.vue')
         },
         {
+            path: '/auth/password-reset',
+            name: 'password-reset',
+            component: () => import('@/views/pages/auth/PasswordReset.vue')
+        },
+        {
             path: '/auth/access',
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')

@@ -1,14 +1,13 @@
 <script setup>
 import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { getAuth, sendPasswordResetEmail } from "firebase/auth"
 import router from '../../../router';
 // import AppConfig from '@/layout/AppConfig.vue';
 
 const toast = useToast();
 
 const email = ref('');
-const password = ref('');
 const errorMsg = ref('');
 const checked = ref(false);
 
@@ -22,7 +21,7 @@ const onSignIn = () => {
     
     const auth = getAuth();
 
-    if (email.value == '' || password.value == '') {
+    if (email.value == '') {
         errorMsg.value = 'Por favor ingresa todos los campos'
         return;
     }
@@ -32,32 +31,15 @@ const onSignIn = () => {
         return;
     }
 
-    // TODO: Agregar persistencia de sesiones
-    signInWithEmailAndPassword(auth, email.value, password.value)
-        .then(async (data) => {
-            if (auth.currentUser.emailVerified) {
-                router.push('/inicio');
-            }
-            else {
-                toast.add({ severity: 'info', summary: 'Por favor verifica tu correo para continuar', detail: 'Revisa tu bandeja de entrada y spam' });
-            }
+    sendPasswordResetEmail(auth, email.value)
+        .then(() => {
+            toast.add({ severity: 'success', summary: 'Correo enviado', detail: 'Revisa tu bandeja de entrada y spam', life: 3000 });
+            router.push('/auth/login');
         })
-        .catch((error) => {
-            switch (error.code) {
-                case "auth/invalid-email":
-                    errorMsg.value = 'Correo no válido'
-                    break;
-                case "auth/user-not-found":
-                    errorMsg.value = 'No se encontró un usuario con ese correo'
-                    break;
-                case "auth/wrong-password":
-                    errorMsg.value = 'Contraseña incorrecta'
-                    break;
-                default:
-                    errorMsg.value = 'El correo o la constraseña no son válidos'
-                    break;
-            }
+        .catch(() => {
+            errorMsg.value = 'Ocurrió un error al tratar de enviar el correo. Contacta un administrador de la página';
         })
+
 }
 </script>
 
@@ -69,22 +51,25 @@ const onSignIn = () => {
                 style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
                     <div class="text-center mb-5">
-                        <div class="text-900 text-3xl font-medium mb-3">Bienvenid@ al portal de MAE</div>
-                        <span class="text-600 font-medium">Inicia sesión para continuar</span>
+                        <div class="text-900 text-3xl font-medium mb-3">Ingresa tu correo electrónico</div>
+                        <span class="text-600 font-medium text-overflow-ellipsis">Recibiras un correo para actualizar tu contraseña</span>
+                        <br>
+                        <span class="text-600 font-medium text-overflow-ellipsis">Asegúrate de que tu contraseña sea diferente a la de otros sitios y que incluya:</span>
+                        <ul class="list-none">
+                            <li class="">Mayúsculas y minúsculas</li>
+                            <li class="">Números</li>
+                            <li class="">Caracteres especiales </li>
+                        </ul>
                     </div>
 
                     <div>
                         <Toast />
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Correo</label>
-                        <InputText id="email1" type="text" placeholder="Correo electrónico" class="w-full md:w-30rem mb-5"
+                        <label for="email" class="block text-900 text-xl font-medium mb-2">Correo</label>
+                        <InputText id="email" type="text" placeholder="Correo electrónico" class="w-full mb-5"
                             style="padding: 1rem" v-model="email" />
 
-                        <label for="password1" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="w-full"
-                            inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
-
-                        <a href="/#/auth/password-reset">
-                            <p class="text-center text-indigo-800 w-full mt-2 underline cursor-pointer">¿Olvidaste tu contraseña?</p>
+                        <a href="/#/auth/login">
+                            <p class="text-center text-indigo-800 w-full mt-2 underline cursor-pointer">Regresar a inicio de sesión</p>
                         </a>
                         <Message v-if="errorMsg" severity="error" class="mt-2"> {{ errorMsg }} </Message>
 
@@ -96,8 +81,7 @@ const onSignIn = () => {
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Olvidaste tu contraseña?</a>
                         </div> -->
                         <Divider />
-                        <Button @click="onSignIn" label="Inicar sesión" class="w-full p-3 mb-3 text-xl"></Button>
-                        <Button label="Registrarse" disabled class="w-full p-3 text-xl"></Button>
+                        <Button @click="onSignIn" label="Restablecer contraseña" class="w-full p-3 mb-3 text-xl"></Button>
                     </div>
                 </div>
             </div>

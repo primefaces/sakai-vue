@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, stopActiveSession } from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
-import { addAsesoria } from '../firebase/db/asesorias';
+import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 
@@ -14,6 +14,8 @@ const router = useRouter();
 const maeInfo = ref(null);
 const userInfo = ref(null);
 
+const asesoriasCount = ref(0);
+
 const selectedSubjects = ref([]);
 const subjects = ref([]);
 
@@ -23,6 +25,8 @@ onMounted(async () => {
   userInfo.value = await getCurrentUser();
 
   maeInfo.value = await getUser(route.params.id);
+
+  asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
   selectedSubjects.value = maeInfo.value.subjects;
   subjects.value = await getSubjects();
 
@@ -215,14 +219,15 @@ const stopSession = async () => {
     <div class="sm:flex">
       <div class="sm:flex sm:flex-1 justify-center w-full">
         <div class="flex">
-          <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-14rem w-14rem sm:mr-5 mx-auto">
+          <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-16rem w-16rem sm:mr-5 mx-auto">
         </div>
-        <div>
+        <div class="mb-2 sm:mb-0">
           <p class="text-3xl font-bold text-center sm:text-left"> {{ maeInfo.name }} </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-book font-medium"></i> {{ maeInfo.career }} </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-building font-medium"></i> Campus {{ maeInfo.campus }} </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-clock font-medium"></i> {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas de servicio </p>
+          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-star font-medium"></i> {{ asesoriasCount }} Asesorías </p>
         </div>
       </div>
       <div class="sm:justify-end">
@@ -235,7 +240,7 @@ const stopSession = async () => {
         <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-book" size="large" severity="secondary"
           @click="showDialogMaterias = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
         <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-clock" size="large" severity="secondary"
-          @click="showDialogHorarios = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
+          @click="showDialogHorarios = true" class="w-full sm:w-fit mb-2 sm:mb-0"/>
         <Button v-else label="Registrar asesoría" icon="pi pi-star" size="large"
           @click="showDialogAsesoria = true" class="w-full sm:w-fit"/>
       </div>
@@ -246,11 +251,11 @@ const stopSession = async () => {
     </div>
     <div class="flex flex-wrap">
       <!-- Mostrar las primeras dos filas de etiquetas -->
-        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-2 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
+        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-2 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
           {{ subject.name }}
         </Tag>
         <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
-          severity="secondary" rounded class="text-lg font-semibold text-white mx-2 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
+          severity="secondary" rounded class="text-lg font-semibold text-white mx-1 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
     </div>
 
     <hr />
@@ -262,6 +267,50 @@ const stopSession = async () => {
           <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
             <div v-if="maeInfo.weekSchedule[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']]" :key="`${day['en']}-${index}`" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
             <div v-else class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
+        </div>
+    </div>
+    </div>
+  </div>
+  <div v-else class="card mb-0 w-full">
+    <div class="sm:flex">
+      <div class="sm:flex sm:flex-1 justify-center w-full">
+        <div class="flex">
+          <Skeleton size="16rem" shape="circle" class="mb-2 sm:mr-5"></Skeleton>
+        </div>
+        <div class="mb-2 sm:mb-0 justify-center">
+          <Skeleton height="36px" width="20rem" class="mb-2"></Skeleton>
+          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
+          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
+          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
+          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
+          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
+        </div>
+      </div>
+    </div>
+    <h2 class="font-bold text-center sm:text-left"> Materias </h2>
+    <div class="mb-2">
+      <Skeleton height="34px" class="p-mr-2"></Skeleton>
+    </div>
+    <div class="flex">
+      <!-- Mostrar las primeras dos filas de etiquetas -->
+      <Skeleton width="20%" height="34px" borderRadius="16px" class="mr-2"></Skeleton>
+      <Skeleton width="60%" height="34px" borderRadius="16px" class="mx-2"></Skeleton>
+      <Skeleton width="40%" height="34px" borderRadius="16px" class="ml-2"></Skeleton>
+        <!-- <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-2 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
+          {{ subject.name }}
+        </Tag>
+        <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
+          severity="secondary" rounded class="text-lg font-semibold text-white mx-2 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" /> -->
+    </div>
+
+    <hr />
+    <h2 class="font-bold text-center sm:text-left"> Horario </h2>
+
+    <div>
+      <div class="grid">
+        <div v-for="day in daysArray" class="md:col col-12">
+          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
+            <div class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
         </div>
     </div>
     </div>

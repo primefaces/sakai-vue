@@ -157,7 +157,7 @@ export async function getTodaysMae() {
         // Step 3: Get current day of the week
         const daysOfWeek = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
         const currentDayIndex = new Date().getDay();
-        const curretDay = daysOfWeek[currentDayIndex]
+        const currentDay = daysOfWeek[currentDayIndex]
 
 
         // Step 4: Filter results client-side to include only those with 'wednesday' in 'weekSchedule'
@@ -165,9 +165,29 @@ export async function getTodaysMae() {
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             //   if (data.weekSchedule && data.weekSchedule["thursday"]) {
-            if (data.weekSchedule && data.weekSchedule[curretDay]) {
+            if (data.weekSchedule && data.weekSchedule[currentDay]) {
                 users.push(data);
             }
+        });
+
+        // Step 5: Sort users by the earliest start time of the current day
+
+        console.log(users);
+
+        users.sort((a, b) => {
+
+            // TODO: Change to this when updating user schedule format
+            // const aStartTime = a.weekSchedule[currentDay][0]?.start;
+            // const bStartTime = b.weekSchedule[currentDay][0]?.start;            
+
+            const bStartTime = b.weekSchedule[currentDay][0]?.start ?? `${Math.round((b.weekSchedule[currentDay][0]))}:00`;
+            const aStartTime = a.weekSchedule[currentDay][0]?.start ?? `${Math.round((a.weekSchedule[currentDay][0]))}:00`;
+            
+            // Convert time strings to Date objects for comparison
+            const aTime = aStartTime ? new Date(`1970-01-01T${aStartTime}:00Z`) : new Date();
+            const bTime = bStartTime ? new Date(`1970-01-01T${bStartTime}:00Z`) : new Date();
+
+            return aTime - bTime;
         });
 
         return users;
@@ -175,7 +195,6 @@ export async function getTodaysMae() {
         console.error("Error fetching filtered users: ", error);
         return [];
     }
-
 }
 
 export async function startActiveSession(userId, userInfo, location) {

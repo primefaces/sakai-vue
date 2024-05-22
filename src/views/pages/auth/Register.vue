@@ -252,14 +252,6 @@ const saveUserToDatabase = (userInfo) => {
                         </Password>
 
                         <Message v-if="errorMsg" severity="error" class="mt-2"> {{ errorMsg }} </Message>
-
-                        <!-- <div class="flex align-items-center justify-content-between mb-5 mt-3 gap-5">
-                            <div class="flex align-items-center">
-                                <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                                <label for="rememberme1">Recuerdame</label>
-                            </div>
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Olvidaste tu contraseña?</a>
-                        </div> -->
                         <Divider />
                         <Button @click="onSignUp" label="Registrarse"
                             :disabled="newUserInfo.email == '' || password1 == '' || password2 == '' || newUserInfo.firstname == null || newUserInfo.lastname == null || newUserInfo.campus == null || newUserInfo.major == null"

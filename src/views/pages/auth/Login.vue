@@ -39,7 +39,7 @@ const onSignIn = () => {
                 router.push('/inicio');
             }
             else {
-                toast.add({ severity: 'info', summary: 'Por favor verifica tu correo para continuar', detail: 'Revisa tu bandeja de entrada y spam' });
+                errorMsg.value = 'Por favor verifica tu correo para continuar. Revisa tu bandeja de entrada y spam'
             }
         })
         .catch((error) => {
@@ -75,12 +75,12 @@ const onSignIn = () => {
 
                     <div>
                         <Toast />
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Correo</label>
-                        <InputText id="email1" type="text" placeholder="Correo electrónico" class="w-full md:w-30rem mb-5"
+                        <label for="email" class="block text-900 text-xl font-medium mb-2">Correo</label>
+                        <InputText id="email" type="text" placeholder="Correo electrónico" class="w-full md:w-30rem mb-5"
                             style="padding: 1rem" v-model="email" />
 
-                        <label for="password1" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="w-full"
+                        <label for="password" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
+                        <Password id="password" v-model="password" placeholder="Password" :toggleMask="true" class="w-full"
                             inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
 
                         <a href="/#/auth/password-reset">
@@ -96,8 +96,8 @@ const onSignIn = () => {
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Olvidaste tu contraseña?</a>
                         </div> -->
                         <Divider />
-                        <Button @click="onSignIn" label="Inicar sesión" class="w-full p-3 mb-3 text-xl"></Button>
-                        <Button label="Registrarse" disabled class="w-full p-3 text-xl"></Button>
+                        <Button @click="onSignIn" :disabled="email == '' || password == ''" label="Inicar sesión" class="w-full p-3 mb-3 text-xl"></Button>
+                        <Button @click="router.push('/auth/register')" label="Registrarse" class="w-full p-3 text-xl" severity="secondary"></Button>
                     </div>
                 </div>
             </div>

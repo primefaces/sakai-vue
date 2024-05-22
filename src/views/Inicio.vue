@@ -23,7 +23,9 @@ onMounted(async () => {
         "lastname": userInfo.value.lastname,
         "name": userInfo.value.name,
         "campus": userInfo.value.campus,
+        "major": userInfo.value.major ?? userInfo.value.career,
         "career": userInfo.value.career,
+        "area": userInfo.value.area,
         "email": userInfo.value.email,
     };
     campuses.value = await getCampuses(); 
@@ -34,6 +36,8 @@ const showDialogPerfil = ref(false);
 const saveProfileChanges = async () => {
     toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tu perfil', life: 3000 });
     try {
+        newUserInfo.value.career = newUserInfo.value.major.id
+        newUserInfo.value.area = newUserInfo.value.major.school
         await updateUserInfo(userInfo.value.uid, newUserInfo.value);
         userInfo.value = await getCurrentUser();
         newUserInfo.value = {
@@ -43,6 +47,8 @@ const saveProfileChanges = async () => {
             "campus": userInfo.value.campus,
             "career": userInfo.value.career,
             "email": userInfo.value.email,
+            "major": userInfo.value.major ?? userInfo.value.career,
+            "area": userInfo.value.area,
         };
         toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tu perfil se guardaron con éxito', life: 3000 });
 
@@ -160,11 +166,11 @@ const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", 
         <label for="firstname">Nombre</label>
         <InputText id="firstname" v-model="newUserInfo.firstname" placeholder="Nombre" class="w-full mb-4" />
         <label for="lastname">Apellido</label>
-        <InputText id="lastname" v-model="newUserInfo.lastname" placeholder="Nombre" class="w-full mb-4" />
+        <InputText id="lastname" v-model="newUserInfo.lastname" placeholder="Apellido" class="w-full mb-4" />
         <label for="career">Carrera</label>
-        <Dropdown v-model="newUserInfo.career" :options="majors" optionValue="id" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
+        <Dropdown v-model="newUserInfo.major" :options="majors" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
         <label for="campus">Campus</label>
-        <Dropdown v-model="newUserInfo.campus" :options="campuses" optionValue="id" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
+        <Dropdown v-model="newUserInfo.campus" :options="campuses" optionValue="id" filter optionLabel="name" placeholder="Campus" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
 
         <div class="flex justify-content-end gap-2">
             <Button type="button" label="Cerrar" severity="secondary" @click="showDialogPerfil = false"></Button>
@@ -172,7 +178,7 @@ const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", 
         </div>
     </Dialog>
     <Dialog v-model:visible="showDialogAnnouncement" modal header="Registrarse" class="w-3">
-        <label for="email">Correo</label>
+        <!-- <label for="email">Correo</label>
         <InputText id="email" v-model="newUserInfo.email" disabled filled placeholder="Disabled" class="w-full mb-4" />
         <label for="firstname">Nombre</label>
         <InputText id="firstname" v-model="newUserInfo.firstname" placeholder="Nombre" class="w-full mb-4" />
@@ -181,12 +187,12 @@ const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", 
         <label for="career">Carrera</label>
         <Dropdown v-model="newUserInfo.career" :options="majors" optionValue="id" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
         <label for="campus">Campus</label>
-        <Dropdown v-model="newUserInfo.campus" :options="campuses" optionValue="id" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
+        <Dropdown v-model="newUserInfo.campus" :options="campuses" optionValue="id" filter optionLabel="name" placeholder="Campus" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
 
         <div class="flex justify-content-end gap-2">
             <Button type="button" label="Cerrar" severity="secondary" @click="showDialogPerfil = false"></Button>
             <Button type="button" label="Guardar cambios " @click="saveProfileChanges"></Button>
-        </div>
+        </div> -->
     </Dialog>
 
     <hr>

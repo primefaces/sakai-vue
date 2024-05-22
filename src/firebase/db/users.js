@@ -5,6 +5,7 @@ import {
     collection,
     query,
     where,
+    setDoc,
     getDoc,
     getDocs,
     updateDoc,
@@ -21,6 +22,19 @@ function getEmailUsername(email) {
     return null; // Return null if there is no "@" symbol in the email
 }
 
+export async function createUser(userInfo) {
+
+    userInfo.id = getEmailUsername(userInfo.email);
+    userInfo.uid = getEmailUsername(userInfo.email);
+
+    userInfo.career = userInfo.major.id
+    userInfo.area = userInfo.major.school
+
+    userInfo.name = userInfo.firstname.trim() + ' ' + userInfo.lastname.trim();
+
+    const userRef = doc(firestoreDB, "users", userInfo.uid);
+    return await setDoc(userRef, userInfo);
+}
 
 export async function getUser(uid) {
     const userRef = doc(firestoreDB, "users", uid);

@@ -1,9 +1,12 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
+import { useToast } from 'primevue/usetoast';
 import { getTodaysMae } from '@/firebase/db/users';
-import { getTodaysReport, updateReport } from '../firebase/db/attendance';
+import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
+import { getUser, incrementTotalTime } from '../firebase/db/users';
 
+const toast = useToast();
 
 const loading = ref(true);
 const maes = ref(null);
@@ -17,6 +20,55 @@ const options = ref([
     { name: 'Retraso', code: 'R' },
     { name: 'Justificado', code: 'J' },
 ]);
+
+watch(report, (newValue, oldValue) => {
+    if (oldValue) {
+        const maeInfo = maes.value.find(mae => mae['uid'] === selectedId.value);
+        console.log(maeInfo)
+        updateReport(maeInfo, newValue[selectedId.value])
+    }
+  },
+  { deep: true }
+)
+
+const showDialogRegister = ref(false);
+
+const maeId = ref('');
+const hours = ref(0);
+const date = ref(new Date());
+const maeInfo = ref(null);
+
+watch(maeId, async (newValue, oldValue) => {
+    if (newValue.length == 9) {
+        maeInfo.value = await getUser(maeId.value.toLocaleLowerCase().trim());
+    }
+})
+
+const addTime = async () => {
+
+    try {
+        await incrementTotalTime(maeId.value.toLocaleLowerCase().trim(), hours.value);
+        toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Se agregó el tiempo al MAE seleccionado', life: 3000 });
+        maeInfo.value = null;
+        maeId.value = '';
+        hours.value = 0;
+    } catch (error) {
+        console.log(error)
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios', life: 5000 });
+    }
+
+    showDialogRegister.value = false;
+}
+
+const addReport = async () => {
+    try {
+        addRegister(maeInfo.value, date.value);
+        toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Se generó el registro MAE seleccionado', life: 3000 });
+    } catch (error) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios', life: 5000 });
+    }
+    showDialogRegister.value = false;
+}
 
 onMounted(() => {
 
@@ -36,21 +88,14 @@ onMounted(() => {
         })
 });
 
-watch(report, (newValue, oldValue) => {
-    if (oldValue) {
-        const maeInfo = maes.value.find(mae => mae['uid'] === selectedId.value);
-        console.log(maeInfo)
-        updateReport(maeInfo, newValue[selectedId.value])
-    }
-  },
-  { deep: true }
-)
-
 </script>
 
 
 <template>
-    <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Coordinador</h1>
+    <div class="sm:flex sm:justify-content-between mb-2 sm:mb-5">
+        <h1 class="text-black text-6xl font-bold text-center m-0 sm:text-left">Coordinador</h1>
+        <Button @click="showDialogRegister = true" label="Crear registro" icon="pi pi-pencil" size="large" class="max-h-full w-full sm:w-fit" />
+    </div>
     <div class="card mb-0">
 
     <!-- TODO: Adjust row sizing -->
@@ -91,22 +136,30 @@ watch(report, (newValue, oldValue) => {
                     <Dropdown @click="selectedId = data.uid" v-if="report" v-model="report[data.uid]" :options="options" optionLabel="name" optionValue="code" placeholder="Selecciona asistencia" class="md:w-full max-w-1" />
                 </template>
             </Column>
-            <!-- <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
-                style="min-width: 6rem">
-                <template #body="{ data }">
-                    <div class="flex justify-content-center">
-                        <Tag :value="data.modalidad ?? 'Híbrida'" class="text-lg text-center" :severity="getSeverity(data.modalidad)" />
-                    </div>
-                </template>
-                <template #filter="{ filterModel, filterCallback }">
-                    <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
-                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 6rem" :showClear="true">
-                        <template #option="slotProps">
-                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
-                        </template>
-                    </Dropdown>
-                </template>
-            </Column> -->
         </DataTable>
     </div>
+    <Dialog v-model:visible="showDialogRegister" modal header="Crear registro" class="md:w-4">
+        
+        <p class="font-bold text-lg">Matricula del MAE</p>
+        <InputText class="w-full" placeholder="A01234567" v-model="maeId"/>
+        <Message  v-if="maeInfo">MAE: {{ maeInfo.name }} - {{ maeInfo.email }}</Message>
+
+        <p class="font-bold text-lg mt-4">Agregar horas</p>
+        <p>Selecciona un MAE para agregar horas a su registro si se le olvidó cerrar su sesión</p>
+        <InputNumber class="w-full mb-2" v-model="hours" inputId="integeronly" suffix=" hrs" />
+        <div class="flex justify-content-end">
+            <Button @click="addTime" type="button" label="Agregar horas" :disabled="maeInfo == null || !hours"></Button>
+        </div>
+
+        <p class="font-bold">Registrar sesión</p>
+        <p>Agrega un registro adicional a la asistencia si hay un MAE reponiendo horas</p>
+        <Calendar class="w-full mb-2" v-model="date" />
+        <div class="flex justify-content-end mb-2">
+            <Button @click="addReport" type="button" label="Registrar sesión" :disabled="maeInfo == null || !date"></Button>
+        </div>
+
+        <div class="flex justify-content-end">
+            <Button type="button" label="Cerrar" severity="secondary" @click="showDialogRegister = false"></Button>
+        </div>
+    </Dialog>
 </template>

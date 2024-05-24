@@ -10,7 +10,8 @@ import {
     getDocs,
     updateDoc,
     serverTimestamp,
-    deleteField
+    deleteField,
+    increment
 } from 'firebase/firestore';
 import { getUserProfilePicture } from "../img/users";
 
@@ -248,4 +249,12 @@ export async function stopActiveSession(userId) {
         console.error("Error stopping active session: ", error);
         return null;
     }
+}
+
+export async function incrementTotalTime(userId, time) {
+    const userRef = doc(firestoreDB, "users", userId);
+
+    await updateDoc(userRef, {
+        totalTime: increment(time*60)
+    });
 }

@@ -39,17 +39,30 @@ export async function updateReport(userInfo, report) {
     try {
         const reportRef = doc(firestoreDB, "attendance", getCurrentDateFormatted(), "report", userInfo.uid);
 
-        console.log(getCurrentDateFormatted())
-        console.log(userInfo.uid)
-        console.log(userInfo)
-
         return await setDoc(reportRef, {
             ...userInfo,
             report
         });
     } catch (error) {
-        console.error("Error fetching filtered users: ", error);
+        console.error("Error updating the report: ", error);
         return [];
     }
 }
 
+export async function addRegister(userInfo, date) {
+    try {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-11
+        const day = String(date.getDate()).padStart(2, '0');
+
+        const reportRef = doc(firestoreDB, "attendance", `${year}-${month}-${day}`, "report", userInfo.uid);
+
+        await setDoc(reportRef, {
+            ...userInfo,
+            report: 'RR'
+        });
+
+    } catch (error) {
+        console.error("Error updating the report: ", error);
+    }
+}

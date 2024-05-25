@@ -236,6 +236,10 @@ export async function stopActiveSession(userId) {
         const currentTime = new Date();
         const differenceInMinutes = Math.floor((currentTime - startTime) / (1000 * 60));
 
+        if (differenceInMinutes > 310) {
+            throw new Error('Exceded time limit')
+        }
+
         const totalTime = (userData.totalTime || 0) + differenceInMinutes;
 
         // Updates the total time and stops current session
@@ -247,7 +251,7 @@ export async function stopActiveSession(userId) {
         return { totalTime, differenceInMinutes, activeSessionDeleted: true };
     } catch (error) {
         console.error("Error stopping active session: ", error);
-        return null;
+        return { timeLimit: error == 'Exceded time limit', activeSessionDeleted: false };
     }
 }
 

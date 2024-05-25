@@ -193,13 +193,20 @@ const stopSession = async () => {
   try {
     const res = await stopActiveSession(userInfo.value.uid);
     if (!res.activeSessionDeleted) {
+      if (res.timeLimit) {
+        throw new Error('Exceded time limit');
+      }
       throw new Error("Active session was not deleted");
     }
     toast.add({ severity: 'success', summary: 'Sesión cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(route.params.id);
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+    if (error == 'Exceded time limit') {
+      toast.add({ severity: 'error', summary: 'Excediste el limite de tiempo de tu sesión (5 horas)', detail: 'Consulta a un coordi para reponer las horas' });
+    } else {
+      toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+    }
   }
 }
 

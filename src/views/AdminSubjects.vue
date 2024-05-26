@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue';
 import TituloAdmin from "../components/TituloAdmin.vue";
 import { FilterMatchMode, FilterService } from 'primevue/api';
-import { MateriasInfoService } from "../service/MateriasInfoService";
 
 
 const usuarios = ref();
@@ -21,7 +20,7 @@ const filters = ref({
 
 
 onMounted(() => {
-    const data = MateriasInfoService.getMaterias();
+    const data = [];
     usuarios.value = data;
     loading.value = false;
 

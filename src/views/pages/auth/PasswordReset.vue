@@ -82,6 +82,9 @@ const onSignIn = () => {
                         </div> -->
                         <Divider />
                         <Button @click="onSignIn" label="Restablecer contraseña" class="w-full p-3 mb-3 text-xl"></Button>
+                        <a href="/public/assets/AvisoPrivacidadMaesMx.pdf">
+                            <p class="text-center text-indigo-800 w-full mt-4 underline cursor-pointer">Aviso de privacidad</p>
+                        </a>
                     </div>
                 </div>
             </div>

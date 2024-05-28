@@ -11,9 +11,9 @@ const logoUrl = computed(() => {
 
 <template>
     <div class="layout-footer mt-4">
-        <img :src="logoUrl" alt="Logo" height="20" class="mr-2" />
-        by
-        <span class="font-medium ml-2">PrimeVue</span>
+        <a href="/public/assets/AvisoPrivacidadMaesMx.pdf">
+            <p class="text-center text-indigo-800 w-full underline cursor-pointer">Aviso de privacidad</p>
+        </a>
     </div>
 </template>
 <style lang="scss" scoped></style>

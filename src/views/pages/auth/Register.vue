@@ -258,6 +258,9 @@ const saveUserToDatabase = (userInfo) => {
                             class="w-full p-3 mb-3 text-xl"></Button>
                         <Button @click="router.push('/auth/login')" label="Iniciar sesión"
                             class="w-full p-3 mb-3 text-xl" severity="secondary"></Button>
+                        <a href="/public/assets/AvisoPrivacidadMaesMx.pdf">
+                            <p class="text-center text-indigo-800 w-full mt-4 underline cursor-pointer">Aviso de privacidad</p>
+                        </a>
                     </div>
                 </div>
             </div>

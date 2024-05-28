@@ -178,11 +178,11 @@ export async function getTodaysMae() {
         users.sort((a, b) => {
 
             // TODO: Change to this when updating user schedule format
-            // const aStartTime = a.weekSchedule[currentDay][0]?.start;
-            // const bStartTime = b.weekSchedule[currentDay][0]?.start;            
+            const aStartTime = a.weekSchedule[currentDay][0]?.start;
+            const bStartTime = b.weekSchedule[currentDay][0]?.start;            
 
-            const bStartTime = b.weekSchedule[currentDay][0]?.start ?? `${Math.round((b.weekSchedule[currentDay][0]))}:00`;
-            const aStartTime = a.weekSchedule[currentDay][0]?.start ?? `${Math.round((a.weekSchedule[currentDay][0]))}:00`;
+            // const bStartTime = b.weekSchedule[currentDay][0]?.start ?? `${Math.round((b.weekSchedule[currentDay][0]))}:00`;
+            // const aStartTime = a.weekSchedule[currentDay][0]?.start ?? `${Math.round((a.weekSchedule[currentDay][0]))}:00`;
             
             // Convert time strings to Date objects for comparison
             const aTime = aStartTime ? new Date(`1970-01-01T${aStartTime}:00Z`) : new Date();

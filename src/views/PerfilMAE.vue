@@ -192,21 +192,22 @@ const stopSession = async () => {
   // Borra field de activeSession, saca la diferencia en minutos de startTime y actual para agregarla a totalTime del usuario
   try {
     const res = await stopActiveSession(userInfo.value.uid);
+    console.log(res)
     if (!res.activeSessionDeleted) {
-      if (res.timeLimit) {
-        throw new Error('Exceded time limit');
+      if (res.timeLimitExceded) {
+        toast.add({ severity: 'error', summary: `Excediste el limite de tiempo de tu sesión (${ Math.round((res.differenceInMinutes / 60) * 100) / 100 } horas)`, detail: 'Consulta a un coordi para reponer las horas' });
       }
-      throw new Error("Active session was not deleted");
+      else {
+        throw new Error("Active session was not deleted");
+      }
+    } else {
+      toast.add({ severity: 'success', summary: 'Sesión cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     }
-    toast.add({ severity: 'success', summary: 'Sesión cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(route.params.id);
   } catch (error) {
-    if (error == 'Exceded time limit') {
-      toast.add({ severity: 'error', summary: 'Excediste el limite de tiempo de tu sesión (5 horas)', detail: 'Consulta a un coordi para reponer las horas' });
-    } else {
-      toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
-    }
+    console.log(error)
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
 }
 

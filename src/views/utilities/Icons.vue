@@ -71,10 +71,10 @@ onMounted(() => {
             Here is the current list of PrimeIcons, more icons are added periodically. You may also <a href="https://github.com/primefaces/primeicons/issues" class="font-medium text-primary hover:underline">request new icons</a> at the issue tracker.
         </p>
 
-        <InputText v-model="filter" class="w-full p-3 mt-3 mb-5" placeholder="Search an icon" />
+        <InputText v-model="filter" class="w-full p-4 mt-4 mb-8" placeholder="Search an icon" />
 
-        <div class="grid icons-list text-center">
-            <div class="col-6 sm:col-4 lg:col-3 xl:col-2 pb-5" v-for="icon of filteredIcons" :key="icon.properties.name">
+        <div class="grid grid-cols-12 gap-4 icons-list text-center">
+            <div class="col-span-6 sm:col-span-4 lg:col-span-3 xl:col-span-2 pb-8" v-for="icon of filteredIcons" :key="icon.properties.name">
                 <i :class="'text-2xl mb-2 pi pi-' + icon.properties.name"></i>
                 <div>pi-{{ icon.properties.name }}</div>
             </div>

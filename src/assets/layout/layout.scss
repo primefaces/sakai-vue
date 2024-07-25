@@ -1,4 +1,6 @@
-@import './_variables';
+@import './variables/_common';
+@import './variables/_light';
+@import './variables/_dark';
 @import './_mixins';
 @import './_preloading';
 @import './_main';

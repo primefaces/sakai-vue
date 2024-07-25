@@ -28,11 +28,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12">
             <div class="card">
                 <h5>ProgressBar</h5>
-                <div class="grid">
+                <div class="grid grid-cols-12 gap-4">
                     <div class="col">
                         <ProgressBar :value="value"></ProgressBar>
                     </div>
@@ -42,7 +42,7 @@ onBeforeUnmount(() => {
                 </div>
             </div>
         </div>
-        <div class="col-12 lg:col-6">
+        <div class="col-span-12 lg:col-span-6">
             <div class="card">
                 <h4>Badge</h4>
                 <h5>Numbers</h5>
@@ -55,8 +55,8 @@ onBeforeUnmount(() => {
                 </div>
 
                 <h5>Positioned Badge</h5>
-                <i class="pi pi-bell mr-4 p-text-secondary" style="font-size: 2rem" v-badge="2"></i>
-                <i class="pi pi-calendar mr-4 p-text-secondary" style="font-size: 2rem" v-badge.danger="'10+'"></i>
+                <i class="pi pi-bell mr-6 p-text-secondary" style="font-size: 2rem" v-badge="2"></i>
+                <i class="pi pi-calendar mr-6 p-text-secondary" style="font-size: 2rem" v-badge.danger="'10+'"></i>
                 <i class="pi pi-envelope p-text-secondary" style="font-size: 2rem" v-badge.danger></i>
 
                 <h5>Inline Button Badge</h5>
@@ -74,7 +74,7 @@ onBeforeUnmount(() => {
             <div class="card">
                 <h4>Avatar</h4>
                 <h5>Avatar Group</h5>
-                <AvatarGroup class="mb-3">
+                <AvatarGroup class="mb-4">
                     <Avatar :image="'/demo/images/avatar/amyelsner.png'" size="large" shape="circle"></Avatar>
                     <Avatar :image="'/demo/images/avatar/asiyajavayant.png'" size="large" shape="circle"></Avatar>
                     <Avatar :image="'/demo/images/avatar/onyamalimba.png'" size="large" shape="circle"></Avatar>
@@ -106,7 +106,7 @@ onBeforeUnmount(() => {
                 </ScrollPanel>
             </div>
         </div>
-        <div class="col-12 lg:col-6">
+        <div class="col-span-12 lg:col-span-6">
             <div class="card">
                 <h4>Tag</h4>
                 <h5>Tags</h5>
@@ -134,7 +134,7 @@ onBeforeUnmount(() => {
             <div class="card">
                 <h4>Chip</h4>
                 <h5>Basic</h5>
-                <div class="flex align-items-center flex-column sm:flex-row">
+                <div class="flex items-center flex-col sm:flex-row">
                     <Chip label="Action" class="mr-2 mb-2"></Chip>
                     <Chip label="Comedy" class="mr-2 mb-2"></Chip>
                     <Chip label="Mystery" class="mr-2 mb-2"></Chip>
@@ -142,7 +142,7 @@ onBeforeUnmount(() => {
                 </div>
 
                 <h5>Icon</h5>
-                <div class="flex align-items-center flex-column sm:flex-row">
+                <div class="flex items-center flex-col sm:flex-row">
                     <Chip label="Apple" icon="pi pi-apple" class="mr-2 mb-2"></Chip>
                     <Chip label="Facebook" icon="pi pi-facebook" class="mr-2 mb-2"></Chip>
                     <Chip label="Google" icon="pi pi-google" class="mr-2 mb-2"></Chip>
@@ -150,7 +150,7 @@ onBeforeUnmount(() => {
                 </div>
 
                 <h5>Image</h5>
-                <div class="flex align-items-center flex-column sm:flex-row">
+                <div class="flex items-center flex-col sm:flex-row">
                     <Chip label="Amy Elsner" :image="'/demo/images/avatar/amyelsner.png'" class="mr-2 mb-2"></Chip>
                     <Chip label="Asiya Javayant" :image="'/demo/images/avatar/asiyajavayant.png'" class="mr-2 mb-2"></Chip>
                     <Chip label="Onyama Limba" :image="'/demo/images/avatar/onyamalimba.png'" class="mr-2 mb-2"></Chip>
@@ -159,8 +159,8 @@ onBeforeUnmount(() => {
 
             <div class="card">
                 <h4>Skeleton</h4>
-                <div class="border-round border-1 surface-border p-4">
-                    <div class="flex mb-3">
+                <div class="rounded-border border border-surface p-6">
+                    <div class="flex mb-4">
                         <Skeleton shape="circle" size="4rem" class="mr-2"></Skeleton>
                         <div>
                             <Skeleton width="10rem" class="mb-2"></Skeleton>
@@ -169,7 +169,7 @@ onBeforeUnmount(() => {
                         </div>
                     </div>
                     <Skeleton width="100%" height="150px"></Skeleton>
-                    <div class="flex justify-content-between mt-3">
+                    <div class="flex justify-between mt-4">
                         <Skeleton width="4rem" height="2rem"></Skeleton>
                         <Skeleton width="4rem" height="2rem"></Skeleton>
                     </div>

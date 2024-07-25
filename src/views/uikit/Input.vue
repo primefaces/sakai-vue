@@ -76,31 +76,31 @@ const searchCountry = (event) => {
 };
 </script>
 <template>
-    <div class="grid p-fluid">
-        <div class="col-12 md:col-6">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 md:col-span-6">
             <div class="card">
                 <h5>InputText</h5>
-                <div class="grid formgrid">
-                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                        <InputText type="text" placeholder="Default"></InputText>
+                <div class="grid grid-cols-12 gap-4 formgrid">
+                    <div class="col-span-12 mb-2 lg:col-span-4 lg:mb-0">
+                        <InputText type="text" placeholder="Default" fluid></InputText>
                     </div>
-                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                        <InputText type="text" placeholder="Disabled" :disabled="true"></InputText>
+                    <div class="col-span-12 mb-2 lg:col-span-4 lg:mb-0">
+                        <InputText type="text" placeholder="Disabled" :disabled="true" fluid></InputText>
                     </div>
-                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                        <InputText type="text" placeholder="Invalid" invalid />
+                    <div class="col-span-12 mb-2 lg:col-span-4 lg:mb-0">
+                        <InputText type="text" placeholder="Invalid" invalid fluid />
                     </div>
                 </div>
 
                 <h5>Icons</h5>
-                <div class="grid formgrid">
-                    <div class="col-12 mb-2 lg:col-6 lg:mb-0">
+                <div class="grid grid-cols-12 gap-4 formgrid">
+                    <div class="col-span-12 mb-2 lg:col-span-6 lg:mb-0">
                         <IconField>
                             <InputIcon class="pi pi-user" />
                             <InputText type="text" placeholder="Username" />
                         </IconField>
                     </div>
-                    <div class="col-12 mb-2 lg:col-6 lg:mb-0">
+                    <div class="col-span-12 mb-2 lg:col-span-6 lg:mb-0">
                         <IconField iconPosition="left">
                             <InputText type="text" placeholder="Search" />
                             <InputIcon class="pi pi-search" />
@@ -118,7 +118,8 @@ const searchCountry = (event) => {
                 <Textarea placeholder="Your Message" :autoResize="true" rows="3" cols="30" />
 
                 <h5>AutoComplete</h5>
-                <AutoComplete placeholder="Search" id="dd" :dropdown="true" :multiple="true" v-model="selectedAutoValue" :suggestions="autoFilteredValue" @complete="searchCountry($event)" field="name" />
+                <AutoComplete placeholder="Search" id="dd" :dropdown="true" :multiple="true" v-model="selectedAutoValue"
+                    :suggestions="autoFilteredValue" @complete="searchCountry($event)" field="name" />
 
                 <h5>Calendar</h5>
                 <Calendar :showIcon="true" :showButtonBar="true" v-model="calendarValue"></Calendar>
@@ -131,21 +132,21 @@ const searchCountry = (event) => {
             </div>
 
             <div class="card">
-                <div class="grid">
-                    <div class="col-12">
+                <div class="grid grid-cols-12 gap-4">
+                    <div class="col-span-12">
                         <h5>Slider</h5>
                         <InputText v-model.number="sliderValue" />
                         <Slider v-model="sliderValue" />
                     </div>
-                    <div class="col-12 md:col-6">
+                    <div class="col-span-12 md:col-span-6">
                         <h5>Rating</h5>
                         <Rating v-model="ratingValue" />
                     </div>
-                    <div class="col-12 md:col-6">
+                    <div class="col-span-12 md:col-span-6">
                         <h5>ColorPicker</h5>
                         <ColorPicker style="width: 2rem" v-model="colorValue" />
                     </div>
-                    <div class="col-12">
+                    <div class="col-span-12">
                         <h5>Knob</h5>
                         <Knob v-model="knobValue" :step="10" :min="-50" :max="50" valueTemplate="{value}%" />
                     </div>
@@ -153,23 +154,23 @@ const searchCountry = (event) => {
             </div>
         </div>
 
-        <div class="col-12 md:col-6">
+        <div class="col-span-12 md:col-span-6">
             <div class="card">
                 <h5>RadioButton</h5>
-                <div class="grid">
-                    <div class="col-12 md:col-4">
+                <div class="grid grid-cols-12 gap-4">
+                    <div class="col-span-12 md:col-span-4">
                         <div class="field-radiobutton mb-0">
                             <RadioButton id="option1" name="option" value="Chicago" v-model="radioValue" />
                             <label for="option1">Chicago</label>
                         </div>
                     </div>
-                    <div class="col-12 md:col-4">
+                    <div class="col-span-12 md:col-span-4">
                         <div class="field-radiobutton mb-0">
                             <RadioButton id="option2" name="option" value="Los Angeles" v-model="radioValue" />
                             <label for="option2">Los Angeles</label>
                         </div>
                     </div>
-                    <div class="col-12 md:col-4">
+                    <div class="col-span-12 md:col-span-4">
                         <div class="field-radiobutton mb-0">
                             <RadioButton id="option3" name="option" value="New York" v-model="radioValue" />
                             <label for="option3">New York</label>
@@ -178,20 +179,20 @@ const searchCountry = (event) => {
                 </div>
 
                 <h5>Checkbox</h5>
-                <div class="grid">
-                    <div class="col-12 md:col-4">
+                <div class="grid grid-cols-12 gap-4">
+                    <div class="col-span-12 md:col-span-4">
                         <div class="field-checkbox mb-0">
                             <Checkbox id="checkOption1" name="option" value="Chicago" v-model="checkboxValue" />
                             <label for="checkOption1">Chicago</label>
                         </div>
                     </div>
-                    <div class="col-12 md:col-4">
+                    <div class="col-span-12 md:col-span-4">
                         <div class="field-checkbox mb-0">
                             <Checkbox id="checkOption2" name="option" value="Los Angeles" v-model="checkboxValue" />
                             <label for="checkOption2">Los Angeles</label>
                         </div>
                     </div>
-                    <div class="col-12 md:col-4">
+                    <div class="col-span-12 md:col-span-4">
                         <div class="field-checkbox mb-0">
                             <Checkbox id="checkOption3" name="option" value="New York" v-model="checkboxValue" />
                             <label for="checkOption3">New York</label>
@@ -211,10 +212,13 @@ const searchCountry = (event) => {
                 <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Select" />
 
                 <h5>MultiSelect</h5>
-                <MultiSelect v-model="multiselectValue" :options="multiselectValues" optionLabel="name" placeholder="Select Countries" :filter="true">
+                <MultiSelect v-model="multiselectValue" :options="multiselectValues" optionLabel="name"
+                    placeholder="Select Countries" :filter="true">
                     <template #value="slotProps">
-                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" v-for="option of slotProps.value" :key="option.code">
-                            <span :class="'mr-2 flag flag-' + option.code.toLowerCase()" style="width: 18px; height: 12px" />
+                        <div class="inline-flex items-center py-1 px-2 bg-primary text-primary-contrast text-primary rounded-border mr-2"
+                            v-for="option of slotProps.value" :key="option.code">
+                            <span :class="'mr-2 flag flag-' + option.code.toLowerCase()"
+                                style="width: 18px; height: 12px" />
                             <div>{{ option.name }}</div>
                         </div>
                         <template v-if="!slotProps.value || slotProps.value.length === 0">
@@ -222,8 +226,9 @@ const searchCountry = (event) => {
                         </template>
                     </template>
                     <template #option="slotProps">
-                        <div class="flex align-items-center">
-                            <span :class="'mr-2 flag flag-' + slotProps.option.code.toLowerCase()" style="width: 18px; height: 12px" />
+                        <div class="flex items-center">
+                            <span :class="'mr-2 flag flag-' + slotProps.option.code.toLowerCase()"
+                                style="width: 18px; height: 12px" />
                             <div>{{ slotProps.option.name }}</div>
                         </div>
                     </template>
@@ -241,15 +246,16 @@ const searchCountry = (event) => {
                 <SelectButton v-model="selectButtonValue1" :options="selectButtonValues1" optionLabel="name" />
 
                 <h5>SelectButton - Multiple</h5>
-                <SelectButton v-model="selectButtonValue2" :options="selectButtonValues2" optionLabel="name" :multiple="true" />
+                <SelectButton v-model="selectButtonValue2" :options="selectButtonValues2" optionLabel="name"
+                    :multiple="true" />
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Input Groups</h5>
-                <div class="grid p-fluid">
-                    <div class="col-12 md:col-6">
+                <div class="grid grid-cols-12 gap-4 p-fluid">
+                    <div class="col-span-12 md:col-span-6">
                         <InputGroup>
                             <InputGroupAddon>
                                 <i class="pi pi-user"></i>
@@ -258,7 +264,7 @@ const searchCountry = (event) => {
                         </InputGroup>
                     </div>
 
-                    <div class="col-12 md:col-6">
+                    <div class="col-span-12 md:col-span-6">
                         <InputGroup>
                             <InputGroupAddon>
                                 <i class="pi pi-clock"></i>
@@ -272,14 +278,14 @@ const searchCountry = (event) => {
                         </InputGroup>
                     </div>
 
-                    <div class="col-12 md:col-6">
+                    <div class="col-span-12 md:col-span-6">
                         <InputGroup>
                             <Button label="Search" />
                             <InputText placeholder="Keyword" />
                         </InputGroup>
                     </div>
 
-                    <div class="col-12 md:col-6">
+                    <div class="col-span-12 md:col-span-6">
                         <InputGroup>
                             <InputGroupAddon>
                                 <Checkbox v-model="inputGroupValue" :binary="true" />

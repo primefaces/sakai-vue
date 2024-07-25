@@ -18,7 +18,9 @@ app.use(router);
 app.use(PrimeVue, {
     theme: {
         preset: Aura,
-        darkModeSelector: 'app-dark'
+        options: {
+            darkModeSelector: '.app-dark'
+        }
     }
 });
 app.use(ToastService);

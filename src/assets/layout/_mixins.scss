@@ -1,13 +1,15 @@
 @mixin focused() {
-    outline: 0 none;
-    outline-offset: 0;
-    transition: box-shadow .2s;
-    box-shadow: var(--focus-ring);
+    outline-width: var(--focus-ring-width);
+    outline-style: var(--focus-ring-style);
+    outline-color: var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    box-shadow: var(--focus-ring-shadow);
+    transition:
+        box-shadow var(--transition-duration),
+        outline-color var(--transition-duration);
 }
 
 @mixin focused-inset() {
-    outline: 0 none;
-    outline-offset: 0;
-    transition: box-shadow .2s;
-    box-shadow: inset var(--focus-ring);
+    outline-offset: -1px;
+    box-shadow: inset var(--focus-ring-shadow);
 }

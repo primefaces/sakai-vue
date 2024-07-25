@@ -67,21 +67,21 @@ const getSeverity = (status) => {
 </script>
 
 <template>
-    <div class="grid p-fluid">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4 p-fluid">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Carousel</h5>
                 <Carousel :value="products" :numVisible="3" :numScroll="3" :responsiveOptions="carouselResponsiveOptions">
                     <template #item="slotProps">
-                        <div class="border-1 surface-border border-round m-2 p-3">
-                            <div class="mb-3">
+                        <div class="border border-surface rounded-border m-2 p-4">
+                            <div class="mb-4">
                                 <div class="relative mx-auto">
-                                    <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.name" class="w-full border-round" />
+                                    <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.name" class="w-full rounded-border" />
                                     <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data.inventoryStatus)" class="absolute" style="left: 5px; top: 5px" />
                                 </div>
                             </div>
-                            <div class="mb-3 font-medium">{{ slotProps.data.name }}</div>
-                            <div class="flex justify-content-between align-items-center">
+                            <div class="mb-4 font-medium">{{ slotProps.data.name }}</div>
+                            <div class="flex justify-between items-center">
                                 <div class="mt-0 font-semibold text-xl">${{ slotProps.data.price }}</div>
                                 <span>
                                     <Button icon="pi pi-heart" severity="secondary" outlined />
@@ -94,16 +94,16 @@ const getSeverity = (status) => {
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Image</h5>
-                <div class="flex justify-content-center">
+                <div class="flex justify-center">
                     <Image :src="'/demo/images/galleria/galleria11.jpg'" alt="Image" width="250" preview />
                 </div>
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Galleria</h5>
                 <Galleria :value="images" :responsiveOptions="galleriaResponsiveOptions" :numVisible="7"

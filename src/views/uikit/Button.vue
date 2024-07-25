@@ -28,8 +28,8 @@ const load = (index) => {
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12 md:col-6">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 md:col-span-6">
             <div class="card">
                 <h5>Default</h5>
                 <Button label="Submit" class="mr-2 mb-2"></Button>
@@ -108,7 +108,7 @@ const load = (index) => {
             </div>
         </div>
 
-        <div class="col-12 md:col-6">
+        <div class="col-span-12 md:col-span-6">
             <div class="card">
                 <h5>Icons</h5>
                 <Button icon="pi pi-star-fill" class="mr-2 mb-2"></Button>

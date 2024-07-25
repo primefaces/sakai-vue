@@ -440,8 +440,8 @@ const onContextRightClick = (event) => {
 </script>
 
 <template>
-    <div class="grid p-fluid">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4 p-fluid">
+        <div class="col-span-12">
             <div class="card card-w-title">
                 <h5>Menubar</h5>
                 <Menubar :model="nestedMenuitems">
@@ -455,14 +455,14 @@ const onContextRightClick = (event) => {
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card card-w-title">
                 <h5>Breadcrumb</h5>
                 <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" />
             </div>
         </div>
 
-        <div class="col-12 md:col-6">
+        <div class="col-span-12 md:col-span-6">
             <div class="card card-w-title">
                 <h5>Steps</h5>
                 <p>Steps and TabMenu are integrated with the same child routes.</p>
@@ -471,7 +471,7 @@ const onContextRightClick = (event) => {
             </div>
         </div>
 
-        <div class="col-12 md:col-6">
+        <div class="col-span-12 md:col-span-6">
             <div class="card card-w-title">
                 <h5>TabMenu</h5>
                 <p>Steps and TabMenu are integrated with the same child routes.</p>
@@ -480,21 +480,21 @@ const onContextRightClick = (event) => {
             </div>
         </div>
 
-        <div class="col-12 md:col-4">
+        <div class="col-span-12 md:col-span-4">
             <div class="card">
                 <h5>Tiered Menu</h5>
                 <TieredMenu :model="tieredMenuItems" />
             </div>
         </div>
 
-        <div class="col-12 md:col-4">
+        <div class="col-span-12 md:col-span-4">
             <div class="card">
                 <h5>Plain Menu</h5>
                 <Menu :model="menuitems" />
             </div>
         </div>
 
-        <div class="col-12 md:col-4">
+        <div class="col-span-12 md:col-span-4">
             <div class="card">
                 <h5>Overlay Menu</h5>
 
@@ -509,7 +509,7 @@ const onContextRightClick = (event) => {
             </div>
         </div>
 
-        <div class="col-12 md:col-6">
+        <div class="col-span-12 md:col-span-6">
             <div class="card">
                 <h5>MegaMenu - Horizontal</h5>
                 <MegaMenu :model="megamenuItems" />
@@ -519,7 +519,7 @@ const onContextRightClick = (event) => {
             </div>
         </div>
 
-        <div class="col-12 md:col-6">
+        <div class="col-span-12 md:col-span-6">
             <div class="card">
                 <h5>PanelMenu</h5>
                 <PanelMenu :model="panelMenuitems" />

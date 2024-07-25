@@ -4,11 +4,11 @@
 
 html {
     height: 100%;
-    font-size: $scale;
+    font-size: 14px;
 }
 
 body {
-    font-family: var(--font-family);
+    font-family: 'CircularStd', sans-serif;
     color: var(--text-color);
     background-color: var(--surface-ground);
     margin: 0;

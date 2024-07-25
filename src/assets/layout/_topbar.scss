@@ -7,15 +7,18 @@
     width: 100%;
     padding: 0 2rem;
     background-color: var(--surface-card);
-    transition: left $transitionDuration;
+    transition: left var(--layout-section-transition-duration);
     display: flex;
     align-items: center;
-    box-shadow: 0px 3px 5px rgba(0,0,0,.02), 0px 0px 2px rgba(0,0,0,.05), 0px 1px 4px rgba(0,0,0,.08);
+    box-shadow:
+        0px 3px 5px rgba(0, 0, 0, 0.02),
+        0px 0px 2px rgba(0, 0, 0, 0.05),
+        0px 1px 4px rgba(0, 0, 0, 0.08);
 
     .layout-topbar-logo {
         display: flex;
         align-items: center;
-        color: var(--surface-900);
+        color: var(--text-color);
         font-size: 1.5rem;
         font-weight: 500;
         width: 300px;
@@ -23,7 +26,7 @@
 
         img {
             height: 2.5rem;
-            margin-right: .5rem;
+            margin-right: 0.5rem;
         }
 
         &:focus {
@@ -41,7 +44,7 @@
         width: 3rem;
         height: 3rem;
         cursor: pointer;
-        transition: background-color $transitionDuration;
+        transition: background-color var(--element-transition-duration);
 
         &:hover {
             color: var(--text-color);
@@ -111,7 +114,10 @@
             position: absolute;
             flex-direction: column;
             background-color: var(--surface-overlay);
-            box-shadow: 0px 3px 5px rgba(0,0,0,.02), 0px 0px 2px rgba(0,0,0,.05), 0px 1px 4px rgba(0,0,0,.08);
+            box-shadow:
+                0px 3px 5px rgba(0, 0, 0, 0.02),
+                0px 0px 2px rgba(0, 0, 0, 0.05),
+                0px 1px 4px rgba(0, 0, 0, 0.08);
             border-radius: 12px;
             padding: 1rem;
             right: 2rem;
@@ -122,7 +128,7 @@
             animation: scalein 0.15s linear;
 
             &.layout-topbar-menu-mobile-active {
-                display: block
+                display: block;
             }
 
             .layout-topbar-button {
@@ -136,7 +142,7 @@
 
                 i {
                     font-size: 1rem;
-                    margin-right: .5rem;
+                    margin-right: 0.5rem;
                 }
 
                 span {
@@ -153,13 +159,15 @@
     top: calc(100% + 2px);
     right: 0;
     width: 16rem;
-    padding: .75rem;
-    background-color: var(--overlay-background);
+    padding: 0.75rem;
+    background-color: var(--surface-overlay);
     border-radius: 6px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--surface-border);
     transform-origin: top;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    
+    box-shadow:
+        0 4px 6px -1px rgb(0 0 0 / 0.1),
+        0 2px 4px -2px rgb(0 0 0 / 0.1);
+
     .config-panel-content {
         display: flex;
         flex-direction: column;
@@ -167,7 +175,7 @@
     }
 
     .config-panel-label {
-        font-size: .875rem;
+        font-size: 0.875rem;
         color: var(--text-secondary-color);
         font-weight: 600;
         line-height: 1;
@@ -175,9 +183,9 @@
 
     .config-panel-colors {
         > div {
-            padding-top: .5rem;
+            padding-top: 0.5rem;
             display: flex;
-            gap: .5rem;
+            gap: 0.5rem;
             flex-wrap: wrap;
             justify-content: space-between;
 

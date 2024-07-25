@@ -38,8 +38,8 @@ const showError = () => {
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12 lg:col-6">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 lg:col-span-6">
             <div class="card">
                 <h5>Toast</h5>
                 <Button @click="showSuccess()" label="Success" class="mr-2" severity="success" />
@@ -49,7 +49,7 @@ const showError = () => {
             </div>
         </div>
 
-        <div class="col-12 lg:col-6">
+        <div class="col-span-12 lg:col-span-6">
             <div class="card">
                 <h5>Messages</h5>
                 <Button label="Success" @click="addMessage('success')" class="mr-2" severity="success" />
@@ -63,18 +63,18 @@ const showError = () => {
             </div>
         </div>
 
-        <div class="col-12 lg:col-8">
+        <div class="col-span-12 lg:col-span-8">
             <div class="card">
                 <h5>Inline</h5>
-                <div class="field grid">
-                    <label for="username1" class="col-fixed w-9rem">Username</label>
+                <div class="field grid grid-cols-12 gap-4">
+                    <label for="username1" class="col-fixed w-36">Username</label>
                     <div class="col">
                         <InputText id="username1" v-model="username" :required="true" invalid class="mr-2"></InputText>
                         <InlineMessage>Username is required</InlineMessage>
                     </div>
                 </div>
-                <div class="field grid">
-                    <label for="email" class="col-fixed w-9rem">Email</label>
+                <div class="field grid grid-cols-12 gap-4">
+                    <label for="email" class="col-fixed w-36">Email</label>
                     <div class="col">
                         <InputText id="email" v-model="email" :required="true" invalid class="mr-2"></InputText>
                         <InlineMessage />
@@ -83,7 +83,7 @@ const showError = () => {
             </div>
         </div>
 
-        <div class="col-12 lg:col-4">
+        <div class="col-span-12 lg:col-span-4">
             <div class="card">
                 <h5>Help Text</h5>
                 <div class="field p-fluid">

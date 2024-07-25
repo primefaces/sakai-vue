@@ -124,8 +124,8 @@ const calculateCustomerTotal = (name) => {
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Filter Menu</h5>
                 <DataTable :value="customer1" :paginator="true" :rows="10" dataKey="id" :rowHover="true"
@@ -133,7 +133,7 @@ const calculateCustomerTotal = (name) => {
                     :globalFilterFields="['name', 'country.name', 'representative.name', 'balance', 'status']"
                     showGridlines>
                     <template #header>
-                        <div class="flex justify-content-between flex-column sm:flex-row">
+                        <div class="flex justify-between flex-col sm:flex-row">
                             <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined
                                 @click="clearFilter1()" />
                             <IconField iconPosition="left">
@@ -156,7 +156,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column header="Country" filterField="country.name" style="min-width: 12rem">
                         <template #body="{ data }">
-                            <div class="flex align-items-center gap-2">
+                            <div class="flex items-center gap-2">
                                 <img alt="flag" src="/demo/images/flag/flag_placeholder.png"
                                     :class="`flag flag-${data.country.code}`" style="width: 24px" />
                                 <span>{{ data.country.name }}</span>
@@ -178,7 +178,7 @@ const calculateCustomerTotal = (name) => {
                     <Column header="Agent" filterField="representative" :showFilterMatchModes="false"
                         :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
                         <template #body="{ data }">
-                            <div class="flex align-items-center gap-2">
+                            <div class="flex items-center gap-2">
                                 <img :alt="data.representative.name"
                                     :src="`https://primefaces.org/cdn/primevue/images/avatar/${data.representative.image}`"
                                     style="width: 32px" />
@@ -186,7 +186,7 @@ const calculateCustomerTotal = (name) => {
                             </div>
                         </template>
                         <template #filter="{ filterModel }">
-                            <div class="mb-3 text-bold">Agent Picker</div>
+                            <div class="mb-4 text-bold">Agent Picker</div>
                             <MultiSelect v-model="filterModel.value" :options="representatives" optionLabel="name"
                                 placeholder="Any" class="p-column-filter">
                                 <template #option="slotProps">
@@ -242,8 +242,8 @@ const calculateCustomerTotal = (name) => {
                             <ProgressBar :value="data.activity" :showValue="false" style="height: 0.5rem"></ProgressBar>
                         </template>
                         <template #filter="{ filterModel }">
-                            <Slider v-model="filterModel.value" :range="true" class="m-3"></Slider>
-                            <div class="flex align-items-center justify-content-between px-2">
+                            <Slider v-model="filterModel.value" :range="true" class="m-4"></Slider>
+                            <div class="flex items-center justify-between px-2">
                                 <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>
                                 <span>{{ filterModel.value ? filterModel.value[1] : 100 }}</span>
                             </div>
@@ -263,19 +263,19 @@ const calculateCustomerTotal = (name) => {
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Frozen Columns</h5>
                 <ToggleButton v-model="idFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="Unfreeze Id"
                     offLabel="Freeze Id" style="width: 10rem" />
 
                 <DataTable :value="customer2" :scrollable="true" scrollHeight="400px" :loading="loading2"
-                    scrollDirection="both" class="mt-3">
+                    scrollDirection="both" class="mt-4">
                     <Column field="name" header="Name" style="min-width: 200px" frozen></Column>
                     <Column field="id" header="Id" style="min-width: 100px" :frozen="idFrozen"></Column>
                     <Column field="country.name" header="Country" :style="{ width: '200px' }">
                         <template #body="{ data }">
-                            <div class="flex align-items-center gap-2">
+                            <div class="flex items-center gap-2">
                                 <img alt="flag" src="/demo/images/flag/flag_placeholder.png"
                                     :class="`flag flag-${data.country.code}`" style="width: 24px" />
                                 <span>{{ data.country.name }}</span>
@@ -292,7 +292,7 @@ const calculateCustomerTotal = (name) => {
                     <Column field="activity" header="Activity" style="min-width: 200px"></Column>
                     <Column field="representative.name" header="Representative" style="min-width: 200px">
                         <template #body="{ data }">
-                            <div class="flex align-items-center gap-2">
+                            <div class="flex items-center gap-2">
                                 <img :alt="data.representative.name"
                                     :src="`https://primefaces.org/cdn/primevue/images/avatar/${data.representative.image}`"
                                     style="width: 32px" />
@@ -309,7 +309,7 @@ const calculateCustomerTotal = (name) => {
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Row Expand</h5>
                 <DataTable :value="products" v-model:expandedRows="expandedRows" dataKey="id"
@@ -329,7 +329,7 @@ const calculateCustomerTotal = (name) => {
                     <Column header="Image">
                         <template #body="slotProps">
                             <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image"
-                                class="shadow-2" width="100" />
+                                class="shadow" width="100" />
                         </template>
                     </Column>
                     <Column field="price" header="Price" :sortable="true">
@@ -354,7 +354,7 @@ const calculateCustomerTotal = (name) => {
                         </template>
                     </Column>
                     <template #expansion="slotProps">
-                        <div class="p-3">
+                        <div class="p-4">
                             <h5>Orders for {{ slotProps.data.name }}</h5>
                             <DataTable :value="slotProps.data.orders">
                                 <Column field="id" header="Id" :sortable="true">
@@ -396,7 +396,7 @@ const calculateCustomerTotal = (name) => {
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Subheader Grouping</h5>
                 <DataTable :value="customer3" rowGroupMode="subheader" groupRowsBy="representative.name"
@@ -405,7 +405,7 @@ const calculateCustomerTotal = (name) => {
                     <Column field="name" header="Name" style="min-width: 200px"></Column>
                     <Column field="country" header="Country" style="min-width: 200px">
                         <template #body="{ data }">
-                            <div class="flex align-items-center gap-2">
+                            <div class="flex items-center gap-2">
                                 <img alt="flag" src="/demo/images/flag/flag_placeholder.png"
                                     :class="`flag flag-${data.country.code}`" style="width: 24px" />
                                 <span>{{ data.country.name }}</span>
@@ -421,7 +421,7 @@ const calculateCustomerTotal = (name) => {
                     </Column>
                     <Column field="date" header="Date" style="min-width: 200px"></Column>
                     <template #groupheader="slotProps">
-                        <div class="flex align-items-center gap-2">
+                        <div class="flex items-center gap-2">
                             <img :alt="slotProps.data.representative.name"
                                 :src="'/demo/images/avatar/' + slotProps.data.representative.image" width="32"
                                 style="vertical-align: middle" />
@@ -429,7 +429,7 @@ const calculateCustomerTotal = (name) => {
                         </div>
                     </template>
                     <template #groupfooter="slotProps">
-                        <td style="text-align: right" class="text-bold pr-6">Total Customers: {{
+                        <td style="text-align: right" class="text-bold pr-12">Total Customers: {{
                             calculateCustomerTotal(slotProps.data.representative.name) }}</td>
                     </template>
                 </DataTable>

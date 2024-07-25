@@ -1,17 +1,16 @@
 /* Utils */
 .clearfix:after {
-    content: " ";
+    content: ' ';
     display: block;
     clear: both;
 }
 
 .card {
     background: var(--surface-card);
-    border: 1px solid var(--surface-border);
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: var(--card-shadow);
-    border-radius: $borderRadius;
+    border-radius: var(--content-border-radius);
 
     &:last-child {
         margin-bottom: 0;

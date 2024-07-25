@@ -43,12 +43,12 @@ const searchCountry = (event) => {
 </script>
 
 <template>
-    <div class="grid p-fluid">
+    <div class="grid grid-cols-12 gap-4 p-fluid">
         <div class="col">
             <div class="card">
                 <h5>Invalid State</h5>
-                <div class="p-fluid grid">
-                    <div class="col-12 md:col-6">
+                <div class="p-fluid grid grid-cols-12 gap-4">
+                    <div class="col-span-12 md:col-span-6">
                         <div class="field">
                             <label for="inputtext">InputText</label>
                             <InputText id="inputtext" type="text" v-model="value1" invalid />
@@ -71,7 +71,7 @@ const searchCountry = (event) => {
                         </div>
                     </div>
 
-                    <div class="col-12 md:col-6">
+                    <div class="col-span-12 md:col-span-6">
                         <div class="field">
                             <label for="inputmask">InputMask</label>
                             <InputMask id="inputmask" v-model="value5" mask="99/99/9999" slotChar="mm/dd/yyyy" invalid />

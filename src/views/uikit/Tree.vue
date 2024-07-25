@@ -15,14 +15,14 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Tree</h5>
                 <Tree :value="treeValue" selectionMode="checkbox" v-model:selectionKeys="selectedTreeValue"></Tree>
             </div>
         </div>
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card">
                 <h5>TreeTable</h5>
                 <TreeTable :value="treeTableValue" selectionMode="checkbox" v-model:selectionKeys="selectedTreeTableValue">

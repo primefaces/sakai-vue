@@ -88,7 +88,7 @@ const isOutsideClicked = (event) => {
             <button type="button" class="p-link layout-topbar-button" @click="toggleDarkMode">
                 <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
             </button>
-            <div>
+            <div class="relative">
                 <button
                     v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
                     type="button" class="p-link layout-topbar-button">

@@ -233,39 +233,39 @@ watch(
 </script>
 
 <template>
-    <div class="grid p-fluid">
-        <div class="col-12 xl:col-6">
+    <div class="grid grid-cols-12 gap-4 p-fluid">
+        <div class="col-span-12 xl:col-span-6">
             <div class="card">
                 <h5>Linear Chart</h5>
                 <Chart type="line" :data="lineData" :options="lineOptions"></Chart>
             </div>
         </div>
-        <div class="col-12 xl:col-6">
+        <div class="col-span-12 xl:col-span-6">
             <div class="card">
                 <h5>Bar Chart</h5>
                 <Chart type="bar" :data="barData" :options="barOptions"></Chart>
             </div>
         </div>
-        <div class="col-12 xl:col-6">
-            <div class="card flex flex-column align-items-center">
+        <div class="col-span-12 xl:col-span-6">
+            <div class="card flex flex-col items-center">
                 <h5 class="text-left w-full">Pie Chart</h5>
                 <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>
             </div>
         </div>
-        <div class="col-12 xl:col-6">
-            <div class="card flex flex-column align-items-center">
+        <div class="col-span-12 xl:col-span-6">
+            <div class="card flex flex-col items-center">
                 <h5 class="text-left w-full">Doughnut Chart</h5>
                 <Chart type="doughnut" :data="pieData" :options="pieOptions"></Chart>
             </div>
         </div>
-        <div class="col-12 xl:col-6">
-            <div class="card flex flex-column align-items-center">
+        <div class="col-span-12 xl:col-span-6">
+            <div class="card flex flex-col items-center">
                 <h5 class="text-left w-full">Polar Area Chart</h5>
                 <Chart type="polarArea" :data="polarData" :options="polarOptions"></Chart>
             </div>
         </div>
-        <div class="col-12 xl:col-6">
-            <div class="card flex flex-column align-items-center">
+        <div class="col-span-12 xl:col-span-6">
+            <div class="card flex flex-col items-center">
                 <h5 class="text-left w-full">Radar Chart</h5>
                 <Chart type="radar" :data="radarData" :options="radarOptions"></Chart>
             </div>

@@ -4,7 +4,7 @@
     min-height: 100vh;
     justify-content: space-between;
     padding: 7rem 2rem 2rem 4rem;
-    transition: margin-left $transitionDuration;
+    transition: margin-left var(--layout-section-transition-duration);
 }
 
 .layout-main {

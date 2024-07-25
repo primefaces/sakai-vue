@@ -11,8 +11,8 @@ const dropdownItem = ref(null);
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12 md:col-6">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 md:col-span-6">
             <div class="card p-fluid">
                 <h5>Vertical</h5>
                 <div class="field">
@@ -31,7 +31,7 @@ const dropdownItem = ref(null);
 
             <div class="card p-fluid">
                 <h5>Vertical Grid</h5>
-                <div class="formgrid grid">
+                <div class="formgrid grid grid-cols-12 gap-4">
                     <div class="field col">
                         <label for="name2">Name</label>
                         <InputText id="name2" type="text" />
@@ -44,18 +44,18 @@ const dropdownItem = ref(null);
             </div>
         </div>
 
-        <div class="col-12 md:col-6">
+        <div class="col-span-12 md:col-span-6">
             <div class="card p-fluid">
                 <h5>Horizontal</h5>
-                <div class="field grid">
-                    <label for="name3" class="col-12 mb-2 md:col-2 md:mb-0">Name</label>
-                    <div class="col-12 md:col-10">
+                <div class="field grid grid-cols-12 gap-4">
+                    <label for="name3" class="col-span-12 mb-2 md:col-span-2 md:mb-0">Name</label>
+                    <div class="col-span-12 md:col-span-10">
                         <InputText id="name3" type="text" />
                     </div>
                 </div>
-                <div class="field grid">
-                    <label for="email3" class="col-12 mb-2 md:col-2 md:mb-0">Email</label>
-                    <div class="col-12 md:col-10">
+                <div class="field grid grid-cols-12 gap-4">
+                    <label for="email3" class="col-span-12 mb-2 md:col-span-2 md:mb-0">Email</label>
+                    <div class="col-span-12 md:col-span-10">
                         <InputText id="email3" type="text" />
                     </div>
                 </div>
@@ -86,31 +86,31 @@ const dropdownItem = ref(null);
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-span-12">
             <div class="card">
                 <h5>Advanced</h5>
-                <div class="p-fluid formgrid grid">
-                    <div class="field col-12 md:col-6">
+                <div class="p-fluid formgrid grid grid-cols-12 gap-4">
+                    <div class="field col-span-12 md:col-span-6">
                         <label for="firstname2">Firstname</label>
                         <InputText id="firstname2" type="text" />
                     </div>
-                    <div class="field col-12 md:col-6">
+                    <div class="field col-span-12 md:col-span-6">
                         <label for="lastname2">Lastname</label>
                         <InputText id="lastname2" type="text" />
                     </div>
-                    <div class="field col-12">
+                    <div class="field col-span-12">
                         <label for="address">Address</label>
                         <Textarea id="address" rows="4" />
                     </div>
-                    <div class="field col-12 md:col-6">
+                    <div class="field col-span-12 md:col-span-6">
                         <label for="city">City</label>
                         <InputText id="city" type="text" />
                     </div>
-                    <div class="field col-12 md:col-3">
+                    <div class="field col-span-12 md:col-span-3">
                         <label for="state">State</label>
                         <Dropdown id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Select One"></Dropdown>
                     </div>
-                    <div class="field col-12 md:col-3">
+                    <div class="field col-span-12 md:col-span-3">
                         <label for="zip">Zip</label>
                         <InputText id="zip" type="text" />
                     </div>

@@ -221,10 +221,10 @@ function applyTheme(type, color) {
 
 function onPresetChange(value) {
     setPreset(value);
-    const preset = presetOptions[value];
+    const presetValue = presets[value];
     const surfacePalette = surfaces.value.find((s) => s.name === selectedSurfaceColor.value)?.palette;
 
-    $t().preset(preset).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
+    $t().preset(presetValue).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
 }
 
 const selectedPrimaryColor = computed(() => {
@@ -236,7 +236,7 @@ const selectedSurfaceColor = computed(() => {
 });
 
 const preset = computed(() => {
-    return layoutConfig.preset;
+    return layoutConfig.preset.value;
 });
 </script>
 

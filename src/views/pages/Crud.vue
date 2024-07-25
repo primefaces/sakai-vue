@@ -136,10 +136,10 @@ const initFilters = () => {
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12">
             <div class="card">
-                <Toolbar class="mb-4">
+                <Toolbar class="mb-6">
                     <template v-slot:start>
                         <div class="my-2">
                             <Button label="New" icon="pi pi-plus" class="mr-2" severity="success" @click="openNew" />
@@ -161,7 +161,7 @@ const initFilters = () => {
                     :rowsPerPageOptions="[5, 10, 25]"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products">
                     <template #header>
-                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <div class="flex flex-col md:flex-row md:justify-between md:items-center">
                             <h5 class="m-0">Manage Products</h5>
                             <IconField iconPosition="left" class="block mt-2 md:mt-0">
                                 <InputIcon class="pi pi-search" />
@@ -188,7 +188,7 @@ const initFilters = () => {
                         <template #body="slotProps">
                             <span class="p-column-title">Image</span>
                             <img :src="'/demo/images/product/' + slotProps.data.image" :alt="slotProps.data.image"
-                                class="shadow-2" width="100" />
+                                class="shadow" width="100" />
                         </template>
                     </Column>
                     <Column field="price" header="Price" :sortable="true" headerStyle="width:14%; min-width:8rem;">
@@ -231,7 +231,7 @@ const initFilters = () => {
                 <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Product Details"
                     :modal="true" class="p-fluid">
                     <img :src="'/demo/images/product/' + product.image" :alt="product.image" v-if="product.image"
-                        width="150" class="mt-0 mx-auto mb-5 block shadow-2" />
+                        width="150" class="mt-0 mx-auto mb-8 block shadow" />
                     <div class="field">
                         <label for="name">Name</label>
                         <InputText id="name" v-model.trim="product.name" required="true" autofocus
@@ -244,7 +244,7 @@ const initFilters = () => {
                     </div>
 
                     <div class="field">
-                        <label for="inventoryStatus" class="mb-3">Inventory Status</label>
+                        <label for="inventoryStatus" class="mb-4">Inventory Status</label>
                         <Dropdown id="inventoryStatus" v-model="product.inventoryStatus" :options="statuses"
                             optionLabel="label" placeholder="Select a Status">
                             <template #value="slotProps">
@@ -264,24 +264,24 @@ const initFilters = () => {
                     </div>
 
                     <div class="field">
-                        <label class="mb-3">Category</label>
-                        <div class="formgrid grid">
-                            <div class="field-radiobutton col-6">
+                        <label class="mb-4">Category</label>
+                        <div class="formgrid grid grid-cols-12 gap-4">
+                            <div class="field-radiobutton col-span-6">
                                 <RadioButton id="category1" name="category" value="Accessories"
                                     v-model="product.category" />
                                 <label for="category1">Accessories</label>
                             </div>
-                            <div class="field-radiobutton col-6">
+                            <div class="field-radiobutton col-span-6">
                                 <RadioButton id="category2" name="category" value="Clothing"
                                     v-model="product.category" />
                                 <label for="category2">Clothing</label>
                             </div>
-                            <div class="field-radiobutton col-6">
+                            <div class="field-radiobutton col-span-6">
                                 <RadioButton id="category3" name="category" value="Electronics"
                                     v-model="product.category" />
                                 <label for="category3">Electronics</label>
                             </div>
-                            <div class="field-radiobutton col-6">
+                            <div class="field-radiobutton col-span-6">
                                 <RadioButton id="category4" name="category" value="Fitness"
                                     v-model="product.category" />
                                 <label for="category4">Fitness</label>
@@ -289,7 +289,7 @@ const initFilters = () => {
                         </div>
                     </div>
 
-                    <div class="formgrid grid">
+                    <div class="formgrid grid grid-cols-12 gap-4">
                         <div class="field col">
                             <label for="price">Price</label>
                             <InputNumber id="price" v-model="product.price" mode="currency" currency="USD"
@@ -309,8 +309,8 @@ const initFilters = () => {
 
                 <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm"
                     :modal="true">
-                    <div class="flex align-items-center justify-content-center">
-                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                    <div class="flex items-center justify-center">
+                        <i class="pi pi-exclamation-triangle mr-4" style="font-size: 2rem" />
                         <span v-if="product">Are you sure you want to delete <b>{{ product.name }}</b>?</span>
                     </div>
                     <template #footer>
@@ -321,8 +321,8 @@ const initFilters = () => {
 
                 <Dialog v-model:visible="deleteProductsDialog" :style="{ width: '450px' }" header="Confirm"
                     :modal="true">
-                    <div class="flex align-items-center justify-content-center">
-                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                    <div class="flex items-center justify-center">
+                        <i class="pi pi-exclamation-triangle mr-4" style="font-size: 2rem" />
                         <span v-if="product">Are you sure you want to delete the selected products?</span>
                     </div>
                     <template #footer>

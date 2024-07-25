@@ -1,40 +1,14 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# dependencies
-/node_modules
-package-lock.json
-yarn.lock
-
-.DS_Store
-dist
-dist-ssr
+node_modules
 coverage
-*.local
-
-/cypress/videos/
-/cypress/screenshots/
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+*.log*
+.nuxt
+.nitro
+.cache
+.output
+.env
+dist
+.DS_Store
 .idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Themes
-public/themes/soho-light/
-public/themes/soho-dark/
-public/themes/viva-light/
-public/themes/viva-dark/
-public/themes/mira/
-public/themes/nano/
+.eslintcache
+api-generator/typedoc.json
+**/.DS_Store

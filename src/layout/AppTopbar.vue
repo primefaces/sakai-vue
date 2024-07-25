@@ -2,8 +2,9 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
+import AppConfigurator from './AppConfigurator.vue';
 
-const { layoutConfig, onMenuToggle } = useLayout();
+const { layoutConfig, onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
@@ -84,6 +85,17 @@ const isOutsideClicked = (event) => {
                 <i class="pi pi-user"></i>
                 <span>Profile</span>
             </button>
+            <button type="button" class="p-link layout-topbar-button" @click="toggleDarkMode">
+                <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
+            </button>
+            <div>
+                <button
+                    v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
+                    type="button" class="p-link layout-topbar-button">
+                    <i class="pi pi-palette"></i>
+                </button>
+                <AppConfigurator />
+            </div>
             <button @click="onSettingsClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>

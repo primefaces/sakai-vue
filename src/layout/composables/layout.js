@@ -7,6 +7,9 @@ const layoutConfig = reactive({
     menuMode: 'static',
     theme: 'aura-light-green',
     scale: 14,
+    primary: 'emerald',
+    surface: null,
+    preset: 'Aura',
     activeMenuItem: null
 });
 
@@ -44,5 +47,22 @@ export function useLayout() {
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
-    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), setScale, onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem };
+    const toggleDarkMode = () => {
+        layoutConfig.darkTheme = !layoutConfig.darkTheme;
+        document.documentElement.classList.toggle('app-dark');
+    };
+
+    const setPrimary = (value) => {
+        layoutConfig.primary = value;
+    };
+
+    const setSurface = (value) => {
+        layoutConfig.surface = value;
+    };
+
+    const setPreset = (value) => {
+        layoutConfig.preset = value;
+    };
+
+    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), setScale, onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset };
 }

@@ -6,6 +6,7 @@ const toast = useToast();
 const message = ref([]);
 const username = ref(null);
 const email = ref(null);
+const value = ref(null);
 const count = ref(0);
 
 const addMessage = (type) => {

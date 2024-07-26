@@ -72,7 +72,7 @@ const dropdownItem = ref(null);
                             <label for="lastname1" class="sr-only">Lastname</label>
                             <InputText id="lastname1" type="text" placeholder="Lastname" />
                         </div>
-                        <Button label="Submit"></Button>
+                        <Button label="Submit" :fluid="false"></Button>
                     </div>
                 </div>
                 <div class="card flex flex-col gap-4">

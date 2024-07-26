@@ -21,10 +21,9 @@ const value7 = ref(null);
 const value8 = ref(null);
 const value9 = ref(null);
 const value10 = ref(null);
-const countryService = new CountryService();
 
 onMounted(() => {
-    countryService.getCountries().then((data) => (countries.value = data));
+    CountryService.getCountries().then((data) => (countries.value = data));
 });
 
 const searchCountry = (event) => {

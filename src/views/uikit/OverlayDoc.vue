@@ -17,12 +17,11 @@ const op = ref(null);
 const op2 = ref(null);
 const popup = ref(null);
 
-const productService = new ProductService();
 const toast = useToast();
 const confirmPopup = useConfirm();
 
 onMounted(() => {
-    productService.getProductsSmall().then((data) => (products.value = data));
+    ProductService.getProductsSmall().then((data) => (products.value = data));
 });
 
 const open = () => {

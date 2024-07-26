@@ -55,12 +55,10 @@ const knobValue = ref(50);
 const inputGroupValue = ref(false);
 const treeSelectNodes = ref(null);
 const selectedNode = ref(null);
-const countryService = new CountryService();
-const nodeService = new NodeService();
 
 onMounted(() => {
-    countryService.getCountries().then((data) => (autoValue.value = data));
-    nodeService.getTreeNodes().then((data) => (treeSelectNodes.value = data));
+    CountryService.getCountries().then((data) => (autoValue.value = data));
+    NodeService.getTreeNodes().then((data) => (treeSelectNodes.value = data));
 });
 
 const searchCountry = (event) => {

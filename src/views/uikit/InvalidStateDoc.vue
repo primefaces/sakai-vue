@@ -21,10 +21,9 @@ const cities = ref([
     { name: 'Istanbul', code: 'IST' },
     { name: 'Paris', code: 'PRS' }
 ]);
-const countryService = new CountryService();
 
 onMounted(() => {
-    countryService.getCountries().then((data) => {
+    CountryService.getCountries().then((data) => {
         countries.value = data;
     });
 });

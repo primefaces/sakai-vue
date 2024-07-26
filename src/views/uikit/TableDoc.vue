@@ -26,9 +26,6 @@ const representatives = reactive([
     { name: 'XuXue Feng', image: 'xuxuefeng.png' }
 ]);
 
-const customerService = new CustomerService();
-const productService = new ProductService();
-
 const getOrderSeverity = (order) => {
     switch (order.status) {
         case 'DELIVERED':
@@ -67,15 +64,31 @@ const getSeverity = (status) => {
     }
 };
 
+const getStockSeverity = (product) => {
+    switch (product.inventoryStatus) {
+        case 'INSTOCK':
+            return 'success';
+
+        case 'LOWSTOCK':
+            return 'warn';
+
+        case 'OUTOFSTOCK':
+            return 'danger';
+
+        default:
+            return null;
+    }
+};
+
 onBeforeMount(() => {
-    productService.getProductsWithOrdersSmall().then((data) => (products.value = data));
-    customerService.getCustomersLarge().then((data) => {
+    ProductService.getProductsWithOrdersSmall().then((data) => (products.value = data));
+    CustomerService.getCustomersLarge().then((data) => {
         customers1.value = data;
         loading1.value = false;
         customers1.value.forEach((customer) => (customer.date = new Date(customer.date)));
     });
-    customerService.getCustomersLarge().then((data) => (customers2.value = data));
-    customerService.getCustomersMedium().then((data) => (customers3.value = data));
+    CustomerService.getCustomersLarge().then((data) => (customers2.value = data));
+    CustomerService.getCustomersMedium().then((data) => (customers3.value = data));
 
     initFilters1();
 });
@@ -306,7 +319,7 @@ const calculateCustomerTotal = (name) => {
             </Column>
             <Column header="Status">
                 <template #body="slotProps">
-                    <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data)" />
+                    <Tag :value="slotProps.data.inventoryStatus" :severity="getStockSeverity(slotProps.data)" />
                 </template>
             </Column>
             <template #expansion="slotProps">

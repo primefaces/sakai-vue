@@ -41,12 +41,9 @@ const carouselResponsiveOptions = ref([
     }
 ]);
 
-const productService = new ProductService();
-const photoService = new PhotoService();
-
 onMounted(() => {
-    productService.getProductsSmall().then((data) => (products.value = data));
-    photoService.getImages().then((data) => (images.value = data));
+    ProductService.getProductsSmall().then((data) => (products.value = data));
+    PhotoService.getImages().then((data) => (images.value = data));
 });
 
 const getSeverity = (status) => {

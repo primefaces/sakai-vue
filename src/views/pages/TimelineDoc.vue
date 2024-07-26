@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 
-const customEvents = ref([
+const events = ref([
     {
         status: 'Ordered',
         date: '15/10/2020 10:30',
@@ -37,7 +37,7 @@ const horizontalEvents = ref(['2020', '2021', '2022', '2023']);
         <div class="col-span-6">
             <div class="card">
                 <h5>Left Align</h5>
-                <Timeline :value="customEvents">
+                <Timeline :value="events">
                     <template #content="slotProps">
                         {{ slotProps.item.status }}
                     </template>
@@ -47,7 +47,7 @@ const horizontalEvents = ref(['2020', '2021', '2022', '2023']);
         <div class="col-span-6">
             <div class="card">
                 <h5>Right Align</h5>
-                <Timeline :value="customEvents" align="right">
+                <Timeline :value="events" align="right">
                     <template #content="slotProps">
                         {{ slotProps.item.status }}
                     </template>
@@ -57,7 +57,7 @@ const horizontalEvents = ref(['2020', '2021', '2022', '2023']);
         <div class="col-span-6">
             <div class="card">
                 <h5>Alternate Align</h5>
-                <Timeline :value="customEvents" align="alternate">
+                <Timeline :value="events" align="alternate">
                     <template #content="slotProps">
                         {{ slotProps.item.status }}
                     </template>
@@ -67,7 +67,7 @@ const horizontalEvents = ref(['2020', '2021', '2022', '2023']);
         <div class="col-span-6">
             <div class="card">
                 <h5>Opposite Content</h5>
-                <Timeline :value="customEvents">
+                <Timeline :value="events">
                     <template #opposite="slotProps">
                         <small class="p-text-secondary">{{ slotProps.item.date }}</small>
                     </template>
@@ -80,14 +80,14 @@ const horizontalEvents = ref(['2020', '2021', '2022', '2023']);
     </div>
     <div class="card">
         <h5>Custom Timeline</h5>
-        <Timeline :value="customEvents" align="alternate" class="customized-timeline">
+        <Timeline :value="events" align="alternate" class="customized-timeline">
             <template #marker="slotProps">
-                <span class="flex w-8 h-8 items-center justify-center text-white rounded-full z-10 shadow" :style="{ backgroundColor: slotProps.item.color }">
+                <span class="flex w-8 h-8 items-center justify-center text-white rounded-full z-10 shadow-sm" :style="{ backgroundColor: slotProps.item.color }">
                     <i :class="slotProps.item.icon"></i>
                 </span>
             </template>
             <template #content="slotProps">
-                <Card>
+                <Card class="mt-4">
                     <template #title>
                         {{ slotProps.item.status }}
                     </template>
@@ -95,12 +95,12 @@ const horizontalEvents = ref(['2020', '2021', '2022', '2023']);
                         {{ slotProps.item.date }}
                     </template>
                     <template #content>
-                        <img v-if="slotProps.item.image" :src="'/demo/images/product/' + slotProps.item.image" :alt="slotProps.item.name" width="200" class="shadow mb-4" />
+                        <img v-if="slotProps.item.image" :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.item.image}`" :alt="slotProps.item.name" width="200" class="shadow-sm" />
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate
                             neque quas!
                         </p>
-                        <Button label="Read more" class="p-button-text"></Button>
+                        <Button label="Read more" text></Button>
                     </template>
                 </Card>
             </template>

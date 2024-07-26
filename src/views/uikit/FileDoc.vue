@@ -1,7 +1,13 @@
 <script setup>
+import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
 const toast = useToast();
+const fileupload = ref();
+
+const upload = () => {
+    fileupload.value.upload();
+};
 
 const onUpload = () => {
     toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });

@@ -124,7 +124,7 @@ const router = createRouter({
                 {
                     path: '/pages/timeline',
                     name: 'timeline',
-                    component: () => import('@/views/pages/Timeline.vue')
+                    component: () => import('@/views/pages/TimelineDoc.vue')
                 },
                 {
                     path: '/pages/empty',

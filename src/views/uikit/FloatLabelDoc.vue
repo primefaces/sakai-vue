@@ -42,26 +42,26 @@ const searchCountry = (event) => {
 </script>
 
 <template>
-    <div class="card">
+    <Fluid class="card">
         <h5>Float Label</h5>
         <div class="flex flex-col md:flex-row gap-6">
             <FloatLabel class="md:w-1/3">
-                <InputText type="text" id="inputtext" v-model="value1" fluid />
+                <InputText type="text" id="inputtext" v-model="value1" />
                 <label for="inputtext">InputText</label>
             </FloatLabel>
             <FloatLabel class="md:w-1/3">
-                <AutoComplete id="autocomplete" v-model="value2" :suggestions="filteredCountries" @complete="searchCountry($event)" field="name" fluid inputClass="w-full" />
+                <AutoComplete id="autocomplete" v-model="value2" :suggestions="filteredCountries" @complete="searchCountry($event)" field="name" inputClass="w-full" />
                 <label for="autocomplete">AutoComplete</label>
             </FloatLabel>
             <FloatLabel class="md:w-1/3">
-                <DatePicker inputId="calendar" v-model="value3" fluid />
+                <DatePicker inputId="calendar" v-model="value3" />
                 <label for="calendar">DatePicker</label>
             </FloatLabel>
         </div>
 
         <div class="flex flex-col md:flex-row gap-6 mt-6">
             <FloatLabel class="md:w-1/3">
-                <AutoComplete inputId="chips" v-model="value4" multiple :typeahead="false" fluid />
+                <AutoComplete inputId="chips" v-model="value4" multiple :typeahead="false" />
                 <label for="chips">Chips</label>
             </FloatLabel>
             <FloatLabel class="md:w-1/3">
@@ -69,7 +69,7 @@ const searchCountry = (event) => {
                 <label for="inputmask">InputMask</label>
             </FloatLabel>
             <FloatLabel class="md:w-1/3">
-                <InputNumber id="inputnumber" v-model="value6" fluid />
+                <InputNumber id="inputnumber" v-model="value6" />
                 <label for="inputnumber">InputNumber</label>
             </FloatLabel>
         </div>
@@ -80,7 +80,7 @@ const searchCountry = (event) => {
                     <i class="pi pi-user"></i>
                 </InputGroupAddon>
                 <FloatLabel>
-                    <InputText type="text" id="inputgroup" v-model="value7" fluid />
+                    <InputText type="text" id="inputgroup" v-model="value7" />
                     <label for="inputgroup">InputGroup</label>
                 </FloatLabel>
             </InputGroup>
@@ -89,16 +89,16 @@ const searchCountry = (event) => {
                 <label for="dropdown">Select</label>
             </FloatLabel>
             <FloatLabel class="md:w-1/3">
-                <MultiSelect id="multiselect" :options="cities" v-model="value9" optionLabel="name" :filter="false" fluid />
+                <MultiSelect id="multiselect" :options="cities" v-model="value9" optionLabel="name" :filter="false" />
                 <label for="multiselect">MultiSelect</label>
             </FloatLabel>
         </div>
 
         <div class="flex flex-col md:flex-row gap-6 mt-6">
             <FloatLabel class="md:w-1/3">
-                <Textarea inputId="textarea" rows="3" cols="30" v-model="value10" fluid />
+                <Textarea inputId="textarea" rows="3" cols="30" v-model="value10" />
                 <label for="textarea">Textarea</label>
             </FloatLabel>
         </div>
-    </div>
+    </Fluid>
 </template>

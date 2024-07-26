@@ -77,51 +77,51 @@ const searchCountry = (event) => {
 </script>
 
 <template>
-    <div class="flex flex-col md:flex-row gap-6">
+    <Fluid class="flex flex-col md:flex-row gap-6">
         <div class="md:w-1/2">
             <div class="card flex flex-col gap-4">
                 <h5>InputText</h5>
                 <div class="flex flex-col md:flex-row gap-4">
-                    <InputText type="text" placeholder="Default" fluid />
-                    <InputText type="text" placeholder="Disabled" :disabled="true" fluid />
-                    <InputText type="text" placeholder="Invalid" invalid fluid />
+                    <InputText type="text" placeholder="Default" />
+                    <InputText type="text" placeholder="Disabled" :disabled="true" />
+                    <InputText type="text" placeholder="Invalid" invalid />
                 </div>
 
                 <h5 class="mt-6">Icons</h5>
                 <IconField>
                     <InputIcon class="pi pi-user" />
-                    <InputText type="text" placeholder="Username" fluid />
+                    <InputText type="text" placeholder="Username" />
                 </IconField>
                 <IconField iconPosition="left">
-                    <InputText type="text" placeholder="Search" fluid />
+                    <InputText type="text" placeholder="Search" />
                     <InputIcon class="pi pi-search" />
                 </IconField>
 
                 <h5 class="mt-6">Float Label</h5>
                 <FloatLabel>
-                    <InputText id="username" type="text" v-model="floatValue" fluid />
+                    <InputText id="username" type="text" v-model="floatValue" />
                     <label for="username">Username</label>
                 </FloatLabel>
 
                 <h5 class="mt-6">Textarea</h5>
-                <Textarea placeholder="Your Message" :autoResize="true" rows="3" cols="30" fluid />
+                <Textarea placeholder="Your Message" :autoResize="true" rows="3" cols="30" />
 
                 <h5 class="mt-6">AutoComplete</h5>
-                <AutoComplete placeholder="Search" id="dd" :dropdown="true" :multiple="true" v-model="selectedAutoValue" :suggestions="autoFilteredValue" @complete="searchCountry($event)" field="name" fluid />
+                <AutoComplete placeholder="Search" id="dd" :dropdown="true" :multiple="true" v-model="selectedAutoValue" :suggestions="autoFilteredValue" @complete="searchCountry($event)" field="name" />
 
                 <h5 class="mt-6">DatePicker</h5>
-                <DatePicker :showIcon="true" :showButtonBar="true" v-model="calendarValue" fluid></DatePicker>
+                <DatePicker :showIcon="true" :showButtonBar="true" v-model="calendarValue"></DatePicker>
 
                 <h5 class="mt-6">Spinner</h5>
-                <InputNumber v-model="inputNumberValue" showButtons mode="decimal" fluid></InputNumber>
+                <InputNumber v-model="inputNumberValue" showButtons mode="decimal"></InputNumber>
 
                 <h5 class="mt-6">Chips</h5>
-                <AutoComplete v-model="chipsValue" :typeahead="false" multiple fluid />
+                <AutoComplete v-model="chipsValue" :typeahead="false" multiple />
             </div>
 
             <div class="card flex flex-col gap-4">
                 <h5>Slider</h5>
-                <InputText v-model.number="sliderValue" fluid />
+                <InputText v-model.number="sliderValue" />
                 <Slider v-model="sliderValue" />
 
                 <div class="flex flex-row mt-6">
@@ -182,10 +182,10 @@ const searchCountry = (event) => {
                 <Listbox v-model="listboxValue" :options="listboxValues" optionLabel="name" :filter="true" />
 
                 <h5 class="mt-6">Select</h5>
-                <Select v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Select" fluid />
+                <Select v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Select" />
 
                 <h5 class="mt-6">MultiSelect</h5>
-                <MultiSelect v-model="multiselectValue" :options="multiselectValues" optionLabel="name" placeholder="Select Countries" :filter="true" fluid>
+                <MultiSelect v-model="multiselectValue" :options="multiselectValues" optionLabel="name" placeholder="Select Countries" :filter="true">
                     <template #value="slotProps">
                         <div class="inline-flex items-center py-1 px-2 bg-primary text-primary-contrast rounded-border mr-2" v-for="option of slotProps.value" :key="option.code">
                             <span :class="'mr-2 flag flag-' + option.code.toLowerCase()" style="width: 18px; height: 12px" />
@@ -204,7 +204,7 @@ const searchCountry = (event) => {
                 </MultiSelect>
 
                 <h5 class="mt-6">TreeSelect</h5>
-                <TreeSelect v-model="selectedNode" :options="treeSelectNodes" placeholder="Select Item" fluid></TreeSelect>
+                <TreeSelect v-model="selectedNode" :options="treeSelectNodes" placeholder="Select Item"></TreeSelect>
             </div>
 
             <div class="card flex flex-col gap-4">
@@ -218,9 +218,9 @@ const searchCountry = (event) => {
                 <SelectButton v-model="selectButtonValue2" :options="selectButtonValues2" optionLabel="name" :multiple="true" />
             </div>
         </div>
-    </div>
+    </Fluid>
 
-    <div class="flex mt-6">
+    <Fluid class="flex mt-6">
         <div class="card flex flex-col gap-4 w-full">
             <h5>Input Groups</h5>
             <div class="flex flex-col md:flex-row gap-4">
@@ -228,7 +228,7 @@ const searchCountry = (event) => {
                     <InputGroupAddon>
                         <i class="pi pi-user"></i>
                     </InputGroupAddon>
-                    <InputText placeholder="Username" fluid />
+                    <InputText placeholder="Username" />
                 </InputGroup>
                 <InputGroup>
                     <InputGroupAddon>
@@ -237,7 +237,7 @@ const searchCountry = (event) => {
                     <InputGroupAddon>
                         <i class="pi pi-star-fill"></i>
                     </InputGroupAddon>
-                    <InputNumber placeholder="Price" fluid />
+                    <InputNumber placeholder="Price" />
                     <InputGroupAddon>$</InputGroupAddon>
                     <InputGroupAddon>.00</InputGroupAddon>
                 </InputGroup>
@@ -245,15 +245,15 @@ const searchCountry = (event) => {
             <div class="flex flex-col md:flex-row gap-4">
                 <InputGroup>
                     <Button label="Search" />
-                    <InputText placeholder="Keyword" fluid />
+                    <InputText placeholder="Keyword" />
                 </InputGroup>
                 <InputGroup>
                     <InputGroupAddon>
                         <Checkbox v-model="inputGroupValue" :binary="true" />
                     </InputGroupAddon>
-                    <InputText placeholder="Confirm" fluid />
+                    <InputText placeholder="Confirm" />
                 </InputGroup>
             </div>
         </div>
-    </div>
+    </Fluid>
 </template>

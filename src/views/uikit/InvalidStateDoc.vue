@@ -43,13 +43,13 @@ const searchCountry = (event) => {
 </script>
 
 <template>
-    <div class="card">
+    <Fluid class="card">
         <h5>Invalid State</h5>
         <div class="flex flex-col md:flex-row gap-6">
             <div class="md:w-1/2">
                 <div class="flex flex-col gap-2">
                     <label for="inputtext">InputText</label>
-                    <InputText id="inputtext" type="text" v-model="value1" invalid fluid />
+                    <InputText id="inputtext" type="text" v-model="value1" invalid />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="autocomplete">AutoComplete</label>
@@ -57,38 +57,38 @@ const searchCountry = (event) => {
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="calendar">DatePicker</label>
-                    <DatePicker id="calendar" v-model="value3" invalid :showIcon="true" fluid />
+                    <DatePicker id="calendar" v-model="value3" invalid :showIcon="true" />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="chips">Chips</label>
-                    <AutoComplete id="chips" v-model="value4" invalid fluid multiple :typeahead="false" />
+                    <AutoComplete id="chips" v-model="value4" invalid multiple :typeahead="false" />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="password">Password</label>
-                    <Password id="password" v-model="value10" invalid fluid />
+                    <Password id="password" v-model="value10" invalid />
                 </div>
             </div>
             <div class="md:w-1/2">
                 <div class="flex flex-col gap-2">
                     <label for="inputmask">InputMask</label>
-                    <InputMask id="inputmask" v-model="value5" mask="99/99/9999" slotChar="mm/dd/yyyy" invalid fluid />
+                    <InputMask id="inputmask" v-model="value5" mask="99/99/9999" slotChar="mm/dd/yyyy" invalid />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="inputnumber">InputNumber</label>
-                    <InputNumber id="inputnumber" v-model="value6" invalid fluid />
+                    <InputNumber id="inputnumber" v-model="value6" invalid />
                 </div>
                 <div class="flex flex-col gap-2"></div>
                 <label for="dropdown">Select</label>
-                <Select id="dropdown" v-model="value7" :options="cities" optionLabel="name" invalid fluid />
+                <Select id="dropdown" v-model="value7" :options="cities" optionLabel="name" invalid />
                 <div class="flex flex-col gap-2">
                     <label for="multiselect">MultiSelect</label>
-                    <MultiSelect id="multiselect" v-model="value8" :options="cities" optionLabel="name" invalid fluid />
+                    <MultiSelect id="multiselect" v-model="value8" :options="cities" optionLabel="name" invalid />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="textarea">Textarea</label>
-                    <Textarea id="textarea" v-model="value9" rows="3" invalid fluid />
+                    <Textarea id="textarea" v-model="value9" rows="3" invalid />
                 </div>
             </div>
         </div>
-    </div>
+    </Fluid>
 </template>

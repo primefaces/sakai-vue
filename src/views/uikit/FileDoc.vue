@@ -14,9 +14,14 @@ const onUpload = () => {
             <div class="card">
                 <h5>Advanced</h5>
                 <FileUpload name="demo[]" @uploader="onUpload" :multiple="true" accept="image/*" :maxFileSize="1000000" customUpload />
-
+            </div>
+            <div class="card">
                 <h5>Basic</h5>
-                <FileUpload mode="basic" name="demo[]" accept="image/*" :maxFileSize="1000000" @uploader="onUpload" customUpload />
+                <div class="card flex flex-col gap-6 items-center justify-center">
+                    <Toast />
+                    <FileUpload ref="fileupload" mode="basic" name="demo[]" url="/api/upload" accept="image/*" :maxFileSize="1000000" @upload="onUpload" />
+                    <Button label="Upload" @click="upload" severity="secondary" />
+                </div>
             </div>
         </div>
     </div>

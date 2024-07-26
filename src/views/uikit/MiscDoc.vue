@@ -28,53 +28,60 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-12">
-            <div class="card">
-                <h5>ProgressBar</h5>
-                <div class="grid grid-cols-12 gap-4">
-                    <div class="col">
-                        <ProgressBar :value="value"></ProgressBar>
-                    </div>
-                    <div class="col">
-                        <ProgressBar :value="50" :showValue="false"></ProgressBar>
-                    </div>
-                </div>
+    <div class="card">
+        <h5>ProgressBar</h5>
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="md:w-1/2">
+                <ProgressBar :value="value"></ProgressBar>
+            </div>
+            <div class="md:w-1/2">
+                <ProgressBar :value="50" :showValue="false"></ProgressBar>
             </div>
         </div>
-        <div class="col-span-12 lg:col-span-6">
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-4 mt-4">
+        <div class="md:w-1/2">
             <div class="card">
-                <h4>Badge</h4>
-                <h5>Numbers</h5>
-                <div class="badges">
-                    <Badge :value="2" class="mr-2"></Badge>
-                    <Badge :value="8" severity="success" class="mr-2"></Badge>
-                    <Badge :value="4" severity="info" class="mr-2"></Badge>
-                    <Badge :value="12" severity="warning" class="mr-2"></Badge>
+                <h4 class="mb-2">Badge</h4>
+                <h5 class="mb-2">Numbers</h5>
+                <div class="flex gap-2">
+                    <Badge :value="2"></Badge>
+                    <Badge :value="8" severity="success"></Badge>
+                    <Badge :value="4" severity="info"></Badge>
+                    <Badge :value="12" severity="warn"></Badge>
                     <Badge :value="3" severity="danger"></Badge>
                 </div>
 
-                <h5>Positioned Badge</h5>
-                <i class="pi pi-bell mr-6 p-text-secondary" style="font-size: 2rem" v-badge="2"></i>
-                <i class="pi pi-calendar mr-6 p-text-secondary" style="font-size: 2rem" v-badge.danger="'10+'"></i>
-                <i class="pi pi-envelope p-text-secondary" style="font-size: 2rem" v-badge.danger></i>
+                <h5 class="my-4">Positioned Badge</h5>
+                <div class="flex gap-6">
+                    <OverlayBadge value="2">
+                        <i class="pi pi-bell" style="font-size: 2rem" />
+                    </OverlayBadge>
+                    <OverlayBadge value="4" severity="danger">
+                        <i class="pi pi-calendar" style="font-size: 2rem" />
+                    </OverlayBadge>
+                    <OverlayBadge severity="danger">
+                        <i class="pi pi-envelope" style="font-size: 2rem" />
+                    </OverlayBadge>
+                </div>
 
-                <h5>Inline Button Badge</h5>
+                <h5 class="my-4">Inline Button Badge</h5>
                 <Button label="Emails" badge="8" class="mr-2"></Button>
-                <Button label="Messages" icon="pi pi-users" class="p-button-warning" badge="8" badgeClass="p-badge-danger"></Button>
+                <Button label="Messages" icon="pi pi-users" severity="warn" badge="8" badgeClass="p-badge-danger"></Button>
 
-                <h5>Sizes</h5>
-                <div class="badges">
-                    <Badge :value="2" class="mr-2"></Badge>
-                    <Badge :value="4" size="large" severity="warning" class="mr-2"></Badge>
+                <h5 class="my-4">Sizes</h5>
+                <div class="flex items-start gap-2">
+                    <Badge :value="2"></Badge>
+                    <Badge :value="4" size="large" severity="warn"></Badge>
                     <Badge :value="6" size="xlarge" severity="success"></Badge>
                 </div>
             </div>
 
             <div class="card">
                 <h4>Avatar</h4>
-                <h5>Avatar Group</h5>
-                <AvatarGroup class="mb-4">
+                <h5 class="my-4">Avatar Group</h5>
+                <AvatarGroup>
                     <Avatar :image="'/demo/images/avatar/amyelsner.png'" size="large" shape="circle"></Avatar>
                     <Avatar :image="'/demo/images/avatar/asiyajavayant.png'" size="large" shape="circle"></Avatar>
                     <Avatar :image="'/demo/images/avatar/onyamalimba.png'" size="large" shape="circle"></Avatar>
@@ -83,13 +90,15 @@ onBeforeUnmount(() => {
                     <Avatar label="+2" shape="circle" size="large" :style="{ 'background-color': '#9c27b0', color: '#ffffff' }"></Avatar>
                 </AvatarGroup>
 
-                <h5>Label - Circle</h5>
+                <h5 class="my-4">Label - Circle</h5>
                 <Avatar label="P" class="mr-2" size="xlarge" shape="circle"></Avatar>
                 <Avatar label="V" class="mr-2" size="large" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar>
                 <Avatar label="U" class="mr-2" :style="{ 'background-color': '#9c27b0', color: '#ffffff' }" shape="circle"></Avatar>
 
-                <h5>Icon - Badge</h5>
-                <Avatar icon="pi pi-user" class="mr-2" size="xlarge" v-badge.success="4"></Avatar>
+                <h5 class="my-4">Icon - Badge</h5>
+                <OverlayBadge value="4" severity="danger" class="inline-flex">
+                    <Avatar label="U" size="xlarge" />
+                </OverlayBadge>
             </div>
 
             <div class="card">
@@ -106,29 +115,35 @@ onBeforeUnmount(() => {
                 </ScrollPanel>
             </div>
         </div>
-        <div class="col-span-12 lg:col-span-6">
+        <div class="md:w-1/2">
             <div class="card">
                 <h4>Tag</h4>
                 <h5>Tags</h5>
-                <Tag class="mr-2" value="Primary"></Tag>
-                <Tag class="mr-2" severity="success" value="Success"></Tag>
-                <Tag class="mr-2" severity="info" value="Info"></Tag>
-                <Tag class="mr-2" severity="warning" value="Warning"></Tag>
-                <Tag severity="danger" value="Danger"></Tag>
+                <div class="flex gap-2">
+                    <Tag value="Primary"></Tag>
+                    <Tag severity="success" value="Success"></Tag>
+                    <Tag severity="info" value="Info"></Tag>
+                    <Tag severity="warn" value="Warn"></Tag>
+                    <Tag severity="danger" value="Danger"></Tag>
+                </div>
 
                 <h5>Pills</h5>
-                <Tag class="mr-2" value="Primary" :rounded="true"></Tag>
-                <Tag class="mr-2" severity="success" value="Success" :rounded="true"></Tag>
-                <Tag class="mr-2" severity="info" value="Info" :rounded="true"></Tag>
-                <Tag class="mr-2" severity="warning" value="Warning" :rounded="true"></Tag>
-                <Tag severity="danger" value="Danger" :rounded="true"></Tag>
+                <div class="flex gap-2">
+                    <Tag value="Primary" :rounded="true"></Tag>
+                    <Tag severity="success" value="Success" :rounded="true"></Tag>
+                    <Tag severity="info" value="Info" :rounded="true"></Tag>
+                    <Tag severity="warn" value="warn" :rounded="true"></Tag>
+                    <Tag severity="danger" value="Danger" :rounded="true"></Tag>
+                </div>
 
                 <h5>Icons</h5>
-                <Tag class="mr-2" icon="pi pi-user" value="Primary"></Tag>
-                <Tag class="mr-2" icon="pi pi-check" severity="success" value="Success"></Tag>
-                <Tag class="mr-2" icon="pi pi-info-circle" severity="info" value="Info"></Tag>
-                <Tag class="mr-2" con="pi pi-exclamation-triangle" severity="warning" value="Warning"></Tag>
-                <Tag icon="pi pi-times" severity="danger" value="Danger"></Tag>
+                <div class="flex gap-2">
+                    <Tag icon="pi pi-user" value="Primary"></Tag>
+                    <Tag icon="pi pi-check" severity="success" value="Success"></Tag>
+                    <Tag icon="pi pi-info-circle" severity="info" value="Info"></Tag>
+                    <Tag con="pi pi-exclamation-triangle" severity="warn" value="warn"></Tag>
+                    <Tag icon="pi pi-times" severity="danger" value="Danger"></Tag>
+                </div>
             </div>
 
             <div class="card">

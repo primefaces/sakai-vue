@@ -11,111 +11,111 @@ const dropdownItem = ref(null);
 </script>
 
 <template>
-    <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-12 md:col-span-6">
-            <div class="card p-fluid">
-                <h5>Vertical</h5>
-                <div class="field">
-                    <label for="name1">Name</label>
-                    <InputText id="name1" type="text" />
+    <Fluid>
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="md:w-1/2">
+                <div class="card flex flex-col gap-4">
+                    <h5>Vertical</h5>
+                    <div class="flex flex-col gap-2">
+                        <label for="name1">Name</label>
+                        <InputText id="name1" type="text" />
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="email1">Email</label>
+                        <InputText id="email1" type="text" />
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="age1">Age</label>
+                        <InputText id="age1" type="text" />
+                    </div>
                 </div>
-                <div class="field">
-                    <label for="email1">Email</label>
-                    <InputText id="email1" type="text" />
-                </div>
-                <div class="field">
-                    <label for="age1">Age</label>
-                    <InputText id="age1" type="text" />
+
+                <div class="card flex flex-col gap-4">
+                    <h5>Vertical Grid</h5>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex flex-col grow basis-0 gap-2">
+                            <label for="name2">Name</label>
+                            <InputText id="name2" type="text" />
+                        </div>
+                        <div class="flex flex-col grow basis-0 gap-2">
+                            <label for="email2">Email</label>
+                            <InputText id="email2" type="text" />
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="card p-fluid">
-                <h5>Vertical Grid</h5>
-                <div class="formgrid grid grid-cols-12 gap-4">
-                    <div class="field col">
-                        <label for="name2">Name</label>
-                        <InputText id="name2" type="text" />
+            <div class="md:w-1/2">
+                <div class="card flex flex-col gap-4">
+                    <h5>Horizontal</h5>
+                    <div class="grid grid-cols-12 gap-2">
+                        <label for="name3" class="flex items-center col-span-12 mb-2 md:col-span-2 md:mb-0">Name</label>
+                        <div class="col-span-12 md:col-span-10">
+                            <InputText id="name3" type="text" />
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label for="email2">Email</label>
-                        <InputText id="email2" type="text" />
+                    <div class="grid grid-cols-12 gap-2">
+                        <label for="email3" class="flex items-center col-span-12 mb-2 md:col-span-2 md:mb-0">Email</label>
+                        <div class="col-span-12 md:col-span-10">
+                            <InputText id="email3" type="text" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card flex flex-col gap-4">
+                    <h5>Inline</h5>
+                    <div class="flex flex-wrap items-start gap-4">
+                        <div class="field">
+                            <label for="firstname1" class="sr-only">Firstname</label>
+                            <InputText id="firstname1" type="text" placeholder="Firstname" />
+                        </div>
+                        <div class="field">
+                            <label for="lastname1" class="sr-only">Lastname</label>
+                            <InputText id="lastname1" type="text" placeholder="Lastname" />
+                        </div>
+                        <Button label="Submit"></Button>
+                    </div>
+                </div>
+                <div class="card flex flex-col gap-4">
+                    <h5>Help Text</h5>
+                    <div class="flex flex-wrap gap-2">
+                        <label for="username">Username</label>
+                        <InputText id="username" type="text" />
+                        <small>Enter your username to reset your password.</small>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-span-12 md:col-span-6">
-            <div class="card p-fluid">
-                <h5>Horizontal</h5>
-                <div class="field grid grid-cols-12 gap-4">
-                    <label for="name3" class="col-span-12 mb-2 md:col-span-2 md:mb-0">Name</label>
-                    <div class="col-span-12 md:col-span-10">
-                        <InputText id="name3" type="text" />
-                    </div>
-                </div>
-                <div class="field grid grid-cols-12 gap-4">
-                    <label for="email3" class="col-span-12 mb-2 md:col-span-2 md:mb-0">Email</label>
-                    <div class="col-span-12 md:col-span-10">
-                        <InputText id="email3" type="text" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h5>Inline</h5>
-                <div class="formgroup-inline">
-                    <div class="field">
-                        <label for="firstname1" class="p-sr-only">Firstname</label>
-                        <InputText id="firstname1" type="text" placeholder="Firstname" />
-                    </div>
-                    <div class="field">
-                        <label for="lastname1" class="p-sr-only">Lastname</label>
-                        <InputText id="lastname1" type="text" placeholder="Lastname" />
-                    </div>
-                    <Button label="Submit"></Button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h5>Help Text</h5>
-                <div class="field p-fluid">
-                    <label for="username">Username</label>
-                    <InputText id="username" type="text" />
-                    <small>Enter your username to reset your password.</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-span-12">
-            <div class="card">
+        <div class="flex mt-6">
+            <div class="card flex flex-col gap-4 w-full">
                 <h5>Advanced</h5>
-                <div class="p-fluid formgrid grid grid-cols-12 gap-4">
-                    <div class="field col-span-12 md:col-span-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex flex-wrap gap-2 w-full">
                         <label for="firstname2">Firstname</label>
                         <InputText id="firstname2" type="text" />
                     </div>
-                    <div class="field col-span-12 md:col-span-6">
+                    <div class="flex flex-wrap gap-2 w-full">
                         <label for="lastname2">Lastname</label>
                         <InputText id="lastname2" type="text" />
                     </div>
-                    <div class="field col-span-12">
-                        <label for="address">Address</label>
-                        <Textarea id="address" rows="4" />
-                    </div>
-                    <div class="field col-span-12 md:col-span-6">
-                        <label for="city">City</label>
-                        <InputText id="city" type="text" />
-                    </div>
-                    <div class="field col-span-12 md:col-span-3">
+                </div>
+
+                <div class="flex flex-wrap">
+                    <label for="address">Address</label>
+                    <Textarea id="address" rows="4" />
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex flex-wrap gap-2 w-full">
                         <label for="state">State</label>
-                        <Dropdown id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Select One"></Dropdown>
+                        <Select id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Select One" class="w-full"></Select>
                     </div>
-                    <div class="field col-span-12 md:col-span-3">
+                    <div class="flex flex-wrap gap-2 w-full">
                         <label for="zip">Zip</label>
                         <InputText id="zip" type="text" />
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </Fluid>
 </template>

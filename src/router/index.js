@@ -21,57 +21,57 @@ const router = createRouter({
                 {
                     path: '/uikit/input',
                     name: 'input',
-                    component: () => import('@/views/uikit/Input.vue')
+                    component: () => import('@/views/uikit/InputDoc.vue')
                 },
                 {
                     path: '/uikit/floatlabel',
                     name: 'floatlabel',
-                    component: () => import('@/views/uikit/FloatLabel.vue')
+                    component: () => import('@/views/uikit/FloatLabelDoc.vue')
                 },
                 {
                     path: '/uikit/invalidstate',
                     name: 'invalidstate',
-                    component: () => import('@/views/uikit/InvalidState.vue')
+                    component: () => import('@/views/uikit/InvalidStateDoc.vue')
                 },
                 {
                     path: '/uikit/button',
                     name: 'button',
-                    component: () => import('@/views/uikit/Button.vue')
+                    component: () => import('@/views/uikit/ButtonDoc.vue')
                 },
                 {
                     path: '/uikit/table',
                     name: 'table',
-                    component: () => import('@/views/uikit/Table.vue')
+                    component: () => import('@/views/uikit/TableDoc.vue')
                 },
                 {
                     path: '/uikit/list',
                     name: 'list',
-                    component: () => import('@/views/uikit/List.vue')
+                    component: () => import('@/views/uikit/ListDoc.vue')
                 },
                 {
                     path: '/uikit/tree',
                     name: 'tree',
-                    component: () => import('@/views/uikit/Tree.vue')
+                    component: () => import('@/views/uikit/TreeDoc.vue')
                 },
                 {
                     path: '/uikit/panel',
                     name: 'panel',
-                    component: () => import('@/views/uikit/Panels.vue')
+                    component: () => import('@/views/uikit/PanelsDoc.vue')
                 },
 
                 {
                     path: '/uikit/overlay',
                     name: 'overlay',
-                    component: () => import('@/views/uikit/Overlay.vue')
+                    component: () => import('@/views/uikit/OverlayDoc.vue')
                 },
                 {
                     path: '/uikit/media',
                     name: 'media',
-                    component: () => import('@/views/uikit/Media.vue')
+                    component: () => import('@/views/uikit/MediaDoc.vue')
                 },
                 {
                     path: '/uikit/menu',
-                    component: () => import('@/views/uikit/Menu.vue'),
+                    component: () => import('@/views/uikit/MenuDoc.vue'),
                     children: [
                         {
                             path: '/uikit/menu',
@@ -94,22 +94,22 @@ const router = createRouter({
                 {
                     path: '/uikit/message',
                     name: 'message',
-                    component: () => import('@/views/uikit/Messages.vue')
+                    component: () => import('@/views/uikit/MessagesDoc.vue')
                 },
                 {
                     path: '/uikit/file',
                     name: 'file',
-                    component: () => import('@/views/uikit/File.vue')
+                    component: () => import('@/views/uikit/FileDoc.vue')
                 },
                 {
                     path: '/uikit/charts',
                     name: 'charts',
-                    component: () => import('@/views/uikit/Chart.vue')
+                    component: () => import('@/views/uikit/ChartDoc.vue')
                 },
                 {
                     path: '/uikit/misc',
                     name: 'misc',
-                    component: () => import('@/views/uikit/Misc.vue')
+                    component: () => import('@/views/uikit/MiscDoc.vue')
                 },
                 {
                     path: '/blocks',

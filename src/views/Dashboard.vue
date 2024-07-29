@@ -115,7 +115,7 @@ watch([getPrimary, getSurface], () => {
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">152</div>
                     </div>
                     <div class="flex items-center justify-center bg-blue-100 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
+                        <i class="pi pi-shopping-cart text-blue-500 !text-xl"></i>
                     </div>
                 </div>
                 <span class="text-primary font-medium">24 new </span>
@@ -130,7 +130,7 @@ watch([getPrimary, getSurface], () => {
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">$2.100</div>
                     </div>
                     <div class="flex items-center justify-center bg-orange-100 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-map-marker text-orange-500 text-xl"></i>
+                        <i class="pi pi-map-marker text-orange-500 !text-xl"></i>
                     </div>
                 </div>
                 <span class="text-primary font-medium">%52+ </span>
@@ -145,7 +145,7 @@ watch([getPrimary, getSurface], () => {
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">28441</div>
                     </div>
                     <div class="flex items-center justify-center bg-cyan-100 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-inbox text-cyan-500 text-xl"></i>
+                        <i class="pi pi-inbox text-cyan-500 !text-xl"></i>
                     </div>
                 </div>
                 <span class="text-primary font-medium">520 </span>
@@ -160,7 +160,7 @@ watch([getPrimary, getSurface], () => {
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">152 Unread</div>
                     </div>
                     <div class="flex items-center justify-center bg-purple-100 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-comment text-purple-500 text-xl"></i>
+                        <i class="pi pi-comment text-purple-500 !text-xl"></i>
                     </div>
                 </div>
                 <span class="text-primary font-medium">85 </span>

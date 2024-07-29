@@ -1,4 +1,5 @@
 <script setup>
+import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
 
 const email = ref('');
@@ -7,6 +8,7 @@ const checked = ref(false);
 </script>
 
 <template>
+    <FloatingConfigurator />
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center">
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">

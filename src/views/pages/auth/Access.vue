@@ -1,6 +1,9 @@
-<script setup></script>
+<script setup>
+import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
+</script>
 
 <template>
+    <FloatingConfigurator />
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center">
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(247, 149, 48, 0.4) 10%, rgba(247, 149, 48, 0) 30%)">

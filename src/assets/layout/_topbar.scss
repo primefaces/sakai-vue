@@ -12,7 +12,7 @@
     align-items: center;
 
     .layout-topbar-logo-container {
-        width: 300px;
+        width: 20rem;
         display: flex;
         align-items: center;
     }
@@ -130,6 +130,7 @@
             right: 2rem;
             top: 4rem;
             min-width: 15rem;
+            border: 1px solid var(--surface-border);
 
             .layout-topbar-menu-content {
                 gap: 0.5rem;
@@ -162,25 +163,6 @@
 }
 
 .config-panel {
-    position: absolute;
-    top: 3.25rem;
-    right: 0;
-    width: 16rem;
-    padding: 0.75rem;
-    background-color: var(--surface-overlay);
-    border-radius: 6px;
-    border: 1px solid var(--surface-border);
-    transform-origin: top;
-    box-shadow:
-        0 4px 6px -1px rgb(0 0 0 / 0.1),
-        0 2px 4px -2px rgb(0 0 0 / 0.1);
-
-    .config-panel-content {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
     .config-panel-label {
         font-size: 0.875rem;
         color: var(--text-secondary-color);

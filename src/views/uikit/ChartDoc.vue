@@ -242,40 +242,40 @@ watch(
 </script>
 
 <template>
-    <Fluid class="grid grid-cols-12 gap-4">
+    <Fluid class="grid grid-cols-12 gap-8">
         <div class="col-span-12 xl:col-span-6">
             <div class="card">
-                <h5>Linear Chart</h5>
+                <div class="font-semibold text-xl mb-4">Linear</div>
                 <Chart type="line" :data="lineData" :options="lineOptions"></Chart>
             </div>
         </div>
         <div class="col-span-12 xl:col-span-6">
             <div class="card">
-                <h5>Bar Chart</h5>
+                <div class="font-semibold text-xl mb-4">Bar</div>
                 <Chart type="bar" :data="barData" :options="barOptions"></Chart>
             </div>
         </div>
         <div class="col-span-12 xl:col-span-6">
             <div class="card flex flex-col items-center">
-                <h5 class="text-left w-full">Pie Chart</h5>
+                <div class="font-semibold text-xl mb-4">Pie</div>
                 <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>
             </div>
         </div>
         <div class="col-span-12 xl:col-span-6">
             <div class="card flex flex-col items-center">
-                <h5 class="text-left w-full">Doughnut Chart</h5>
+                <div class="font-semibold text-xl mb-4">Doughnut</div>
                 <Chart type="doughnut" :data="pieData" :options="pieOptions"></Chart>
             </div>
         </div>
         <div class="col-span-12 xl:col-span-6">
             <div class="card flex flex-col items-center">
-                <h5 class="text-left w-full">Polar Area Chart</h5>
+                <div class="font-semibold text-xl mb-4">Polar Area</div>
                 <Chart type="polarArea" :data="polarData" :options="polarOptions"></Chart>
             </div>
         </div>
         <div class="col-span-12 xl:col-span-6">
             <div class="card flex flex-col items-center">
-                <h5 class="text-left w-full">Radar Chart</h5>
+                <div class="font-semibold text-xl mb-4">Radar</div>
                 <Chart type="radar" :data="radarData" :options="radarOptions"></Chart>
             </div>
         </div>

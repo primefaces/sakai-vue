@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 const value = ref(0);
 let interval = null;
@@ -29,7 +29,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="card">
-        <h5>ProgressBar</h5>
+        <div class="font-semibold text-xl mb-4">ProgressBar</div>
         <div class="flex flex-col md:flex-row gap-4">
             <div class="md:w-1/2">
                 <ProgressBar :value="value"></ProgressBar>
@@ -40,11 +40,10 @@ onBeforeUnmount(() => {
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4 mt-4">
+    <div class="flex flex-col md:flex-row gap-8">
         <div class="md:w-1/2">
             <div class="card">
-                <h4 class="mb-2">Badge</h4>
-                <h5 class="mb-2">Numbers</h5>
+                <div class="font-semibold text-xl mb-4">Badge</div>
                 <div class="flex gap-2">
                     <Badge :value="2"></Badge>
                     <Badge :value="8" severity="success"></Badge>
@@ -53,7 +52,7 @@ onBeforeUnmount(() => {
                     <Badge :value="3" severity="danger"></Badge>
                 </div>
 
-                <h5 class="my-4">Positioned Badge</h5>
+                <div class="font-semibold my-4">Overlay</div>
                 <div class="flex gap-6">
                     <OverlayBadge value="2">
                         <i class="pi pi-bell" style="font-size: 2rem" />
@@ -66,11 +65,13 @@ onBeforeUnmount(() => {
                     </OverlayBadge>
                 </div>
 
-                <h5 class="my-4">Inline Button Badge</h5>
-                <Button label="Emails" badge="8" class="mr-2"></Button>
-                <Button label="Messages" icon="pi pi-users" severity="warn" badge="8" badgeClass="p-badge-danger"></Button>
+                <div class="font-semibold my-4">Button</div>
+                <div class="flex gap-2">
+                    <Button label="Emails" badge="8" class="mr-2"></Button>
+                    <Button label="Messages" icon="pi pi-users" severity="warn" badge="8" badgeClass="p-badge-danger"></Button>
+                </div>
 
-                <h5 class="my-4">Sizes</h5>
+                <div class="font-semibold my-4">Sizes</div>
                 <div class="flex items-start gap-2">
                     <Badge :value="2"></Badge>
                     <Badge :value="4" size="large" severity="warn"></Badge>
@@ -79,8 +80,8 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="card">
-                <h4>Avatar</h4>
-                <h5 class="my-4">Avatar Group</h5>
+                <div class="font-semibold text-xl mb-4">Avatar</div>
+                <div class="font-semibold mb-4">Group</div>
                 <AvatarGroup>
                     <Avatar :image="'/demo/images/avatar/amyelsner.png'" size="large" shape="circle"></Avatar>
                     <Avatar :image="'/demo/images/avatar/asiyajavayant.png'" size="large" shape="circle"></Avatar>
@@ -90,19 +91,19 @@ onBeforeUnmount(() => {
                     <Avatar label="+2" shape="circle" size="large" :style="{ 'background-color': '#9c27b0', color: '#ffffff' }"></Avatar>
                 </AvatarGroup>
 
-                <h5 class="my-4">Label - Circle</h5>
+                <div class="font-semibold my-4">Label - Circle</div>
                 <Avatar label="P" class="mr-2" size="xlarge" shape="circle"></Avatar>
                 <Avatar label="V" class="mr-2" size="large" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar>
                 <Avatar label="U" class="mr-2" :style="{ 'background-color': '#9c27b0', color: '#ffffff' }" shape="circle"></Avatar>
 
-                <h5 class="my-4">Icon - Badge</h5>
+                <div class="font-semibold my-4">Icon - Badge</div>
                 <OverlayBadge value="4" severity="danger" class="inline-flex">
                     <Avatar label="U" size="xlarge" />
                 </OverlayBadge>
             </div>
 
             <div class="card">
-                <h4>ScrollTop</h4>
+                <div class="font-semibold text-xl mb-4">ScrollTop</div>
                 <ScrollPanel :style="{ width: '250px', height: '200px' }">
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae et leo duis ut diam. Ultricies mi quis hendrerit dolor magna eget est lorem. Amet consectetur
@@ -117,8 +118,8 @@ onBeforeUnmount(() => {
         </div>
         <div class="md:w-1/2">
             <div class="card">
-                <h4>Tag</h4>
-                <h5>Tags</h5>
+                <div class="font-semibold text-xl mb-4">Tag</div>
+                <div class="font-semibold mb-4">Default</div>
                 <div class="flex gap-2">
                     <Tag value="Primary"></Tag>
                     <Tag severity="success" value="Success"></Tag>
@@ -127,7 +128,7 @@ onBeforeUnmount(() => {
                     <Tag severity="danger" value="Danger"></Tag>
                 </div>
 
-                <h5>Pills</h5>
+                <div class="font-semibold my-4">Pills</div>
                 <div class="flex gap-2">
                     <Tag value="Primary" :rounded="true"></Tag>
                     <Tag severity="success" value="Success" :rounded="true"></Tag>
@@ -136,7 +137,7 @@ onBeforeUnmount(() => {
                     <Tag severity="danger" value="Danger" :rounded="true"></Tag>
                 </div>
 
-                <h5>Icons</h5>
+                <div class="font-semibold my-4">Icons</div>
                 <div class="flex gap-2">
                     <Tag icon="pi pi-user" value="Primary"></Tag>
                     <Tag icon="pi pi-check" severity="success" value="Success"></Tag>
@@ -147,8 +148,8 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="card">
-                <h4>Chip</h4>
-                <h5>Basic</h5>
+                <div class="font-semibold text-xl mb-4">Chip</div>
+                <div class="font-semibold mb-4">Basic</div>
                 <div class="flex items-center flex-col sm:flex-row">
                     <Chip label="Action" class="mr-2 mb-2"></Chip>
                     <Chip label="Comedy" class="mr-2 mb-2"></Chip>
@@ -156,7 +157,7 @@ onBeforeUnmount(() => {
                     <Chip label="Thriller" :removable="true" class="mb-2"></Chip>
                 </div>
 
-                <h5>Icon</h5>
+                <div class="font-semibold my-4">Icon</div>
                 <div class="flex items-center flex-col sm:flex-row">
                     <Chip label="Apple" icon="pi pi-apple" class="mr-2 mb-2"></Chip>
                     <Chip label="Facebook" icon="pi pi-facebook" class="mr-2 mb-2"></Chip>
@@ -164,7 +165,7 @@ onBeforeUnmount(() => {
                     <Chip label="Microsoft" icon="pi pi-microsoft" :removable="true" class="mb-2"></Chip>
                 </div>
 
-                <h5>Image</h5>
+                <div class="font-semibold my-4">Image</div>
                 <div class="flex items-center flex-col sm:flex-row">
                     <Chip label="Amy Elsner" :image="'/demo/images/avatar/amyelsner.png'" class="mr-2 mb-2"></Chip>
                     <Chip label="Asiya Javayant" :image="'/demo/images/avatar/asiyajavayant.png'" class="mr-2 mb-2"></Chip>
@@ -173,7 +174,7 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="card">
-                <h4>Skeleton</h4>
+                <div class="font-semibold text-xl mb-4">Skeleton</div>
                 <div class="rounded-border border border-surface p-6">
                     <div class="flex mb-4">
                         <Skeleton shape="circle" size="4rem" class="mr-2"></Skeleton>

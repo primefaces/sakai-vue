@@ -60,28 +60,6 @@ const router = createRouter({
                     component: () => import('@/views/uikit/MediaDoc.vue')
                 },
                 {
-                    path: '/uikit/menu',
-                    component: () => import('@/views/uikit/MenuDoc.vue'),
-                    children: [
-                        {
-                            path: '/uikit/menu',
-                            component: () => import('@/views/uikit/menu/PersonalDemo.vue')
-                        },
-                        {
-                            path: '/uikit/menu/seat',
-                            component: () => import('@/views/uikit/menu/SeatDemo.vue')
-                        },
-                        {
-                            path: '/uikit/menu/payment',
-                            component: () => import('@/views/uikit/menu/PaymentDemo.vue')
-                        },
-                        {
-                            path: '/uikit/menu/confirmation',
-                            component: () => import('@/views/uikit/menu/ConfirmationDemo.vue')
-                        }
-                    ]
-                },
-                {
                     path: '/uikit/message',
                     name: 'message',
                     component: () => import('@/views/uikit/MessagesDoc.vue')
@@ -90,6 +68,11 @@ const router = createRouter({
                     path: '/uikit/file',
                     name: 'file',
                     component: () => import('@/views/uikit/FileDoc.vue')
+                },
+                {
+                    path: '/uikit/menu',
+                    name: 'menu',
+                    component: () => import('@/views/uikit/MenuDoc.vue')
                 },
                 {
                     path: '/uikit/charts',
@@ -102,19 +85,9 @@ const router = createRouter({
                     component: () => import('@/views/uikit/MiscDoc.vue')
                 },
                 {
-                    path: '/blocks',
-                    name: 'blocks',
-                    component: () => import('@/views/utilities/Blocks.vue')
-                },
-                {
-                    path: '/utilities/icons',
-                    name: 'icons',
-                    component: () => import('@/views/utilities/Icons.vue')
-                },
-                {
-                    path: '/pages/timeline',
+                    path: '/uikit/timeline',
                     name: 'timeline',
-                    component: () => import('@/views/pages/TimelineDoc.vue')
+                    component: () => import('@/views/uikit/TimelineDoc.vue')
                 },
                 {
                     path: '/pages/empty',
@@ -129,7 +102,7 @@ const router = createRouter({
                 {
                     path: '/documentation',
                     name: 'documentation',
-                    component: () => import('@/views/utilities/Documentation.vue')
+                    component: () => import('@/views/pages/Documentation.vue')
                 }
             ]
         },

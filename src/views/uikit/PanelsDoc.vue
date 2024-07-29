@@ -32,9 +32,9 @@ const toggle = () => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col">
         <div class="card">
-            <h5>Toolbar</h5>
+            <div class="font-semibold text-xl mb-4">Toolbar</div>
             <Toolbar>
                 <template #start>
                     <Button icon="pi pi-plus" class="mr-2" severity="secondary" text />
@@ -55,10 +55,10 @@ const toggle = () => {
             </Toolbar>
         </div>
 
-        <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2">
                 <div class="card">
-                    <h5>Accordion</h5>
+                    <div class="font-semibold text-xl mb-4">Accordion</div>
                     <Accordion value="0">
                         <AccordionPanel value="0">
                             <AccordionHeader>Header I</AccordionHeader>
@@ -93,7 +93,7 @@ const toggle = () => {
                     </Accordion>
                 </div>
                 <div class="card">
-                    <h5>Tabs</h5>
+                    <div class="font-semibold text-xl mb-4">Tabs</div>
                     <Tabs value="0">
                         <TabList>
                             <Tab value="0">Header I</Tab>
@@ -128,7 +128,7 @@ const toggle = () => {
             </div>
             <div class="md:w-1/2 mt-6 md:mt-0">
                 <div class="card">
-                    <h5>Panel</h5>
+                    <div class="font-semibold text-xl mb-4">Panel</div>
                     <Panel header="Header" :toggleable="true">
                         <p class="leading-normal m-0">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -138,7 +138,7 @@ const toggle = () => {
                     </Panel>
                 </div>
                 <div class="card">
-                    <h5>Fieldset</h5>
+                    <div class="font-semibold text-xl mb-4">Fieldset</div>
                     <Fieldset legend="Legend" :toggleable="true">
                         <p class="leading-normal m-0">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -151,7 +151,7 @@ const toggle = () => {
                 <Card>
                     <template v-slot:title>
                         <div class="flex items-center justify-between mb-0">
-                            <h5>Card</h5>
+                            <div class="font-semibold text-xl mb-4">Card</div>
                             <Button icon="pi pi-plus" class="p-button-text" @click="toggle" />
                         </div>
                         <Menu id="config_menu" ref="menuRef" :model="cardMenu" :popup="true" />
@@ -168,8 +168,8 @@ const toggle = () => {
             </div>
         </div>
 
-        <div class="card mt-4">
-            <h5>Divider</h5>
+        <div class="card mt-8">
+            <div class="font-semibold text-xl mb-4">Divider</div>
             <div class="flex flex-col md:flex-row">
                 <div class="w-full md:w-5/12 flex flex-col items-center justify-center gap-3 py-5">
                     <div class="flex flex-col gap-2">
@@ -185,8 +185,8 @@ const toggle = () => {
                     </div>
                 </div>
                 <div class="w-full md:w-2/12">
-                    <Divider layout="vertical" class="hidden md:flex"><b>OR</b></Divider>
-                    <Divider layout="horizontal" class="flex md:hidden" align="center"><b>OR</b></Divider>
+                    <Divider layout="vertical" class="!hidden md:!flex"><b>OR</b></Divider>
+                    <Divider layout="horizontal" class="!flex md:!hidden" align="center"><b>OR</b></Divider>
                 </div>
                 <div class="w-full md:w-5/12 flex items-center justify-center py-5">
                     <Button label="Sign Up" icon="pi pi-user-plus" severity="success" class="w-full max-w-[17.35rem] mx-auto"></Button>
@@ -195,8 +195,7 @@ const toggle = () => {
         </div>
 
         <div class="card">
-            <h5>Splitter</h5>
-
+            <div class="font-semibold text-xl mb-4">Splitter</div>
             <Splitter style="height: 300px" class="mb-8">
                 <SplitterPanel :size="30" :minSize="10">
                     <div className="h-full flex items-center justify-center">Panel 1</div>

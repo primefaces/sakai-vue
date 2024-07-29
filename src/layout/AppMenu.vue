@@ -24,14 +24,8 @@ const model = ref([
             { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/uikit/message' },
             { label: 'File', icon: 'pi pi-fw pi-file', to: '/uikit/file' },
             { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/charts' },
+            { label: 'Timeline', icon: 'pi pi-fw pi-calendar', to: '/uikit/timeline' },
             { label: 'Misc', icon: 'pi pi-fw pi-circle', to: '/uikit/misc' }
-        ]
-    },
-    {
-        label: 'Utilities',
-        items: [
-            { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/utilities/icons' },
-            { label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: 'https://www.primefaces.org/primeflex/', target: '_blank' }
         ]
     },
     {
@@ -69,11 +63,6 @@ const model = ref([
                 label: 'Crud',
                 icon: 'pi pi-fw pi-pencil',
                 to: '/pages/crud'
-            },
-            {
-                label: 'Timeline',
-                icon: 'pi pi-fw pi-calendar',
-                to: '/pages/timeline'
             },
             {
                 label: 'Not Found',

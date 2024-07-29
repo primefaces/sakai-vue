@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useConfirm } from 'primevue/useconfirm';
 import { ProductService } from '@/service/ProductService';
+import { useConfirm } from 'primevue/useconfirm';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
 
 const display = ref(false);
 const displayConfirmation = ref(false);
@@ -77,31 +77,26 @@ const confirm = (event) => {
 </script>
 
 <template>
-    <div class="flex flex-col md:flex-row gap-6">
+    <div class="flex flex-col md:flex-row gap-8">
         <div class="md:w-1/2">
             <div class="card">
-                <h5 class="mb-4">Dialog</h5>
+                <div class="font-semibold text-xl mb-4">Dialog</div>
                 <Dialog header="Dialog" v-model:visible="display" :breakpoints="{ '960px': '75vw' }" :style="{ width: '30vw' }" :modal="true">
                     <p class="leading-normal m-0">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
                         consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                     </p>
                     <template #footer>
-                        <Button label="Ok" @click="close" icon="pi pi-check" class="p-button-outlined" />
+                        <Button label="Save" @click="close" />
                     </template>
                 </Dialog>
-                <Button label="Show" icon="pi pi-external-link" style="width: auto" @click="open" />
+                <Button label="Show" style="width: auto" @click="open" />
             </div>
 
             <div class="card">
-                <h5 class="mb-4">Popover</h5>
+                <div class="font-semibold text-xl mb-4">Popover</div>
                 <div class="flex flex-wrap gap-2">
-                    <Button type="button" label="Image" @click="toggle" severity="success" />
-                    <Popover ref="op">
-                        <img src="https://primefaces.org/cdn/primevue/images/nature/nature9.jpg" alt="Image" />
-                    </Popover>
-
-                    <Button type="button" label="DataTable" @click="toggleDataTable" severity="success" />
+                    <Button type="button" label="Show" @click="toggleDataTable" />
                     <Popover ref="op2" id="overlay_panel" style="width: 450px">
                         <DataTable v-model:selection="selectedProduct" :value="products" selectionMode="single" :paginator="true" :rows="5" @row-select="onProductSelect">
                             <Column field="name" header="Name" sortable style="min-width: 12rem"></Column>
@@ -119,16 +114,16 @@ const confirm = (event) => {
             </div>
 
             <div class="card">
-                <h5 class="mb-4">Tooltip</h5>
+                <div class="font-semibold text-xl mb-4">Tooltip</div>
                 <div class="inline-flex gap-4">
                     <InputText type="text" placeholder="Username" v-tooltip="'Your username'" />
-                    <Button type="button" label="Save" icon="pi pi-check" v-tooltip="'Click to proceed'" />
+                    <Button type="button" label="Save" v-tooltip="'Click to proceed'" />
                 </div>
             </div>
         </div>
         <div class="md:w-1/2">
             <div class="card">
-                <h5 class="mb-4">Drawer</h5>
+                <div class="font-semibold text-xl mb-4">Drawer</div>
                 <Drawer v-model:visible="visibleLeft" header="Drawer">
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -164,21 +159,21 @@ const confirm = (event) => {
                     </p>
                 </Drawer>
 
-                <Button icon="pi pi-arrow-right" severity="warn" @click="visibleLeft = true" style="margin-right: 0.25em" />
-                <Button icon="pi pi-arrow-left" severity="warn" @click="visibleRight = true" style="margin-right: 0.25em" />
-                <Button icon="pi pi-arrow-down" severity="warn" @click="visibleTop = true" style="margin-right: 0.25em" />
-                <Button icon="pi pi-arrow-up" severity="warn" @click="visibleBottom = true" style="margin-right: 0.25em" />
-                <Button icon="pi pi-external-link" severity="warn" @click="visibleFull = true" />
+                <Button icon="pi pi-arrow-right" @click="visibleLeft = true" style="margin-right: 0.25em" />
+                <Button icon="pi pi-arrow-left" @click="visibleRight = true" style="margin-right: 0.25em" />
+                <Button icon="pi pi-arrow-down" @click="visibleTop = true" style="margin-right: 0.25em" />
+                <Button icon="pi pi-arrow-up" @click="visibleBottom = true" style="margin-right: 0.25em" />
+                <Button icon="pi pi-external-link" @click="visibleFull = true" />
             </div>
 
             <div class="card">
-                <h5 class="mb-4">ConfirmPopup</h5>
+                <div class="font-semibold text-xl mb-4">ConfirmPopup</div>
                 <ConfirmPopup></ConfirmPopup>
                 <Button ref="popup" @click="confirm($event)" icon="pi pi-check" label="Confirm" class="mr-2"></Button>
             </div>
 
             <div class="card">
-                <h5 class="mb-4">Confirmation</h5>
+                <div class="font-semibold text-xl mb-4">ConfirmDialog</div>
                 <Button label="Delete" icon="pi pi-trash" severity="danger" style="width: auto" @click="openConfirmation" />
                 <Dialog header="Confirmation" v-model:visible="displayConfirmation" :style="{ width: '350px' }" :modal="true">
                     <div class="flex items-center justify-center">
@@ -186,8 +181,8 @@ const confirm = (event) => {
                         <span>Are you sure you want to proceed?</span>
                     </div>
                     <template #footer>
-                        <Button label="No" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
-                        <Button label="Yes" icon="pi pi-check" @click="closeConfirmation" class="p-button-text" autofocus />
+                        <Button label="No" icon="pi pi-times" @click="closeConfirmation" text severity="secondary" />
+                        <Button label="Yes" icon="pi pi-check" @click="closeConfirmation" severity="danger" outlined autofocus />
                     </template>
                 </Dialog>
             </div>

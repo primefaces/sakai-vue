@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { ref } from 'vue';
 
 const toast = useToast();
 const fileupload = ref();
@@ -15,17 +15,19 @@ const onUpload = () => {
 </script>
 
 <template>
-    <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-12">
+    <div class="grid grid-cols-12 gap-8">
+        <div class="col-span-full lg:col-span-6">
             <div class="card">
-                <h5>Advanced</h5>
+                <div class="font-semibold text-xl mb-4">Advanced</div>
                 <FileUpload name="demo[]" @uploader="onUpload" :multiple="true" accept="image/*" :maxFileSize="1000000" customUpload />
             </div>
+        </div>
+        <div class="col-span-full lg:col-span-6">
             <div class="card">
-                <h5>Basic</h5>
+                <div class="font-semibold text-xl mb-4">Basic</div>
                 <div class="card flex flex-col gap-6 items-center justify-center">
                     <Toast />
-                    <FileUpload ref="fileupload" mode="basic" name="demo[]" url="/api/upload" accept="image/*" :maxFileSize="1000000" @upload="onUpload" />
+                    <FileUpload ref="fileupload" mode="basic" name="demo[]" accept="image/*" :maxFileSize="1000000" @uploader="onUpload" customUpload />
                     <Button label="Upload" @click="upload" severity="secondary" />
                 </div>
             </div>

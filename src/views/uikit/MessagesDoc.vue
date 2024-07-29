@@ -1,12 +1,11 @@
 <script setup>
-import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { ref } from 'vue';
 
 const toast = useToast();
 const message = ref([]);
 const username = ref(null);
 const email = ref(null);
-const value = ref(null);
 const count = ref(0);
 
 const addMessage = (type) => {
@@ -39,34 +38,17 @@ const showError = () => {
 </script>
 
 <template>
-    <div class="flex flex-col md:flex-row gap-4">
+    <div class="flex flex-col md:flex-row gap-4 items-start">
         <div class="card md:w-1/2">
-            <h5 class="mb-2">Toast</h5>
+            <div class="font-semibold text-xl mb-4">Toast</div>
             <div class="flex flex-wrap gap-2">
                 <Button @click="showSuccess()" label="Success" severity="success" />
                 <Button @click="showInfo()" label="Info" severity="info" />
                 <Button @click="showWarn()" label="Warn" severity="warning" />
                 <Button @click="showError()" label="Error" severity="danger" />
             </div>
-        </div>
-        <div class="card md:w-1/2">
-            <h5 class="mb-2">Messages</h5>
-            <div class="flex flex-wrap gap-2 mb-4">
-                <Button label="Success" @click="addMessage('success')" severity="success" />
-                <Button label="Info" @click="addMessage('info')" severity="info" />
-                <Button label="Warn" @click="addMessage('warn')" severity="warning" />
-                <Button label="Error" @click="addMessage('error')" severity="danger" />
-            </div>
 
-            <transition-group name="p-message" tag="div">
-                <Message v-for="msg of message" :severity="msg.severity" :key="msg.content">{{ msg.content }}</Message>
-            </transition-group>
-        </div>
-    </div>
-
-    <div class="flex flex-col md:flex-row gap-4 mt-6">
-        <div class="card md:w-1/2">
-            <h5 class="mb-2">Inline</h5>
+            <div class="font-semibold text-xl mt-4 mb-4">Inline</div>
             <div class="flex flex-wrap mb-4 gap-2">
                 <InputText v-model="username" placeholder="Username" aria-label="username" invalid />
                 <Message severity="error">Username is required</Message>
@@ -77,12 +59,19 @@ const showError = () => {
             </div>
         </div>
         <div class="card md:w-1/2">
-            <h5 class="mb-2">Help Text</h5>
-            <div class="flex flex-col gap-2">
-                <label for="username">Username</label>
-                <InputText id="username" v-model="value" aria-describedby="username-help" />
-                <small id="username-help">Enter your username to reset your password.</small>
+            <div class="font-semibold text-xl mb-4">Message</div>
+            <div class="flex flex-col gap-4 mb-4">
+                <Message severity="success">Success Message</Message>
+                <Message severity="info">Info Message</Message>
+                <Message severity="warn">Warn Message</Message>
+                <Message severity="error">Error Message</Message>
+                <Message severity="secondary">Secondary Message</Message>
+                <Message severity="contrast">Contrast Message</Message>
             </div>
+
+            <transition-group name="p-message" tag="div">
+                <Message v-for="msg of message" :severity="msg.severity" :key="msg.content">{{ msg.content }}</Message>
+            </transition-group>
         </div>
     </div>
 </template>

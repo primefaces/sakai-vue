@@ -2,12 +2,10 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 
-import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
-import ToastService from 'primevue/toastservice';
+import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
-
-import BlockViewer from '@/components/BlockViewer.vue';
+import ToastService from 'primevue/toastservice';
 
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
@@ -25,7 +23,5 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(ConfirmationService);
-
-app.component('BlockViewer', BlockViewer);
 
 app.mount('#app');

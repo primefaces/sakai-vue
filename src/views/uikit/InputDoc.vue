@@ -9,7 +9,6 @@ const selectedAutoValue = ref(null);
 const autoFilteredValue = ref([]);
 const calendarValue = ref(null);
 const inputNumberValue = ref(null);
-const chipsValue = ref(null);
 const sliderValue = ref(50);
 const ratingValue = ref(null);
 const colorValue = ref('#1976D2');
@@ -47,10 +46,8 @@ const multiselectValues = ref([
 
 const multiselectValue = ref(null);
 const toggleValue = ref(false);
-const selectButtonValue1 = ref(null);
-const selectButtonValues1 = ref([{ name: 'Option 1' }, { name: 'Option 2' }, { name: 'Option 3' }]);
-const selectButtonValue2 = ref(null);
-const selectButtonValues2 = ref([{ name: 'Option 1' }, { name: 'Option 2' }, { name: 'Option 3' }]);
+const selectButtonValue = ref(null);
+const selectButtonValues = ref([{ name: 'Option 1' }, { name: 'Option 2' }, { name: 'Option 3' }]);
 const knobValue = ref(50);
 const inputGroupValue = ref(false);
 const treeSelectNodes = ref(null);
@@ -75,17 +72,17 @@ const searchCountry = (event) => {
 </script>
 
 <template>
-    <Fluid class="flex flex-col md:flex-row gap-6">
+    <Fluid class="flex flex-col md:flex-row gap-8">
         <div class="md:w-1/2">
             <div class="card flex flex-col gap-4">
-                <div class="font-semibold text-xl mb-4">InputText</div>
+                <div class="font-semibold text-xl">InputText</div>
                 <div class="flex flex-col md:flex-row gap-4">
                     <InputText type="text" placeholder="Default" />
                     <InputText type="text" placeholder="Disabled" :disabled="true" />
                     <InputText type="text" placeholder="Invalid" invalid />
                 </div>
 
-                <h5 class="mt-6">Icons</h5>
+                <div class="font-semibold text-xl">Icons</div>
                 <IconField>
                     <InputIcon class="pi pi-user" />
                     <InputText type="text" placeholder="Username" />
@@ -95,51 +92,48 @@ const searchCountry = (event) => {
                     <InputIcon class="pi pi-search" />
                 </IconField>
 
-                <h5 class="mt-6">Float Label</h5>
+                <div class="font-semibold text-xl">Float Label</div>
                 <FloatLabel>
                     <InputText id="username" type="text" v-model="floatValue" />
                     <label for="username">Username</label>
                 </FloatLabel>
 
-                <h5 class="mt-6">Textarea</h5>
+                <div class="font-semibold text-xl">Textarea</div>
                 <Textarea placeholder="Your Message" :autoResize="true" rows="3" cols="30" />
 
-                <h5 class="mt-6">AutoComplete</h5>
-                <AutoComplete placeholder="Search" id="dd" :dropdown="true" :multiple="true" v-model="selectedAutoValue" :suggestions="autoFilteredValue" @complete="searchCountry($event)" field="name" />
+                <div class="font-semibold text-xl">AutoComplete</div>
+                <AutoComplete placeholder="Search" :dropdown="true" display="chip" v-model="selectedAutoValue" :suggestions="autoFilteredValue" @complete="searchCountry($event)" field="name" />
 
-                <h5 class="mt-6">DatePicker</h5>
+                <div class="font-semibold text-xl">DatePicker</div>
                 <DatePicker :showIcon="true" :showButtonBar="true" v-model="calendarValue"></DatePicker>
 
-                <h5 class="mt-6">Spinner</h5>
+                <div class="font-semibold text-xl">InputNumber</div>
                 <InputNumber v-model="inputNumberValue" showButtons mode="decimal"></InputNumber>
-
-                <h5 class="mt-6">Chips</h5>
-                <AutoComplete v-model="chipsValue" :typeahead="false" multiple />
             </div>
 
             <div class="card flex flex-col gap-4">
-                <h5>Slider</h5>
+                <div class="font-semibold text-xl">Slider</div>
                 <InputText v-model.number="sliderValue" />
                 <Slider v-model="sliderValue" />
 
                 <div class="flex flex-row mt-6">
                     <div class="flex flex-col gap-4 w-1/2">
-                        <h5>Rating</h5>
+                        <div class="font-semibold text-xl">Rating</div>
                         <Rating v-model="ratingValue" />
                     </div>
                     <div class="flex flex-col gap-4 w-1/2">
-                        <h5>ColorPicker</h5>
+                        <div class="font-semibold text-xl">ColorPicker</div>
                         <ColorPicker style="width: 2rem" v-model="colorValue" />
                     </div>
                 </div>
 
-                <h5 class="mt-6">Knob</h5>
+                <div class="font-semibold text-xl">Knob</div>
                 <Knob v-model="knobValue" :step="10" :min="-50" :max="50" valueTemplate="{value}%" />
             </div>
         </div>
         <div class="md:w-1/2">
             <div class="card flex flex-col gap-4">
-                <h5>RadioButton</h5>
+                <div class="font-semibold text-xl">RadioButton</div>
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex items-center">
                         <RadioButton id="option1" name="option" value="Chicago" v-model="radioValue" />
@@ -155,7 +149,7 @@ const searchCountry = (event) => {
                     </div>
                 </div>
 
-                <h5 class="mt-6">Checkbox</h5>
+                <div class="font-semibold text-xl">Checkbox</div>
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex items-center">
                         <Checkbox id="checkOption1" name="option" value="Chicago" v-model="checkboxValue" />
@@ -171,18 +165,18 @@ const searchCountry = (event) => {
                     </div>
                 </div>
 
-                <h5 class="mt-6">Input Switch</h5>
+                <div class="font-semibold text-xl">ToggleSwitch</div>
                 <ToggleSwitch v-model="switchValue" />
             </div>
 
             <div class="card flex flex-col gap-4">
-                <h5>Listbox</h5>
+                <div class="font-semibold text-xl">Listbox</div>
                 <Listbox v-model="listboxValue" :options="listboxValues" optionLabel="name" :filter="true" />
 
-                <h5 class="mt-6">Select</h5>
+                <div class="font-semibold text-xl">Select</div>
                 <Select v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Select" />
 
-                <h5 class="mt-6">MultiSelect</h5>
+                <div class="font-semibold text-xl">MultiSelect</div>
                 <MultiSelect v-model="multiselectValue" :options="multiselectValues" optionLabel="name" placeholder="Select Countries" :filter="true">
                     <template #value="slotProps">
                         <div class="inline-flex items-center py-1 px-2 bg-primary text-primary-contrast rounded-border mr-2" v-for="option of slotProps.value" :key="option.code">
@@ -201,26 +195,23 @@ const searchCountry = (event) => {
                     </template>
                 </MultiSelect>
 
-                <h5 class="mt-6">TreeSelect</h5>
+                <div class="font-semibold text-xl">TreeSelect</div>
                 <TreeSelect v-model="selectedNode" :options="treeSelectNodes" placeholder="Select Item"></TreeSelect>
             </div>
 
             <div class="card flex flex-col gap-4">
-                <h5>ToggleButton</h5>
+                <div class="font-semibold text-xl">ToggleButton</div>
                 <ToggleButton v-model="toggleValue" onLabel="Yes" offLabel="No" :style="{ width: '10em' }" />
 
-                <h5 class="mt-6">SelectButton</h5>
-                <SelectButton v-model="selectButtonValue1" :options="selectButtonValues1" optionLabel="name" />
-
-                <h5 class="mt-6">SelectButton - Multiple</h5>
-                <SelectButton v-model="selectButtonValue2" :options="selectButtonValues2" optionLabel="name" :multiple="true" />
+                <div class="font-semibold text-xl">SelectButton</div>
+                <SelectButton v-model="selectButtonValue" :options="selectButtonValues" optionLabel="name" />
             </div>
         </div>
     </Fluid>
 
-    <Fluid class="flex mt-6">
+    <Fluid class="flex mt-8">
         <div class="card flex flex-col gap-4 w-full">
-            <h5>Input Groups</h5>
+            <div class="font-semibold text-xl">InputGroup</div>
             <div class="flex flex-col md:flex-row gap-4">
                 <InputGroup>
                     <InputGroupAddon>

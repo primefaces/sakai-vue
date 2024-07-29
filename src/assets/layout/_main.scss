@@ -1,23 +1,13 @@
-html {
-    height: 100%;
-    font-size: 14px;
-}
-
-body {
-    font-family: 'CircularStd', sans-serif;
-    color: var(--text-color);
-    background-color: var(--surface-ground);
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-    text-decoration: none;
-}
-
-.layout-wrapper {
+.layout-main-container {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
+    justify-content: space-between;
+    padding: 6rem 2rem 0 2rem;
+    transition: margin-left var(--layout-section-transition-duration);
+}
+
+.layout-main {
+    flex: 1 1 auto;
+    padding-bottom: 2rem;
 }

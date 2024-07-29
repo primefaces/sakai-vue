@@ -3,7 +3,7 @@ import { useLayout } from '@/layout/composables/layout';
 import { ProductService } from '@/service/ProductService';
 import { onMounted, ref, watch } from 'vue';
 
-const { getPrimary, isDarkTheme } = useLayout();
+const { getPrimary, getSurface, isDarkTheme } = useLayout();
 
 const products = ref(null);
 const chartData = ref(null);
@@ -99,7 +99,7 @@ watch(isDarkTheme, () => {
     chartOptions.value = setChartOptions();
 });
 
-watch(getPrimary, () => {
+watch([getPrimary, getSurface], () => {
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
 });
@@ -191,8 +191,8 @@ watch(getPrimary, () => {
                 </DataTable>
             </div>
             <div class="card">
-                <div class="flex justify-between items-center mb-8">
-                    <div class="font-semibold text-xl mb-4">Best Selling Products</div>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="font-semibold text-xl">Best Selling Products</div>
                     <div>
                         <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-plain p-button-rounded" @click="$refs.menu2.toggle($event)"></Button>
                         <Menu ref="menu2" :popup="true" :model="items"></Menu>
@@ -281,7 +281,7 @@ watch(getPrimary, () => {
             </div>
             <div class="card">
                 <div class="flex items-center justify-between mb-6">
-                    <div class="font-semibold text-xl mb-4">Notifications</div>
+                    <div class="font-semibold text-xl">Notifications</div>
                     <div>
                         <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-plain p-button-rounded" @click="$refs.menu1.toggle($event)"></Button>
                         <Menu ref="menu1" :popup="true" :model="items"></Menu>
@@ -292,7 +292,7 @@ watch(getPrimary, () => {
                 <ul class="p-0 mx-0 mt-0 mb-6 list-none">
                     <li class="flex items-center py-2 border-b border-surface">
                         <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full mr-4 shrink-0">
-                            <i class="pi pi-dollar text-xl text-blue-500"></i>
+                            <i class="pi pi-dollar !text-xl text-blue-500"></i>
                         </div>
                         <span class="text-surface-900 dark:text-surface-0 leading-normal"
                             >Richard Jones
@@ -301,7 +301,7 @@ watch(getPrimary, () => {
                     </li>
                     <li class="flex items-center py-2">
                         <div class="w-12 h-12 flex items-center justify-center bg-orange-100 rounded-full mr-4 shrink-0">
-                            <i class="pi pi-download text-xl text-orange-500"></i>
+                            <i class="pi pi-download !text-xl text-orange-500"></i>
                         </div>
                         <span class="text-surface-700 dark:text-surface-100 leading-normal">Your request for withdrawal of <span class="text-blue-500 font-medium">2500$</span> has been initiated.</span>
                     </li>
@@ -311,7 +311,7 @@ watch(getPrimary, () => {
                 <ul class="p-0 m-0 list-none">
                     <li class="flex items-center py-2 border-b border-surface">
                         <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full mr-4 shrink-0">
-                            <i class="pi pi-dollar text-xl text-blue-500"></i>
+                            <i class="pi pi-dollar !text-xl text-blue-500"></i>
                         </div>
                         <span class="text-surface-900 dark:text-surface-0 leading-normal"
                             >Keyser Wick
@@ -320,7 +320,7 @@ watch(getPrimary, () => {
                     </li>
                     <li class="flex items-center py-2 border-b border-surface">
                         <div class="w-12 h-12 flex items-center justify-center bg-pink-100 rounded-full mr-4 shrink-0">
-                            <i class="pi pi-question text-xl text-pink-500"></i>
+                            <i class="pi pi-question !text-xl text-pink-500"></i>
                         </div>
                         <span class="text-surface-900 dark:text-surface-0 leading-normal"
                             >Jane Davis

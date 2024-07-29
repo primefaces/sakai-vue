@@ -19,8 +19,6 @@ watch(isSidebarActive, (newVal) => {
 
 const containerClass = computed(() => {
     return {
-        'layout-theme-light': !layoutConfig.darkTheme,
-        'layout-theme-dark': layoutConfig.darkTheme,
         'layout-overlay': layoutConfig.menuMode === 'overlay',
         'layout-static': layoutConfig.menuMode === 'static',
         'layout-static-inactive': layoutState.staticMenuDesktopInactive && layoutConfig.menuMode === 'static',
@@ -55,9 +53,7 @@ const isOutsideClicked = (event) => {
 <template>
     <div class="layout-wrapper" :class="containerClass">
         <app-topbar></app-topbar>
-        <div class="layout-sidebar">
-            <app-sidebar></app-sidebar>
-        </div>
+        <app-sidebar></app-sidebar>
         <div class="layout-main-container">
             <div class="layout-main">
                 <router-view></router-view>
@@ -68,5 +64,3 @@ const isOutsideClicked = (event) => {
     </div>
     <Toast />
 </template>
-
-<style lang="scss" scoped></style>

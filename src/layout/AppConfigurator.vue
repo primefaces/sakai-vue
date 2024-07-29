@@ -6,17 +6,21 @@ import Lara from '@primevue/themes/lara';
 import Nora from '@primevue/themes/nora';
 import { ref } from 'vue';
 
-const { layoutConfig, setPrimary, setSurface, setPreset, isDarkTheme } = useLayout();
-
-const preset = ref(layoutConfig.preset);
+const { layoutConfig, setPrimary, setSurface, setPreset, isDarkTheme, setMenuMode } = useLayout();
 
 const presets = {
     Aura,
     Lara,
     Nora
 };
-
+const preset = ref(layoutConfig.preset);
 const presetOptions = ref(Object.keys(presets));
+
+const menuMode = ref(layoutConfig.menuMode);
+const menuModeOptions = ref([
+    { label: 'Static', value: 'static' },
+    { label: 'Overlay', value: 'overlay' }
+]);
 
 const primaryColors = ref([
     { name: 'noir', palette: {} },
@@ -219,49 +223,62 @@ function applyTheme(type, color) {
     }
 }
 
-function onPresetChange(value) {
-    setPreset(value);
-    const presetValue = presets[value];
+function onPresetChange() {
+    setPreset(preset.value);
+    const presetValue = presets[preset.value];
     const surfacePalette = surfaces.value.find((s) => s.name === layoutConfig.surface)?.palette;
 
     $t().preset(presetValue).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
 }
+
+function onMenuModeChange() {
+    setMenuMode(menuMode.value);
+}
 </script>
 
 <template>
-    <div class="config-panel hidden">
-        <div class="config-panel-content">
-            <div class="config-panel-colors">
-                <span class="config-panel-label">Primary</span>
-                <div>
+    <div
+        class="config-panel hidden absolute top-[3.25rem] right-0 w-64 p-4 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]"
+    >
+        <div class="flex flex-col gap-4">
+            <div>
+                <span class="text-sm text-muted-color font-semibold">Primary</span>
+                <div class="pt-2 flex gap-2 flex-wrap justify-between">
                     <button
                         v-for="primaryColor of primaryColors"
                         :key="primaryColor.name"
                         type="button"
                         :title="primaryColor.name"
                         @click="updateColors('primary', primaryColor)"
-                        :class="{ 'active-color': layoutConfig.primary === primaryColor.name }"
+                        :class="['border-none w-5 h-5 rounded-full p-0 cursor-pointer outline-none outline-offset-1', { 'outline-primary': layoutConfig.primary === primaryColor.name }]"
                         :style="{ backgroundColor: `${primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500']}` }"
                     ></button>
                 </div>
             </div>
-            <div class="config-panel-colors">
-                <span class="config-panel-label">Surface</span>
-                <div>
+            <div>
+                <span class="text-sm text-muted-color font-semibold">Surface</span>
+                <div class="pt-2 flex gap-2 flex-wrap justify-between">
                     <button
                         v-for="surface of surfaces"
                         :key="surface.name"
                         type="button"
                         :title="surface.name"
                         @click="updateColors('surface', surface)"
-                        :class="{ 'active-color': layoutConfig.surface ? layoutConfig.surface === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }"
+                        :class="[
+                            'border-none w-5 h-5 rounded-full p-0 cursor-pointer outline-none outline-offset-1',
+                            { 'outline-primary': layoutConfig.surface ? layoutConfig.surface === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }
+                        ]"
                         :style="{ backgroundColor: `${surface.palette['500']}` }"
                     ></button>
                 </div>
             </div>
-            <div class="config-panel-settings">
-                <span class="config-panel-label">Presets</span>
-                <SelectButton v-model="preset" @update:modelValue="onPresetChange" :options="presetOptions" :allowEmpty="false" />
+            <div class="flex flex-col gap-2">
+                <span class="text-sm text-muted-color font-semibold">Presets</span>
+                <SelectButton v-model="preset" @change="onPresetChange" :options="presetOptions" :allowEmpty="false" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <span class="text-sm text-muted-color font-semibold">Menu Mode</span>
+                <SelectButton v-model="menuMode" @change="onMenuModeChange" :options="menuModeOptions" :allowEmpty="false" optionLabel="label" optionValue="value" />
             </div>
         </div>
     </div>

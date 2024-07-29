@@ -35,6 +35,10 @@ export function useLayout() {
         layoutConfig.activeMenuItem = item.value || item;
     };
 
+    const setMenuMode = (mode) => {
+        layoutConfig.menuMode = mode;
+    };
+
     const toggleDarkMode = () => {
         if (!document.startViewTransition) {
             executeDarkModeToggle();
@@ -74,5 +78,7 @@ export function useLayout() {
 
     const getPrimary = computed(() => layoutConfig.primary);
 
-    return { layoutConfig: readonly(layoutConfig), layoutState: readonly(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, getPrimary, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset, resetMenu };
+    const getSurface = computed(() => layoutConfig.surface);
+
+    return { layoutConfig: readonly(layoutConfig), layoutState: readonly(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, getPrimary, getSurface, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset, resetMenu, setMenuMode };
 }

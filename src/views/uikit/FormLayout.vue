@@ -12,10 +12,10 @@ const dropdownItem = ref(null);
 
 <template>
     <Fluid>
-        <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2">
                 <div class="card flex flex-col gap-4">
-                    <h5>Vertical</h5>
+                    <div class="font-semibold text-xl">Vertical</div>
                     <div class="flex flex-col gap-2">
                         <label for="name1">Name</label>
                         <InputText id="name1" type="text" />
@@ -31,7 +31,7 @@ const dropdownItem = ref(null);
                 </div>
 
                 <div class="card flex flex-col gap-4">
-                    <h5>Vertical Grid</h5>
+                    <div class="font-semibold text-xl">Vertical Grid</div>
                     <div class="flex flex-wrap gap-4">
                         <div class="flex flex-col grow basis-0 gap-2">
                             <label for="name2">Name</label>
@@ -46,7 +46,7 @@ const dropdownItem = ref(null);
             </div>
             <div class="md:w-1/2">
                 <div class="card flex flex-col gap-4">
-                    <h5>Horizontal</h5>
+                    <div class="font-semibold text-xl">Horizontal</div>
                     <div class="grid grid-cols-12 gap-2">
                         <label for="name3" class="flex items-center col-span-12 mb-2 md:col-span-2 md:mb-0">Name</label>
                         <div class="col-span-12 md:col-span-10">
@@ -62,7 +62,7 @@ const dropdownItem = ref(null);
                 </div>
 
                 <div class="card flex flex-col gap-4">
-                    <h5>Inline</h5>
+                    <div class="font-semibold text-xl">Inline</div>
                     <div class="flex flex-wrap items-start gap-4">
                         <div class="field">
                             <label for="firstname1" class="sr-only">Firstname</label>
@@ -76,7 +76,7 @@ const dropdownItem = ref(null);
                     </div>
                 </div>
                 <div class="card flex flex-col gap-4">
-                    <h5>Help Text</h5>
+                    <div class="font-semibold text-xl">Help Text</div>
                     <div class="flex flex-wrap gap-2">
                         <label for="username">Username</label>
                         <InputText id="username" type="text" />
@@ -86,9 +86,9 @@ const dropdownItem = ref(null);
             </div>
         </div>
 
-        <div class="flex mt-6">
+        <div class="flex mt-8">
             <div class="card flex flex-col gap-4 w-full">
-                <h5>Advanced</h5>
+                <div class="font-semibold text-xl">Advanced</div>
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="firstname2">Firstname</label>

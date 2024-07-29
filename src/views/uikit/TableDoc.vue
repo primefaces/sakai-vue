@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onBeforeMount, reactive } from 'vue';
-import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { CustomerService } from '@/service/CustomerService';
 import { ProductService } from '@/service/ProductService';
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import { onBeforeMount, reactive, ref } from 'vue';
 
 const customers1 = ref(null);
 const customers2 = ref(null);
@@ -143,7 +143,7 @@ const calculateCustomerTotal = (name) => {
 
 <template>
     <div class="card">
-        <h5>Filter Menu</h5>
+        <div class="font-semibold text-xl mb-4">Filtering</div>
         <DataTable
             :value="customers1"
             :paginator="true"
@@ -269,7 +269,7 @@ const calculateCustomerTotal = (name) => {
     </div>
 
     <div class="card">
-        <h5>Frozen Columns</h5>
+        <div class="font-semibold text-xl mb-4">Frozen Columns</div>
         <ToggleButton v-model="balanceFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="Balance" offLabel="Balance" />
 
         <DataTable :value="customers2" scrollable scrollHeight="400px" class="mt-6">
@@ -291,7 +291,7 @@ const calculateCustomerTotal = (name) => {
     </div>
 
     <div class="card">
-        <h5>Row Expand</h5>
+        <div class="font-semibold text-xl mb-4">Row Expansion</div>
         <DataTable v-model:expandedRows="expandedRows" :value="products" dataKey="id" tableStyle="min-width: 60rem">
             <template #header>
                 <div class="flex flex-wrap justify-end gap-2">
@@ -351,7 +351,7 @@ const calculateCustomerTotal = (name) => {
     </div>
 
     <div class="card">
-        <h5>Subheader Grouping</h5>
+        <div class="font-semibold text-xl mb-4">Grouping</div>
         <DataTable :value="customers3" rowGroupMode="subheader" groupRowsBy="representative.name" sortMode="single" sortField="representative.name" :sortOrder="1" scrollable scrollHeight="400px" tableStyle="min-width: 50rem">
             <template #groupheader="slotProps">
                 <div class="flex items-center gap-2">

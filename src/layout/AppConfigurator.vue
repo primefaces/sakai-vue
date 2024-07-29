@@ -246,25 +246,34 @@ const preset = computed(() => {
             <div class="config-panel-colors">
                 <span class="config-panel-label">Primary</span>
                 <div>
-                    <button v-for="primaryColor of primaryColors" :key="primaryColor.name" type="button"
-                        :title="primaryColor.name" @click="updateColors('primary', primaryColor)"
+                    <button
+                        v-for="primaryColor of primaryColors"
+                        :key="primaryColor.name"
+                        type="button"
+                        :title="primaryColor.name"
+                        @click="updateColors('primary', primaryColor)"
                         :class="{ 'active-color': selectedPrimaryColor === primaryColor.name }"
-                        :style="{ backgroundColor: `${primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500']}` }"></button>
+                        :style="{ backgroundColor: `${primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500']}` }"
+                    ></button>
                 </div>
             </div>
             <div class="config-panel-colors">
                 <span class="config-panel-label">Surface</span>
                 <div>
-                    <button v-for="surface of surfaces" :key="surface.name" type="button" :title="surface.name"
+                    <button
+                        v-for="surface of surfaces"
+                        :key="surface.name"
+                        type="button"
+                        :title="surface.name"
                         @click="updateColors('surface', surface)"
                         :class="{ 'active-color': selectedSurfaceColor ? selectedSurfaceColor === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }"
-                        :style="{ backgroundColor: `${surface.palette['500']}` }"></button>
+                        :style="{ backgroundColor: `${surface.palette['500']}` }"
+                    ></button>
                 </div>
             </div>
             <div class="config-panel-settings">
                 <span class="config-panel-label">Presets</span>
-                <SelectButton v-model="preset" @update:modelValue="onPresetChange" :options="presetOptions"
-                    :allowEmpty="false" />
+                <SelectButton v-model="preset" @update:modelValue="onPresetChange" :options="presetOptions" :allowEmpty="false" />
             </div>
         </div>
     </div>

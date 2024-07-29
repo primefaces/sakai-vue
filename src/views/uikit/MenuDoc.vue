@@ -82,24 +82,6 @@ const nestedMenuitems = ref([
 ]);
 const breadcrumbHome = ref({ icon: 'pi pi-home', to: '/' });
 const breadcrumbItems = ref([{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }]);
-const nestedRouteItems = ref([
-    {
-        label: 'Personal',
-        to: '/uikit/menu'
-    },
-    {
-        label: 'Seat',
-        to: '/uikit/menu/seat'
-    },
-    {
-        label: 'Payment',
-        to: '/uikit/menu/payment'
-    },
-    {
-        label: 'Confirmation',
-        to: '/uikit/menu/confirmation'
-    }
-]);
 const tieredMenuItems = ref([
     {
         label: 'Customers',

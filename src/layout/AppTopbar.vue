@@ -91,7 +91,9 @@ const isOutsideClicked = (event) => {
             <div class="relative">
                 <button
                     v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
-                    type="button" class="p-link layout-topbar-button">
+                    type="button"
+                    class="p-link layout-topbar-button"
+                >
                     <i class="pi pi-palette"></i>
                 </button>
                 <AppConfigurator />

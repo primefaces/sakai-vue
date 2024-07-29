@@ -784,7 +784,9 @@ const checked = ref(false);
                     </li>
                     <li class="flex items-center py-4 px-2 border-t border-b border-surface flex-wrap">
                         <div class="text-surface-500 dark:text-surface-300 w-6/12 md:w-2/12 font-medium">Plot</div>
-                        <div class="text-surface-900 dark:text-surface-0 w-full md:w-8/12 md:order-none order-1 leading-normal">A group of professional bank robbers start to feel the heat from police when they unknowingly leave a clue at their latest heist.</div>
+                        <div class="text-surface-900 dark:text-surface-0 w-full md:w-8/12 md:order-none order-1 leading-normal">
+                            A group of professional bank robbers start to feel the heat from police when they unknowingly leave a clue at their latest heist.
+                        </div>
                         <div class="w-6/12 md:w-2/12 flex justify-end">
                             <Button label="Edit" icon="pi pi-pencil" class="p-button-text"></Button>
                         </div>

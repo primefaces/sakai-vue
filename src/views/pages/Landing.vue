@@ -2,7 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { computed } from 'vue';
 
-const { layoutConfig } = useLayout();
+const { isDarkTheme } = useLayout();
 
 const smoothScroll = (id) => {
     document.querySelector(id).scrollIntoView({
@@ -11,7 +11,7 @@ const smoothScroll = (id) => {
 };
 
 const logoUrl = computed(() => {
-    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+    return `layout/images/${isDarkTheme ? 'logo-white' : 'logo-dark'}.svg`;
 });
 </script>
 

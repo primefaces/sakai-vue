@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onBeforeMount, watch } from 'vue';
-import { useRoute } from 'vue-router';
 import { useLayout } from '@/layout/composables/layout';
+import { onBeforeMount, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
@@ -38,7 +38,7 @@ onBeforeMount(() => {
 });
 
 watch(
-    () => layoutConfig.activeMenuItem.value,
+    () => layoutConfig.activeMenuItem,
     (newVal) => {
         isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
     }
@@ -49,9 +49,7 @@ const itemClick = (event, item) => {
         return;
     }
 
-    const { overlayMenuActive, staticMenuMobileActive } = layoutState;
-
-    if ((item.to || item.url) && (staticMenuMobileActive.value || overlayMenuActive.value)) {
+    if ((item.to || item.url) && (layoutState.staticMenuMobileActive || layoutState.overlayMenuActive)) {
         onMenuToggle();
     }
 

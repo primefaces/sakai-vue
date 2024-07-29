@@ -5,7 +5,7 @@ import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
 
-const { layoutConfig, layoutState, isSidebarActive } = useLayout();
+const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
 
 const outsideClickListener = ref(null);
 
@@ -19,22 +19,20 @@ watch(isSidebarActive, (newVal) => {
 
 const containerClass = computed(() => {
     return {
-        'layout-theme-light': !layoutConfig.darkTheme.value,
-        'layout-theme-dark': layoutConfig.darkTheme.value,
-        'layout-overlay': layoutConfig.menuMode.value === 'overlay',
-        'layout-static': layoutConfig.menuMode.value === 'static',
-        'layout-static-inactive': layoutState.staticMenuDesktopInactive.value && layoutConfig.menuMode.value === 'static',
-        'layout-overlay-active': layoutState.overlayMenuActive.value,
-        'layout-mobile-active': layoutState.staticMenuMobileActive.value
+        'layout-theme-light': !layoutConfig.darkTheme,
+        'layout-theme-dark': layoutConfig.darkTheme,
+        'layout-overlay': layoutConfig.menuMode === 'overlay',
+        'layout-static': layoutConfig.menuMode === 'static',
+        'layout-static-inactive': layoutState.staticMenuDesktopInactive && layoutConfig.menuMode === 'static',
+        'layout-overlay-active': layoutState.overlayMenuActive,
+        'layout-mobile-active': layoutState.staticMenuMobileActive
     };
 });
 const bindOutsideClickListener = () => {
     if (!outsideClickListener.value) {
         outsideClickListener.value = (event) => {
             if (isOutsideClicked(event)) {
-                layoutState.overlayMenuActive.value = false;
-                layoutState.staticMenuMobileActive.value = false;
-                layoutState.menuHoverActive.value = false;
+                resetMenu();
             }
         };
         document.addEventListener('click', outsideClickListener.value);

@@ -8,6 +8,8 @@ import { ref } from 'vue';
 
 const { layoutConfig, setPrimary, setSurface, setPreset, isDarkTheme } = useLayout();
 
+const preset = ref(layoutConfig.preset);
+
 const presets = {
     Aura,
     Lara,
@@ -72,7 +74,7 @@ const surfaces = ref([
 ]);
 
 function getPresetExt() {
-    const color = primaryColors.value.find((c) => c.name === layoutConfig.primary.value);
+    const color = primaryColors.value.find((c) => c.name === layoutConfig.primary);
 
     if (color.name === 'noir') {
         return {
@@ -123,7 +125,7 @@ function getPresetExt() {
             }
         };
     } else {
-        if (layoutConfig.preset.value === 'Nora') {
+        if (layoutConfig.preset === 'Nora') {
             return {
                 semantic: {
                     primary: color.palette,
@@ -215,14 +217,12 @@ function applyTheme(type, color) {
     } else if (type === 'surface') {
         updateSurfacePalette(color.palette);
     }
-
-    /*EventBus.emit('theme-palette-change');*/
 }
 
 function onPresetChange(value) {
     setPreset(value);
     const presetValue = presets[value];
-    const surfacePalette = surfaces.value.find((s) => s.name === layoutConfig.surface.value)?.palette;
+    const surfacePalette = surfaces.value.find((s) => s.name === layoutConfig.surface)?.palette;
 
     $t().preset(presetValue).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
 }
@@ -240,7 +240,7 @@ function onPresetChange(value) {
                         type="button"
                         :title="primaryColor.name"
                         @click="updateColors('primary', primaryColor)"
-                        :class="{ 'active-color': layoutConfig.primary.value === primaryColor.name }"
+                        :class="{ 'active-color': layoutConfig.primary === primaryColor.name }"
                         :style="{ backgroundColor: `${primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500']}` }"
                     ></button>
                 </div>
@@ -254,14 +254,14 @@ function onPresetChange(value) {
                         type="button"
                         :title="surface.name"
                         @click="updateColors('surface', surface)"
-                        :class="{ 'active-color': layoutConfig.surface.value ? layoutConfig.surface.value === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }"
+                        :class="{ 'active-color': layoutConfig.surface ? layoutConfig.surface === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }"
                         :style="{ backgroundColor: `${surface.palette['500']}` }"
                     ></button>
                 </div>
             </div>
             <div class="config-panel-settings">
                 <span class="config-panel-label">Presets</span>
-                <SelectButton v-model="layoutConfig.preset.value" @update:modelValue="onPresetChange" :options="presetOptions" :allowEmpty="false" />
+                <SelectButton v-model="preset" @update:modelValue="onPresetChange" :options="presetOptions" :allowEmpty="false" />
             </div>
         </div>
     </div>

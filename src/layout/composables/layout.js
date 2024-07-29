@@ -1,4 +1,4 @@
-import { computed, reactive, toRefs } from 'vue';
+import { computed, reactive, readonly } from 'vue';
 
 const layoutConfig = reactive({
     preset: 'Aura',
@@ -52,9 +52,15 @@ export function useLayout() {
         }
     };
 
+    const resetMenu = () => {
+        layoutState.overlayMenuActive = false;
+        layoutState.staticMenuMobileActive = false;
+        layoutState.menuHoverActive = false;
+    };
+
     const isSidebarActive = computed(() => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive);
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
-    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset };
+    return { layoutConfig: readonly(layoutConfig), layoutState: readonly(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset, resetMenu };
 }

@@ -36,6 +36,16 @@ export function useLayout() {
     };
 
     const toggleDarkMode = () => {
+        if (!document.startViewTransition) {
+            executeDarkModeToggle();
+
+            return;
+        }
+
+        document.startViewTransition(() => executeDarkModeToggle(event));
+    };
+
+    const executeDarkModeToggle = () => {
         layoutConfig.darkTheme = !layoutConfig.darkTheme;
         document.documentElement.classList.toggle('app-dark');
     };

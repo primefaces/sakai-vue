@@ -1,6 +1,6 @@
 .layout-topbar {
     position: fixed;
-    height: 5rem;
+    height: 4rem;
     z-index: 997;
     left: 0;
     top: 0;
@@ -10,58 +10,63 @@
     transition: left var(--layout-section-transition-duration);
     display: flex;
     align-items: center;
-    box-shadow:
-        0px 3px 5px rgba(0, 0, 0, 0.02),
-        0px 0px 2px rgba(0, 0, 0, 0.05),
-        0px 1px 4px rgba(0, 0, 0, 0.08);
 
-    .layout-topbar-logo {
+    .layout-topbar-logo-container {
+        width: 300px;
         display: flex;
         align-items: center;
-        color: var(--text-color);
+    }
+
+    .layout-topbar-logo {
+        display: inline-flex;
+        align-items: center;
         font-size: 1.5rem;
+        border-radius: var(--content-border-radius);
+        color: var(--text-color);
         font-weight: 500;
-        width: 300px;
-        border-radius: 12px;
+        gap: 0.5rem;
 
         svg {
             width: 3rem;
-            margin-right: 0.5rem;
         }
 
-        &:focus {
+        &:focus-visible {
             @include focused();
         }
     }
 
-    .layout-topbar-button {
+    .layout-topbar-action {
         display: inline-flex;
         justify-content: center;
         align-items: center;
-        position: relative;
         color: var(--text-color-secondary);
         border-radius: 50%;
-        width: 3rem;
-        height: 3rem;
-        cursor: pointer;
+        width: 2.5rem;
+        height: 2.5rem;
+        color: var(--text-color);
         transition: background-color var(--element-transition-duration);
+        cursor: pointer;
 
         &:hover {
-            color: var(--text-color);
             background-color: var(--surface-hover);
         }
 
-        &:focus {
+        &:focus-visible {
             @include focused();
         }
 
         i {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
         }
 
         span {
             font-size: 1rem;
             display: none;
+        }
+
+        &.layout-topbar-action-highlight {
+            background-color: var(--primary-color);
+            color: var(--primary-contrast-color);
         }
     }
 
@@ -71,10 +76,6 @@
 
     .layout-topbar-menu-button {
         display: none;
-
-        i {
-            font-size: 1.25rem;
-        }
     }
 
     .layout-topbar-actions {
@@ -83,7 +84,8 @@
         gap: 1rem;
     }
 
-    .layout-topbar-menu {
+    .layout-topbar-menu-content {
+        display: flex;
         gap: 1rem;
     }
 
@@ -95,16 +97,14 @@
 
 @media (max-width: 991px) {
     .layout-topbar {
-        justify-content: space-between;
-
-        .layout-topbar-logo {
+        .layout-topbar-logo-container {
             width: auto;
             order: 2;
-            margin-left: 1rem;
         }
 
         .layout-menu-button {
             margin-left: 0;
+            margin-right: 1rem;
             order: 1;
         }
 
@@ -119,27 +119,29 @@
 
         .layout-topbar-menu {
             position: absolute;
-            flex-direction: column;
             background-color: var(--surface-overlay);
             transform-origin: top;
             box-shadow:
                 0px 3px 5px rgba(0, 0, 0, 0.02),
                 0px 0px 2px rgba(0, 0, 0, 0.05),
                 0px 1px 4px rgba(0, 0, 0, 0.08);
-            border-radius: 12px;
+            border-radius: var(--content-border-radius);
             padding: 1rem;
             right: 2rem;
-            top: 5rem;
+            top: 4rem;
             min-width: 15rem;
 
-            .layout-topbar-button {
-                margin-left: 0;
+            .layout-topbar-menu-content {
+                gap: 0.5rem;
+            }
+
+            .layout-topbar-action {
                 display: flex;
                 width: 100%;
                 height: auto;
                 justify-content: flex-start;
-                border-radius: 12px;
-                padding: 1rem;
+                border-radius: var(--content-border-radius);
+                padding: 0.5rem 1rem;
 
                 i {
                     font-size: 1rem;
@@ -152,12 +154,16 @@
                 }
             }
         }
+
+        .layout-topbar-menu-content {
+            flex-direction: column;
+        }
     }
 }
 
 .config-panel {
     position: absolute;
-    top: calc(100% + 2px);
+    top: 3.25rem;
     right: 0;
     width: 16rem;
     padding: 0.75rem;

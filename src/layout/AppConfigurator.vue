@@ -1,10 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { $t, updatePreset, updateSurfacePalette } from '@primevue/themes';
 import { useLayout } from '@/layout/composables/layout';
+import { $t, updatePreset, updateSurfacePalette } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 import Lara from '@primevue/themes/lara';
 import Nora from '@primevue/themes/nora';
+import { ref } from 'vue';
 
 const { layoutConfig, setPrimary, setSurface, setPreset, isDarkTheme } = useLayout();
 
@@ -123,7 +123,7 @@ function getPresetExt() {
             }
         };
     } else {
-        if (layoutConfig.preset === 'Nora') {
+        if (layoutConfig.preset.value === 'Nora') {
             return {
                 semantic: {
                     primary: color.palette,
@@ -222,22 +222,10 @@ function applyTheme(type, color) {
 function onPresetChange(value) {
     setPreset(value);
     const presetValue = presets[value];
-    const surfacePalette = surfaces.value.find((s) => s.name === selectedSurfaceColor.value)?.palette;
+    const surfacePalette = surfaces.value.find((s) => s.name === layoutConfig.surface.value)?.palette;
 
     $t().preset(presetValue).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
 }
-
-const selectedPrimaryColor = computed(() => {
-    return layoutConfig.primary.value;
-});
-
-const selectedSurfaceColor = computed(() => {
-    return layoutConfig.surface.value;
-});
-
-const preset = computed(() => {
-    return layoutConfig.preset.value;
-});
 </script>
 
 <template>
@@ -252,7 +240,7 @@ const preset = computed(() => {
                         type="button"
                         :title="primaryColor.name"
                         @click="updateColors('primary', primaryColor)"
-                        :class="{ 'active-color': selectedPrimaryColor === primaryColor.name }"
+                        :class="{ 'active-color': layoutConfig.primary.value === primaryColor.name }"
                         :style="{ backgroundColor: `${primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500']}` }"
                     ></button>
                 </div>
@@ -266,14 +254,14 @@ const preset = computed(() => {
                         type="button"
                         :title="surface.name"
                         @click="updateColors('surface', surface)"
-                        :class="{ 'active-color': selectedSurfaceColor ? selectedSurfaceColor === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }"
+                        :class="{ 'active-color': layoutConfig.surface.value ? layoutConfig.surface.value === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }"
                         :style="{ backgroundColor: `${surface.palette['500']}` }"
                     ></button>
                 </div>
             </div>
             <div class="config-panel-settings">
                 <span class="config-panel-label">Presets</span>
-                <SelectButton v-model="preset" @update:modelValue="onPresetChange" :options="presetOptions" :allowEmpty="false" />
+                <SelectButton v-model="layoutConfig.preset.value" @update:modelValue="onPresetChange" :options="presetOptions" :allowEmpty="false" />
             </div>
         </div>
     </div>

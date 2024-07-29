@@ -1,6 +1,6 @@
 <script setup>
-import { ref, watch } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
+import { ref, watch } from 'vue';
 
 const { layoutConfig } = useLayout();
 let documentStyle = getComputedStyle(document.documentElement);
@@ -223,7 +223,16 @@ const setChart = () => {
 };
 
 watch(
-    layoutConfig.theme,
+    layoutConfig.primary,
+    () => {
+        setColorOptions();
+        setChart();
+    },
+    { immediate: true }
+);
+
+watch(
+    layoutConfig.darkTheme,
     () => {
         setColorOptions();
         setChart();

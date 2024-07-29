@@ -1,15 +1,11 @@
-import { toRefs, reactive, computed } from 'vue';
+import { computed, reactive, toRefs } from 'vue';
 
 const layoutConfig = reactive({
-    ripple: true,
-    darkTheme: false,
-    inputStyle: 'outlined',
-    menuMode: 'static',
-    theme: 'aura-light-green',
-    scale: 14,
+    preset: 'Aura',
     primary: 'emerald',
     surface: null,
-    preset: 'Aura',
+    darkTheme: false,
+    menuMode: 'static',
     activeMenuItem: null
 });
 
@@ -23,12 +19,25 @@ const layoutState = reactive({
 });
 
 export function useLayout() {
-    const setScale = (scale) => {
-        layoutConfig.scale = scale;
+    const setPrimary = (value) => {
+        layoutConfig.primary = value;
+    };
+
+    const setSurface = (value) => {
+        layoutConfig.surface = value;
+    };
+
+    const setPreset = (value) => {
+        layoutConfig.preset = value;
     };
 
     const setActiveMenuItem = (item) => {
         layoutConfig.activeMenuItem = item.value || item;
+    };
+
+    const toggleDarkMode = () => {
+        layoutConfig.darkTheme = !layoutConfig.darkTheme;
+        document.documentElement.classList.toggle('app-dark');
     };
 
     const onMenuToggle = () => {
@@ -47,22 +56,5 @@ export function useLayout() {
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
-    const toggleDarkMode = () => {
-        layoutConfig.darkTheme = !layoutConfig.darkTheme;
-        document.documentElement.classList.toggle('app-dark');
-    };
-
-    const setPrimary = (value) => {
-        layoutConfig.primary = value;
-    };
-
-    const setSurface = (value) => {
-        layoutConfig.surface = value;
-    };
-
-    const setPreset = (value) => {
-        layoutConfig.preset = value;
-    };
-
-    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), setScale, onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset };
+    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset };
 }

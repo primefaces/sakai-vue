@@ -9,7 +9,7 @@
     background: var(--surface-card);
     padding: 2rem;
     margin-bottom: 2rem;
-    box-shadow: var(--card-shadow);
+    border: 1px solid var(--surface-border);
     border-radius: var(--content-border-radius);
 
     &:last-child {

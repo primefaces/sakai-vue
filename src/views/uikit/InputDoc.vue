@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue';
 import { CountryService } from '@/service/CountryService';
 import { NodeService } from '@/service/NodeService';
+import { onMounted, ref } from 'vue';
 
 const floatValue = ref(null);
 const autoValue = ref(null);
@@ -78,7 +78,7 @@ const searchCountry = (event) => {
     <Fluid class="flex flex-col md:flex-row gap-6">
         <div class="md:w-1/2">
             <div class="card flex flex-col gap-4">
-                <h5>InputText</h5>
+                <div class="font-semibold text-xl mb-4">InputText</div>
                 <div class="flex flex-col md:flex-row gap-4">
                     <InputText type="text" placeholder="Default" />
                     <InputText type="text" placeholder="Disabled" :disabled="true" />

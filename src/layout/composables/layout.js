@@ -56,5 +56,7 @@ export function useLayout() {
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
-    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset };
+    const getPrimary = computed(() => layoutConfig.primary);
+
+    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, getPrimary, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset };
 }

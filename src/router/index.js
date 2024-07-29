@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
+import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -22,16 +22,6 @@ const router = createRouter({
                     path: '/uikit/input',
                     name: 'input',
                     component: () => import('@/views/uikit/InputDoc.vue')
-                },
-                {
-                    path: '/uikit/floatlabel',
-                    name: 'floatlabel',
-                    component: () => import('@/views/uikit/FloatLabelDoc.vue')
-                },
-                {
-                    path: '/uikit/invalidstate',
-                    name: 'invalidstate',
-                    component: () => import('@/views/uikit/InvalidStateDoc.vue')
                 },
                 {
                     path: '/uikit/button',

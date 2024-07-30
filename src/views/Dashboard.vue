@@ -94,12 +94,7 @@ const formatCurrency = (value) => {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 };
 
-watch(isDarkTheme, () => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-});
-
-watch([getPrimary, getSurface], () => {
+watch([getPrimary, getSurface, isDarkTheme], () => {
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
 });

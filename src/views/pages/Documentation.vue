@@ -1,47 +1,50 @@
 <template>
     <div class="card">
-        <h3>Documentation</h3>
-        <p class="bg-primary text-primary-contrast rounded-border p-4">
-            This page covers the Vite version, for Nuxt 3 visit the <a href="https://github.com/primefaces/sakai-nuxt" class="font-bold bg-primary text-primary-contrast hover:underline">sakai-nuxt</a> repository instead.
-        </p>
-        <h5>Getting Started</h5>
-        <p>
+        <div class="font-semibold text-2xl mb-4">Documentation</div>
+        <div class="font-semibold text-xl mb-4">Get Started</div>
+        <p class="text-lg mb-4">
             Sakai is an application template for Vue based on the <a href="https://github.com/vuejs/create-vue" class="font-medium text-primary hover:underline">create-vue</a>, the recommended way to start a <strong>Vite-powered</strong> Vue
             projects. To get started, clone the <a href="https://github.com/primefaces/sakai-vue" class="font-medium text-primary hover:underline">repository</a> from GitHub and install the dependencies with npm or yarn.
         </p>
-        <pre class="app-code"><code> npm install </code></pre>
+        <pre class="app-code">
+<code>git clone https://github.com/primefaces/sakai-vue
+npm install
+npm run dev</code></pre>
 
-        <p>or</p>
+        <p class="text-lg mb-4">Navigate to <i class="bg-highlight px-2 py-1 rounded-border not-italic text-base">http://localhost:5173/</i> to view the application in your local environment.</p>
 
-        <pre class="app-code"><code> yarn </code></pre>
+        <pre class="app-code"><code>npm run dev</code></pre>
 
-        <p>Next step is running the application using the serve script and navigate to <i>http://localhost:5173/</i> to view the application. That is it, you may now start with the development of your application using the Sakai template.</p>
-
-        <pre class="app-code"><code> npm run dev </code></pre>
-
-        <h5>Structure</h5>
-        <p>Sakai consists of a couple folders, demos and layout have been separated so that you can easily remove what is not necessary for your application.</p>
-        <ul class="leading-normal">
-            <li><span class="text-primary font-medium">src/layout</span>: Main layout files, needs to be present</li>
-            <li><span class="text-primary font-medium">src/views</span>: Demo pages</li>
+        <div class="font-semibold text-xl mb-4">Structure</div>
+        <p class="text-lg mb-4">Templates consists of a couple folders, demos and layout have been separated so that you can easily remove what is not necessary for your application.</p>
+        <ul class="leading-normal list-disc pl-8 text-lg mb-4">
+            <li><span class="text-primary font-medium">src/layout</span>: Main layout files, needs to be present.</li>
+            <li><span class="text-primary font-medium">src/views</span>: Demo pages like Dashboard.</li>
             <li><span class="text-primary font-medium">public/demo</span>: Assets used in demos</li>
-            <li><span class="text-primary font-medium">public/layout</span>: Assets used in layout</li>
             <li><span class="text-primary font-medium">src/assets/demo</span>: Styles used in demos</li>
             <li><span class="text-primary font-medium">src/assets/layout</span>: SCSS files of the main layout</li>
         </ul>
 
-        <h5>Menu</h5>
-        <p>Main menu is defined at <span class="text-primary font-medium">src/layout/AppMenu.vue</span> file.</p>
+        <div class="font-semibold text-xl mb-4">Menu</div>
+        <p class="text-lg mb-4">
+            Main menu is defined at <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">src/layout/AppMenu.vue</span> file. Update the <i class="bg-highlight px-2 py-1 rounded-border not-italic text-base">model</i> property to
+            define your own menu items.
+        </p>
 
-        <h5>Integration with Existing Vite Applications</h5>
-        <p>Only the folders that are related to the layout needs to move in to your project. We've created a short tutorial with details.</p>
+        <div class="font-semibold text-xl mb-4">Layout Composable</div>
+        <p class="text-lg mb-4">
+            The <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">src/layout/composables/layout.js</span> is a composable that manages the layout state changes including dark mode, PrimeVue theme, menu modes and states. If you
+            change the initial values like the preset or colors, make sure to apply them at PrimeVue config at main.js as well.
+        </p>
 
-        <div class="video-container">
-            <iframe className="video" width="560" height="315" src="https://www.youtube.com/embed/AHeSjJFR3ZE" frameborder="0" allowfullscreen></iframe>
-        </div>
+        <div class="font-semibold text-xl mb-4">Tailwind CSS</div>
+        <p class="text-lg mb-4">The demo pages are developed with Tailwind CSS however the core application shell mainly uses custom CSS.</p>
 
-        <h5>PrimeVue Theme</h5>
-        <p>Sakai theming is based on the PrimeVue theme being used. Default theme is <b>lara-light-indigo</b>.</p>
+        <div class="font-semibold text-xl mb-4">Variables</div>
+        <p class="text-lg mb-4">
+            CSS variables used in the template derive their values from the PrimeVue styled mode presets, use the files under <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">assets/layout/_variables.scss</span> to customize
+            according to your requirements.
+        </p>
     </div>
 </template>
 

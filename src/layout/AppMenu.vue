@@ -120,12 +120,12 @@ const model = ref([
         items: [
             {
                 label: 'Documentation',
-                icon: 'pi pi-fw pi-question',
+                icon: 'pi pi-fw pi-book',
                 to: '/documentation'
             },
             {
                 label: 'View Source',
-                icon: 'pi pi-fw pi-search',
+                icon: 'pi pi-fw pi-github',
                 url: 'https://github.com/primefaces/sakai-vue',
                 target: '_blank'
             }

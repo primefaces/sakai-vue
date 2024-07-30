@@ -194,9 +194,6 @@ const calculateCustomerTotal = (name) => {
                 <template #filterapply="{ filterCallback }">
                     <Button type="button" icon="pi pi-check" @click="filterCallback()" severity="success"></Button>
                 </template>
-                <template #filterfooter>
-                    <div class="px-4 pt-0 pb-4 text-center">Customized Buttons</div>
-                </template>
             </Column>
             <Column header="Agent" filterField="representative" :showFilterMatchModes="false" :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
                 <template #body="{ data }">

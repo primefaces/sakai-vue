@@ -30,7 +30,7 @@ const load = (index) => {
 <template>
     <div class="flex flex-col md:flex-row gap-8">
         <div class="md:w-1/2">
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Default</div>
                 <div class="flex flex-wrap gap-2">
                     <Button label="Submit"></Button>
@@ -38,7 +38,7 @@ const load = (index) => {
                     <Button label="Link" class="p-button-link" />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Severities</div>
                 <div class="flex flex-wrap gap-2">
                     <Button label="Primary" />
@@ -51,7 +51,7 @@ const load = (index) => {
                     <Button label="Contrast" severity="contrast" />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Text</div>
                 <div class="flex flex-wrap gap-2">
                     <Button label="Primary" text />
@@ -64,7 +64,7 @@ const load = (index) => {
                     <Button label="Plain" plain text />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Outlined</div>
                 <div class="flex flex-wrap gap-2">
                     <Button label="Primary" outlined />
@@ -77,7 +77,7 @@ const load = (index) => {
                     <Button label="Contrast" severity="contrast" outlined />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Group</div>
                 <div class="flex flex-wrap gap-2">
                     <ButtonGroup>
@@ -87,7 +87,7 @@ const load = (index) => {
                     </ButtonGroup>
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">SplitButton</div>
                 <div class="flex flex-wrap gap-2">
                     <SplitButton label="Save" :model="items"></SplitButton>
@@ -100,7 +100,7 @@ const load = (index) => {
                     <SplitButton label="Save" :model="items" severity="contrast"></SplitButton>
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Templating</div>
                 <div class="flex flex-wrap gap-2">
                     <Button type="button">
@@ -114,7 +114,7 @@ const load = (index) => {
             </div>
         </div>
         <div class="md:w-1/2">
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Icons</div>
                 <div class="flex flex-wrap gap-2">
                     <Button icon="pi pi-star-fill" class="mr-2 mb-2"></Button>
@@ -122,7 +122,7 @@ const load = (index) => {
                     <Button label="Bookmark" icon="pi pi-bookmark" iconPos="right" class="mr-2 mb-2"></Button>
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Raised</div>
                 <div class="flex flex-wrap gap-2">
                     <Button label="Primary" raised />
@@ -135,7 +135,7 @@ const load = (index) => {
                     <Button label="Contrast" severity="contrast" raised />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Rounded</div>
                 <div class="flex flex-wrap gap-2">
                     <Button label="Primary" rounded />
@@ -148,7 +148,7 @@ const load = (index) => {
                     <Button label="Contrast" severity="contrast" rounded />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Rounded Icons</div>
                 <div class="flex flex-wrap gap-2">
                     <Button icon="pi pi-check" rounded />
@@ -160,7 +160,7 @@ const load = (index) => {
                     <Button icon="pi pi-times" severity="danger" rounded />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Rounded Text</div>
                 <div class="flex flex-wrap gap-2">
                     <Button icon="pi pi-check" text raised rounded />
@@ -172,7 +172,7 @@ const load = (index) => {
                     <Button icon="pi pi-times" severity="danger" text raised rounded />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Rounded Outlined</div>
                 <div class="flex flex-wrap gap-2">
                     <Button icon="pi pi-check" rounded outlined />
@@ -184,7 +184,7 @@ const load = (index) => {
                     <Button icon="pi pi-times" severity="danger" rounded outlined />
                 </div>
             </div>
-            <div class="card flex flex-col gap-2">
+            <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">Loading</div>
                 <div class="flex flex-wrap gap-2">
                     <Button type="button" class="mr-2 mb-2" label="Search" icon="pi pi-search" :loading="loading[0]" @click="load(0)" />

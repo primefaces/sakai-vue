@@ -38,7 +38,7 @@ const showError = () => {
 </script>
 
 <template>
-    <div class="flex flex-col md:flex-row gap-4 items-start">
+    <div class="flex flex-col md:flex-row gap-4">
         <div class="card md:w-1/2">
             <div class="font-semibold text-xl mb-4">Toast</div>
             <div class="flex flex-wrap gap-2">

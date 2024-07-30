@@ -439,7 +439,7 @@ const onContextRightClick = (event) => {
         <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" />
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4">
+    <div class="flex flex-col md:flex-row gap-8">
         <div class="md:w-1/2">
             <div class="card">
                 <div class="font-semibold text-xl mb-4">Steps</div>

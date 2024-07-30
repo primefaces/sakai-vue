@@ -2,35 +2,18 @@
 import { ProductService } from '@/service/ProductService';
 import { onMounted, ref } from 'vue';
 
-const picklistValue = ref([
-    [
-        { name: 'San Francisco', code: 'SF' },
-        { name: 'London', code: 'LDN' },
-        { name: 'Paris', code: 'PRS' },
-        { name: 'Istanbul', code: 'IST' },
-        { name: 'Berlin', code: 'BRL' },
-        { name: 'Barcelona', code: 'BRC' },
-        { name: 'Rome', code: 'RM' }
-    ],
-    []
-]);
-
-const orderlistValue = ref([
-    { name: 'San Francisco', code: 'SF' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Paris', code: 'PRS' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Berlin', code: 'BRL' },
-    { name: 'Barcelona', code: 'BRC' },
-    { name: 'Rome', code: 'RM' }
-]);
-
 const products = ref(null);
+const picklistProducts = ref(null);
+const orderlistProducts = ref(null);
 const options = ref(['list', 'grid']);
-const layout = ref('grid');
+const layout = ref('list');
 
 onMounted(() => {
-    ProductService.getProductsSmall().then((data) => (products.value = data));
+    ProductService.getProductsSmall().then((data) => {
+        products.value = data.slice(0, 6);
+        picklistProducts.value = [data, []];
+        orderlistProducts.value = data;
+    });
 });
 
 const getSeverity = (product) => {
@@ -157,7 +140,7 @@ const getSeverity = (product) => {
             <div class="lg:w-2/3">
                 <div class="card">
                     <div class="font-semibold text-xl mb-4">PickList</div>
-                    <PickList v-model="picklistValue" breakpoint="1400px" dataKey="id">
+                    <PickList v-model="picklistProducts" breakpoint="1400px" dataKey="id">
                         <template #option="{ option }">
                             {{ option.name }}
                         </template>
@@ -168,7 +151,7 @@ const getSeverity = (product) => {
             <div class="lg:w-1/3">
                 <div class="card">
                     <div class="font-semibold text-xl mb-4">OrderList</div>
-                    <OrderList v-model="orderlistValue" breakpoint="1400px" dataKey="id" pt:pcList:root="w-full">
+                    <OrderList v-model="orderlistProducts" breakpoint="1400px" dataKey="id" pt:pcList:root="w-full">
                         <template #option="{ option }">
                             {{ option.name }}
                         </template>

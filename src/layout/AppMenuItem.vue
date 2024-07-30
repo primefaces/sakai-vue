@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
-const { layoutConfig, layoutState, setActiveMenuItem, onMenuToggle } = useLayout();
+const { layoutState, setActiveMenuItem, onMenuToggle } = useLayout();
 
 const props = defineProps({
     item: {
@@ -38,7 +38,7 @@ onBeforeMount(() => {
 });
 
 watch(
-    () => layoutConfig.activeMenuItem,
+    () => layoutState.activeMenuItem,
     (newVal) => {
         isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
     }

@@ -5,8 +5,7 @@ const layoutConfig = reactive({
     primary: 'emerald',
     surface: null,
     darkTheme: false,
-    menuMode: 'static',
-    activeMenuItem: null
+    menuMode: 'static'
 });
 
 const layoutState = reactive({
@@ -15,7 +14,8 @@ const layoutState = reactive({
     profileSidebarVisible: false,
     configSidebarVisible: false,
     staticMenuMobileActive: false,
-    menuHoverActive: false
+    menuHoverActive: false,
+    activeMenuItem: null
 });
 
 export function useLayout() {
@@ -32,7 +32,7 @@ export function useLayout() {
     };
 
     const setActiveMenuItem = (item) => {
-        layoutConfig.activeMenuItem = item.value || item;
+        layoutState.activeMenuItem = item.value || item;
     };
 
     const setMenuMode = (mode) => {

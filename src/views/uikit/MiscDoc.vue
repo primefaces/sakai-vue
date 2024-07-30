@@ -48,7 +48,7 @@ onBeforeUnmount(() => {
                     <Badge :value="2"></Badge>
                     <Badge :value="8" severity="success"></Badge>
                     <Badge :value="4" severity="info"></Badge>
-                    <Badge :value="12" severity="warn"></Badge>
+                    <Badge :value="12" severity="Warn"></Badge>
                     <Badge :value="3" severity="danger"></Badge>
                 </div>
 
@@ -133,7 +133,7 @@ onBeforeUnmount(() => {
                     <Tag value="Primary" :rounded="true"></Tag>
                     <Tag severity="success" value="Success" :rounded="true"></Tag>
                     <Tag severity="info" value="Info" :rounded="true"></Tag>
-                    <Tag severity="warn" value="warn" :rounded="true"></Tag>
+                    <Tag severity="warn" value="Warn" :rounded="true"></Tag>
                     <Tag severity="danger" value="Danger" :rounded="true"></Tag>
                 </div>
 
@@ -142,7 +142,7 @@ onBeforeUnmount(() => {
                     <Tag icon="pi pi-user" value="Primary"></Tag>
                     <Tag icon="pi pi-check" severity="success" value="Success"></Tag>
                     <Tag icon="pi pi-info-circle" severity="info" value="Info"></Tag>
-                    <Tag con="pi pi-exclamation-triangle" severity="warn" value="warn"></Tag>
+                    <Tag con="pi pi-exclamation-triangle" severity="warn" value="Warn"></Tag>
                     <Tag icon="pi pi-times" severity="danger" value="Danger"></Tag>
                 </div>
             </div>

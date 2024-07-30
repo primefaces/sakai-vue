@@ -1,33 +1,29 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
-const { layoutConfig } = useLayout();
-let documentStyle = getComputedStyle(document.documentElement);
-let textColor = documentStyle.getPropertyValue('--text-color');
-let textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-let surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-
+const { getPrimary, getSurface, isDarkTheme } = useLayout();
 const lineData = ref(null);
 const pieData = ref(null);
 const polarData = ref(null);
 const barData = ref(null);
 const radarData = ref(null);
-
 const lineOptions = ref(null);
 const pieOptions = ref(null);
 const polarOptions = ref(null);
 const barOptions = ref(null);
 const radarOptions = ref(null);
 
-const setColorOptions = () => {
-    documentStyle = getComputedStyle(document.documentElement);
-    textColor = documentStyle.getPropertyValue('--text-color');
-    textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-    surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-};
+onMounted(() => {
+    setColorOptions();
+});
 
-const setChart = () => {
+const setColorOptions = () => {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--text-color');
+    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+    const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+
     barData.value = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [
@@ -223,19 +219,9 @@ const setChart = () => {
 };
 
 watch(
-    layoutConfig.primary,
+    [getPrimary, getSurface, isDarkTheme],
     () => {
         setColorOptions();
-        setChart();
-    },
-    { immediate: true }
-);
-
-watch(
-    layoutConfig.darkTheme,
-    () => {
-        setColorOptions();
-        setChart();
     },
     { immediate: true }
 );

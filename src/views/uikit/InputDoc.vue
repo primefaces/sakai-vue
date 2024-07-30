@@ -102,7 +102,7 @@ const searchCountry = (event) => {
                 <Textarea placeholder="Your Message" :autoResize="true" rows="3" cols="30" />
 
                 <div class="font-semibold text-xl">AutoComplete</div>
-                <AutoComplete placeholder="Search" :dropdown="true" display="chip" v-model="selectedAutoValue" :suggestions="autoFilteredValue" @complete="searchCountry($event)" field="name" />
+                <AutoComplete v-model="selectedAutoValue" :suggestions="autoFilteredValue" optionLabel="name" placeholder="Search" dropdown multiple display="chip" @complete="searchCountry($event)" />
 
                 <div class="font-semibold text-xl">DatePicker</div>
                 <DatePicker :showIcon="true" :showButtonBar="true" v-model="calendarValue"></DatePicker>

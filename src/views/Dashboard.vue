@@ -109,7 +109,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                         <span class="block text-muted-color font-medium mb-4">Orders</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">152</div>
                     </div>
-                    <div class="flex items-center justify-center bg-blue-100 rounded-border" style="width: 2.5rem; height: 2.5rem">
+                    <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-shopping-cart text-blue-500 !text-xl"></i>
                     </div>
                 </div>
@@ -124,7 +124,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                         <span class="block text-muted-color font-medium mb-4">Revenue</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">$2.100</div>
                     </div>
-                    <div class="flex items-center justify-center bg-orange-100 rounded-border" style="width: 2.5rem; height: 2.5rem">
+                    <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-dollar text-orange-500 !text-xl"></i>
                     </div>
                 </div>
@@ -139,7 +139,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                         <span class="block text-muted-color font-medium mb-4">Customers</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">28441</div>
                     </div>
-                    <div class="flex items-center justify-center bg-cyan-100 rounded-border" style="width: 2.5rem; height: 2.5rem">
+                    <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-users text-cyan-500 !text-xl"></i>
                     </div>
                 </div>
@@ -154,7 +154,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                         <span class="block text-muted-color font-medium mb-4">Comments</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">152 Unread</div>
                     </div>
-                    <div class="flex items-center justify-center bg-purple-100 rounded-border" style="width: 2.5rem; height: 2.5rem">
+                    <div class="flex items-center justify-center bg-purple-100 dark:bg-purple-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-comment text-purple-500 !text-xl"></i>
                     </div>
                 </div>
@@ -286,7 +286,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                 <span class="block text-muted-color font-medium mb-4">TODAY</span>
                 <ul class="p-0 mx-0 mt-0 mb-6 list-none">
                     <li class="flex items-center py-2 border-b border-surface">
-                        <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full mr-4 shrink-0">
+                        <div class="w-12 h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-full mr-4 shrink-0">
                             <i class="pi pi-dollar !text-xl text-blue-500"></i>
                         </div>
                         <span class="text-surface-900 dark:text-surface-0 leading-normal"
@@ -295,7 +295,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                         </span>
                     </li>
                     <li class="flex items-center py-2">
-                        <div class="w-12 h-12 flex items-center justify-center bg-orange-100 rounded-full mr-4 shrink-0">
+                        <div class="w-12 h-12 flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-full mr-4 shrink-0">
                             <i class="pi pi-download !text-xl text-orange-500"></i>
                         </div>
                         <span class="text-surface-700 dark:text-surface-100 leading-normal">Your request for withdrawal of <span class="text-primary font-bold">$2500.00</span> has been initiated.</span>
@@ -305,7 +305,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                 <span class="block text-muted-color font-medium mb-4">YESTERDAY</span>
                 <ul class="p-0 m-0 list-none mb-6">
                     <li class="flex items-center py-2 border-b border-surface">
-                        <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full mr-4 shrink-0">
+                        <div class="w-12 h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-full mr-4 shrink-0">
                             <i class="pi pi-dollar !text-xl text-blue-500"></i>
                         </div>
                         <span class="text-surface-900 dark:text-surface-0 leading-normal"
@@ -314,7 +314,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                         </span>
                     </li>
                     <li class="flex items-center py-2 border-b border-surface">
-                        <div class="w-12 h-12 flex items-center justify-center bg-pink-100 rounded-full mr-4 shrink-0">
+                        <div class="w-12 h-12 flex items-center justify-center bg-pink-100 dark:bg-pink-400/10 rounded-full mr-4 shrink-0">
                             <i class="pi pi-question !text-xl text-pink-500"></i>
                         </div>
                         <span class="text-surface-900 dark:text-surface-0 leading-normal"
@@ -326,13 +326,13 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                 <span class="block text-muted-color font-medium mb-4">LAST WEEK</span>
                 <ul class="p-0 m-0 list-none">
                     <li class="flex items-center py-2 border-b border-surface">
-                        <div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full mr-4 shrink-0">
+                        <div class="w-12 h-12 flex items-center justify-center bg-green-100 dark:bg-green-400/10 rounded-full mr-4 shrink-0">
                             <i class="pi pi-arrow-up !text-xl text-green-500"></i>
                         </div>
                         <span class="text-surface-900 dark:text-surface-0 leading-normal">Your revenue has increased by <span class="text-primary font-bold">%25</span>.</span>
                     </li>
                     <li class="flex items-center py-2 border-b border-surface">
-                        <div class="w-12 h-12 flex items-center justify-center bg-purple-100 rounded-full mr-4 shrink-0">
+                        <div class="w-12 h-12 flex items-center justify-center bg-purple-100 dark:bg-purple-400/10 rounded-full mr-4 shrink-0">
                             <i class="pi pi-heart !text-xl text-purple-500"></i>
                         </div>
                         <span class="text-surface-900 dark:text-surface-0 leading-normal"><span class="text-primary font-bold">12</span> users have added your products to their wishlist.</span>

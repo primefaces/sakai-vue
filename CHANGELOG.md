@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.1.0 (2024-07-29)
+
+-   Changed menu button location at topbar
+-   Add border to overlay menu
+-   Animation for mobile mask
+-   Fixed chart colors
+
+## 4.0.0 (2024-07-29)
+
+-   Updated to PrimeVue v4
+
 ## 3.10.0 (2024-03-11)
 
 **Migration Guide**

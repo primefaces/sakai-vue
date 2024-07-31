@@ -60,7 +60,7 @@ const isOutsideClicked = (event) => {
             </div>
             <app-footer></app-footer>
         </div>
-        <div class="layout-mask"></div>
+        <div class="layout-mask animate-fadein"></div>
     </div>
     <Toast />
 </template>

@@ -71,7 +71,7 @@
     }
 
     .layout-menu-button {
-        margin-left: 2rem;
+        margin-right: 0.5rem;
     }
 
     .layout-topbar-menu-button {
@@ -97,24 +97,19 @@
 
 @media (max-width: 991px) {
     .layout-topbar {
+        padding: 0 2rem;
+
         .layout-topbar-logo-container {
             width: auto;
-            order: 2;
         }
 
         .layout-menu-button {
             margin-left: 0;
             margin-right: 1rem;
-            order: 1;
         }
 
         .layout-topbar-menu-button {
             display: inline-flex;
-            order: 4;
-        }
-
-        .layout-topbar-actions {
-            order: 3;
         }
 
         .layout-topbar-menu {

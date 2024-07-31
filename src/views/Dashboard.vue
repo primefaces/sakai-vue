@@ -29,21 +29,21 @@ function setChartData() {
             {
                 type: 'bar',
                 label: 'Subscriptions',
-                backgroundColor: 'color-mix(in srgb, ' + documentStyle.getPropertyValue('--p-primary-400') + ' 100%, #fff)',
+                backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
                 data: [4000, 10000, 15000, 4000],
                 barThickness: 32
             },
             {
                 type: 'bar',
                 label: 'Advertising',
-                backgroundColor: 'color-mix(in srgb, ' + documentStyle.getPropertyValue('--p-primary-300') + ' 100%, transparent)',
+                backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
                 data: [2100, 8400, 2400, 7500],
                 barThickness: 32
             },
             {
                 type: 'bar',
                 label: 'Affiliate',
-                backgroundColor: 'color-mix(in srgb, ' + documentStyle.getPropertyValue('--p-primary-200') + ' 100%, transparent)',
+                backgroundColor: documentStyle.getPropertyValue('--p-primary-200'),
                 data: [4100, 5200, 3400, 7400],
                 borderRadius: {
                     topLeft: 8,

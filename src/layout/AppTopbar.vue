@@ -8,6 +8,9 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 <template>
     <div class="layout-topbar">
         <div class="layout-topbar-logo-container">
+            <button class="layout-menu-button layout-topbar-action" @click="onMenuToggle">
+                <i class="pi pi-bars"></i>
+            </button>
             <router-link to="/" class="layout-topbar-logo">
                 <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -30,10 +33,6 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
                 <span>SAKAI</span>
             </router-link>
         </div>
-
-        <button class="layout-menu-button layout-topbar-action" @click="onMenuToggle">
-            <i class="pi pi-bars"></i>
-        </button>
 
         <div class="layout-topbar-actions">
             <div class="layout-config-menu">

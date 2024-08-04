@@ -166,6 +166,7 @@ const saveAsesoria = async () => {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
   }
   showDialogAsesoria.value = false;  
+  asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
   
 }
 

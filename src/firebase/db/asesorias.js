@@ -40,16 +40,18 @@ export async function getAsesoriasCountForUserInCurrentSemester(userId) {
         const endTimestamp = Timestamp.fromDate(endOfSemester);
 
         // Construct the query
-        const requestsRef = collection(firestoreDB, "requests");
+        const requestsRef = collection(firestoreDB, "asesorias");
         const q = query(
             requestsRef,
             where(`peerInfo.uid`, "==", userId),
-            where("createdAt", ">=", startTimestamp),
-            where("createdAt", "<=", endTimestamp)
+            where("date", ">=", startTimestamp),
+            where("date", "<=", endTimestamp)
         );
 
         // Execute the query
         const querySnapshot = await getDocs(q);
+
+        console.log(querySnapshot)
 
         // Return the number of documents
         return querySnapshot.size;

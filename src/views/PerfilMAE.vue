@@ -376,7 +376,7 @@ const stopSession = async () => {
     <Rating v-model="ratingAsesoria" :cancel="false"/>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
-      <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null && comentarioAsesoria !== '' && ratingAsesoria !== null)" @click="saveAsesoria"></Button>
+      <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null)" @click="saveAsesoria"></Button>
     </div>
   </Dialog>
 

@@ -171,7 +171,7 @@ const saveUserToDatabase = (userInfo) => {
                     <div>
                         <Toast />
                         <label for="email" class="block text-900 text-xl font-medium mb-2">Correo</label>
-                        <InputText id="email" type="text" placeholder="example@tec.mx" class="w-full md:w-30rem mb-5"
+                        <InputText id="email" type="text" placeholder="example@tec.mx" class="w-full mb-5"
                             v-model="newUserInfo.email" />
 
                         <label for="firstname" class="block text-900 text-xl font-medium mb-2">Nombre</label>
@@ -193,7 +193,7 @@ const saveUserToDatabase = (userInfo) => {
                             class="w-12 mb-4" />
 
                         <label for="password1" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
-                        <Password id="password1" v-model="password1" placeholder="Password" :toggleMask="true"
+                        <Password id="password1" v-model="password1" placeholder="Contraseña" :toggleMask="true"
                             class="w-full mb-4" inputClass="w-full" :inputStyle="{ padding: '1rem' }">
                             <template #header>
                                 <h6>Introduce tu contraseña</h6>
@@ -250,6 +250,9 @@ const saveUserToDatabase = (userInfo) => {
                                 </ul>
                             </template>
                         </Password>
+                        <div class="text-center max-w-full mt-4">
+                            <p class="text-600 font-medium">Recuerda usar una contraseña única y diferente a la que utilizas en otras cuentas, incluido tu correo institucional</p>
+                        </div>
 
                         <Message v-if="errorMsg" severity="error" class="mt-2"> {{ errorMsg }} </Message>
                         <Divider />

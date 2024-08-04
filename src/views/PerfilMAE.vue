@@ -89,7 +89,6 @@ const saveSubjectChanges = async () => {
    maeInfo.value = await getUser(route.params.id);
    toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tus materias se guardaron con éxito', life: 3000 });
   } catch (error) {
-    console.log(error)
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios' });
   }
   showDialogMaterias.value = false;    
@@ -142,7 +141,6 @@ const saveScheduleChanges = async () => {
    maeInfo.value = await getUser(route.params.id);
    toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tus materias se guardaron con éxito', life: 3000 });
   } catch (error) {
-    console.log(error)
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios' });
   }
   showDialogHorarios.value = false;  
@@ -165,7 +163,6 @@ const saveAsesoria = async () => {
     comentarioAsesoria.value = '';
     materiaAsesoria.value = null;
   } catch (error) {
-    console.log(error)
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
   }
   showDialogAsesoria.value = false;  
@@ -192,7 +189,6 @@ const stopSession = async () => {
   // Borra field de activeSession, saca la diferencia en minutos de startTime y actual para agregarla a totalTime del usuario
   try {
     const res = await stopActiveSession(userInfo.value.uid);
-    console.log(res)
     if (!res.activeSessionDeleted) {
       if (res.timeLimitExceded) {
         toast.add({ severity: 'error', summary: `Excediste el limite de tiempo de tu sesión (${ Math.round((res.differenceInMinutes / 60) * 100) / 100 } horas)`, detail: 'Consulta a un coordi para reponer las horas' });
@@ -206,7 +202,6 @@ const stopSession = async () => {
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(route.params.id);
   } catch (error) {
-    console.log(error)
     toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
 }
@@ -333,7 +328,7 @@ const stopSession = async () => {
         <span v-for="(slot, index) in newSchedule[day['en']]" :key="`editor-${day['en']}-${index}`" class="flex justify-content-around flex-wrap">
           <Dropdown v-model="newSchedule[day['en']][index]['start']" optionValue="code" :options="timeSlots" optionLabel="name" placeholder="Entrada" checkmark :highlightOnSelect="false" class="md:w-5 w-4 mb-2" />
           <Dropdown v-model="newSchedule[day['en']][index]['end']" optionValue="code" :options="timeSlots" optionLabel="name" placeholder="Salida" checkmark :highlightOnSelect="false" class="md:w-5 w-4 mb-2" />
-          <Button @click="newSchedule[day['en']].splice(index, 1); newSchedule[day['en']] = newSchedule[day['en']] ?? []; console.log(newSchedule[day['en']])" icon="pi pi-times" severity="danger" text rounded aria-label="Cancel"  />
+          <Button @click="newSchedule[day['en']].splice(index, 1); newSchedule[day['en']] = newSchedule[day['en']] ?? []" icon="pi pi-times" severity="danger" text rounded aria-label="Cancel"  />
         </span>
       </div>
   </div>

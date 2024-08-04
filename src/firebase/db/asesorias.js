@@ -22,7 +22,6 @@ export async function addAsesoria(maeInfo, userInfo, subject, comment, rating) {
 
 export async function getAsesoriasCountForUserInCurrentSemester(userId) {
     try {
-        console.log('UID', userId)
         const now = new Date();
         const currentYear = now.getFullYear();
         let startOfSemester, endOfSemester;

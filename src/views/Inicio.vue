@@ -53,7 +53,6 @@ const saveProfileChanges = async () => {
         toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tu perfil se guardaron con éxito', life: 3000 });
 
     } catch (error) {
-        console.log(error)
         toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al guardar los cambios' });
     }
     showDialogPerfil.value = false;

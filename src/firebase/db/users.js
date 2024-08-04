@@ -172,9 +172,6 @@ export async function getTodaysMae() {
         });
 
         // Step 5: Sort users by the earliest start time of the current day
-
-        console.log(users);
-
         users.sort((a, b) => {
 
             // TODO: Change to this when updating user schedule format
@@ -235,8 +232,6 @@ export async function stopActiveSession(userId) {
         // Calculates and adds the duration of the current session to the total time
         const currentTime = new Date();
         const differenceInMinutes = Math.floor((currentTime - startTime) / (1000 * 60));
-
-        console.log(differenceInMinutes)
 
         if (differenceInMinutes > 310) {
             await updateDoc(userRef, {

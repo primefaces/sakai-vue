@@ -29,7 +29,6 @@ const loading = ref(true);
 onMounted(() => {
 
     getMaes().then((data) => {
-        //console.log(data[0])
         maes.value = data;
         loading.value = false;
     })
@@ -62,7 +61,6 @@ onMounted(() => {
             
             // Verificar si el filtro coincide con el ID o el nombre
             if (idNormalized.toLowerCase().includes(filterNormalized.toLowerCase()) || nameNormalized.toLowerCase().includes(filterNormalized.toLowerCase())) {
-                window.console.log("TRUE:", id, "o", name, "contiene", filterNormalized);
                 return true;
             }
         }
@@ -92,7 +90,6 @@ onMounted(() => {
         
         // Checar las llaves
         // const numDias = Object.keys(value).length;
-        // console.log("Número de días:", numDias);
         // Comprobar si algún día del filtro coincide con los días en los valores
         
         for (let i = 0; i < normalizedFilter.length; i++) {
@@ -127,7 +124,6 @@ onMounted(() => {
 // }
 
 function translateDayToSpanish(day) {
-    //console.log(day)
   const daysMapping = {
     'monday': 'Lunes',
     'tuesday': 'Martes',

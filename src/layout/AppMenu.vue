@@ -20,7 +20,6 @@ onMounted(async () => {
     const { role, uid } = await getCurrentUser();
 
     // if (['user', 'mae', 'Academic', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
-    //     console.log('A: 1')
     //     model.value.push({
     //         label: 'Estudiante',
     //         items: [

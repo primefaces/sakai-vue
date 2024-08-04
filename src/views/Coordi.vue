@@ -24,7 +24,6 @@ const options = ref([
 watch(report, (newValue, oldValue) => {
     if (oldValue) {
         const maeInfo = maes.value.find(mae => mae['uid'] === selectedId.value);
-        console.log(maeInfo)
         updateReport(maeInfo, newValue[selectedId.value])
     }
   },
@@ -53,7 +52,6 @@ const addTime = async () => {
         maeId.value = '';
         hours.value = 0;
     } catch (error) {
-        console.log(error)
         toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios', life: 5000 });
     }
 
@@ -74,7 +72,6 @@ onMounted(() => {
 
     getTodaysMae()
         .then((data) => {
-            //console.log(data[0])
             maes.value = data;
             
         })
@@ -82,7 +79,6 @@ onMounted(() => {
             getTodaysReport()
                 .then((data) => {
                     report.value = data;
-                    console.log(report.value)
                     loading.value = false;
                 })
         })

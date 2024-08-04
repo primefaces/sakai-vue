@@ -92,7 +92,7 @@ const verIntensiva = (userId) => {
 </script>
 
 <template>
-    <div class="overflow-hidden font-lato px-4">
+    <!-- <div class="overflow-hidden font-lato px-4">
         <TituloAdmin></TituloAdmin>
         <DataTable v-model:filters="filters" :value="usuarios" paginator :rows="5"  dataKey="id" filterDisplay="row"
             :loading="loading" :globalFilterFields="['materia', 'abreviacion', 'cantidad', ]" class="border-round-xl text-lg font-bold">
@@ -154,5 +154,8 @@ const verIntensiva = (userId) => {
         <Button label="Agregar Materia" icon="pi pi-plus-circle" severity="info" size="large" class="ml-5 bg-0D294C" />
         </div>
     </div>
-   
+    -->
+    <div class="flex align-content-center h-full" style="min-height: 300px">
+        <h1 class="flex align-items-center justify-content-center w-full">Admin Materias: ¡En construcción! ✌</h1>
+    </div>
 </template>

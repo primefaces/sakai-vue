@@ -5,14 +5,17 @@
 
 
 <template>
-  <div class="overflow-hidden font-lato px-4">
+  <!-- <div class="overflow-hidden font-lato px-4">
     <TituloAdmin></TituloAdmin>
     <div class="grid-cols-4 gap-5">
         <InfoCard :tema="'Asesorías Totales'" :datos="'22,000 totales'" />
         <InfoCard :tema="'Asesorías de hoy'" :datos="'129 Asesorías'" />
         <InfoCard :tema="'Usuarios'" :datos="'15,000 usuarios'" />
     </div>
-  </div>
+  </div> -->
+    <div class="flex align-content-center h-full" style="min-height: 300px">
+        <h1 class="flex align-items-center justify-content-center w-full">Admin Asesorías: ¡En construcción! ✌</h1>
+    </div>
 </template>
 
 <style scoped>

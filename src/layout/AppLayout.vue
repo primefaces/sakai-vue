@@ -26,7 +26,8 @@ const containerClass = computed(() => {
         'layout-mobile-active': layoutState.staticMenuMobileActive
     };
 });
-const bindOutsideClickListener = () => {
+
+function bindOutsideClickListener() {
     if (!outsideClickListener.value) {
         outsideClickListener.value = (event) => {
             if (isOutsideClicked(event)) {
@@ -35,19 +36,21 @@ const bindOutsideClickListener = () => {
         };
         document.addEventListener('click', outsideClickListener.value);
     }
-};
-const unbindOutsideClickListener = () => {
+}
+
+function unbindOutsideClickListener() {
     if (outsideClickListener.value) {
         document.removeEventListener('click', outsideClickListener);
         outsideClickListener.value = null;
     }
-};
-const isOutsideClicked = (event) => {
+}
+
+function isOutsideClicked(event) {
     const sidebarEl = document.querySelector('.layout-sidebar');
     const topbarEl = document.querySelector('.layout-menu-button');
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
-};
+}
 </script>
 
 <template>

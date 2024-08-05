@@ -16,7 +16,7 @@ onMounted(() => {
     });
 });
 
-const getSeverity = (product) => {
+function getSeverity(product) {
     switch (product.inventoryStatus) {
         case 'INSTOCK':
             return 'success';
@@ -30,7 +30,7 @@ const getSeverity = (product) => {
         default:
             return null;
     }
-};
+}
 </script>
 
 <template>

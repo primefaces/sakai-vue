@@ -24,36 +24,32 @@ onMounted(() => {
     ProductService.getProductsSmall().then((data) => (products.value = data));
 });
 
-const open = () => {
+function open() {
     display.value = true;
-};
+}
 
-const close = () => {
+function close() {
     display.value = false;
-};
+}
 
-const openConfirmation = () => {
+function openConfirmation() {
     displayConfirmation.value = true;
-};
+}
 
-const closeConfirmation = () => {
+function closeConfirmation() {
     displayConfirmation.value = false;
-};
+}
 
-const toggle = (event) => {
-    op.value.toggle(event);
-};
-
-const toggleDataTable = (event) => {
+function toggleDataTable(event) {
     op2.value.toggle(event);
-};
+}
 
-const onProductSelect = (event) => {
+function onProductSelect(event) {
     op.value.hide();
     toast.add({ severity: 'info', summary: 'Product Selected', detail: event.data.name, life: 3000 });
-};
+}
 
-const confirm = (event) => {
+function confirm(event) {
     confirmPopup.require({
         target: event.target,
         message: 'Are you sure you want to proceed?',
@@ -73,7 +69,7 @@ const confirm = (event) => {
             toast.add({ severity: 'info', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
         }
     });
-};
+}
 </script>
 
 <template>

@@ -18,7 +18,7 @@ onMounted(() => {
     setColorOptions();
 });
 
-const setColorOptions = () => {
+function setColorOptions() {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
@@ -216,7 +216,7 @@ const setColorOptions = () => {
             }
         }
     };
-};
+}
 
 watch(
     [getPrimary, getSurface, isDarkTheme],

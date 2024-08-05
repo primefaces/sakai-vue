@@ -58,7 +58,7 @@ onMounted(() => {
     NodeService.getTreeNodes().then((data) => (treeSelectNodes.value = data));
 });
 
-const searchCountry = (event) => {
+function searchCountry(event) {
     setTimeout(() => {
         if (!event.query.trim().length) {
             autoFilteredValue.value = [...autoValue.value];
@@ -68,7 +68,7 @@ const searchCountry = (event) => {
             });
         }
     }, 250);
-};
+}
 </script>
 
 <template>

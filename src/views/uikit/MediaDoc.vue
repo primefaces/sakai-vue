@@ -46,7 +46,7 @@ onMounted(() => {
     PhotoService.getImages().then((data) => (images.value = data));
 });
 
-const getSeverity = (status) => {
+function getSeverity(status) {
     switch (status) {
         case 'INSTOCK':
             return 'success';
@@ -60,7 +60,7 @@ const getSeverity = (status) => {
         default:
             return null;
     }
-};
+}
 </script>
 
 <template>

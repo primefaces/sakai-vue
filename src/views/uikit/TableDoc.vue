@@ -26,7 +26,7 @@ const representatives = reactive([
     { name: 'XuXue Feng', image: 'xuxuefeng.png' }
 ]);
 
-const getOrderSeverity = (order) => {
+function getOrderSeverity(order) {
     switch (order.status) {
         case 'DELIVERED':
             return 'success';
@@ -43,9 +43,9 @@ const getOrderSeverity = (order) => {
         default:
             return null;
     }
-};
+}
 
-const getSeverity = (status) => {
+function getSeverity(status) {
     switch (status) {
         case 'unqualified':
             return 'danger';
@@ -62,9 +62,9 @@ const getSeverity = (status) => {
         case 'renewal':
             return null;
     }
-};
+}
 
-const getStockSeverity = (product) => {
+function getStockSeverity(product) {
     switch (product.inventoryStatus) {
         case 'INSTOCK':
             return 'success';
@@ -78,7 +78,7 @@ const getStockSeverity = (product) => {
         default:
             return null;
     }
-};
+}
 
 onBeforeMount(() => {
     ProductService.getProductsWithOrdersSmall().then((data) => (products.value = data));
@@ -93,7 +93,7 @@ onBeforeMount(() => {
     initFilters1();
 });
 
-const initFilters1 = () => {
+function initFilters1() {
     filters1.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -105,29 +105,29 @@ const initFilters1 = () => {
         activity: { value: [0, 100], matchMode: FilterMatchMode.BETWEEN },
         verified: { value: null, matchMode: FilterMatchMode.EQUALS }
     };
-};
+}
 
-const expandAll = () => {
+function expandAll() {
     expandedRows.value = products.value.reduce((acc, p) => (acc[p.id] = true) && acc, {});
-};
+}
 
-const collapseAll = () => {
+function collapseAll() {
     expandedRows.value = null;
-};
+}
 
-const formatCurrency = (value) => {
+function formatCurrency(value) {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-};
+}
 
-const formatDate = (value) => {
+function formatDate(value) {
     return value.toLocaleDateString('en-US', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
     });
-};
+}
 
-const calculateCustomerTotal = (name) => {
+function calculateCustomerTotal(name) {
     let total = 0;
     if (customers3.value) {
         for (let customer of customers3.value) {
@@ -138,7 +138,7 @@ const calculateCustomerTotal = (name) => {
     }
 
     return total;
-};
+}
 </script>
 
 <template>

@@ -26,20 +26,23 @@ const statuses = ref([
     { label: 'OUTOFSTOCK', value: 'outofstock' }
 ]);
 
-const formatCurrency = (value) => {
+function formatCurrency(value) {
     if (value) return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     return;
-};
-const openNew = () => {
+}
+
+function openNew() {
     product.value = {};
     submitted.value = false;
     productDialog.value = true;
-};
-const hideDialog = () => {
+}
+
+function hideDialog() {
     productDialog.value = false;
     submitted.value = false;
-};
-const saveProduct = () => {
+}
+
+function saveProduct() {
     submitted.value = true;
 
     if (product?.value.name?.trim()) {
@@ -59,22 +62,26 @@ const saveProduct = () => {
         productDialog.value = false;
         product.value = {};
     }
-};
-const editProduct = (prod) => {
+}
+
+function editProduct(prod) {
     product.value = { ...prod };
     productDialog.value = true;
-};
-const confirmDeleteProduct = (prod) => {
+}
+
+function confirmDeleteProduct(prod) {
     product.value = prod;
     deleteProductDialog.value = true;
-};
-const deleteProduct = () => {
+}
+
+function deleteProduct() {
     products.value = products.value.filter((val) => val.id !== product.value.id);
     deleteProductDialog.value = false;
     product.value = {};
     toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-};
-const findIndexById = (id) => {
+}
+
+function findIndexById(id) {
     let index = -1;
     for (let i = 0; i < products.value.length; i++) {
         if (products.value[i].id === id) {
@@ -84,29 +91,33 @@ const findIndexById = (id) => {
     }
 
     return index;
-};
-const createId = () => {
+}
+
+function createId() {
     let id = '';
     var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (var i = 0; i < 5; i++) {
         id += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return id;
-};
-const exportCSV = () => {
+}
+
+function exportCSV() {
     dt.value.exportCSV();
-};
-const confirmDeleteSelected = () => {
+}
+
+function confirmDeleteSelected() {
     deleteProductsDialog.value = true;
-};
-const deleteSelectedProducts = () => {
+}
+
+function deleteSelectedProducts() {
     products.value = products.value.filter((val) => !selectedProducts.value.includes(val));
     deleteProductsDialog.value = false;
     selectedProducts.value = null;
     toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-};
+}
 
-const getStatusLabel = (status) => {
+function getStatusLabel(status) {
     switch (status) {
         case 'INSTOCK':
             return 'success';
@@ -120,7 +131,7 @@ const getStatusLabel = (status) => {
         default:
             return null;
     }
-};
+}
 </script>
 
 <template>

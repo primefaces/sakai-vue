@@ -21,10 +21,10 @@ const items = ref([
 
 const loading = ref([false, false, false]);
 
-const load = (index) => {
+function load(index) {
     loading.value[index] = true;
     setTimeout(() => (loading.value[index] = false), 1000);
-};
+}
 </script>
 
 <template>

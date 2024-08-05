@@ -26,9 +26,9 @@ const cardMenu = ref([
 ]);
 const menuRef = ref(null);
 
-const toggle = () => {
+function toggle() {
     menuRef.value.toggle(event);
-};
+}
 </script>
 
 <template>

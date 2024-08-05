@@ -7,21 +7,21 @@ const message = ref([]);
 const username = ref(null);
 const email = ref(null);
 
-const showSuccess = () => {
+function showSuccess() {
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Message Detail', life: 3000 });
-};
+}
 
-const showInfo = () => {
+function showInfo() {
     toast.add({ severity: 'info', summary: 'Info Message', detail: 'Message Detail', life: 3000 });
-};
+}
 
-const showWarn = () => {
+function showWarn() {
     toast.add({ severity: 'warn', summary: 'Warn Message', detail: 'Message Detail', life: 3000 });
-};
+}
 
-const showError = () => {
+function showError() {
     toast.add({ severity: 'error', summary: 'Error Message', detail: 'Message Detail', life: 3000 });
-};
+}
 </script>
 
 <template>

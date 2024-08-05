@@ -412,13 +412,13 @@ const panelMenuitems = ref([
     }
 ]);
 
-const toggleMenu = (event) => {
+function toggleMenu(event) {
     menu.value.toggle(event);
-};
+}
 
-const onContextRightClick = (event) => {
+function onContextRightClick(event) {
     contextMenu.value.show(event);
-};
+}
 </script>
 
 <template>

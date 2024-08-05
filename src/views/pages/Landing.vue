@@ -1,10 +1,10 @@
 <script setup>
-const smoothScroll = (id) => {
+function smoothScroll(id) {
     document.body.click();
     document.querySelector(id).scrollIntoView({
         behavior: 'smooth'
     });
-};
+}
 </script>
 
 <template>

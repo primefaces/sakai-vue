@@ -4,7 +4,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 const value = ref(0);
 let interval = null;
 
-const startProgress = () => {
+function startProgress() {
     interval = setInterval(() => {
         let newValue = value.value + Math.floor(Math.random() * 10) + 1;
         if (newValue >= 100) {
@@ -12,11 +12,12 @@ const startProgress = () => {
         }
         value.value = newValue;
     }, 2000);
-};
-const endProgress = () => {
+}
+
+function endProgress() {
     clearInterval(interval);
     interval = null;
-};
+}
 
 onMounted(() => {
     startProgress();

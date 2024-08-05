@@ -5,13 +5,13 @@ import { ref } from 'vue';
 const toast = useToast();
 const fileupload = ref();
 
-const upload = () => {
+function upload() {
     fileupload.value.upload();
-};
+}
 
-const onUpload = () => {
+function onUpload() {
     toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
-};
+}
 </script>
 
 <template>

@@ -58,7 +58,6 @@ export async function getCurrentUser() {
     }
     return null;
 }
-
 export async function getMaes(getProfilePicture = false) {
     const usersRef = collection(firestoreDB, "users");
     const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi']));
@@ -66,20 +65,24 @@ export async function getMaes(getProfilePicture = false) {
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot) {
+        let data = querySnapshot.docs.map(doc => doc.data());
+
+        // Filtrar y ordenar por el campo name en orden alfabético
+        data = data.filter(item => item.name).sort((a, b) => a.name.localeCompare(b.name));
+
         if (getProfilePicture) {
-            return Promise.all(querySnapshot.docs.map(async (doc) => {
-                const data = doc.data();
-                const profilePictureUrl = await getUserProfilePicture(data.email);
-                return { ...data, profilePictureUrl };
+            return Promise.all(data.map(async (item) => {
+                const profilePictureUrl = await getUserProfilePicture(item.email);
+                return { ...item, profilePictureUrl };
             }));
-        }
-        else {
-            return querySnapshot.docs.map(doc => doc.data());
+        } else {
+            return data;
         }
     } else {
         return null;
     }
 }
+
 
 export async function getUsersWithActiveSession(getProfilePicture = false) {
     try {

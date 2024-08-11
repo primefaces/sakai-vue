@@ -108,6 +108,11 @@ const announcements = ref([
 ])
 
 const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()]);
+
+const isZoomLink = (location) => {
+    const zoomRegex = /https.*zoom/;
+    return zoomRegex.test(location);
+}
 </script>
 
 <template>
@@ -219,10 +224,16 @@ const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", 
                         {{ mae.name }}
                     </a>
                     <div class="absolute bottom-0 w-full">
-                        <p v-if="mae.activeSession.location"
-                           class="truncate"
-                           style="max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                            {{ mae.activeSession.location }}
+                        <p v-if="mae.activeSession.location" class="truncate" 
+                            style="max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                            <template v-if="isZoomLink(mae.activeSession.location)">
+                                <a :href="mae.activeSession.location" target="_blank" rel="noopener noreferrer">
+                                    Liga de zoom
+                                </a>
+                            </template>
+                            <template v-else>
+                                {{ mae.activeSession.location }}
+                            </template>
                         </p>
                         <Tag v-if="mae.weekSchedule[currentDay]" class="text-md w-6rem" severity="success" :value="`${mae.weekSchedule[currentDay][0]['start']} - ${mae.weekSchedule[currentDay][0]['end']}`" />
                     </div>

@@ -84,6 +84,19 @@ export async function getMaes(getProfilePicture = false) {
 }
 
 
+/**
+ * Retrieve users with an active session within the last 5 hours.
+ *
+ * This function queries the "users" collection in Firestore, filtering for users who have an 
+ * 'activeSession' object that was started within the last 5 hours. If `getProfilePicture` is set 
+ * to true, the function will also fetch the user's profile picture URL using the `getUserProfilePicture` 
+ * function.
+ *
+ * @param {boolean} getProfilePicture - (Optional) Flag to determine whether to fetch profile pictures for users.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of user data objects with their active session 
+ * information. If `getProfilePicture` is true, each object will also include a `profilePictureUrl` field.
+ * @throws Will log an error if there is an issue with the Firestore query or data processing.
+ */
 export async function getUsersWithActiveSession(getProfilePicture = false) {
     try {
         // Get a reference to the users collection

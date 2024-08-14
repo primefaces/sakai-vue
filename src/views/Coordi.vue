@@ -1,10 +1,9 @@
-
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { getTodaysMae } from '@/firebase/db/users';
+import { getTodaysMae, getUser, incrementTotalTime } from '@/firebase/db/users';
 import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
-import { getUser, incrementTotalTime } from '../firebase/db/users';
+import { getUsersWithActiveSession } from '@/firebase/db/users';
 
 const toast = useToast();
 
@@ -24,11 +23,9 @@ const options = ref([
 watch(report, (newValue, oldValue) => {
     if (oldValue) {
         const maeInfo = maes.value.find(mae => mae['uid'] === selectedId.value);
-        updateReport(maeInfo, newValue[selectedId.value])
+        updateReport(maeInfo, newValue[selectedId.value]);
     }
-  },
-  { deep: true }
-)
+}, { deep: true });
 
 const showDialogRegister = ref(false);
 
@@ -36,17 +33,17 @@ const maeId = ref('');
 const hours = ref(0);
 const date = ref(new Date());
 const maeInfo = ref(null);
+const activeMAEs = ref([]);
 
-watch(maeId, async (newValue, oldValue) => {
-    if (newValue.length == 9) {
-        maeInfo.value = await getUser(maeId.value.toLocaleLowerCase().trim());
+watch(maeId, async (newValue) => {
+    if (newValue.length === 9) {
+        maeInfo.value = await getUser(maeId.value.toLowerCase().trim());
     }
-})
+});
 
 const addTime = async () => {
-
     try {
-        await incrementTotalTime(maeId.value.toLocaleLowerCase().trim(), hours.value);
+        await incrementTotalTime(maeId.value.toLowerCase().trim(), hours.value);
         toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Se agregó el tiempo al MAE seleccionado', life: 3000 });
         maeInfo.value = null;
         maeId.value = '';
@@ -56,36 +53,30 @@ const addTime = async () => {
     }
 
     showDialogRegister.value = false;
-}
+};
 
 const addReport = async () => {
     try {
-        addRegister(maeInfo.value, date.value);
-        toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Se generó el registro MAE seleccionado', life: 3000 });
+        await addRegister(maeInfo.value, date.value);
+        toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Se generó el registro del MAE seleccionado', life: 3000 });
     } catch (error) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios', life: 5000 });
     }
     showDialogRegister.value = false;
-}
+};
 
-onMounted(() => {
-
-    getTodaysMae()
-        .then((data) => {
-            maes.value = data;
-            
-        })
-        .finally(() => {
-            getTodaysReport()
-                .then((data) => {
-                    report.value = data;
-                    loading.value = false;
-                })
-        })
+onMounted(async () => {
+    try {
+        activeMAEs.value = await getUsersWithActiveSession(); // Obteniendo los MAEs activos
+        maes.value = await getTodaysMae(); // Obteniendo los MAEs del día de hoy
+        report.value = await getTodaysReport(); // Obteniendo el reporte del día de hoy
+    } catch (error) {
+        console.error('Error al cargar datos:', error);
+    } finally {
+        loading.value = false;
+    }
 });
-
 </script>
-
 
 <template>
     <div class="sm:flex sm:justify-content-between mb-2 sm:mb-5">
@@ -94,15 +85,13 @@ onMounted(() => {
     </div>
     <div class="card mb-0">
 
-    <!-- TODO: Adjust row sizing -->
-    <!-- TODO: implement responsive resizing -->
         <DataTable :value="maes" paginator :rows="50" dataKey="id" 
             :loading="loading" class="border-round-xl"
             responsiveLayout="stack" breakpoint="640px"
             >
-            <!-- @rowSelect="onRowSelect" selectionMode="single" -->
-            <template #empty>No se encontraron Maes. </template>
+            <template #empty>No se encontraron Maes.</template>
             <template #loading>Cargando información. Por favor espera.</template>
+
             <Column header="Matricula" field="uid" style="min-width: 15rem">
                 <template #body="{ data }">
                     <a :href="`#/mae/${data.uid}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.uid }}</a>
@@ -115,21 +104,41 @@ onMounted(() => {
                 </template>
             </Column>
 
-            <Column header="Horario"
-                style="min-width: 6rem">
+            <Column header="Horario" style="min-width: 6rem">
                 <template #body="{ data }">
-                    <!-- TODO: ask for hour display implementation -->
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
                         <Tag v-for="(value, key) in data.weekSchedule[currentDay]" class="text-md mx-auto"
-                         :value="`${value.start} - ${value.end} `"
-                           rounded style="min-width: 3rem"/>
+                            :value="`${value.start} - ${value.end} `"
+                            rounded style="min-width: 6rem"/>
                     </div>
+                </template>
+            </Column>
+
+            <!-- Nueva columna para mostrar si el MAE está activo -->
+            <Column header="Estado" style="min-width: 6rem">
+                <template #body="{ data }">
+                    <span :class="{'status-dot': true, 'active': activeMAEs.some(mae => mae.uid === data.uid), 'inactive': !activeMAEs.some(mae => mae.uid === data.uid)}"></span>
                 </template>
             </Column>
 
             <Column header="Asistencia" style="min-width:8rem">
                 <template #body="{ data }">
-                    <Dropdown @click="selectedId = data.uid" v-if="report" v-model="report[data.uid]" :options="options" optionLabel="name" optionValue="code" placeholder="Selecciona asistencia" class="md:w-full max-w-1" />
+                    <Dropdown 
+                        @click="selectedId = data.uid" 
+                        v-if="report" 
+                        v-model="report[data.uid]" 
+                        :options="options" 
+                        optionLabel="name" 
+                        optionValue="code" 
+                        placeholder="Selecciona asistencia" 
+                        class="md:w-full max-w-1"
+                        :class="{
+                            'attendance-green': report[data.uid] === 'A',
+                            'attendance-red': report[data.uid] === 'F',
+                            'attendance-yellow': report[data.uid] === 'R',
+                            'attendance-blue': report[data.uid] === 'J'
+                        }"
+                    />
                 </template>
             </Column>
         </DataTable>
@@ -159,3 +168,40 @@ onMounted(() => {
         </div>
     </Dialog>
 </template>
+
+<style>
+.attendance-green {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.attendance-red {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.attendance-yellow {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.attendance-blue {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.active {
+    background-color: #28a745; /* Verde */
+}
+
+.inactive {
+    background-color: #6c757d; /* Gris */
+}
+</style>

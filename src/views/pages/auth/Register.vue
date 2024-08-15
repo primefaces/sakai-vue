@@ -217,6 +217,9 @@ const saveUserToDatabase = (userInfo) => {
                                     <li><i class="pi font-bold"
                                             :class="/[`!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?~]/.test(password1) ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
                                         Se requiere al menos un carácter especial (!, @, #, $, etc.).</li>
+                                        <li><i class="pi font-bold"
+                                            :class="/[a-z]/.test(password1) ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
+                                        El correo debe ser diferente al institucional.</li>
                                 </ul>
                             </template>
                         </Password>
@@ -247,6 +250,9 @@ const saveUserToDatabase = (userInfo) => {
                                     <li><i class="pi font-bold"
                                             :class="/[`!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?~]/.test(password2) ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
                                         Se requiere al menos un carácter especial (!, @, #, $, etc.).</li>
+                                        <li><i class="pi font-bold"
+                                            :class="/[a-z]/.test(password1) ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
+                                        El correo debe ser diferente al institucional.</li>
                                 </ul>
                             </template>
                         </Password>

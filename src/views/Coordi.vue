@@ -92,15 +92,21 @@ onMounted(async () => {
             <template #empty>No se encontraron Maes.</template>
             <template #loading>Cargando información. Por favor espera.</template>
 
-            <Column header="Matricula" field="uid" style="min-width: 15rem">
+            <Column header="Matricula" field="uid" style="min-width: 8rem">
                 <template #body="{ data }">
                     <a :href="`#/mae/${data.uid}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.uid }}</a>
                 </template>
             </Column>
 
-            <Column header="Nombre" field="name" style="min-width: 15rem">
+            <Column header="Nombre" field="name" style="min-width: 10rem">
                 <template #body="{ data }">
                     <p class="text-lg font-semibold">{{ data.name }}</p>
+                </template>
+            </Column>
+
+            <Column header="Carrera" field="name" style="min-width: 5rem">
+                <template #body="{ data }">
+                    <p class="text-lg font-semibold">{{ data.career }}</p>
                 </template>
             </Column>
 

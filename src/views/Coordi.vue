@@ -81,7 +81,7 @@ onMounted(async () => {
 <template>
     <div class="sm:flex sm:justify-content-between mb-2 sm:mb-5">
         <h1 class="text-black text-6xl font-bold text-center m-0 sm:text-left">Coordinador</h1>
-        <Button @click="showDialogRegister = true" label="Crear registro" icon="pi pi-pencil" size="large" class="max-h-full w-full sm:w-fit" />
+        <Button @click="showDialogRegister = true" label="Agregar horas" icon="pi pi-pencil" size="large" class="max-h-full w-full sm:w-fit" />
     </div>
     <div class="card mb-0">
 

@@ -354,7 +354,7 @@ const stopSession = async () => {
     <Column field="area" header="Area"></Column>
     <Column field="top" header="Top">
       <template #body="slotProps">
-        <i v-if="slotProps.data.top" class="pi pi-star-fill" style="color: gold;"></i>
+         <i v-if="slotProps.data.top" class="pi pi-star-fill" style="color: gold;"></i>
       </template>
     </Column>
   </DataTable>

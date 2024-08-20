@@ -205,10 +205,18 @@ const isZoomLink = (location) => {
         <div class="p-0 w-full h-full border-round-xl bg-white shadow-1 hover:shadow-3 transition-duration-300 transition-ease-out">
             <div class="flex border-round-top-xl bg-primary">
                 <div class="pl-4 p-2">
-                    <p class="text-2xl font-semibold uppercase">{{ mae.uid }}</p>
+                    <p class="text-2xl font-semibold uppercase">{{ mae.career === 'ADMIN' ? mae.career : mae.uid }}</p>
                 </div>
                 <div class="ml-auto pr-4 p-2">
-                    <p class="text-2xl font-semibold text-end uppercase">{{ mae.career }}</p>
+                    <p class="text-2xl font-semibold text-end uppercase">
+                        <span v-if="mae.career === 'ADMIN'" class="flex items-center">
+                            <i class="pi pi-star-fill text-yellow-500 text-3xl pt-1"></i>
+                        
+                        </span>
+                        <span v-else>
+                            {{ mae.career }}
+                        </span>
+                    </p>
                 </div>
             </div>
 
@@ -217,10 +225,9 @@ const isZoomLink = (location) => {
                     class="border-circle h-6rem w-6rem">
                 <Skeleton v-else shape="circle" size="5rem"></Skeleton>
                 <div class="relative w-full">
-                    <!-- Contenedor del texto con manejo de desbordamiento -->
                     <a :href="`/#/mae/${mae.uid}`"
                         class="font-semibold text-xl text-black-alpha-90 hover:underline hover:text-primary truncate"
-                        style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                        style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                         {{ mae.name }}
                     </a>
                     <div class="absolute bottom-0 w-full">

@@ -385,7 +385,7 @@ const stopSession = async () => {
 
   <Dialog v-model:visible="showDialogSession" modal header="Iniciar sesión" class="md:w-4">
     <label for="location">Por favor indica donde te encuentras</label>
-    <InputText id="email" v-model="location" placeholder="Biblioteca piso 3" class="w-full mb-4" />
+    <InputText id="text" v-model="location" placeholder="Biblioteca piso 3" class="w-full mb-4" />
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogSession = false"></Button>
       <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>

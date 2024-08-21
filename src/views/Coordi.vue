@@ -127,8 +127,8 @@ const getSubjectColor = (area) => {
 
             <Column header="Carrera" field="name" style="min-width: 5rem">
                 <template #body="{ data }">
-                    <div :class="`flex flex-wrap justify-content-evenly column-gap-2 row-gap-2 ${getSubjectColor(data.area)}`">
-                        <p class="text-lg p-1 mx-auto text-white md:text-md text-xs text-center w-full md:w-fi">
+                    <div :class="`flex rounded-full  ${getSubjectColor(data.area)}`">
+                        <p class="text-lg p-1 mx-auto text-white md:text-md text-xs text-center w-full md:w-fi rounded-full">
                             {{ data.career }}
                         </p>
                     </div>
@@ -145,10 +145,11 @@ const getSubjectColor = (area) => {
                 </template>
             </Column>
 
-            <!-- Nueva columna para mostrar si el MAE está activo -->
-            <Column header="Estado" style="min-width: 6rem">
-                <template #body="{ data }">
-                    <span :class="{'status-dot': true, 'active': activeMAEs.some(mae => mae.uid === data.uid), 'inactive': !activeMAEs.some(mae => mae.uid === data.uid)}"></span>
+            <Column header="Estado" style="min-width: 6rem; text-align: center;">
+                <template #body="{ data }">            
+                    <span :class="{'status-dot': true, 
+                    'active': activeMAEs.some(mae => mae.uid === data.uid),
+                     'inactive': !activeMAEs.some(mae => mae.uid === data.uid) }"></span>                   
                 </template>
             </Column>
 

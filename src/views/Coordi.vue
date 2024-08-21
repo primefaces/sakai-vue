@@ -76,6 +76,27 @@ onMounted(async () => {
         loading.value = false;
     }
 });
+
+const getSubjectColor = (area) => {
+    console.log(area)
+    switch (area) {
+        case 'Ingeniería y Ciencias':
+            return 'bg-cyan-600';
+        case 'Negocios':
+            return 'bg-blue-600';
+        case 'Salud':
+            return 'bg-teal-600';
+        case 'Derecho, Economía y Relaciones Internacionales':
+            return 'bg-red-600';
+        case 'Ambiente Construido':
+            return 'bg-green-600';
+        case 'Estudios Creativos':
+            return 'bg-purple-600';
+        default:
+            return 'bg-yellow-600';
+    }
+}
+
 </script>
 
 <template>
@@ -106,7 +127,11 @@ onMounted(async () => {
 
             <Column header="Carrera" field="name" style="min-width: 5rem">
                 <template #body="{ data }">
-                    <p class="text-lg font-semibold">{{ data.career }}</p>
+                    <div :class="`flex rounded-full  ${getSubjectColor(data.area)}`">
+                        <p class="text-lg p-1 mx-auto text-white md:text-md text-xs text-center w-full md:w-fi rounded-full">
+                            {{ data.career }}
+                        </p>
+                    </div>
                 </template>
             </Column>
 
@@ -120,10 +145,11 @@ onMounted(async () => {
                 </template>
             </Column>
 
-            <!-- Nueva columna para mostrar si el MAE está activo -->
-            <Column header="Estado" style="min-width: 6rem">
-                <template #body="{ data }">
-                    <span :class="{'status-dot': true, 'active': activeMAEs.some(mae => mae.uid === data.uid), 'inactive': !activeMAEs.some(mae => mae.uid === data.uid)}"></span>
+            <Column header="Estado" style="min-width: 6rem; text-align: center;">
+                <template #body="{ data }">            
+                    <span :class="{'status-dot': true, 
+                    'active': activeMAEs.some(mae => mae.uid === data.uid),
+                     'inactive': !activeMAEs.some(mae => mae.uid === data.uid) }"></span>                   
                 </template>
             </Column>
 

@@ -172,7 +172,7 @@ const saveAsesoria = async () => {
 }
 
 const showDialogSession = ref(false);
-const location = ref('')
+const location = ref('Biblioteca Piso 3')
 
 const startSession = async () => {
   // Crea field de activeSession con id, location, peerInfo, startTime, status
@@ -385,7 +385,7 @@ const stopSession = async () => {
 
   <Dialog v-model:visible="showDialogSession" modal header="Iniciar sesión" class="md:w-4">
     <label for="location">Por favor indica donde te encuentras</label>
-    <InputText id="text" v-model="location" placeholder="Biblioteca piso 3" class="w-full mb-4" />
+    <InputText id="text" v-model="location" placeholder="Biblioteca Piso 3" class="w-full mb-4"/>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogSession = false"></Button>
       <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>

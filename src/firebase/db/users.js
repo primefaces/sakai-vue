@@ -11,7 +11,7 @@ import {
     updateDoc,
     serverTimestamp,
     deleteField,
-    increment
+    increment,
 } from 'firebase/firestore';
 import { getUserProfilePicture } from "../img/users";
 
@@ -276,4 +276,20 @@ export async function incrementTotalTime(userId, time) {
     await updateDoc(userRef, {
         totalTime: increment(time*60)
     });
+}
+
+
+export async function updateUserProfilePicture(userId, photoURL) {
+    try {
+        const userRef = doc(firestoreDB, 'users', userId);
+        console.log(userId)
+        // Actualizar el documento con la nueva URL de la foto
+        await updateDoc(userRef, {
+            photoURL: photoURL
+        });
+        
+    } catch (error) {
+        console.error('Error updating user profile picture: ', error);
+        throw error;
+    }
 }

@@ -1,11 +1,13 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, stopActiveSession } from '../firebase/db/users';
+import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
+  stopActiveSession,updateUserProfilePicture} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
+import { uploadFile } from '../firebase/img/users';
 
 const toast = useToast();
 const route = useRoute();
@@ -21,6 +23,9 @@ const subjects = ref([]);
 
 const newSchedule = ref({});
 
+//Imagen a actualizar
+const showDialogUpload = ref(false); 
+const selectedFile = ref(null); 
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
@@ -41,6 +46,29 @@ watch(route, async (newroute, oldroute) => {
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
 })
 
+
+// Actualizar foto 
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    selectedFile.value = file;
+  }
+};
+
+const uploadProfilePicture = async () => {
+  if (!selectedFile.value) return;
+
+  try {
+    const url = await uploadFile(selectedFile.value,userInfo.value.email);
+    await updateUserProfilePicture(userInfo.value.uid, url); // Actualiza la URL de la foto en la base de datos
+    maeInfo.value = await getUser(route.params.id); // Refresca la información del usuario
+    toast.add({ severity: 'success', summary: 'Foto actualizada', life: 3000 });
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar la foto de perfil' });
+  } finally {
+    showDialogUpload.value = false; // Cierra el diálogo
+  }
+};
 const showMoreTags = ref(false);
 
 const filteredSubjects = computed(() => {
@@ -226,6 +254,7 @@ const stopSession = async () => {
       <div class="sm:flex sm:flex-1 justify-center w-full">
         <div class="flex">
           <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-16rem w-16rem sm:mr-5 mx-auto">
+          <Button icon="pi pi-pencil" class="p-0 m-0 ml-2" @click="showDialogUpload = true" />
         </div>
         <div class="mb-2 sm:mb-0">
           <p class="text-3xl font-bold text-center sm:text-left"> {{ maeInfo.name }} </p>
@@ -391,6 +420,14 @@ const stopSession = async () => {
       <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>
     </div>
   </Dialog>
+
+  <Dialog v-model:visible="showDialogUpload" modal header="Cambiar foto de perfil" class="md:w-4">
+      <Input type="file" @change="handleFileChange" />
+      <div class="flex justify-content-end gap-2 mt-2">
+        <Button type="button" label="Cerrar" severity="secondary" @click="showDialogUpload = false"></Button>
+        <Button type="button" label="Subir" :disabled="!selectedFile" @click="uploadProfilePicture"></Button>
+      </div>
+    </Dialog>
 </template>
 
 <style scoped>

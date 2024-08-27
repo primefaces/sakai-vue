@@ -1,11 +1,13 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, stopActiveSession } from '../firebase/db/users';
+import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
+  stopActiveSession,updateUserProfilePicture} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
+import { uploadFile } from '../firebase/img/users';
 
 const toast = useToast();
 const route = useRoute();
@@ -21,6 +23,9 @@ const subjects = ref([]);
 
 const newSchedule = ref({});
 
+//Imagen a actualizar
+const showDialogUpload = ref(false); 
+const selectedFile = ref(null); 
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
@@ -40,6 +45,25 @@ watch(route, async (newroute, oldroute) => {
   selectedSubjects.value = maeInfo.value.subjects;
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
 })
+
+
+
+const uploadProfilePicture = async () => {
+  if (!selectedFile.value) return;
+
+  try {
+    const url = await uploadFile(selectedFile.value, userInfo.value.email);
+    await updateUserProfilePicture(userInfo.value.uid, url); 
+    maeInfo.value = await getUser(route.params.id); 
+    toast.add({ severity: 'success', summary: 'Foto actualizada', life: 3000 });
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar la foto de perfil' });
+  } finally {
+    showDialogUpload.value = false; 
+    selectedFile.value = null; 
+    previewUrl.value = null; 
+  }
+};
 
 const showMoreTags = ref(false);
 
@@ -209,6 +233,44 @@ const stopSession = async () => {
 }
 
 
+
+const previewUrl = ref(null);
+
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file && validateFile(file)) {
+    selectedFile.value = file;
+    previewUrl.value = URL.createObjectURL(file);
+  } else {
+    showError();
+  }
+};
+
+const handleDrop = (event) => {
+  const file = event.dataTransfer.files[0];
+  if (file && validateFile(file)) {
+    selectedFile.value = file;
+    previewUrl.value = URL.createObjectURL(file);
+  } else {
+    showError();
+  }
+};
+
+const showError = () => {
+  toast.add({ severity: 'error', summary: 'Error', detail: 'Solo puedes subir archivos JPG o PNG', life: 3000 });
+  
+};
+
+const triggerFileInput = () => {
+  document.querySelector('input[type="file"]').click();
+};
+
+const validateFile = (file) => {
+  const validTypes = ['image/jpeg', 'image/png'];
+  return validTypes.includes(file.type);
+}
+
 </script>
 
 <template>
@@ -224,9 +286,13 @@ const stopSession = async () => {
   <div v-if="maeInfo && userInfo" class="card mb-0 w-full">
     <div class="sm:flex">
       <div class="sm:flex sm:flex-1 justify-center w-full">
-        <div class="flex">
-          <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-16rem w-16rem sm:mr-5 mx-auto">
+        <div class="relative flex align-items-center justify-content-center mr-4">
+            <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-16rem w-16rem">
+            <div class="absolute bottom-0 right-0 p-3">             
+                    <Button icon="pi pi-pencil"  class="border-3 border-white" rounded @click="showDialogUpload = true" />     
+            </div>
         </div>
+        
         <div class="mb-2 sm:mb-0">
           <p class="text-3xl font-bold text-center sm:text-left"> {{ maeInfo.name }} </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>
@@ -391,6 +457,29 @@ const stopSession = async () => {
       <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>
     </div>
   </Dialog>
+
+  <Dialog v-model:visible="showDialogUpload" modal header="Cambiar foto de perfil" class="md:w-4">
+    <!-- Vista previa de la imagen -->
+    <div v-if="previewUrl" class="mb-3 flex justify-content-center">
+      <img :src="previewUrl" alt="Vista previa" class="border-circle h-16rem w-16rem">
+    </div>
+
+    <!-- Área de arrastrar y soltar y seleccionar archivo -->
+    <div
+      class="border-2 border-dashed p-3 text-center cursor-pointer"
+      @dragover.prevent
+      @drop.prevent="handleDrop"
+      @click="triggerFileInput"
+    >
+      <p class="mb-3">Arrastra y suelta tu imagen aquí, o haz clic para seleccionar un archivo</p>
+      <input type="file" ref="fileInput" @change="handleFileChange" accept=".jpg, .jpeg, .png" class="hidden" />
+    </div>
+
+    <div class="flex justify-content-end gap-2 mt-2">
+      <Button type="button" label="Cerrar" severity="secondary" @click="showDialogUpload = false"></Button>
+      <Button type="button" label="Subir" :disabled="!selectedFile" @click="uploadProfilePicture"></Button>
+    </div>
+  </Dialog>
 </template>
 
 <style scoped>
@@ -403,5 +492,9 @@ const stopSession = async () => {
 /* Vertical spacing utility class */
 .space-y > * {
   margin-bottom: 1rem; 
+}
+
+.border-round-lg {
+  border-radius: 0.75rem;
 }
 </style>

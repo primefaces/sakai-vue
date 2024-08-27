@@ -12,7 +12,7 @@ import { uploadFile } from '../firebase/img/users';
 const toast = useToast();
 const route = useRoute();
 const router = useRouter();
-
+const userId = ref(route.path.split('/').pop());
 const maeInfo = ref(null);
 const userInfo = ref(null);
 
@@ -288,8 +288,8 @@ const validateFile = (file) => {
       <div class="sm:flex sm:flex-1 justify-center w-full">
         <div class="relative flex align-items-center justify-content-center mr-4">
             <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-16rem w-16rem">
-            <div class="absolute bottom-0 right-0 p-3">             
-                    <Button icon="pi pi-pencil"  class="border-3 border-white" rounded @click="showDialogUpload = true" />     
+            <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
+                <Button icon="pi pi-pencil"  class="border-3 border-white" rounded @click="showDialogUpload = true" />
             </div>
         </div>
         
@@ -323,7 +323,7 @@ const validateFile = (file) => {
     </div>
     <div class="flex flex-wrap">
       <!-- Mostrar las primeras dos filas de etiquetas -->
-        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-2 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
+        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
           {{ subject.name }}
         </Tag>
         <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 

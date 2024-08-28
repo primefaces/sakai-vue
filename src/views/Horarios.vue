@@ -20,7 +20,7 @@ const filters = ref({
 });
 
 const horario = ref([
-    "Lunes", "Martes", "Miercoles", "Jueves", "Viernes"
+    "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
 ]);
 
 const statuses = ref(['Remota', 'Presencial', 'Híbrida']);

@@ -205,7 +205,7 @@ const isZoomLink = (location) => {
         <div class="p-0 w-full h-full border-round-xl bg-white shadow-1 hover:shadow-3 transition-duration-300 transition-ease-out">
             <div class="flex border-round-top-xl bg-primary">
                 <div class="pl-4 p-2">
-                    <p class="text-2xl font-semibold uppercase">{{ mae.career === 'ADMIN' ? mae.career : mae.uid }}</p>
+                    <p class="text-2xl font-semibold uppercase">{{ mae.career === 'ADMIN' ? mae.career : mae.role }}</p>
                 </div>
                 <div class="ml-auto pr-4 p-2">
                     <p class="text-2xl font-semibold text-end uppercase">

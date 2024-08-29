@@ -192,11 +192,11 @@ const saveUserToDatabase = (userInfo) => {
                             optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false"
                             class="w-12 mb-4" />
 
-                        <label for="password1" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
+                        <label for="password1" class="block text-900 font-medium text-xl mb-2">Contraseña diferente a la institucional</label>
                         <Password id="password1" v-model="password1" placeholder="Contraseña" :toggleMask="true"
                             class="w-full mb-4" inputClass="w-full" :inputStyle="{ padding: '1rem' }">
                             <template #header>
-                                <h6>Introduce tu contraseña</h6>
+                                <h6>Introduce tu contraseña diferente a la institucional</h6>
                             </template>
                             <template #footer>
                                 <Divider />
@@ -217,9 +217,7 @@ const saveUserToDatabase = (userInfo) => {
                                     <li><i class="pi font-bold"
                                             :class="/[`!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?~]/.test(password1) ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
                                         Se requiere al menos un carácter especial (!, @, #, $, etc.).</li>
-                                        <li><i class="pi font-bold"
-                                            :class="/[a-z]/.test(password1) ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
-                                        El contraseña debe ser diferente al institucional.</li>
+                                        
                                 </ul>
                             </template>
                         </Password>
@@ -250,9 +248,7 @@ const saveUserToDatabase = (userInfo) => {
                                     <li><i class="pi font-bold"
                                             :class="/[`!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?~]/.test(password2) ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
                                         Se requiere al menos un carácter especial (!, @, #, $, etc.).</li>
-                                        <li><i class="pi font-bold"
-                                            :class="/[a-z]/.test(password1) ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
-                                        El correo debe ser diferente al institucional.</li>
+                                        
                                 </ul>
                             </template>
                         </Password>

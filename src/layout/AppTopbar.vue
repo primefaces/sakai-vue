@@ -25,6 +25,7 @@ const logoUrl = computed(() => {
 const onTopBarMenuButton = () => {
     topbarMenuActive.value = !topbarMenuActive.value;
 };
+
 const onSettingsClick = () => {
     topbarMenuActive.value = false;
     router.push('/documentation');
@@ -73,6 +74,7 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
+
 </script>
 
 <template>
@@ -89,8 +91,9 @@ const isOutsideClicked = (event) => {
         <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
             <i class="pi pi-ellipsis-v"></i>
         </button>
-
+       
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
+            <!-- TODO: Implement notifition -->
             <!-- <button @click="onSettingsClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>

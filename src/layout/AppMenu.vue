@@ -30,16 +30,6 @@ onMounted(async () => {
     //     })
     // }
 
-    if (['mae', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
-        model.value.push({
-            label: 'MAE',
-            items: [
-                { label: 'Mi perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
-                { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
-            ]
-        })
-    }
-
     if (['admin'].includes(role)) {
         model.value.push({
             label: 'Administrador',
@@ -50,6 +40,27 @@ onMounted(async () => {
             ]
         })
     }
+    
+    if (['mae', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
+        model.value.push({
+            label: 'MAE',
+            items: [
+                { label: 'Mi perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
+                
+            ]
+        })
+    }
+
+    if (['coordi', 'subjectCoordi', 'admin'].includes(role)) {
+        model.value.push({
+            label: 'Coordi',
+            items: [
+                { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
+            ]
+        })
+    }
+
+    
 
     model.value.push({
         label: 'Maeteca',
@@ -62,7 +73,7 @@ onMounted(async () => {
 
 <template>
     <ul class="layout-menu">
-        <template v-for="(item, i) in model" :key="item">
+        <template v-for="(item, i) in model" :key="item.label">
             <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
         </template>

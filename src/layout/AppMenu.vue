@@ -8,7 +8,9 @@ const model = ref([
     {
         label: 'Estudiante',
         items: [
-            { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
+            
+            { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/' },
+            { label: 'Maes activos', icon: 'pi pi-fw pi-video', to: '/maesactivos' },
             { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
             // { label: 'MAE', icon: 'pi pi-fw pi-user', to: '/mae' },
             // { label: 'Dashboard (Template)', icon: 'pi pi-fw pi-home', to: '/dashboard' }

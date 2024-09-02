@@ -14,9 +14,14 @@ const router = createRouter({
             },
             children: [
                 {
-                    path: '/inicio',
+                    path: '/',
                     name: 'inicio',
                     component: () => import('@/views/Inicio.vue')
+                },
+                {
+                    path: '/maesactivos',
+                    name: 'maesactivos',
+                    component: () => import('@/views/MaesActivos.vue')
                 },
                 {
                     path: '/horarios',

@@ -14,14 +14,24 @@ const router = createRouter({
             },
             children: [
                 {
-                    path: '/inicio',
+                    path: '/',
                     name: 'inicio',
                     component: () => import('@/views/Inicio.vue')
+                },
+                {
+                    path: '/maesactivos',
+                    name: 'maesactivos',
+                    component: () => import('@/views/MaesActivos.vue')
                 },
                 {
                     path: '/horarios',
                     name: 'horarios',
                     component: () => import('@/views/Horarios.vue')
+                },
+                {
+                    path: '/asesoriasgrupales',
+                    name: 'asesoriasgrupales',
+                    component: () => import('@/views/AsesoriasGrupales.vue')
                 },
                 {
                     path: '/mae/:id',

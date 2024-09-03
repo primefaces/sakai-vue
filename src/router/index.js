@@ -10,23 +10,18 @@ const router = createRouter({
             path: '/',
             component: AppLayout,
             meta: {
-                requiresAuth: true,
+                requiresAuth: true
             },
             children: [
                 {
-                    path: '/inicio',
+                    path: '/',
                     name: 'inicio',
                     component: () => import('@/views/Inicio.vue')
                 },
                 {
-                    path: '/admin',
-                    name: 'admin',
-                    component: () => import('@/views/Admin.vue')
-                },
-                {
-                    path: '/coordi',
-                    name: 'coordi',
-                    component: () => import('@/views/Coordi.vue')
+                    path: '/maesactivos',
+                    name: 'maesactivos',
+                    component: () => import('@/views/MaesActivos.vue')
                 },
                 {
                     path: '/horarios',
@@ -34,133 +29,63 @@ const router = createRouter({
                     component: () => import('@/views/Horarios.vue')
                 },
                 {
-                    path: '/dashboard',
-                    name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
+                    path: '/asesoriasgrupales',
+                    name: 'asesoriasgrupales',
+                    component: () => import('@/views/AsesoriasGrupales.vue')
                 },
                 {
-                    path: '/uikit/formlayout',
-                    name: 'formlayout',
-                    component: () => import('@/views/uikit/FormLayout.vue')
+                    path: '/mae/:id',
+                    name: 'perfil',
+                    component: () => import('@/views/PerfilMAE.vue')
                 },
                 {
-                    path: '/uikit/input',
-                    name: 'input',
-                    component: () => import('@/views/uikit/Input.vue')
+                    path: '/biblioteca',
+                    name: 'biblioteca',
+                    component: () => import('@/views/Biblioteca.vue')
                 },
                 {
-                    path: '/uikit/floatlabel',
-                    name: 'floatlabel',
-                    component: () => import('@/views/uikit/FloatLabel.vue')
+                    path: '/profile',
+                    name: 'maeprofile',
+                    component: () => import('@/views/ConfiguracionMAE.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae']
+                    }
                 },
                 {
-                    path: '/uikit/invalidstate',
-                    name: 'invalidstate',
-                    component: () => import('@/views/uikit/InvalidState.vue')
+                    path: '/coordi',
+                    name: 'coordi',
+                    component: () => import('@/views/Coordi.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi']
+                    }
                 },
                 {
-                    path: '/uikit/button',
-                    name: 'button',
-                    component: () => import('@/views/uikit/Button.vue')
+                    path: '/admin/asesorias',
+                    name: 'adminasesorias',
+                    component: () => import('@/views/AdminAsesorias.vue'),
+                    meta: {
+                        roles: ['admin']
+                    }
                 },
                 {
-                    path: '/uikit/table',
-                    name: 'table',
-                    component: () => import('@/views/uikit/Table.vue')
+                    path: '/admin/usuarios',
+                    name: 'adminusuarios',
+                    component: () => import('@/views/AdminUsers.vue'),
+                    meta: {
+                        roles: ['admin']
+                    }
                 },
                 {
-                    path: '/uikit/list',
-                    name: 'list',
-                    component: () => import('@/views/uikit/List.vue')
+                    path: '/admin/materias',
+                    name: 'adminmaterias',
+                    component: () => import('@/views/AdminSubjects.vue'),
+                    meta: {
+                        roles: ['admin']
+                    }
                 },
-                {
-                    path: '/uikit/tree',
-                    name: 'tree',
-                    component: () => import('@/views/uikit/Tree.vue')
-                },
-                {
-                    path: '/uikit/panel',
-                    name: 'panel',
-                    component: () => import('@/views/uikit/Panels.vue')
-                },
-
-                {
-                    path: '/uikit/overlay',
-                    name: 'overlay',
-                    component: () => import('@/views/uikit/Overlay.vue')
-                },
-                {
-                    path: '/uikit/media',
-                    name: 'media',
-                    component: () => import('@/views/uikit/Media.vue')
-                },
-                {
-                    path: '/uikit/menu',
-                    component: () => import('@/views/uikit/Menu.vue'),
-                    children: [
-                        {
-                            path: '/uikit/menu',
-                            component: () => import('@/views/uikit/menu/PersonalDemo.vue')
-                        },
-                        {
-                            path: '/uikit/menu/seat',
-                            component: () => import('@/views/uikit/menu/SeatDemo.vue')
-                        },
-                        {
-                            path: '/uikit/menu/payment',
-                            component: () => import('@/views/uikit/menu/PaymentDemo.vue')
-                        },
-                        {
-                            path: '/uikit/menu/confirmation',
-                            component: () => import('@/views/uikit/menu/ConfirmationDemo.vue')
-                        }
-                    ]
-                },
-                {
-                    path: '/uikit/message',
-                    name: 'message',
-                    component: () => import('@/views/uikit/Messages.vue')
-                },
-                {
-                    path: '/uikit/file',
-                    name: 'file',
-                    component: () => import('@/views/uikit/File.vue')
-                },
-                {
-                    path: '/uikit/charts',
-                    name: 'charts',
-                    component: () => import('@/views/uikit/Chart.vue')
-                },
-                {
-                    path: '/uikit/misc',
-                    name: 'misc',
-                    component: () => import('@/views/uikit/Misc.vue')
-                },
-                {
-                    path: '/blocks',
-                    name: 'blocks',
-                    component: () => import('@/views/utilities/Blocks.vue')
-                },
-                {
-                    path: '/utilities/icons',
-                    name: 'icons',
-                    component: () => import('@/views/utilities/Icons.vue')
-                },
-                {
-                    path: '/pages/timeline',
-                    name: 'timeline',
-                    component: () => import('@/views/pages/Timeline.vue')
-                },
-                {
-                    path: '/pages/empty',
-                    name: 'empty',
-                    component: () => import('@/views/pages/Empty.vue')
-                },
-                {
-                    path: '/pages/crud',
-                    name: 'crud',
-                    component: () => import('@/views/pages/Crud.vue')
-                },
+                /* 
+                    TEMPLATE
+                */
                 {
                     path: '/documentation',
                     name: 'documentation',
@@ -168,21 +93,30 @@ const router = createRouter({
                 }
             ]
         },
-        {
-            path: '/landing',
-            name: 'landing',
-            component: () => import('@/views/pages/Landing.vue')
-        },
+        // {
+        //     path: '/landing',
+        //     name: 'landing',
+        //     component: () => import('@/views/pages/Landing.vue')
+        // },
         {
             path: '/pages/notfound',
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
-
         {
             path: '/auth/login',
             name: 'login',
             component: () => import('@/views/pages/auth/Login.vue')
+        },
+        {
+            path: '/auth/register',
+            name: 'register',
+            component: () => import('@/views/pages/auth/Register.vue')
+        },
+        {
+            path: '/auth/password-reset',
+            name: 'password-reset',
+            component: () => import('@/views/pages/auth/PasswordReset.vue')
         },
         {
             path: '/auth/access',
@@ -197,7 +131,6 @@ const router = createRouter({
     ]
 });
 
-// NOTE:  Borrar para navegación sin problemas
 router.beforeEach((to, from, next) => {
     if (!to.matched.some((record) => record.meta.requiresAuth)) {
         // Route does not require authentication
@@ -205,17 +138,32 @@ router.beforeEach((to, from, next) => {
     }
 
     const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
         unsubscribe(); // Unsubscribe to avoid memory leaks
 
-        if (user) {
-            // User is signed in
+        if (!user) {
+            // User is not signed in
+            
+            alert("No tienes acceso a esta página. Por favor inicia sesión");
+            return next("/auth/login");
+        }
+
+        // User is signed in
+        const { role } = await getCurrentUser()
+
+        if (!to.meta.roles) {
+            // Route does not require roles
             return next();
         }
 
-        // User is not signed in
-        alert("No tienes acceso a esta página. Por favor inicia sesión");
-        return next("/auth/login");
+        if (to.meta.roles.includes(role)) {
+            // User has roule privilege
+            return next();
+        }
+        else {
+            // User does not have roule privilege
+            alert("No tienes acceso a esta página");
+        }
     });
 });
 

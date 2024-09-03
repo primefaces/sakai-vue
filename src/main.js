@@ -212,6 +212,7 @@ app.component('VirtualScroller', VirtualScroller);
 // Firebase config
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from 'firebase/storage';
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
@@ -227,6 +228,7 @@ const firebaseConfig = {
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const firestoreDB = getFirestore(firebaseApp);
+export const firebaseStorage = getStorage(firebaseApp);
 export const auth = getAuth(firebaseApp);
 
 app.mount('#app');

@@ -1,67 +1,59 @@
 <script setup>
-import Button from 'primevue/button';
+import { ref } from 'vue';
+import { Dialog } from 'primevue/dialog';
+import { Tag } from 'primevue/tag';
+import { Skeleton } from 'primevue/skeleton';
+
 // Props para recibir del padre
-const props = defineProps(['nombre', 'carrera', 'matricula', 'horaInicio', 'horaFin']);
-console.log(props);
+const props = defineProps(['user']);
+
+const checked = ref(null);
+const showDetails = ref(false);
+
+const toggleDetails = () => {
+    showDetails.value = !showDetails.value;
+};
 </script>
 
 <template>
-    <div class="relative sm:w-30% md:w-30% lg:w-30% shrink-0 text-black ml-2 mt-3 mb-3" style="border-radius: 25px; overflow: hidden; border: 1px solid #ccc">
-        <div class="flex" style="background-color: #09144f; border-radius: 25px 25px 0 0">
-            <div class="pl-5 p-2">
-                <p class="text-4xl font-semibold text-white">{{ nombre }}</p>
+    <div @click="toggleDetails" class="w-full p-0 border-round-xl bg-white shadow-1 col-4 cursor-pointer">
+        <div class="flex border-round-top-xl bg-primary">
+            <div class="pl-4 p-2">
+                <p class="text-2xl font-semibold uppercase">{{ user.uid }}</p>
             </div>
             <div class="ml-auto pr-4 p-2">
-                <p class="text-4xl font-semibold text-white text-end">{{ carrera }}</p>
+                <p class="text-2xl font-semibold text-end uppercase">{{ user.career }}</p>
             </div>
         </div>
 
-        <div class="flex mt-5">
-            <div class="flex top-1/2 transform -translate-y-1/2 bg-gray-300 mb-5 ml-4" style="width: 80px; height: 80px; border-radius: 50%; margin-left: 1%"></div>
-            <b class="flex text-4xl text-blue-800" style="padding-left: 8%; padding-right: 20%">{{ matricula }}</b>
-
-            <div class="flex top-1/2 transform -translate-y-1/2 bg-gray-300" style="width: 25px; height: 25px; border-radius: 50%"></div>
-            <div class="flex" style="margin-left: -61.5%; margin-top: 10%">
-                <Button :label="horaInicio" size="large" class="custom-button-style-fin custom-button-left" />
-                <Button :label="horaFin" size="large" class="custom-button-style-fin custom-button-right" />
+        <div class="flex p-3 gap-3">
+            <img v-if="true" src="https://randomuser.me/api/portraits/lego/5.jpg" alt="Foto de perfil" class="border-circle h-5rem w-5rem">
+            <Skeleton v-else shape="circle" size="5rem"></Skeleton>
+            <div class="ellipsis">
+                <p class="font-semibold text-xl">{{ user.name }}</p>
+                <Tag class="text-md" severity="success" :value="`${'11:00'} - ${'13:00'}`" rounded />
             </div>
+            <!-- <Button v-if="checked == null" @click="checked = false" icon="pi pi-check" class="p-button-rounded p-button-success ml-auto" />
+            <Button v-if="checked == false" @click="checked = true" icon="pi pi-check" class="p-button-rounded p-button-warning ml-auto" />
+            <Button v-if="checked == true" @click="checked = null" icon="pi pi-check" class="p-button-rounded p-button-danger ml-auto" /> -->
         </div>
     </div>
+
+    <Dialog :visible="showDetails" @hide="toggleDetails" header="Detalles del Usuario">
+        <p><strong>UID:</strong> {{ user.uid }}</p>
+        <p><strong>Nombre:</strong> {{ user.name }}</p>
+        <p><strong>Carrera:</strong> {{ user.career }}</p>
+        <!-- Aquí puedes agregar más detalles si es necesario -->
+    </Dialog>
 </template>
 
 <style scoped>
-.custom-button-style,
-.custom-button-style-fin {
-    height: 35px;
-    border: 1px solid #b6b6b6;
-    background-color: #e4ffea;
-    color: #718096;
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
-.custom-button-left {
-    border-radius: 25px 0 0 25px;
-}
-
-.custom-button-right {
-    border-radius: 0 25px 25px 0;
-}
-
-.custom-button-style:hover {
-    color: #e4ffea;
-}
-
-.custom-button-style:hover,
-.custom-button-style:active {
-    background-color: #d5eedb;
-}
-
-.custom-button-style-fin:hover {
-    color: #fff;
-}
-
-.custom-button-style-fin:hover,
-.custom-button-style-fin:active {
-    background-color: #4fd06b;
-    border: 1px solid #b6b6b6;
+.cursor-pointer {
+    cursor: pointer;
 }
 </style>

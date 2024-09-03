@@ -25,6 +25,7 @@ const logoUrl = computed(() => {
 const onTopBarMenuButton = () => {
     topbarMenuActive.value = !topbarMenuActive.value;
 };
+
 const onSettingsClick = () => {
     topbarMenuActive.value = false;
     router.push('/documentation');
@@ -73,28 +74,26 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
+
 </script>
 
 <template>
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
-            <img :src="logoUrl" alt="logo" />
-            <span>SAKAI</span>
+            <img src="../../public/layout/images/logo-maes.svg" alt="logo" />
+            <span>Dashboard</span>
         </router-link>
 
-        <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
+        <!-- Este botón solo será visible en pantallas pequeñas -->
+        <button class="p-link layout-menu-button layout-topbar-button block lg:hidden" @click="onMenuToggle()">
             <i class="pi pi-bars"></i>
         </button>
 
         <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
             <i class="pi pi-ellipsis-v"></i>
         </button>
-
+       
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onSettingsClick()" class="p-link layout-topbar-button">
-                <i class="pi pi-cog"></i>
-                <span>Settings</span>
-            </button>
             <button @click="onLogOut()" class="p-link layout-topbar-button">
                 <i class="pi pi-sign-out"></i>
                 <span>Log out</span>
@@ -102,5 +101,8 @@ const isOutsideClicked = (event) => {
         </div>
     </div>
 </template>
+
+<style lang="scss" scoped></style>
+
 
 <style lang="scss" scoped></style>

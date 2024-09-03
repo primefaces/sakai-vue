@@ -43,6 +43,7 @@ watch(
         isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
     }
 );
+
 const itemClick = (event, item) => {
     if (item.disabled) {
         event.preventDefault();
@@ -65,7 +66,12 @@ const itemClick = (event, item) => {
 };
 
 const checkActiveRoute = (item) => {
-    return route.path.includes(item.to);
+    // Verifica si la ruta actual es exactamente '/' y si 'item.to' también es '/'
+    if (route.path === '/' && item.to === '/') {
+        return true;
+    }
+    // Para otras rutas, verifica si 'item.to' está incluido en la ruta actual
+    return item.to && item.to !== '/' && route.path.includes(item.to);
 };
 </script>
 

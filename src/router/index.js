@@ -29,6 +29,11 @@ const router = createRouter({
                     component: () => import('@/views/Horarios.vue')
                 },
                 {
+                    path: '/asesoriasgrupales',
+                    name: 'asesoriasgrupales',
+                    component: () => import('@/views/AsesoriasGrupales.vue')
+                },
+                {
                     path: '/mae/:id',
                     name: 'perfil',
                     component: () => import('@/views/PerfilMAE.vue')

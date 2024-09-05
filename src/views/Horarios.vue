@@ -131,9 +131,9 @@ const toggleSubjects = (mae) => {
             <div class="card p-4 border rounded-lg shadow-md cursor-pointer">
                 <div class="flex flex-column">
                     <span class="flex flex-row">
-                        <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
-                        class="border-circle h-6rem w-6rem">
-                        <Skeleton v-if="loading" shape="circle" size="4rem" class="custom-skeleton mb-2"></Skeleton>
+                        <img v-if="true" :src="mae.profilePictureUrl" alt="Foto de perfil"
+                    class="border-circle h-6rem w-6rem">
+                        <Skeleton v-else shape="circle" size="5rem"></Skeleton>
                         <div class="relative w-full">
                             <a :href="`/#/mae/${mae.uid}`" class="pl-2 font-semibold text-xl text-black-alpha-90 hover:underline hover:text-primary truncate">
                                 {{ mae.name }}

@@ -70,14 +70,11 @@ export async function getMaes(getProfilePicture = false) {
         // Filtrar y ordenar por el campo name en orden alfabético
         data = data.filter(item => item.name).sort((a, b) => a.name.localeCompare(b.name));
 
-        if (getProfilePicture) {
             return Promise.all(data.map(async (item) => {
                 const profilePictureUrl = await getUserProfilePicture(item.email);
                 return { ...item, profilePictureUrl };
             }));
-        } else {
-            return data;
-        }
+        
     } else {
         return null;
     }

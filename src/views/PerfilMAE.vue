@@ -159,18 +159,64 @@ const addTimeSlot = (day, start, end) => {
   }
 }
 
+// Converitir en decimal 
+const timeToDecimal = (time) => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours + minutes / 60;
+};
+
 const saveScheduleChanges = async () => {
-  toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tu horario', life: 3000 });
+  // Validación de horario
+  let  hours = 0
+  for (const day of daysArray) {
+    const scheduleForDay = newSchedule.value[day.en];
+    
+    if (scheduleForDay) {
+      for (const timeSlot of scheduleForDay) {
+        const startTime = timeSlot.start;
+        const endTime = timeSlot.end;
+        
+        if (startTime === endTime) {
+          toast.add({ severity: 'error', summary: 'Error de horario', detail: `La hora de inicio y la hora de fin no pueden ser iguales para el día ${day.es}`, life: 3000 });
+          return;
+        }
+
+        if (startTime > endTime) {
+          toast.add({ severity: 'error', summary: 'Error de horario', detail: `La hora de inicio no puede ser mayor que la hora de fin para el día ${day.es}`, life: 3000 });
+          return;
+        }
+        const start = timeToDecimal(timeSlot.start);
+        const end = timeToDecimal(timeSlot.end);
+        hours = hours + end - start 
+
+      }
+    }
+  }
+
+  if (maeInfo.value.status === "becario" && hours < 5 && maeInfo.value.role !== "admin") {
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 5 horas asignadas en total', life: 3000 });
+    return;
+  }else if ( hours < 3 && maeInfo.value.career.toUpperCase() === "MC" ||  maeInfo.value.career.toUpperCase() === "LBC"
+  ||  maeInfo.value.career.toUpperCase() === "LPS") {
+    toast.add({ severity: 'error', summary: 'Error de horas',detail: 'No puedes tener menos de 3 horas asignadas en total' , life: 3000 }); 
+    return;
+  }
+  else if (maeInfo.value.status === "voluntario" && hours < 1 && maeInfo.value.role !== "admin") {
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de una hora asignada en total', life: 3000 });
+    return;
+  }
+
+  toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tu horario', life: 3000  });
   try {
-   await updateUserSchedule(maeInfo.value.uid, newSchedule.value); 
-   maeInfo.value = await getUser(route.params.id);
-   toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tus materias se guardaron con éxito', life: 3000 });
+    await updateUserSchedule(maeInfo.value.uid, newSchedule.value); 
+    maeInfo.value = await getUser(route.params.id);
+    toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tu horario se guardaron con éxito', life: 3000 });
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios' });
   }
   showDialogHorarios.value = false;  
-  
-}
+};
+
 
 const showDialogAsesoria = ref(false);
 

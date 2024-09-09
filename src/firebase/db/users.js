@@ -293,3 +293,34 @@ export async function updateUserProfilePicture(userId, photoURL) {
         throw error;
     }
 }
+
+/**
+ * Clears the content of the weekSchedule field for all users, but keeps the field as an empty object.
+ *
+ * @returns {Promise<void>} - A promise that resolves when all weekSchedules are cleared.
+ */
+export async function clearAllUsersWeekSchedule() {
+    try {
+        // Get a reference to the "users" collection
+        const usersRef = collection(firestoreDB, "users");
+
+        // Get all user documents from the collection
+        const querySnapshot = await getDocs(usersRef);
+
+        // Iterate through each document and update the weekSchedule field to an empty object
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref; // Reference to the specific user document
+            return updateDoc(userRef, {
+                weekSchedule: {} // Set weekSchedule to an empty object
+            });
+        });
+
+        // Wait for all promises to resolve
+        await Promise.all(promises);
+
+        console.log("Week schedule content has been successfully cleared for all users.");
+    } catch (error) {
+        console.error("Error clearing weekSchedule content for all users: ", error);
+        throw error;
+    }
+}

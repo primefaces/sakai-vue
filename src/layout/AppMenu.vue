@@ -45,7 +45,7 @@ onMounted(async () => {
         })
     }
     
-    if (['mae', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
+    if (['publi','mae', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
         model.value.push({
             label: 'MAE',
             items: [

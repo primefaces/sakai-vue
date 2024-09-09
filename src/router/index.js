@@ -83,6 +83,14 @@ const router = createRouter({
                         roles: ['admin']
                     }
                 },
+                {
+                    path: '/admin/funciones',
+                    name: 'adminfunciones',
+                    component: () => import('@/views/AdminFunciones.vue'),
+                    meta: {
+                        roles: ['admin']
+                    }
+                },
                 /* 
                     TEMPLATE
                 */

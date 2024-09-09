@@ -16,12 +16,13 @@ const confirmDelete = () => {
         acceptClass: 'p-button-danger',
         accept: async () => {
             try {
-                await clearAllUsersWeekSchedule(); // Llama a la función para limpiar weekSchedule
+                await clearAllUsersWeekSchedule(); 
                 toast.add({ severity: 'success', summary: 'Éxito', detail: 'Se ha limpiado el horario de todos los maes.', life: 3000 });
             } catch (error) {
                 console.error("Error al limpiar weekSchedule:", error);
                 toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar limpiar los horarios de los maes.', life: 3000 });
             }
+            
         },
         reject: () => {
             toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });

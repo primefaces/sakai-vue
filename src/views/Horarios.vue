@@ -1,10 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { getMaes } from '@/firebase/db/users';
-
-const router = useRouter();
 
 const maes = ref([]);
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
@@ -114,10 +111,6 @@ const filteredMaes = computed(() => {
     });
 });
 
-const onCardClick = (uid) => {
-    router.push(`/mae/${uid}`);
-}
-
 const toggleSubjects = (mae) => {
     mae.showMoreSubjects = !mae.showMoreSubjects;
 }
@@ -150,7 +143,7 @@ const toggleSubjects = (mae) => {
                     </div>
                     <p class="font-bold text-2xl">Materias</p>
                     <div class="flex flex-wrap">
-                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2"/>
+                        <!-- <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2"/> -->
                         <div v-if="mae.subjects.length > 1">
                             <button @click="toggleSubjects(mae)" class="text-blue-500 mt-2">
                                 {{ mae.showMoreSubjects ? '-' : '+' }} 
@@ -165,6 +158,7 @@ const toggleSubjects = (mae) => {
         </div>
     </div>
 </template>
+
 
 
 

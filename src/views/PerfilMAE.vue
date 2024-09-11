@@ -193,20 +193,23 @@ const saveScheduleChanges = async () => {
       }
     }
   }
+
+  if (maeInfo.value.status === "becario" && hours < 5 && maeInfo.value.role === "mae" || 
+  maeInfo.value.role === "coordi"  && maeInfo.value.career.toUpperCase() !== "MC" || 
+   maeInfo.value.career.toUpperCase() !== "LBC" ||  maeInfo.value.career.toUpperCase() !== "LPS") {
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 5 horas asignadas en total', life: 3000 });
+    return;
+  }else
+  if ( maeInfo.value.status === "becario" && hours < 3 && maeInfo.value.career.toUpperCase() === "MC" ||  maeInfo.value.career.toUpperCase() === "LBC"
+  ||  maeInfo.value.career.toUpperCase() === "LPS") {
+    toast.add({ severity: 'error', summary: 'Error de horas',detail: 'No puedes tener menos de 3 horas asignadas en total' , life: 3000 }); 
+    return;
+  }else 
   if ( maeInfo.value.status === "becario" && hours < 2  && maeInfo.value.role === "publi") {
     toast.add({ severity: 'error', summary: 'Error de horas',detail: 'No puedes tener menos de 2 horas asignadas en total' , life: 3000 }); 
     return;
   }
-  else if ( maeInfo.value.status === "becario" && hours < 3 && maeInfo.value.career.toUpperCase() === "MC" ||  maeInfo.value.career.toUpperCase() === "LBC"
-  ||  maeInfo.value.career.toUpperCase() === "LPS") {
-    toast.add({ severity: 'error', summary: 'Error de horas',detail: 'No puedes tener menos de 3 horas asignadas en total' , life: 3000 }); 
-    return;
-  }
-  else if (maeInfo.value.status === "becario" && hours < 5 && maeInfo.value.role !== "admin") {
-    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 5 horas asignadas en total', life: 3000 });
-    return;
-  }
-  else if (maeInfo.value.status === "voluntario" && hours < 1 && maeInfo.value.role !== "admin") {
+ else if (maeInfo.value.status === "voluntario" && hours < 1 && maeInfo.value.role === "admin" ) {
     toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de una hora asignada en total', life: 3000 });
     return;
   }

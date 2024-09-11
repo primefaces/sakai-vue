@@ -190,47 +190,42 @@ function formatScheduleHours(hours) {
     return result;
 }
 
-
-
 </script>
-
 <template>
     <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
-    <div class="p-grid">
+    <div class="grid">
         <div v-if="loading" class="text-center col-12">Cargando información...</div>
-        <div v-for="mae in filteredMaes" :key="mae.uid" class="p-col-12 p-md-4">
-            <div class="card p-4 border rounded-lg shadow-md cursor-pointer">
+        <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
+        <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-4 lg:col-4 p-2">
+            <div class="card h-full p-4 border rounded-lg shadow-md cursor-pointer flex flex-column justify-between">
                 <div class="flex flex-column">
                     <span class="flex flex-row">
                         <img v-if="true" :src="mae.profilePictureUrl" alt="Foto de perfil"
-                    class="border-circle h-5rem w-5rem">
+                        class="border-circle h-5rem w-5rem">
                         <Skeleton v-else shape="circle" size="5rem"></Skeleton>
-                        <div class="relative w-full  pl-4 pt-3">
+                        <div class="relative w-full pl-4 pt-3">
                             <span class="font-bold pb-2 text-lg">
-
                                 {{ mae.name }}
                             </span>
-                            <div class="flex flex-row  text-lg">
+                            <div class="flex flex-row text-lg">
                                 <p class="pr-2">{{ mae.career }} </p>
                                 <p class="pr-2">|</p>  
                                 <p>{{ mae.uid }}</p>
                             </div>
                         </div>
                     </span>
-                    <!-- Mostrar el día más cercano -->
-                    <!-- Mostrar el día más cercano y las horas -->
+
                     <p class="font-bold text-lg mt-2">Horarios</p>
                     <div class="flex flex-wrap">
                         <Tag :class="getDayColor(closestDay(mae.weekSchedule))" :value="translateClosestDay(mae.weekSchedule)" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
                     </div>
 
-                     <!-- Materias: Mostrar solo una y cuántas quedan -->
                     <p class="font-bold text-lg mt-1">Materias</p>
                     <div class="flex items-center text-md">
-                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2 p-2 px-3 border-round-2xl	"/>
-                        <div v-if="mae.subjects.length > 1" >
-                            <button @click="toggleSubjects(mae)" class="p-2  text-gray-500 " >
-                                {{ subjectCountDisplay(mae.subjects ) }}
+                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                        <div v-if="mae.subjects.length > 1">
+                            <button @click="toggleSubjects(mae)" class="p-2 text-gray-500">
+                                {{ subjectCountDisplay(mae.subjects) }}
                             </button>
                         </div>
                     </div>
@@ -240,17 +235,19 @@ function formatScheduleHours(hours) {
     </div>
 </template>
 
-
-
 <style scoped>
+.card {
+    min-height: 100%; /* Hace que todas las cartas tengan la misma altura */
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+  border: 1px solid #ddd;
+}
 .custom-skeleton {
   background-color: #3498db;
   border-color: #2980b9;
 }
-.card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-}
+
 button {
   background: none;
   border: none;

@@ -196,18 +196,20 @@ function formatScheduleHours(hours) {
     <div class="grid">
         <div v-if="loading" class="text-center col-12">Cargando información...</div>
         <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
-        <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-4 lg:col-4 p-2">
+        <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-6 lg:col-4 p-2">
             <div class="card h-full p-4 border rounded-lg shadow-md cursor-pointer flex flex-column justify-between">
-                <div class="flex flex-column">
+                <div class="flex flex-column border-radius-3xl">
                     <span class="flex flex-row">
                         <img v-if="true" :src="mae.profilePictureUrl" alt="Foto de perfil"
                         class="border-circle h-5rem w-5rem">
                         <Skeleton v-else shape="circle" size="5rem"></Skeleton>
                         <div class="relative w-full pl-4 pt-3">
-                            <span class="font-bold pb-2 text-lg">
+                            <span class="font-bold text-lg text-black-alpha-90 truncate"
+                            style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                                 {{ mae.name }}
                             </span>
-                            <div class="flex flex-row text-lg">
+                            <div class="flex flex-row text-lg text-black-alpha-90  truncate"
+                            style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                                 <p class="pr-2">{{ mae.career }} </p>
                                 <p class="pr-2">|</p>  
                                 <p>{{ mae.uid }}</p>

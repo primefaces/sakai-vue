@@ -1,7 +1,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { getMaes } from '@/firebase/db/users';
+
+const router = useRouter();
 
 const maes = ref([]);
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
@@ -99,6 +102,7 @@ function getSubjectColor(area) {
     }
 }
 
+
 const filteredMaes = computed(() => {
     return maes.value.filter(mae => {
         return (
@@ -110,6 +114,7 @@ const filteredMaes = computed(() => {
         );
     });
 });
+
 
 const toggleSubjects = (mae) => {
     mae.showMoreSubjects = !mae.showMoreSubjects;
@@ -128,6 +133,79 @@ const toggleSubjects = (mae) => {
                     class="border-circle h-6rem w-6rem">
                         <Skeleton v-else shape="circle" size="5rem"></Skeleton>
                         <div class="relative w-full">
+                            
+                                {{ mae.name }}
+                            <div class="flex flex-row font-semibold pl-2">
+                                <p>{{ mae.career }} |</p>
+                                <p>{{ mae.uid }}</p>
+                            </div>
+                        </div>
+                    </span>
+                    <p class="font-bold text-2xl">Horarios</p>
+                    <div class="flex flex-wrap">
+                        <Tag v-for="(value, key) in mae.weekSchedule" :key="key" :class="getDayColor(key)" :value="translateDayToSpanish(key)" class="mr-2 mb-2"/>
+                    </div>
+                    <p class="font-bold text-2xl">Materias</p>
+                    <div class="flex flex-wrap">
+                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2"/>
+                        <div v-if="mae.subjects.length > 1">
+                            <button @click="toggleSubjects(mae)" class="text-blue-500 mt-2">
+                                {{ mae.showMoreSubjects ? '-' : '+' }} 
+                            </button>
+                            <div v-if="mae.showMoreSubjects">
+                                <Tag v-for="subject in mae.subjects.slice(1)" :key="subject.id" :class="getSubjectColor(subject.area)" :value="subject.name" class="mr-2 mb-2"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+
+<style scoped>
+.custom-skeleton {
+  background-color: #3498db;
+  border-color: #2980b9;
+}
+.card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+</style>
+
+
+<!-- <script setup>
+import { ref, computed, onMounted } from 'vue';
+import { FilterMatchMode, FilterService } from 'primevue/api';
+import { getMaes } from '@/firebase/db/users';
+
+
+z
+
+const toggleSubjects = (mae) => {
+    mae.showMoreSubjects = !mae.showMoreSubjects;
+}
+</script>
+
+<template>
+    <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
+    
+        
+        <div v-for="mae in filteredMaes" :key="mae.uid" class="p-col-12 p-md-4">
+            <div class="card p-4 border rounded-lg shadow-md cursor-pointer">
+                <div class="flex flex-column">
+                    <span class="flex flex-row">
+                        
+                        <div class="relative w-full">
                             <a :href="`/#/mae/${mae.uid}`" class="pl-2 font-semibold text-xl text-black-alpha-90 hover:underline hover:text-primary truncate">
                                 {{ mae.name }}
                             </a>
@@ -143,7 +221,7 @@ const toggleSubjects = (mae) => {
                     </div>
                     <p class="font-bold text-2xl">Materias</p>
                     <div class="flex flex-wrap">
-                        <!-- <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2"/> -->
+                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2"/> 
                         <div v-if="mae.subjects.length > 1">
                             <button @click="toggleSubjects(mae)" class="text-blue-500 mt-2">
                                 {{ mae.showMoreSubjects ? '-' : '+' }} 
@@ -177,4 +255,4 @@ button {
   cursor: pointer;
   font-size: 1rem;
 }
-</style>
+</style> -->

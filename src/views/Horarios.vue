@@ -1,10 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { getMaes } from '@/firebase/db/users';
 
-const router = useRouter();
 
 const maes = ref([]);
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
@@ -80,6 +79,8 @@ function translateDayToEnglish(day) {
 }
 
 function getDayColor(day) {
+    if (!day) return '';  // Retorna una cadena vacía si el día es indefinido
+
     const dayLC = day.toLowerCase();
     switch (dayLC) {
         case 'monday': return 'bg-blue-600';
@@ -87,6 +88,7 @@ function getDayColor(day) {
         case 'wednesday': return 'bg-yellow-600';
         case 'thursday': return 'bg-red-600';
         case 'friday': return 'bg-purple-600';
+        default: return '';  // Retorna una cadena vacía si no hay un caso que coincida
     }
 }
 
@@ -119,6 +121,39 @@ const filteredMaes = computed(() => {
 const toggleSubjects = (mae) => {
     mae.showMoreSubjects = !mae.showMoreSubjects;
 }
+
+
+const closestDay = (schedule) => {
+    const today = new Date().getDay();
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    // Filtra los días que están definidos en el horario
+    const daysInSchedule = Object.keys(schedule)
+        .filter(day => Array.isArray(schedule[day]) && schedule[day].length > 0) // Verifica si el día tiene valores
+        .map(day => daysOfWeek.indexOf(day));
+
+    if (daysInSchedule.length === 0) return null;  // Si no hay días, retorna null
+
+    const upcomingDays = daysInSchedule.filter(day => day >= today);
+
+    const closestDay = upcomingDays.length ? upcomingDays[0] : daysInSchedule[0];
+
+    return daysOfWeek[closestDay];
+};
+
+const translateClosestDay = (schedule) => {
+    const day = closestDay(schedule);
+    if (!day) return 'Sin horario';  // Si no hay día más cercano, retorna un mensaje
+    return translateDayToSpanish(day);
+}
+
+
+// Estilización de materias y cálculo de cuántas quedan
+const subjectCountDisplay = (subjects) => {
+    if (subjects.length <= 1) return null;
+    return `+${subjects.length - 1}`;
+}
+
 </script>
 
 <template>
@@ -141,20 +176,19 @@ const toggleSubjects = (mae) => {
                             </div>
                         </div>
                     </span>
+                    <!-- Mostrar el día más cercano -->
                     <p class="font-bold text-2xl">Horarios</p>
                     <div class="flex flex-wrap">
-                        <Tag v-for="(value, key) in mae.weekSchedule" :key="key" :class="getDayColor(key)" :value="translateDayToSpanish(key)" class="mr-2 mb-2"/>
+                        <Tag :class="getDayColor(closestDay(mae.weekSchedule))" :value="translateClosestDay(mae.weekSchedule)" class="mr-2 mb-2"/>
                     </div>
+                     <!-- Materias: Mostrar solo una y cuántas quedan -->
                     <p class="font-bold text-2xl">Materias</p>
-                    <div class="flex flex-wrap">
+                    <div class="flex items-center">
                         <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2"/>
-                        <div v-if="mae.subjects.length > 1">
-                            <button @click="toggleSubjects(mae)" class="text-blue-500 mt-2">
-                                {{ mae.showMoreSubjects ? '-' : '+' }} 
+                        <div v-if="mae.subjects.length > 1" class="flex items-center">
+                            <button @click="toggleSubjects(mae)" class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center ml-2">
+                                {{ subjectCountDisplay(mae.subjects ) }}
                             </button>
-                            <div v-if="mae.showMoreSubjects">
-                                <Tag v-for="subject in mae.subjects.slice(1)" :key="subject.id" :class="getSubjectColor(subject.area)" :value="subject.name" class="mr-2 mb-2"/>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -183,76 +217,3 @@ button {
 </style>
 
 
-<!-- <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { FilterMatchMode, FilterService } from 'primevue/api';
-import { getMaes } from '@/firebase/db/users';
-
-
-z
-
-const toggleSubjects = (mae) => {
-    mae.showMoreSubjects = !mae.showMoreSubjects;
-}
-</script>
-
-<template>
-    <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
-    
-        
-        <div v-for="mae in filteredMaes" :key="mae.uid" class="p-col-12 p-md-4">
-            <div class="card p-4 border rounded-lg shadow-md cursor-pointer">
-                <div class="flex flex-column">
-                    <span class="flex flex-row">
-                        
-                        <div class="relative w-full">
-                            <a :href="`/#/mae/${mae.uid}`" class="pl-2 font-semibold text-xl text-black-alpha-90 hover:underline hover:text-primary truncate">
-                                {{ mae.name }}
-                            </a>
-                            <div class="flex flex-row font-semibold pl-2">
-                                <p>{{ mae.career }} |</p>
-                                <p>{{ mae.uid }}</p>
-                            </div>
-                        </div>
-                    </span>
-                    <p class="font-bold text-2xl">Horarios</p>
-                    <div class="flex flex-wrap">
-                        <Tag v-for="(value, key) in mae.weekSchedule" :key="key" :class="getDayColor(key)" :value="translateDayToSpanish(key)" class="mr-2 mb-2"/>
-                    </div>
-                    <p class="font-bold text-2xl">Materias</p>
-                    <div class="flex flex-wrap">
-                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2"/> 
-                        <div v-if="mae.subjects.length > 1">
-                            <button @click="toggleSubjects(mae)" class="text-blue-500 mt-2">
-                                {{ mae.showMoreSubjects ? '-' : '+' }} 
-                            </button>
-                            <div v-if="mae.showMoreSubjects">
-                                <Tag v-for="subject in mae.subjects.slice(1)" :key="subject.id" :class="getSubjectColor(subject.area)" :value="subject.name" class="mr-2 mb-2"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-
-
-
-
-<style scoped>
-.custom-skeleton {
-  background-color: #3498db;
-  border-color: #2980b9;
-}
-.card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-}
-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-}
-</style> -->

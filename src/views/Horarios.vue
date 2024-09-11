@@ -144,8 +144,10 @@ const closestDay = (schedule) => {
 const translateClosestDay = (schedule) => {
     const day = closestDay(schedule);
     if (!day) return 'Sin horario';  // Si no hay día más cercano, retorna un mensaje
-    return translateDayToSpanish(day);
-}
+    const hours = formatScheduleHours(schedule[day]);
+
+    return `${translateDayToSpanish(day)} ${hours}`;
+};
 
 
 // Estilización de materias y cálculo de cuántas quedan
@@ -153,6 +155,42 @@ const subjectCountDisplay = (subjects) => {
     if (subjects.length <= 1) return null;
     return `+${subjects.length - 1}`;
 }
+
+function formatScheduleHours(hours) {
+    console.log("Estas son las horas", hours);
+
+    if (!Array.isArray(hours) || hours.length === 0) return '';
+
+    // Convertir horas a objetos de tipo Date
+    const timeEntries = hours.map(hour => {
+        const start = new Date(`1970-01-01T${hour.start}:00Z`);
+        const end = new Date(`1970-01-01T${hour.end}:00Z`);
+        return { start, end };
+    });
+
+    // Ordenar los horarios por hora de inicio
+    const sortedEntries = timeEntries.sort((a, b) => a.start - b.start);
+
+    let result = '';
+    for (let i = 0; i < sortedEntries.length; i++) {
+        const { start, end } = sortedEntries[i];
+
+        const startHour = start.toISOString().substr(11, 5);
+        const endHour = end.toISOString().substr(11, 5);
+
+        // Si la siguiente entrada empieza en la misma hora que esta termina
+        if (i < sortedEntries.length - 1 && sortedEntries[i + 1].start.getTime() === end.getTime()) {
+            result += `${startHour} - `;
+        } else {
+            result += `${startHour} - ${endHour}`;
+            if (i < sortedEntries.length - 1) result += ', ';
+        }
+    }
+    result = ' • ' + result 
+    return result;
+}
+
+
 
 </script>
 
@@ -165,28 +203,33 @@ const subjectCountDisplay = (subjects) => {
                 <div class="flex flex-column">
                     <span class="flex flex-row">
                         <img v-if="true" :src="mae.profilePictureUrl" alt="Foto de perfil"
-                    class="border-circle h-6rem w-6rem">
+                    class="border-circle h-5rem w-5rem">
                         <Skeleton v-else shape="circle" size="5rem"></Skeleton>
-                        <div class="relative w-full">
-                            
+                        <div class="relative w-full  pl-4 pt-3">
+                            <span class="font-bold pb-2 text-lg">
+
                                 {{ mae.name }}
-                            <div class="flex flex-row font-semibold pl-2">
-                                <p>{{ mae.career }} |</p>
+                            </span>
+                            <div class="flex flex-row  text-lg">
+                                <p class="pr-2">{{ mae.career }} </p>
+                                <p class="pr-2">|</p>  
                                 <p>{{ mae.uid }}</p>
                             </div>
                         </div>
                     </span>
                     <!-- Mostrar el día más cercano -->
-                    <p class="font-bold text-2xl">Horarios</p>
+                    <!-- Mostrar el día más cercano y las horas -->
+                    <p class="font-bold text-lg mt-2">Horarios</p>
                     <div class="flex flex-wrap">
-                        <Tag :class="getDayColor(closestDay(mae.weekSchedule))" :value="translateClosestDay(mae.weekSchedule)" class="mr-2 mb-2"/>
+                        <Tag :class="getDayColor(closestDay(mae.weekSchedule))" :value="translateClosestDay(mae.weekSchedule)" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
                     </div>
+
                      <!-- Materias: Mostrar solo una y cuántas quedan -->
-                    <p class="font-bold text-2xl">Materias</p>
-                    <div class="flex items-center">
-                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2"/>
-                        <div v-if="mae.subjects.length > 1" class="flex items-center">
-                            <button @click="toggleSubjects(mae)" class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center ml-2">
+                    <p class="font-bold text-lg mt-1">Materias</p>
+                    <div class="flex items-center text-md">
+                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2 p-2 px-3 border-round-2xl	"/>
+                        <div v-if="mae.subjects.length > 1" >
+                            <button @click="toggleSubjects(mae)" class="p-2  text-gray-500 " >
                                 {{ subjectCountDisplay(mae.subjects ) }}
                             </button>
                         </div>

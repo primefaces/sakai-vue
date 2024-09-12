@@ -290,3 +290,45 @@ export async function updateUserProfilePicture(userId, photoURL) {
         throw error;
     }
 }
+
+/**
+ * Clears the content of the weekSchedule field for users with specific roles (admin, coordi, mae),
+ * but keeps the field as an empty object.
+ *
+ * @returns {Promise<void>} - A promise that resolves when all eligible weekSchedules are cleared.
+ */
+export async function clearAllUsersWeekSchedule() {
+    try {
+        // Get a reference to the "users" collection
+        const usersRef = collection(firestoreDB, "users");
+
+        // Get all user documents from the collection
+        const querySnapshot = await getDocs(usersRef);
+
+        // Roles that are eligible for clearing the weekSchedule
+        const eligibleRoles = ['admin', 'coordi', 'mae'];
+
+        // Iterate through each document and update the weekSchedule field to an empty object if the role matches
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref; // Reference to the specific user document
+            const userData = doc.data(); // Get the user data
+
+            // Check if the user's role is in the list of eligible roles
+            if (eligibleRoles.includes(userData.role)) {
+                return updateDoc(userRef, {
+                    weekSchedule: {} // Set weekSchedule to an empty object
+                });
+            } else {
+                return Promise.resolve(); // Skip the update for users with other roles
+            }
+        });
+
+        // Wait for all promises to resolve
+        await Promise.all(promises);
+
+        console.log("Week schedule content has been successfully cleared for eligible users.");
+    } catch (error) {
+        console.error("Error clearing weekSchedule content for eligible users: ", error);
+        throw error;
+    }
+}

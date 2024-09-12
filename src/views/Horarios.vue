@@ -161,7 +161,7 @@ const translateClosestDay = (schedule) => {
     const day = closestDay(schedule);
     if (!day) return 'Sin horario';  // Si no hay día más cercano, retorna un mensaje
     const hours = formatScheduleHours(schedule[day]);
-    console.log(schedule,"Prueba")
+ 
     return `${translateDayToSpanish(day)} ${hours}`;
 };
 
@@ -220,78 +220,101 @@ function getDisplayedSubject(subjects) {
 </script>
 
 <template>
-    <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
-    <h2 class="text-black text-3xl font-semibold mb-5 text-center sm:text-left">Filtros</h2>
-    <div class="grid">
-        <div v-if="loading" class="text-center col-12">Cargando información...</div>
-        
-        <!-- Filtros -->
-        <div class="flex flex-row">
-            <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 mx-3 w-6" />
-            <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 mx-3 w-6" />
-            <Dropdown 
-                v-model="filters.weekSchedule.value"
-                :options="daysOfWeek" 
-                option-label="label" 
-                option-value="value"
-                placeholder="Cualquiera..." 
-                class="mb-2 mx-3 w-4" 
-            />
+    <div>
+        <div class="filters-container">
+            <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
+            <h2 class="text-black text-3xl font-semibold mb-5 text-center sm:text-left">Filtros</h2>
+            <div class="flex flex-row filters">
+                <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 mx-3 w-6" />
+                <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 mx-3 w-6" />
+                <Dropdown 
+                    v-model="filters.weekSchedule.value"
+                    :options="daysOfWeek" 
+                    option-label="label" 
+                    option-value="value"
+                    placeholder="Cualquiera..." 
+                    class="mb-2 mx-3 w-4" 
+                />
+            </div>
         </div>
 
-        <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
-        <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-6 lg:col-4 p-2">
-            <a :href="`#/mae/${mae.uid}`" class="block transition-transform duration-300 transform hover:scale-105">
-                <div class="card h-full p-4 border-round-3xl shadow-md cursor-pointer flex flex-column justify-between">
-                    <div class="flex flex-column">
-                        <span class="flex flex-row items-center">
-                            <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
-                            class="border-circle h-5rem w-5rem">
-                            <Skeleton v-else shape="circle" size="5rem"></Skeleton>
-                            <div class="relative w-full pl-4 pt-3">
-                                <span class="font-bold text-lg text-black-alpha-90 truncate"
-                                style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                                    {{ mae.name }}
-                                </span>
-                                <div class="flex flex-row text-lg text-black-alpha-90 truncate"
-                                style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                                    <p class="pr-2">{{ mae.career }} </p>
-                                    <p class="pr-2">|</p>  
-                                    <p>{{ mae.uid }}</p>
+        <div class="cards-container">
+            <div v-if="loading" class="text-center col-12">Cargando información...</div>
+
+            <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
+            <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-6 lg:col-4 p-2">
+                <a :href="`#/mae/${mae.uid}`" class="block transition-transform duration-300 transform hover:scale-105">
+                    <div class="card h-full p-4 border-round-3xl shadow-md cursor-pointer flex flex-column justify-between">
+                        <div class="flex flex-column">
+                            <span class="flex flex-row items-center">
+                                <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
+                                class="border-circle h-5rem w-5rem">
+                                <Skeleton v-else shape="circle" size="5rem"></Skeleton>
+                                <div class="relative w-full pl-4 pt-3">
+                                    <span class="font-bold text-lg text-black-alpha-90 truncate"
+                                    style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                        {{ mae.name }}
+                                    </span>
+                                    <div class="flex flex-row text-lg text-black-alpha-90 truncate"
+                                    style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                        <p class="pr-2">{{ mae.career }} </p>
+                                        <p class="pr-2">|</p>  
+                                        <p>{{ mae.uid }}</p>
+                                    </div>
+                                </div>
+                            </span>
+
+                            <p class="font-bold text-lg mt-2 text-black-alpha-90">Horarios</p>
+                            <div class="flex flex-wrap">
+                                <Tag :class="getDayColor(filters.weekSchedule.value || closestDay(mae.weekSchedule))" 
+                                :value="getDisplayedDay(mae.weekSchedule)" 
+                                class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                                
+                                <div v-if="Object.keys(mae.weekSchedule).length > 1">
+                                    <button class="p-2 text-gray-500">
+                                        {{ weekCountDisplay(mae.weekSchedule) }}
+                                    </button>
                                 </div>
                             </div>
-                        </span>
 
-                        <p class="font-bold text-lg mt-2 text-black-alpha-90">Horarios</p>
-                        <div class="flex flex-wrap">
-                            <Tag :class="getDayColor(filters.weekSchedule.value || closestDay(mae.weekSchedule))" 
-                            :value="getDisplayedDay(mae.weekSchedule)" 
-                            class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
-                            
-                            <div v-if="Object.keys(mae.weekSchedule).length > 1">
-                                <button class="p-2 text-gray-500">
-                                    {{ weekCountDisplay(mae.weekSchedule) }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <p class="font-bold text-lg mt-1 text-black-alpha-90">Materias</p>
-                        <div class="flex items-center text-md">
-                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
-                            <div v-if="mae.subjects.length > 1">
-                                <button class="p-2 text-gray-500">
-                                    {{ subjectCountDisplay(mae.subjects) }}
-                                </button>
+                            <p class="font-bold text-lg mt-1 text-black-alpha-90">Materias</p>
+                            <div class="flex items-center text-md">
+                                <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                                <div v-if="mae.subjects.length > 1">
+                                    <button class="p-2 text-gray-500">
+                                        {{ subjectCountDisplay(mae.subjects) }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
+.filters-container {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Asegura que el fondo de los filtros sea blanco */
+    z-index: 10; /* Asegura que los filtros estén por encima de las cartas */
+    padding-bottom: 1rem; /* Espacio en la parte inferior del contenedor de filtros */
+    border-bottom: 1px solid #ddd; /* Línea separadora debajo de los filtros */
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    max-width: 1200px; /* Ajusta el ancho máximo según sea necesario */
+}
+
+.cards-container {
+    padding: 1rem;
+}
+
 .card {
     min-height: 100%;
     display: flex;
@@ -321,4 +344,3 @@ a:hover .card {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
-

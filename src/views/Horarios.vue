@@ -10,7 +10,7 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.CONTAINS },
     weekSchedule: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
-    subjects: { value: null, matchMode: ARRAY_CONTAINS.value },
+    subjects: { value: null, matchMode: ARRAY_CONTAINS.value }, // Ajustado para usar ARRAY_CONTAINS
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 const loading = ref(true);
@@ -43,6 +43,22 @@ onMounted(() => {
         return Object.keys(value).some(dayArray => {
             return normalizedFilter.includes(normalizeDay(dayArray));
         });
+    });
+});
+
+const filteredMaes = computed(() => {
+    return maes.value.filter(mae => {
+        const hasSubject = filters.value.subjects.value
+            ? mae.subjects.some(subject => subject.name.toLowerCase().includes(filters.value.subjects.value.toLowerCase()))
+            : true;
+
+        return (
+            (!filters.value.global.value || mae.name.toLowerCase().includes(filters.value.global.value.toLowerCase())) &&
+            (!filters.value.name.value || mae.name.toLowerCase().includes(filters.value.name.value.toLowerCase())) &&
+            (!filters.value.weekSchedule.value || filters.value.weekSchedule.value.some(day => mae.weekSchedule[day])) &&
+            hasSubject &&
+            (!filters.value.status.value || mae.status === filters.value.status.value)
+        );
     });
 });
 
@@ -102,21 +118,7 @@ function getSubjectColor(area) {
     }
 }
 
-const filteredMaes = computed(() => {
-    return maes.value.filter(mae => {
-        return (
-            (!filters.value.global.value || mae.name.toLowerCase().includes(filters.value.global.value.toLowerCase())) &&
-            (!filters.value.name.value || mae.name.toLowerCase().includes(filters.value.name.value.toLowerCase())) &&
-            (!filters.value.weekSchedule.value || filters.value.weekSchedule.value.some(day => mae.weekSchedule[day])) &&
-            (!filters.value.subjects.value || mae.subjects.some(subject => filters.value.subjects.value.includes(subject.name))) &&
-            (!filters.value.status.value || mae.status === filters.value.status.value)
-        );
-    });
-});
 
-const toggleSubjects = (mae) => {
-    mae.showMoreSubjects = !mae.showMoreSubjects;
-}
 
 const closestDay = (schedule) => {
     const today = new Date().getDay();
@@ -176,6 +178,16 @@ function formatScheduleHours(hours) {
     result = ' • ' + result 
     return result;
 }
+
+function getDisplayedSubject(subjects) {
+    if (!filters.value.subjects.value) {
+        return subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' };
+    }
+
+    const filteredSubject = subjects.find(subject => subject.name.toLowerCase().includes(filters.value.subjects.value.toLowerCase()));
+    return filteredSubject || (subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' });
+}
+
 </script>
 
 <template>
@@ -218,13 +230,13 @@ function formatScheduleHours(hours) {
 
                     <p class="font-bold text-lg mt-1">Materias</p>
                     <div class="flex items-center text-md">
-                        <Tag v-if="mae.subjects.length > 0" :class="getSubjectColor(mae.subjects[0].area)" :value="mae.subjects[0].name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
-                        <div v-if="mae.subjects.length > 1">
-                            <button @click="toggleSubjects(mae)" class="p-2 text-gray-500">
-                                {{ subjectCountDisplay(mae.subjects) }}
-                            </button>
-                        </div>
+                    <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                    <div v-if="mae.subjects.length > 1">
+                        <button class="p-2 text-gray-500">
+                            {{ subjectCountDisplay(mae.subjects) }}
+                        </button>
                     </div>
+                </div>
                 </div>
             </div>
         </div>

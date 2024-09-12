@@ -197,8 +197,8 @@ function formatScheduleHours(hours) {
         <div v-if="loading" class="text-center col-12">Cargando información...</div>
         <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
         <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-6 lg:col-4 p-2">
-            <div class="card h-full p-4 border rounded-lg shadow-md cursor-pointer flex flex-column justify-between">
-                <div class="flex flex-column border-radius-3xl">
+            <div class="card h-full p-4 border-round-3xl shadow-md cursor-pointer flex flex-column justify-between">
+                <div class="flex flex-column ">
                     <span class="flex flex-row">
                         <img v-if="true" :src="mae.profilePictureUrl" alt="Foto de perfil"
                         class="border-circle h-5rem w-5rem">
@@ -243,7 +243,6 @@ function formatScheduleHours(hours) {
     display: flex;
     flex-direction: column;
     background-color: #fff;
-  border: 1px solid #ddd;
 }
 .custom-skeleton {
   background-color: #3498db;

@@ -1,13 +1,9 @@
-
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { getMaes } from '@/firebase/db/users';
 
-const router = useRouter();
-
-const maes = ref();
+const maes = ref([]);
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
 const ARRAY_CONTAINS_ANY = ref('ARRAY_CONTAINS_ANY');
 const filters = ref({
@@ -16,277 +12,313 @@ const filters = ref({
     weekSchedule: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
     subjects: { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    // modalidad: { value: null, matchMode: FilterMatchMode.EQUALS }
 });
-
-const horario = ref([
-    "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
-]);
-
-const statuses = ref(['Remota', 'Presencial', 'Híbrida']);
 const loading = ref(true);
+const daysOfWeek = [
+    { label: 'Todos los días', value: null },
+    { label: 'Lunes', value: 'monday' },
+    { label: 'Martes', value: 'tuesday' },
+    { label: 'Miércoles', value: 'wednesday' },
+    { label: 'Jueves', value: 'thursday' },
+    { label: 'Viernes', value: 'friday' },
+];
+
 
 onMounted(() => {
-
     getMaes().then((data) => {
         maes.value = data;
         loading.value = false;
-    })
-
-    
-    // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
-    // Custom filter for mae subjects. Returns true if the filter value is contained within any of the values of the array.
-    FilterService.register(ARRAY_CONTAINS.value, (value, filter) => {
-        // Filter -> valor ingresado por el usuario
-        // Value -> array de objetos, donde cada objeto representa una materia dada por un mae;
-        
-        if (filter === undefined || filter === null || filter.trim() === '') {
-            return true;
-        }
-
-        if (value === undefined || value === null) {
-            return false;
-        }
-    
-        // Normalizar el filtro para comparación sin distinción entre mayúsculas y minúsculas y considerando los acentos
-        const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-        for (let i = 0; i < value.length; i++) {
-            const id = value[i].id.toString();
-            const name = value[i].name.toString(); 
-            
-            // Normalizar el ID y el nombre para comparación sin distinción entre mayúsculas y minúsculas y considerando los acentos
-            const idNormalized = id.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const nameNormalized = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            
-            // Verificar si el filtro coincide con el ID o el nombre
-            if (idNormalized.toLowerCase().includes(filterNormalized.toLowerCase()) || nameNormalized.toLowerCase().includes(filterNormalized.toLowerCase())) {
-                return true;
-            }
-        }
-
-        return false; // Ninguna coincidencia encontrada
     });
 
+    FilterService.register(ARRAY_CONTAINS.value, (value, filter) => {
+        if (!filter || filter.trim() === '') return true;
+        if (!value) return false;
 
+        const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-    // Función para normalizar días
-    function normalizeDay(day) {
-        return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    }
+        return value.some(item => {
+            const idNormalized = item.id.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const nameNormalized = item.name.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            return idNormalized.toLowerCase().includes(filterNormalized.toLowerCase()) ||
+                   nameNormalized.toLowerCase().includes(filterNormalized.toLowerCase());
+        });
+    });
 
-    // Función de filtrado
     FilterService.register(ARRAY_CONTAINS_ANY.value, (value, filter) => {
-        
-        if (!filter || filter.length === 0) {
-            return true; // Si no hay filtro, mostrar todos
-        }
-        if (!value || value.length === 0) {
-            return false; // No hay valores para comparar
-        }
+        if (!filter || filter.length === 0) return true;
+        if (!value || value.length === 0) return false;
 
-        // Normalizar y traducir los días del filtro
         const normalizedFilter = filter.map(day => translateDayToEnglish(day));
-        
-        // Checar las llaves
-        // const numDias = Object.keys(value).length;
-        // Comprobar si algún día del filtro coincide con los días en los valores
-        
-        for (let i = 0; i < normalizedFilter.length; i++) {
-            const filterDay = normalizedFilter[i];
-            for (let j = 0; j < Object.keys(value).length; j++) {
-                const dayArrays = Object.keys(value); // Obtener los nombres de los arrays (días)
-                for (let k = 0; k < dayArrays.length; k++) {
-                    const dayArray = dayArrays[k];
-                    const dayNorm = normalizeDay(dayArray);
-                    if (dayNorm === filterDay) {
-                        return true; // Al menos un día coincide, mostrar este valor
-                    }
-                }
-            }
-        }
-
-        return false; // Ningún día coincide
+        return Object.keys(value).some(dayArray => {
+            return normalizedFilter.includes(normalizeDay(dayArray));
+        });
     });
 });
 
-// const getSeverity = (status) => {
-//     switch (status) {
-//         case 'Remota':
-//             return 'success';
-//         case 'Presencial':
-//             return 'info';
-//         case 'Hibrido':
-//             return 'warning';
-//         case 'renewal':
-//             return null;
-//     }
-// }
+const filteredMaes = computed(() => {
+    return maes.value.filter(mae => {
+        const hasSubject = filters.value.subjects.value
+            ? mae.subjects.some(subject => subject.name.toLowerCase().includes(filters.value.subjects.value.toLowerCase()))
+            : true;
+
+        const hasWeekSchedule = filters.value.weekSchedule.value
+            ? mae.weekSchedule[filters.value.weekSchedule.value] && mae.weekSchedule[filters.value.weekSchedule.value].length > 0
+            : true;
+
+        return (
+            (!filters.value.global.value || mae.name.toLowerCase().includes(filters.value.global.value.toLowerCase())) &&
+            (!filters.value.name.value || mae.name.toLowerCase().includes(filters.value.name.value.toLowerCase())) &&
+            hasWeekSchedule &&
+            hasSubject &&
+            (!filters.value.status.value || mae.status === filters.value.status.value)
+        );
+    });
+});
+function getDisplayedDay(weekSchedule) {
+    if (filters.value.weekSchedule.value) {
+        const scheduleForDay = weekSchedule[filters.value.weekSchedule.value] || [];
+       
+        const hours = formatScheduleHours(scheduleForDay);
+        return `${translateDayToSpanish(filters.value.weekSchedule.value)} ${hours}`;
+    } else {
+        return translateClosestDay(weekSchedule);
+    }
+}
+function normalizeDay(day) {
+    return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
 
 function translateDayToSpanish(day) {
-  const daysMapping = {
-    'monday': 'Lunes',
-    'tuesday': 'Martes',
-    'wednesday': 'Miércoles',
-    'thursday': 'Jueves',
-    'friday': 'Viernes',
-    'saturday': 'Sábado',
-    'sunday': 'Domingo'
-  };
-
-  // Check if the provided day is in the mapping
-  if (day in daysMapping) {
-    return daysMapping[day];
-  } else {
-    // If the day is not found in the mapping, return an error message
-    return 'Invalid day';
-  }
+    const daysMapping = {
+        'monday': 'Lunes',
+        'tuesday': 'Martes',
+        'wednesday': 'Miércoles',
+        'thursday': 'Jueves',
+        'friday': 'Viernes',
+        'saturday': 'Sábado',
+        'sunday': 'Domingo'
+    };
+    return daysMapping[day] || 'Sin horario';
 }
 
 function translateDayToEnglish(day) {
-  const daysMapping = {
-    'Lunes': 'monday',
-    'Martes': 'tuesday',
-    'Miércoles': 'wednesday',
-    'Jueves': 'thursday',
-    'Viernes': 'friday',
-    'Sábado': 'saturday',
-    'Domingo': 'sunday'
-  };
-
-  // Check if the provided day is in the mapping
-  if (day in daysMapping) {
-    return daysMapping[day];
-  } else {
-    // If the day is not found in the mapping, return an error message
-    return 'Invalid day';
-  }
+    const daysMapping = {
+        'Lunes': 'monday',
+        'Martes': 'tuesday',
+        'Miércoles': 'wednesday',
+        'Jueves': 'thursday',
+        'Viernes': 'friday',
+        'Sábado': 'saturday',
+        'Domingo': 'sunday'
+    };
+    return daysMapping[day] || 'Invalid day';
 }
 
-// TODO: adjust colors to figma design
-const getDayColor = (day) => {
+function getDayColor(day) {
+    if (!day) return '';
+
     const dayLC = day.toLowerCase();
     switch (dayLC) {
-        case 'monday':
-            return 'bg-blue-600';
-        case 'tuesday':
-            return 'bg-green-600';
-        case 'wednesday':
-            return 'bg-yellow-600';
-        case 'thursday':
-            return 'bg-red-600';
-        case 'friday':
-            return 'bg-purple-600';
+        case 'monday': return 'bg-blue-600';
+        case 'tuesday': return 'bg-green-600';
+        case 'wednesday': return 'bg-yellow-600';
+        case 'thursday': return 'bg-red-600';
+        case 'friday': return 'bg-purple-600';
+        default: return '';
     }
 }
 
-const getSubjectColor = (area) => {
+function getSubjectColor(area) {
     switch (area) {
-        case 'ING':
-            return 'bg-cyan-600';
-        case 'NEG':
-            return 'bg-blue-600';
-        case 'SLD':
-            return 'bg-teal-600';
-        case 'CIS':
-            return 'bg-red-600';
-        case 'AMC':
-            return 'bg-green-600';
-        case 'ART':
-            return 'bg-purple-600';
-        default:
-            return 'bg-yellow-600';
+        case 'ING': return 'bg-cyan-600';
+        case 'NEG': return 'bg-blue-600';
+        case 'SLD': return 'bg-teal-600';
+        case 'CIS': return 'bg-red-600';
+        case 'AMC': return 'bg-green-600';
+        case 'ART': return 'bg-purple-600';
+        default: return 'bg-yellow-600';
     }
 }
 
-const onRowSelect = (event) => {
-    router.push(`/mae/${event.data.uid}`);
+const closestDay = (schedule) => {
+    const today = new Date().getDay();
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    const daysInSchedule = Object.keys(schedule)
+        .filter(day => Array.isArray(schedule[day]) && schedule[day].length > 0)
+        .map(day => daysOfWeek.indexOf(day));
+
+    if (daysInSchedule.length === 0) return null;
+
+    const upcomingDays = daysInSchedule.filter(day => day >= today);
+
+    const closestDay = upcomingDays.length ? upcomingDays[0] : daysInSchedule[0];
+
+    return daysOfWeek[closestDay];
 }
 
-</script>
+const translateClosestDay = (schedule) => {
+    const day = closestDay(schedule);
+    if (!day) return 'Sin horario';  // Si no hay día más cercano, retorna un mensaje
+    const hours = formatScheduleHours(schedule[day]);
+    console.log(schedule,"Prueba")
+    return `${translateDayToSpanish(day)} ${hours}`;
+};
 
+function formatScheduleHours(hours) {
+
+
+    if (!Array.isArray(hours) || hours.length === 0) return '' ;
+
+    // Convertir horas a objetos de tipo Date
+    const timeEntries = hours.map(hour => {
+        const start = new Date(`1970-01-01T${hour.start}:00Z`);
+        const end = new Date(`1970-01-01T${hour.end}:00Z`);
+        return { start, end };
+    });
+
+    // Ordenar los horarios por hora de inicio
+    const sortedEntries = timeEntries.sort((a, b) => a.start - b.start);
+
+    let result = '';
+    for (let i = 0; i < sortedEntries.length; i++) {
+        const { start, end } = sortedEntries[i];
+
+        const startHour = start.toISOString().substr(11, 5);
+        const endHour = end.toISOString().substr(11, 5);
+
+        // Si la siguiente entrada empieza en la misma hora que esta termina
+        if (i < sortedEntries.length - 1 && sortedEntries[i + 1].start.getTime() === end.getTime()) {
+            result += `${startHour} - `;
+        } else {
+            result += `${startHour} - ${endHour}`;
+            if (i < sortedEntries.length - 1) result += ', ';
+        }
+    }
+    result = ' • ' + result 
+    return result;
+}
+
+const weekCountDisplay = (weekSchedule) => {
+    const numberOfKeys = Object.keys(weekSchedule).length;
+    if (numberOfKeys <= 1) return null;
+    return `+${numberOfKeys - 1}`;
+}
+
+const subjectCountDisplay = (subjects) => {
+    if (subjects.length <= 1) return null;
+    return `+${subjects.length - 1}`;
+}
+function getDisplayedSubject(subjects) {
+    if (!filters.value.subjects.value) {
+        return subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' };
+    }
+
+    const filteredSubject = subjects.find(subject => subject.name.toLowerCase().includes(filters.value.subjects.value.toLowerCase()));
+    return filteredSubject || (subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' });
+}
+</script>
 
 <template>
     <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
-    <div class="card mb-0">
-        <Tag icon="pi pi-info-circle" severity="warning" value="Cambia al modo horizontal para usar los filtros" class="sm:hidden text-center"></Tag>
-    <!-- TODO: Adjust row sizing -->
-    <!-- TODO: implement responsive resizing -->
-        <DataTable v-model:filters="filters" :value="maes" paginator :rows="10" dataKey="id" filterDisplay="row"
-            :loading="loading" :globalFilterFields="['name', 'horario', 'subjects'/*, 'modalidad'*/]" class="border-round-xl"
-            @rowSelect="onRowSelect" selectionMode="single" responsiveLayout="stack" breakpoint="640px">
-            <!-- <template #header>
-                <div class="flex justify-content-end">
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Busqueda general" />
-                    </span>
-                </div>
-            </template> -->
-            <template #empty>No se encontraron Maes. </template>
-            <template #loading>Cargando información. Por favor espera.</template>
-            <Column header="Nombre" field="name" :showFilterMenu="false" style="min-width: 15rem">
-                <template #body="{ data }">
-                    <p class="md:text-lg md:font-semibold md:text-left text-right">{{ data.name }}</p>
-                </template>
-                <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter w-full"
-                        placeholder="Nombre" />
-                </template>
-            </Column>
-            <Column header="Materias" filterField="subjects" :showFilterMenu="false" style="min-width: 14rem">
-                <template #body="{ data }">
-                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2 ml-2 md:ml-0">
-                        <Tag class="md:text-md text-xs text-center w-full md:w-fit" :class="getSubjectColor(item.area)"
-                            :value="item.name" v-tooltip.top="item.id" rounded v-for="item in data.subjects"/>
-                    </div>
-                </template>
-                <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" @input="filterCallback()" 
-                        class="p-column-filter" placeholder="Materia " />
-                </template>
-            </Column>
+    <h2 class="text-black text-3xl font-semibold mb-5 text-center sm:text-left">Filtros</h2>
+    <div class="grid">
+        <div v-if="loading" class="text-center col-12">Cargando información...</div>
+        
+        <!-- Filtros -->
+        <div class="flex flex-row">
+            <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 mx-3 w-6" />
+            <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 mx-3 w-6" />
+            <Dropdown 
+                v-model="filters.weekSchedule.value"
+                :options="daysOfWeek" 
+                option-label="label" 
+                option-value="value"
+                placeholder="Cualquiera..." 
+                class="mb-2 mx-3 w-4" 
+            />
+        </div>
 
-
-            <Column header="Horario" filterField="weekSchedule" :showFilterMenu="false" :filterMenuStyle="{ width: '2rem' }"
-                style="min-width: 6rem">
-                <template #body="{ data }">
-                    <!-- TODO: ask for hour display implementation -->
-                    <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap- ml-2 md:ml-0">
-                        <Tag v-for="(value, key) in data.weekSchedule" class="text-md mx-auto"
-                         :class="getDayColor(key)" :value="translateDayToSpanish(key)" v-tooltip.top="
-                          value[0].start ? `${value[0].start} - ${value[0].end}` : value.toString()"
-                           rounded style="min-width: 3rem"/>
-                       
-                    </div>
-                </template>
-                <template #filter="{ filterModel, filterCallback }">
-                    <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="horario"
-                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 6rem" :maxSelectedLabels="1">
-                        <template #option="slotProps">
-                            <div class="flex align-items-center gap-2">
-                                <span>{{ slotProps.option }}</span>
+        <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
+        <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-6 lg:col-4 p-2">
+            <a :href="`#/mae/${mae.uid}`" class="block transition-transform duration-300 transform hover:scale-105">
+                <div class="card h-full p-4 border-round-3xl shadow-md cursor-pointer flex flex-column justify-between">
+                    <div class="flex flex-column">
+                        <span class="flex flex-row items-center">
+                            <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
+                            class="border-circle h-5rem w-5rem">
+                            <Skeleton v-else shape="circle" size="5rem"></Skeleton>
+                            <div class="relative w-full pl-4 pt-3">
+                                <span class="font-bold text-lg text-black-alpha-90 truncate"
+                                style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                    {{ mae.name }}
+                                </span>
+                                <div class="flex flex-row text-lg text-black-alpha-90 truncate"
+                                style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                    <p class="pr-2">{{ mae.career }} </p>
+                                    <p class="pr-2">|</p>  
+                                    <p>{{ mae.uid }}</p>
+                                </div>
                             </div>
-                        </template>
-                    </MultiSelect>
-                </template>
-            </Column>
-            <!-- <Column field="modalidad" header="Modalidad" :showFilterMenu="false" :filterMenuStyle="{ width: '6rem' }"
-                style="min-width: 6rem">
-                <template #body="{ data }">
-                    <div class="flex justify-content-center">
-                        <Tag :value="data.modalidad ?? 'Híbrida'" class="text-lg text-center" :severity="getSeverity(data.modalidad)" />
+                        </span>
+
+                        <p class="font-bold text-lg mt-2 text-black-alpha-90">Horarios</p>
+                        <div class="flex flex-wrap">
+                            <Tag :class="getDayColor(filters.weekSchedule.value || closestDay(mae.weekSchedule))" 
+                            :value="getDisplayedDay(mae.weekSchedule)" 
+                            class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                            
+                            <div v-if="Object.keys(mae.weekSchedule).length > 1">
+                                <button class="p-2 text-gray-500">
+                                    {{ weekCountDisplay(mae.weekSchedule) }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="font-bold text-lg mt-1 text-black-alpha-90">Materias</p>
+                        <div class="flex items-center text-md">
+                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                            <div v-if="mae.subjects.length > 1">
+                                <button class="p-2 text-gray-500">
+                                    {{ subjectCountDisplay(mae.subjects) }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </template>
-                <template #filter="{ filterModel, filterCallback }">
-                    <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="statuses"
-                        placeholder="Cualquiera" class="p-column-filter" style="min-width: 6rem" :showClear="true">
-                        <template #option="slotProps">
-                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
-                        </template>
-                    </Dropdown>
-                </template>
-            </Column> -->
-        </DataTable>
+                </div>
+            </a>
+        </div>
     </div>
 </template>
+
+<style scoped>
+.card {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+.custom-skeleton {
+    background-color: #3498db;
+    border-color: #2980b9;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Agrega transición y efecto de escala */
+a {
+    display: block;
+    text-decoration: none;
+}
+
+a:hover .card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+</style>
+

@@ -127,8 +127,8 @@ const getSubjectColor = (area) => {
 
             <Column header="Carrera" field="name" style="min-width: 5rem">
                 <template #body="{ data }">
-                    <div :class="`flex rounded-full  ${getSubjectColor(data.area)}`">
-                        <p class="text-lg p-1 mx-auto text-white md:text-md text-xs text-center w-full md:w-fi rounded-full">
+                    <div :class="`flex border-round-3xl px-2 ${getSubjectColor(data.area)}`">
+                        <p class="text-lg p-1 mx-auto text-white md:text-md text-xs text-center w-full md:w-fi ">
                             {{ data.career }}
                         </p>
                     </div>
@@ -138,7 +138,7 @@ const getSubjectColor = (area) => {
             <Column header="Horario" style="min-width: 6rem">
                 <template #body="{ data }">
                     <div class="flex flex-wrap justify-content-evenly column-gap-2 row-gap-2">
-                        <Tag v-for="(value, key) in data.weekSchedule[currentDay]" class="text-md mx-auto"
+                        <Tag v-for="(value, key) in data.weekSchedule[currentDay]" class="text-md mx-auto py-2 "
                             :value="`${value.start} - ${value.end} `"
                             rounded style="min-width: 6rem"/>
                     </div>

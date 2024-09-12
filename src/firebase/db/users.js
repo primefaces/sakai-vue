@@ -60,7 +60,7 @@ export async function getCurrentUser() {
 }
 export async function getMaes(getProfilePicture = false) {
     const usersRef = collection(firestoreDB, "users");
-    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi']));
+    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi']));
 
     const querySnapshot = await getDocs(q);
 

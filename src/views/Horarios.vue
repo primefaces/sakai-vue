@@ -76,7 +76,10 @@ const filteredMaes = computed(() => {
 });
 function getDisplayedDay(weekSchedule) {
     if (filters.value.weekSchedule.value) {
-        return translateDayToSpanish(filters.value.weekSchedule.value);
+        const scheduleForDay = weekSchedule[filters.value.weekSchedule.value] || [];
+       
+        const hours = formatScheduleHours(scheduleForDay);
+        return `${translateDayToSpanish(filters.value.weekSchedule.value)} ${hours}`;
     } else {
         return translateClosestDay(weekSchedule);
     }
@@ -154,9 +157,52 @@ const closestDay = (schedule) => {
     return daysOfWeek[closestDay];
 }
 
-const translateClosestDay = (weekSchedule) => {
-    const closest = closestDay(weekSchedule);
-    return translateDayToSpanish(closest);
+const translateClosestDay = (schedule) => {
+    const day = closestDay(schedule);
+    if (!day) return 'Sin horario';  // Si no hay día más cercano, retorna un mensaje
+    const hours = formatScheduleHours(schedule[day]);
+    console.log(schedule,"Prueba")
+    return `${translateDayToSpanish(day)} ${hours}`;
+};
+
+function formatScheduleHours(hours) {
+
+
+    if (!Array.isArray(hours) || hours.length === 0) return '' ;
+
+    // Convertir horas a objetos de tipo Date
+    const timeEntries = hours.map(hour => {
+        const start = new Date(`1970-01-01T${hour.start}:00Z`);
+        const end = new Date(`1970-01-01T${hour.end}:00Z`);
+        return { start, end };
+    });
+
+    // Ordenar los horarios por hora de inicio
+    const sortedEntries = timeEntries.sort((a, b) => a.start - b.start);
+
+    let result = '';
+    for (let i = 0; i < sortedEntries.length; i++) {
+        const { start, end } = sortedEntries[i];
+
+        const startHour = start.toISOString().substr(11, 5);
+        const endHour = end.toISOString().substr(11, 5);
+
+        // Si la siguiente entrada empieza en la misma hora que esta termina
+        if (i < sortedEntries.length - 1 && sortedEntries[i + 1].start.getTime() === end.getTime()) {
+            result += `${startHour} - `;
+        } else {
+            result += `${startHour} - ${endHour}`;
+            if (i < sortedEntries.length - 1) result += ', ';
+        }
+    }
+    result = ' • ' + result 
+    return result;
+}
+
+const weekCountDisplay = (weekSchedule) => {
+    const numberOfKeys = Object.keys(weekSchedule).length;
+    if (numberOfKeys <= 1) return null;
+    return `+${numberOfKeys - 1}`;
 }
 
 const subjectCountDisplay = (subjects) => {
@@ -173,66 +219,74 @@ function getDisplayedSubject(subjects) {
 }
 </script>
 
-
-
 <template>
     <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
+    <h2 class="text-black text-3xl font-semibold mb-5 text-center sm:text-left">Filtros</h2>
     <div class="grid">
         <div v-if="loading" class="text-center col-12">Cargando información...</div>
+        
         <!-- Filtros -->
-        <div class="p-2">
-            <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 w-full" />
-            <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 w-full" />
+        <div class="flex flex-row">
+            <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 mx-3 w-6" />
+            <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 mx-3 w-6" />
             <Dropdown 
                 v-model="filters.weekSchedule.value"
                 :options="daysOfWeek" 
                 option-label="label" 
                 option-value="value"
-                placeholder="Selecciona un día..." 
-                class="mb-2 w-full" 
+                placeholder="Cualquiera..." 
+                class="mb-2 mx-3 w-4" 
             />
-
         </div>
+
         <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
         <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-6 lg:col-4 p-2">
-            <div class="card h-full p-4 border-round-3xl shadow-md cursor-pointer flex flex-column justify-between">
-                <div class="flex flex-column">
-                    <span class="flex flex-row items-center">
-                        <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
-                        class="border-circle h-5rem w-5rem">
-                        <Skeleton v-else shape="circle" size="5rem"></Skeleton>
-                        <div class="relative w-full pl-4 pt-3">
-                            <span class="font-bold text-lg text-black-alpha-90 truncate"
-                            style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                                {{ mae.name }}
-                            </span>
-                            <div class="flex flex-row text-lg text-black-alpha-90 truncate"
-                            style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                                <p class="pr-2">{{ mae.career }} </p>
-                                <p class="pr-2">|</p>  
-                                <p>{{ mae.uid }}</p>
+            <a :href="`#/mae/${mae.uid}`" class="block transition-transform duration-300 transform hover:scale-105">
+                <div class="card h-full p-4 border-round-3xl shadow-md cursor-pointer flex flex-column justify-between">
+                    <div class="flex flex-column">
+                        <span class="flex flex-row items-center">
+                            <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
+                            class="border-circle h-5rem w-5rem">
+                            <Skeleton v-else shape="circle" size="5rem"></Skeleton>
+                            <div class="relative w-full pl-4 pt-3">
+                                <span class="font-bold text-lg text-black-alpha-90 truncate"
+                                style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                    {{ mae.name }}
+                                </span>
+                                <div class="flex flex-row text-lg text-black-alpha-90 truncate"
+                                style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                    <p class="pr-2">{{ mae.career }} </p>
+                                    <p class="pr-2">|</p>  
+                                    <p>{{ mae.uid }}</p>
+                                </div>
+                            </div>
+                        </span>
+
+                        <p class="font-bold text-lg mt-2 text-black-alpha-90">Horarios</p>
+                        <div class="flex flex-wrap">
+                            <Tag :class="getDayColor(filters.weekSchedule.value || closestDay(mae.weekSchedule))" 
+                            :value="getDisplayedDay(mae.weekSchedule)" 
+                            class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                            
+                            <div v-if="Object.keys(mae.weekSchedule).length > 1">
+                                <button class="p-2 text-gray-500">
+                                    {{ weekCountDisplay(mae.weekSchedule) }}
+                                </button>
                             </div>
                         </div>
-                    </span>
 
-                    <p class="font-bold text-lg mt-2">Horarios</p>
-                    <div class="flex flex-wrap">
-                        <Tag :class="getDayColor(filters.weekSchedule.value || closestDay(mae.weekSchedule))" 
-         :value="getDisplayedDay(mae.weekSchedule)" 
-         class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
-                    </div>
-
-                    <p class="font-bold text-lg mt-1">Materias</p>
-                    <div class="flex items-center text-md">
-                    <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
-                    <div v-if="mae.subjects.length > 1">
-                        <button class="p-2 text-gray-500">
-                            {{ subjectCountDisplay(mae.subjects) }}
-                        </button>
+                        <p class="font-bold text-lg mt-1 text-black-alpha-90">Materias</p>
+                        <div class="flex items-center text-md">
+                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                            <div v-if="mae.subjects.length > 1">
+                                <button class="p-2 text-gray-500">
+                                    {{ subjectCountDisplay(mae.subjects) }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
-            </div>
+            </a>
         </div>
     </div>
 </template>
@@ -246,14 +300,25 @@ function getDisplayedSubject(subjects) {
 }
 
 .custom-skeleton {
-  background-color: #3498db;
-  border-color: #2980b9;
+    background-color: #3498db;
+    border-color: #2980b9;
 }
 
 button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Agrega transición y efecto de escala */
+a {
+    display: block;
+    text-decoration: none;
+}
+
+a:hover .card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
+

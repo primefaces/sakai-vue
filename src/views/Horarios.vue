@@ -10,10 +10,19 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.CONTAINS },
     weekSchedule: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
-    subjects: { value: null, matchMode: ARRAY_CONTAINS.value }, // Ajustado para usar ARRAY_CONTAINS
+    subjects: { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 const loading = ref(true);
+const daysOfWeek = [
+    { label: 'Todos los días', value: null },
+    { label: 'Lunes', value: 'monday' },
+    { label: 'Martes', value: 'tuesday' },
+    { label: 'Miércoles', value: 'wednesday' },
+    { label: 'Jueves', value: 'thursday' },
+    { label: 'Viernes', value: 'friday' },
+];
+
 
 onMounted(() => {
     getMaes().then((data) => {
@@ -52,16 +61,26 @@ const filteredMaes = computed(() => {
             ? mae.subjects.some(subject => subject.name.toLowerCase().includes(filters.value.subjects.value.toLowerCase()))
             : true;
 
+        const hasWeekSchedule = filters.value.weekSchedule.value
+            ? mae.weekSchedule[filters.value.weekSchedule.value] && mae.weekSchedule[filters.value.weekSchedule.value].length > 0
+            : true;
+
         return (
             (!filters.value.global.value || mae.name.toLowerCase().includes(filters.value.global.value.toLowerCase())) &&
             (!filters.value.name.value || mae.name.toLowerCase().includes(filters.value.name.value.toLowerCase())) &&
-            (!filters.value.weekSchedule.value || filters.value.weekSchedule.value.some(day => mae.weekSchedule[day])) &&
+            hasWeekSchedule &&
             hasSubject &&
             (!filters.value.status.value || mae.status === filters.value.status.value)
         );
     });
 });
-
+function getDisplayedDay(weekSchedule) {
+    if (filters.value.weekSchedule.value) {
+        return translateDayToSpanish(filters.value.weekSchedule.value);
+    } else {
+        return translateClosestDay(weekSchedule);
+    }
+}
 function normalizeDay(day) {
     return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
@@ -76,7 +95,7 @@ function translateDayToSpanish(day) {
         'saturday': 'Sábado',
         'sunday': 'Domingo'
     };
-    return daysMapping[day] || 'Invalid day';
+    return daysMapping[day] || 'Sin horario';
 }
 
 function translateDayToEnglish(day) {
@@ -118,8 +137,6 @@ function getSubjectColor(area) {
     }
 }
 
-
-
 const closestDay = (schedule) => {
     const today = new Date().getDay();
     const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -135,50 +152,17 @@ const closestDay = (schedule) => {
     const closestDay = upcomingDays.length ? upcomingDays[0] : daysInSchedule[0];
 
     return daysOfWeek[closestDay];
-};
+}
 
-const translateClosestDay = (schedule) => {
-    const day = closestDay(schedule);
-    if (!day) return 'Sin horario';
-    const hours = formatScheduleHours(schedule[day]);
-
-    return `${translateDayToSpanish(day)} ${hours}`;
-};
+const translateClosestDay = (weekSchedule) => {
+    const closest = closestDay(weekSchedule);
+    return translateDayToSpanish(closest);
+}
 
 const subjectCountDisplay = (subjects) => {
     if (subjects.length <= 1) return null;
     return `+${subjects.length - 1}`;
 }
-
-function formatScheduleHours(hours) {
-    if (!Array.isArray(hours) || hours.length === 0) return '';
-
-    const timeEntries = hours.map(hour => {
-        const start = new Date(`1970-01-01T${hour.start}:00Z`);
-        const end = new Date(`1970-01-01T${hour.end}:00Z`);
-        return { start, end };
-    });
-
-    const sortedEntries = timeEntries.sort((a, b) => a.start - b.start);
-
-    let result = '';
-    for (let i = 0; i < sortedEntries.length; i++) {
-        const { start, end } = sortedEntries[i];
-
-        const startHour = start.toISOString().substr(11, 5);
-        const endHour = end.toISOString().substr(11, 5);
-
-        if (i < sortedEntries.length - 1 && sortedEntries[i + 1].start.getTime() === end.getTime()) {
-            result += `${startHour} - `;
-        } else {
-            result += `${startHour} - ${endHour}`;
-            if (i < sortedEntries.length - 1) result += ', ';
-        }
-    }
-    result = ' • ' + result 
-    return result;
-}
-
 function getDisplayedSubject(subjects) {
     if (!filters.value.subjects.value) {
         return subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' };
@@ -187,8 +171,9 @@ function getDisplayedSubject(subjects) {
     const filteredSubject = subjects.find(subject => subject.name.toLowerCase().includes(filters.value.subjects.value.toLowerCase()));
     return filteredSubject || (subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' });
 }
-
 </script>
+
+
 
 <template>
     <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
@@ -198,8 +183,15 @@ function getDisplayedSubject(subjects) {
         <div class="p-2">
             <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 w-full" />
             <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 w-full" />
-            <InputText v-model="filters.status.value" placeholder="Estado..." class="mb-2 w-full" />
-            <!-- Otros filtros según sea necesario -->
+            <Dropdown 
+                v-model="filters.weekSchedule.value"
+                :options="daysOfWeek" 
+                option-label="label" 
+                option-value="value"
+                placeholder="Selecciona un día..." 
+                class="mb-2 w-full" 
+            />
+
         </div>
         <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
         <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-6 lg:col-4 p-2">
@@ -225,7 +217,9 @@ function getDisplayedSubject(subjects) {
 
                     <p class="font-bold text-lg mt-2">Horarios</p>
                     <div class="flex flex-wrap">
-                        <Tag :class="getDayColor(closestDay(mae.weekSchedule))" :value="translateClosestDay(mae.weekSchedule)" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                        <Tag :class="getDayColor(filters.weekSchedule.value || closestDay(mae.weekSchedule))" 
+         :value="getDisplayedDay(mae.weekSchedule)" 
+         class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
                     </div>
 
                     <p class="font-bold text-lg mt-1">Materias</p>

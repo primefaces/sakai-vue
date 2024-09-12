@@ -1,9 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { getMaes } from '@/firebase/db/users';
-
 
 const maes = ref([]);
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
@@ -79,7 +77,7 @@ function translateDayToEnglish(day) {
 }
 
 function getDayColor(day) {
-    if (!day) return '';  // Retorna una cadena vacía si el día es indefinido
+    if (!day) return '';
 
     const dayLC = day.toLowerCase();
     switch (dayLC) {
@@ -88,7 +86,7 @@ function getDayColor(day) {
         case 'wednesday': return 'bg-yellow-600';
         case 'thursday': return 'bg-red-600';
         case 'friday': return 'bg-purple-600';
-        default: return '';  // Retorna una cadena vacía si no hay un caso que coincida
+        default: return '';
     }
 }
 
@@ -104,7 +102,6 @@ function getSubjectColor(area) {
     }
 }
 
-
 const filteredMaes = computed(() => {
     return maes.value.filter(mae => {
         return (
@@ -117,22 +114,19 @@ const filteredMaes = computed(() => {
     });
 });
 
-
 const toggleSubjects = (mae) => {
     mae.showMoreSubjects = !mae.showMoreSubjects;
 }
-
 
 const closestDay = (schedule) => {
     const today = new Date().getDay();
     const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-    // Filtra los días que están definidos en el horario
     const daysInSchedule = Object.keys(schedule)
-        .filter(day => Array.isArray(schedule[day]) && schedule[day].length > 0) // Verifica si el día tiene valores
+        .filter(day => Array.isArray(schedule[day]) && schedule[day].length > 0)
         .map(day => daysOfWeek.indexOf(day));
 
-    if (daysInSchedule.length === 0) return null;  // Si no hay días, retorna null
+    if (daysInSchedule.length === 0) return null;
 
     const upcomingDays = daysInSchedule.filter(day => day >= today);
 
@@ -143,32 +137,26 @@ const closestDay = (schedule) => {
 
 const translateClosestDay = (schedule) => {
     const day = closestDay(schedule);
-    if (!day) return 'Sin horario';  // Si no hay día más cercano, retorna un mensaje
+    if (!day) return 'Sin horario';
     const hours = formatScheduleHours(schedule[day]);
 
     return `${translateDayToSpanish(day)} ${hours}`;
 };
 
-
-// Estilización de materias y cálculo de cuántas quedan
 const subjectCountDisplay = (subjects) => {
     if (subjects.length <= 1) return null;
     return `+${subjects.length - 1}`;
 }
 
 function formatScheduleHours(hours) {
-    console.log("Estas son las horas", hours);
-
     if (!Array.isArray(hours) || hours.length === 0) return '';
 
-    // Convertir horas a objetos de tipo Date
     const timeEntries = hours.map(hour => {
         const start = new Date(`1970-01-01T${hour.start}:00Z`);
         const end = new Date(`1970-01-01T${hour.end}:00Z`);
         return { start, end };
     });
 
-    // Ordenar los horarios por hora de inicio
     const sortedEntries = timeEntries.sort((a, b) => a.start - b.start);
 
     let result = '';
@@ -178,7 +166,6 @@ function formatScheduleHours(hours) {
         const startHour = start.toISOString().substr(11, 5);
         const endHour = end.toISOString().substr(11, 5);
 
-        // Si la siguiente entrada empieza en la misma hora que esta termina
         if (i < sortedEntries.length - 1 && sortedEntries[i + 1].start.getTime() === end.getTime()) {
             result += `${startHour} - `;
         } else {
@@ -189,18 +176,25 @@ function formatScheduleHours(hours) {
     result = ' • ' + result 
     return result;
 }
-
 </script>
+
 <template>
     <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
     <div class="grid">
         <div v-if="loading" class="text-center col-12">Cargando información...</div>
+        <!-- Filtros -->
+        <div class="p-2">
+            <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 w-full" />
+            <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 w-full" />
+            <InputText v-model="filters.status.value" placeholder="Estado..." class="mb-2 w-full" />
+            <!-- Otros filtros según sea necesario -->
+        </div>
         <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->
         <div v-for="mae in filteredMaes" :key="mae.uid" class="col-12 md:col-6 lg:col-4 p-2">
             <div class="card h-full p-4 border-round-3xl shadow-md cursor-pointer flex flex-column justify-between">
-                <div class="flex flex-column ">
-                    <span class="flex flex-row">
-                        <img v-if="true" :src="mae.profilePictureUrl" alt="Foto de perfil"
+                <div class="flex flex-column">
+                    <span class="flex flex-row items-center">
+                        <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
                         class="border-circle h-5rem w-5rem">
                         <Skeleton v-else shape="circle" size="5rem"></Skeleton>
                         <div class="relative w-full pl-4 pt-3">
@@ -208,7 +202,7 @@ function formatScheduleHours(hours) {
                             style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                                 {{ mae.name }}
                             </span>
-                            <div class="flex flex-row text-lg text-black-alpha-90  truncate"
+                            <div class="flex flex-row text-lg text-black-alpha-90 truncate"
                             style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                                 <p class="pr-2">{{ mae.career }} </p>
                                 <p class="pr-2">|</p>  
@@ -239,11 +233,12 @@ function formatScheduleHours(hours) {
 
 <style scoped>
 .card {
-    min-height: 100%; /* Hace que todas las cartas tengan la misma altura */
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     background-color: #fff;
 }
+
 .custom-skeleton {
   background-color: #3498db;
   border-color: #2980b9;
@@ -256,5 +251,3 @@ button {
   font-size: 1rem;
 }
 </style>
-
-

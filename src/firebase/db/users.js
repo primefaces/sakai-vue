@@ -58,7 +58,8 @@ export async function getCurrentUser() {
     }
     return null;
 }
-export async function getMaes(getProfilePicture = false) {
+
+export async function getMaes() {
     const usersRef = collection(firestoreDB, "users");
     const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi']));
 

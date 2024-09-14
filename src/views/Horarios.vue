@@ -50,30 +50,41 @@ onMounted(() => {
 
         const normalizedFilter = filter.map(day => translateDayToEnglish(day));
         return Object.keys(value).some(dayArray => {
-            return normalizedFilter.includes(normalizeDay(dayArray));
+            return normalizedFilter.includes(normalize(dayArray));
         });
     });
 });
 
+function normalize(day) {
+    return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 const filteredMaes = computed(() => {
+    const globalFilter = filters.value.global.value ? filters.value.global.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : null;
+    const nameFilter = filters.value.name.value ? filters.value.name.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : null;
+    const subjectsFilter = filters.value.subjects.value ? filters.value.subjects.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : null;
+    const weekScheduleFilter = filters.value.weekSchedule.value ? filters.value.weekSchedule.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : null;
+    const statusFilter = filters.value.status.value ? filters.value.status.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : null;
+
     return maes.value.filter(mae => {
-        const hasSubject = filters.value.subjects.value
-            ? mae.subjects.some(subject => subject.name.toLowerCase().includes(filters.value.subjects.value.toLowerCase()))
+        const hasSubject = subjectsFilter
+            ? mae.subjects.some(subject => subject.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(subjectsFilter))
             : true;
 
-        const hasWeekSchedule = filters.value.weekSchedule.value
-            ? mae.weekSchedule[filters.value.weekSchedule.value] && mae.weekSchedule[filters.value.weekSchedule.value].length > 0
+        const hasWeekSchedule = weekScheduleFilter
+            ? mae.weekSchedule[weekScheduleFilter] && mae.weekSchedule[weekScheduleFilter].length > 0
             : true;
 
         return (
-            (!filters.value.global.value || mae.name.toLowerCase().includes(filters.value.global.value.toLowerCase())) &&
-            (!filters.value.name.value || mae.name.toLowerCase().includes(filters.value.name.value.toLowerCase())) &&
+            (!globalFilter || mae.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(globalFilter)) &&
+            (!nameFilter || mae.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(nameFilter)) &&
             hasWeekSchedule &&
             hasSubject &&
-            (!filters.value.status.value || mae.status === filters.value.status.value)
+            (!statusFilter || mae.status.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(statusFilter))
         );
     });
 });
+
 function getDisplayedDay(weekSchedule) {
     if (filters.value.weekSchedule.value) {
         const scheduleForDay = weekSchedule[filters.value.weekSchedule.value] || [];
@@ -84,9 +95,7 @@ function getDisplayedDay(weekSchedule) {
         return translateClosestDay(weekSchedule);
     }
 }
-function normalizeDay(day) {
-    return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-}
+
 
 function translateDayToSpanish(day) {
     const daysMapping = {
@@ -214,7 +223,11 @@ function getDisplayedSubject(subjects) {
         return subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' };
     }
 
-    const filteredSubject = subjects.find(subject => subject.name.toLowerCase().includes(filters.value.subjects.value.toLowerCase()));
+    const normalizedFilter = filters.value.subjects.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const filteredSubject = subjects.find(subject => 
+        subject.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedFilter)
+    );
+
     return filteredSubject || (subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' });
 }
 </script>
@@ -237,7 +250,6 @@ function getDisplayedSubject(subjects) {
         </div>
     <div class="grid">
         <div v-if="loading" class="text-center col-12">Cargando información...</div>
-        
         
 
         <!-- Cada tarjeta ocupa 1/3 del ancho y se asegura de tener la misma altura -->

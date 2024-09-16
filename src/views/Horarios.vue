@@ -9,7 +9,7 @@ const ARRAY_CONTAINS_ANY = ref('ARRAY_CONTAINS_ANY');
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    weekSchedule: { value: null, matchMode: ARRAY_CONTAINS_ANY.value },
+    weekSchedule: { value: null, matchMode: FilterMatchMode.CONTAINS  },
     subjects: { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
@@ -23,7 +23,6 @@ const daysOfWeek = [
     { label: 'Viernes', value: 'friday' },
 ];
 
-
 onMounted(() => {
     getMaes().then((data) => {
         maes.value = data;
@@ -34,13 +33,12 @@ onMounted(() => {
         if (!filter || filter.trim() === '') return true;
         if (!value) return false;
 
-        const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const filterNormalized = filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
         return value.some(item => {
-            const idNormalized = item.id.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const nameNormalized = item.name.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            return idNormalized.toLowerCase().includes(filterNormalized.toLowerCase()) ||
-                   nameNormalized.toLowerCase().includes(filterNormalized.toLowerCase());
+            const idNormalized = item.id.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            const nameNormalized = item.name.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            return idNormalized.includes(filterNormalized) || nameNormalized.includes(filterNormalized);
         });
     });
 
@@ -68,7 +66,10 @@ const filteredMaes = computed(() => {
 
     return maes.value.filter(mae => {
         const hasSubject = subjectsFilter
-            ? mae.subjects.some(subject => subject.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(subjectsFilter))
+            ? mae.subjects.some(subject => {
+                const subjectNameNormalized = subject.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                return subjectNameNormalized.includes(subjectsFilter);
+            })
             : true;
 
         const hasWeekSchedule = weekScheduleFilter
@@ -168,7 +169,7 @@ const closestDay = (schedule) => {
 
 const translateClosestDay = (schedule) => {
     const day = closestDay(schedule);
-    if (!day) return 'Sin horario';  // Si no hay día más cercano, retorna un mensaje
+    if (!day) return 'Sin horario'; 
     const hours = formatScheduleHours(schedule[day]);
  
     return `${translateDayToSpanish(day)} ${hours}`;
@@ -290,9 +291,9 @@ function getDisplayedSubject(subjects) {
 
                         <p class="font-bold text-lg mt-1 text-black-alpha-90">Materias</p>
                         <div class="flex items-center text-md">
-                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)"  style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
                             <div v-if="mae.subjects.length > 1">
-                                <button class="p-2 text-gray-500">
+                                <button class="p-2 text-gray-500" >
                                     {{ subjectCountDisplay(mae.subjects) }}
                                 </button>
                             </div>
@@ -334,4 +335,3 @@ a:hover .card {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
-

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { FilterMatchMode, FilterService } from 'primevue/api';
-import { getMaes } from '@/firebase/db/users';
+import { getMaes, getClosestDayAndStartTime} from '@/firebase/db/users';
 
 const maes = ref([]);
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
@@ -87,15 +87,19 @@ const filteredMaes = computed(() => {
 });
 
 function getDisplayedDay(weekSchedule) {
-    if (filters.value.weekSchedule.value) {
-        const scheduleForDay = weekSchedule[filters.value.weekSchedule.value] || [];
-       
+    const closestDayData = getClosestDayAndStartTime(weekSchedule);
+    const displayedDay = filters.value.weekSchedule.value || closestDayData.day;
+    
+    if (displayedDay) {
+        const scheduleForDay = weekSchedule[displayedDay] || [];
         const hours = formatScheduleHours(scheduleForDay);
-        return `${translateDayToSpanish(filters.value.weekSchedule.value)} ${hours}`;
+        return `${translateDayToSpanish(displayedDay)} ${hours}`;
     } else {
-        return translateClosestDay(weekSchedule);
+        return 'Sin horario';
     }
 }
+
+
 
 
 function translateDayToSpanish(day) {
@@ -150,30 +154,13 @@ function getSubjectColor(area) {
     }
 }
 
-const closestDay = (schedule) => {
-    const today = new Date().getDay();
-    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-
-    const daysInSchedule = Object.keys(schedule)
-        .filter(day => Array.isArray(schedule[day]) && schedule[day].length > 0)
-        .map(day => daysOfWeek.indexOf(day));
-
-    if (daysInSchedule.length === 0) return null;
-
-    const upcomingDays = daysInSchedule.filter(day => day >= today);
-
-    const closestDay = upcomingDays.length ? upcomingDays[0] : daysInSchedule[0];
-
-    return daysOfWeek[closestDay];
+function closestDay(schedule) {
+    console.log(schedule,"Papao")
+    const { day } = getClosestDayAndStartTime(schedule);
+    return day;
 }
 
-const translateClosestDay = (schedule) => {
-    const day = closestDay(schedule);
-    if (!day) return 'Sin horario'; 
-    const hours = formatScheduleHours(schedule[day]);
- 
-    return `${translateDayToSpanish(day)} ${hours}`;
-};
+
 
 function formatScheduleHours(hours) {
 

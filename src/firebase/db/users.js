@@ -59,6 +59,46 @@ export async function getCurrentUser() {
     return null;
 }
 
+// Función para obtener el día más cercano en la semana y la hora de inicio más temprana
+export const getClosestDayAndStartTime = (schedules) => {
+    if (typeof schedules !== 'object' || schedules === null || Array.isArray(schedules)) {
+        console.error('Expected a map of schedules, but received:', schedules);
+        return { day: null, startTime: null };
+    }
+
+    const today = new Date().getDay(); // Día actual (0-6) donde 0 es domingo
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    // Buscar el día más cercano con horarios
+    let closestDay = null;
+    let earliestStartTime = null;
+
+    Object.keys(schedules).forEach(day => {
+        if (Array.isArray(schedules[day])) {
+            schedules[day].forEach(schedule => {
+                if (schedule.start) {
+                    const dayIndex = daysOfWeek.indexOf(day);
+                    if (dayIndex >= today) {
+                        if (closestDay === null || dayIndex < daysOfWeek.indexOf(closestDay) || (dayIndex === daysOfWeek.indexOf(closestDay) && (earliestStartTime === null || schedule.start < earliestStartTime))) {
+                            closestDay = day;
+                            earliestStartTime = schedule.start;
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    // Si no se encuentra ningún día, establecer valores nulos
+    if (closestDay === null) {
+        return { day: null, startTime: null };
+    }
+
+    return { day: closestDay, startTime: earliestStartTime };
+};
+
+
+
 export async function getMaes() {
     const usersRef = collection(firestoreDB, "users");
     const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi']));
@@ -68,14 +108,36 @@ export async function getMaes() {
     if (querySnapshot) {
         let data = querySnapshot.docs.map(doc => doc.data());
 
-        // Filtrar y ordenar por el campo name en orden alfabético
-        data = data.filter(item => item.name).sort((a, b) => a.name.localeCompare(b.name));
+        // Filtrar usuarios que tienen un nombre
+        data = data.filter(item => item.name);
 
-            return Promise.all(data.map(async (item) => {
-                const profilePictureUrl = await getUserProfilePicture(item.email);
-                return { ...item, profilePictureUrl };
-            }));
-        
+        // Obtener la URL de la foto de perfil
+        data = await Promise.all(data.map(async (item) => {
+            const profilePictureUrl = await getUserProfilePicture(item.email);
+            return { ...item, profilePictureUrl };
+        }));
+
+        // Ordenar por el día más cercano, la hora de inicio más temprana y alfabéticamente por nombre
+        data.sort((a, b) => {
+            // Obtener el día más cercano y la hora de inicio más temprana
+            const { day: dayA, startTime: startTimeA } = getClosestDayAndStartTime(a.weekSchedule);
+            const { day: dayB, startTime: startTimeB } = getClosestDayAndStartTime(b.weekSchedule);
+
+            const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+            // Comparar días más cercanos
+            const dayComparison = (dayA === null ? 1 : (dayB === null ? -1 : daysOfWeek.indexOf(dayA) - daysOfWeek.indexOf(dayB)));
+            if (dayComparison !== 0) return dayComparison;
+
+            // Comparar horas de inicio si los días son iguales
+            const startTimeComparison = (startTimeA === null ? 1 : (startTimeB === null ? -1 : startTimeA.localeCompare(startTimeB)));
+            if (startTimeComparison !== 0) return startTimeComparison;
+
+            // Comparar alfabéticamente si ambos días y horas son iguales
+            return a.name.localeCompare(b.name);
+        });
+
+        return data;
     } else {
         return null;
     }

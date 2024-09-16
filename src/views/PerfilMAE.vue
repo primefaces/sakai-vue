@@ -168,15 +168,17 @@ const timeToDecimal = (time) => {
 
 const saveScheduleChanges = async () => {
   // Validación de horario
-  let  hours = 0
+  let hours = 0;
+
   for (const day of daysArray) {
     const scheduleForDay = newSchedule.value[day.en];
-    
+    const intervals = [];
+
     if (scheduleForDay) {
       for (const timeSlot of scheduleForDay) {
         const startTime = timeSlot.start;
         const endTime = timeSlot.end;
-        
+
         if (startTime === endTime) {
           toast.add({ severity: 'error', summary: 'Error de horario', detail: `La hora de inicio y la hora de fin no pueden ser iguales para el día ${day.es}`, life: 3000 });
           return;
@@ -186,37 +188,52 @@ const saveScheduleChanges = async () => {
           toast.add({ severity: 'error', summary: 'Error de horario', detail: `La hora de inicio no puede ser mayor que la hora de fin para el día ${day.es}`, life: 3000 });
           return;
         }
+
+        // Verificación de solapamientos
+        for (const existingSlot of intervals) {
+          const existingStart = existingSlot.start;
+          const existingEnd = existingSlot.end;
+          
+          if ((startTime < existingEnd && endTime > existingStart)) {
+            toast.add({ severity: 'error', summary: 'Error de horario', detail: `El intervalo de tiempo de ${startTime} a ${endTime} ya existe o se sobrepone con otro intervalo para el día ${day.es}`, life: 3000 });
+            return;
+          }
+        }
+
+        intervals.push({ start: startTime, end: endTime });
+
         const start = timeToDecimal(timeSlot.start);
         const end = timeToDecimal(timeSlot.end);
-        hours = hours + end - start 
-
+        hours = hours + end - start;
       }
     }
   }
+
+  // Validaciones adicionales
   if (maeInfo.value.status === "becario" && 
     ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") &&
     (maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS") && 
     hours < 3)) {
-  toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 3 horas asignadas en total', life: 3000 });
-  return;
-} else if (maeInfo.value.status === "becario" && 
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 3 horas asignadas en total', life: 3000 });
+    return;
+  } else if (maeInfo.value.status === "becario" && 
            ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") && 
            !(maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS")) && 
            hours < 5) {
-  toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 5 horas asignadas en total', life: 3000 });
-  return;
-} else if (maeInfo.value.status === "becario" && 
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 5 horas asignadas en total', life: 3000 });
+    return;
+  } else if (maeInfo.value.status === "becario" && 
            maeInfo.value.role === "publi" && 
            hours < 2) {
-  toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 2 horas asignadas en total', life: 3000 });
-  return;
-} else if (maeInfo.value.status === "voluntario" && 
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 2 horas asignadas en total', life: 3000 });
+    return;
+  } else if (maeInfo.value.status === "voluntario" && 
            hours < 1) {
-  toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de una hora asignada en total', life: 3000 });
-  return;
-}
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de una hora asignada en total', life: 3000 });
+    return;
+  }
 
-  toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tu horario', life: 3000  });
+  toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tu horario', life: 3000 });
   try {
     await updateUserSchedule(maeInfo.value.uid, newSchedule.value); 
     maeInfo.value = await getUser(route.params.id);
@@ -226,6 +243,9 @@ const saveScheduleChanges = async () => {
   }
   showDialogHorarios.value = false;  
 };
+
+
+
 
 
 const showDialogAsesoria = ref(false);

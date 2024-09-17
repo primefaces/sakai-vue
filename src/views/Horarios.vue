@@ -2,7 +2,17 @@
 import { ref, computed, onMounted } from 'vue';
 import { FilterMatchMode, FilterService } from 'primevue/api';
 import { getMaes, getClosestDayAndStartTime} from '@/firebase/db/users';
-
+import {
+    normalize,
+    translateDayToSpanish,
+    translateDayToEnglish,
+    getDayColor,
+    getSubjectColor,
+    formatScheduleHours,
+    closestDay,
+    weekCountDisplay,
+    subjectCountDisplay,
+} from '@/utils/HorarioUtils';
 const maes = ref([]);
 const ARRAY_CONTAINS = ref('ARRAY_CONTAINS');
 const ARRAY_CONTAINS_ANY = ref('ARRAY_CONTAINS_ANY');
@@ -53,9 +63,6 @@ onMounted(() => {
     });
 });
 
-function normalize(day) {
-    return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-}
 
 const filteredMaes = computed(() => {
     const globalFilter = filters.value.global.value ? filters.value.global.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : null;
@@ -100,112 +107,6 @@ function getDisplayedDay(weekSchedule) {
 }
 
 
-
-
-function translateDayToSpanish(day) {
-    const daysMapping = {
-        'monday': 'Lunes',
-        'tuesday': 'Martes',
-        'wednesday': 'Miércoles',
-        'thursday': 'Jueves',
-        'friday': 'Viernes',
-        'saturday': 'Sábado',
-        'sunday': 'Domingo'
-    };
-    return daysMapping[day] || 'Sin horario';
-}
-
-function translateDayToEnglish(day) {
-    const daysMapping = {
-        'Lunes': 'monday',
-        'Martes': 'tuesday',
-        'Miércoles': 'wednesday',
-        'Jueves': 'thursday',
-        'Viernes': 'friday',
-        'Sábado': 'saturday',
-        'Domingo': 'sunday'
-    };
-    return daysMapping[day] || 'Invalid day';
-}
-
-function getDayColor(day) {
-    if (!day) return '';
-
-    const dayLC = day.toLowerCase();
-    switch (dayLC) {
-        case 'monday': return 'bg-blue-600';
-        case 'tuesday': return 'bg-green-600';
-        case 'wednesday': return 'bg-yellow-600';
-        case 'thursday': return 'bg-red-600';
-        case 'friday': return 'bg-purple-600';
-        default: return '';
-    }
-}
-
-function getSubjectColor(area) {
-    switch (area) {
-        case 'ING': return 'bg-cyan-600';
-        case 'NEG': return 'bg-blue-600';
-        case 'SLD': return 'bg-teal-600';
-        case 'CIS': return 'bg-red-600';
-        case 'AMC': return 'bg-green-600';
-        case 'ART': return 'bg-purple-600';
-        default: return 'bg-yellow-600';
-    }
-}
-
-function closestDay(schedule) {
-    console.log(schedule,"Papao")
-    const { day } = getClosestDayAndStartTime(schedule);
-    return day;
-}
-
-
-
-function formatScheduleHours(hours) {
-
-
-    if (!Array.isArray(hours) || hours.length === 0) return '' ;
-
-    // Convertir horas a objetos de tipo Date
-    const timeEntries = hours.map(hour => {
-        const start = new Date(`1970-01-01T${hour.start}:00Z`);
-        const end = new Date(`1970-01-01T${hour.end}:00Z`);
-        return { start, end };
-    });
-
-    // Ordenar los horarios por hora de inicio
-    const sortedEntries = timeEntries.sort((a, b) => a.start - b.start);
-
-    let result = '';
-    for (let i = 0; i < sortedEntries.length; i++) {
-        const { start, end } = sortedEntries[i];
-
-        const startHour = start.toISOString().substr(11, 5);
-        const endHour = end.toISOString().substr(11, 5);
-
-        // Si la siguiente entrada empieza en la misma hora que esta termina
-        if (i < sortedEntries.length - 1 && sortedEntries[i + 1].start.getTime() === end.getTime()) {
-            result += `${startHour} - `;
-        } else {
-            result += `${startHour} - ${endHour}`;
-            if (i < sortedEntries.length - 1) result += ', ';
-        }
-    }
-    result = ' • ' + result 
-    return result;
-}
-
-const weekCountDisplay = (weekSchedule) => {
-    const numberOfKeys = Object.keys(weekSchedule).length;
-    if (numberOfKeys <= 1) return null;
-    return `+${numberOfKeys - 1}`;
-}
-
-const subjectCountDisplay = (subjects) => {
-    if (subjects.length <= 1) return null;
-    return `+${subjects.length - 1}`;
-}
 function getDisplayedSubject(subjects) {
     if (!filters.value.subjects.value) {
         return subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' };

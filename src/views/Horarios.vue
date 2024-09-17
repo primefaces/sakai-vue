@@ -31,6 +31,7 @@ const daysOfWeek = [
     { label: 'Miércoles', value: 'wednesday' },
     { label: 'Jueves', value: 'thursday' },
     { label: 'Viernes', value: 'friday' },
+
 ];
 
 onMounted(() => {
@@ -125,16 +126,18 @@ function getDisplayedSubject(subjects) {
     <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Horarios</h1>
     <h2 class="text-black text-3xl font-semibold mb-5 text-center sm:text-left">Filtros</h2>
     <!-- Filtros -->
-    <div class="flex flex-row mb-4">
-            <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 mr-3 w-6" />
-            <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 mx-3 w-6" />
+    <div class="flex md:flex-row flex-column mb-4">
+            <InputText v-model="filters.name.value" placeholder="Nombre..." class="mb-2 md:mr-3 md:w-6 w-full" />
+            <InputText v-model="filters.subjects.value" placeholder="Materias..." class="mb-2 md:mx-3 md:w-6 w-full" />
+
             <Dropdown 
                 v-model="filters.weekSchedule.value"
                 :options="daysOfWeek" 
                 option-label="label" 
                 option-value="value"
                 placeholder="Cualquiera..." 
-                class="mb-2 mx-3 w-4" 
+                class="mb-2 md:mx-3 md:w-4 w-full" 
+
             />
         </div>
     <div class="grid">
@@ -213,7 +216,6 @@ button {
     font-size: 1rem;
 }
 
-/* Agrega transición y efecto de escala */
 a {
     display: block;
     text-decoration: none;

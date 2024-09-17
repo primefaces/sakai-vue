@@ -14,6 +14,7 @@ import {
     increment,
 } from 'firebase/firestore';
 import { getUserProfilePicture } from "../img/users";
+import * as XLSX from 'xlsx';
 
 function getEmailUsername(email) {
     var atIndex = email.indexOf('@');
@@ -397,49 +398,128 @@ export async function clearAllUsersWeekSchedule() {
 }
 
 
-
-export async function checkAndUpdateUserRole() {
+export async function checkAndUpdateUserRole(file = null) {
     try {
-      
         const usersRef = collection(firestoreDB, "users");
-
-
         const querySnapshot = await getDocs(usersRef);
 
-        // Roles que serán filtrados
-        const eligibleRoles = ['mae', 'coordi','publi'];
+        // Si se subió un archivo Excel, ejecutamos la lógica relacionada con el archivo
+        if (file) {
+            // Leer y procesar el archivo Excel
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const excelData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-  
-        const promises = querySnapshot.docs.map(async (doc) => {
-            const userRef = doc.ref; // Referencia al documento específico del usuario
-            const userData = doc.data(); // Obtener los datos del usuario
+                    // Convertimos las matrículas del Excel a correos en formato lowercase@tec.mx
+                    const emailsFromExcel = excelData.slice(1).map(row => row[1]?.toLowerCase() + '@tec.mx'); // Ajusta el índice si es necesario
 
-            // Verificar si el rol es "mae" o "coordi" o "publi"
-            if (eligibleRoles.includes(userData.role)) {
+                    // Procesamos cada usuario
+                    const promises = querySnapshot.docs.map(async (doc) => {
+                        const userRef = doc.ref;
+                        const userData = doc.data();
+                        const eligibleRoles = ['mae', 'coordi', 'publi']; // Roles que serán filtrados
 
-                // Verificar si weekSchedule está vacío
-                const isWeekScheduleEmpty = Object.values(userData.weekSchedule).every(day => day.length === 0);
+                        if (eligibleRoles.includes(userData.role)) {
+                            const userEmail = userData.email?.toLowerCase(); // Convertir a minúsculas para comparar
 
-                // Verificar si totalTime es menor a 60
-                const isTotalTimeLessThan60 = userData.totalTime < 60;
+                            // Si el correo no está en la lista de correos del Excel, actualizamos el rol a "exmae"
+                            if (!emailsFromExcel.includes(userEmail)) {
+                                return updateDoc(userRef, { role: "exmae" });
+                            }
+                        }
 
-       
-                if (isWeekScheduleEmpty && isTotalTimeLessThan60) {
-                    return updateDoc(userRef, {
-                        role: "exmae"
+                        return Promise.resolve();
                     });
+
+                    await Promise.all(promises);
+                    console.log("Roles actualizados con base en el archivo Excel.");
+                } catch (error) {
+                    console.error("Error al procesar el archivo Excel:", error);
+                    throw error;
                 }
-            }
+            };
 
-            return Promise.resolve();
-        });
+            reader.readAsArrayBuffer(file);
+        } else {
+            // Si no hay archivo, ejecutamos la lógica normal
+            const eligibleRoles = ['mae', 'coordi', 'publi'];
 
+            const promises = querySnapshot.docs.map(async (doc) => {
+                const userRef = doc.ref;
+                const userData = doc.data();
 
-        await Promise.all(promises);
+                // Verificar si el rol es "mae", "coordi" o "publi"
+                if (eligibleRoles.includes(userData.role)) {
 
-        console.log("Roles actualizados exitosamente.");
+                    // Verificar si weekSchedule está vacío
+                    const isWeekScheduleEmpty = Object.values(userData.weekSchedule).every(day => day.length === 0);
+
+                    // Verificar si totalTime es 0
+                    const isTotalTimeEquals0 = userData.totalTime == 0;
+
+                    // Verificar si subjects está vacío
+                    const hasNoSubjects = !userData.subjects || userData.subjects.length === 0;
+
+                    // Si no tiene horario, su tiempo es 0 y no tiene materias, actualizar el rol
+                    if (isWeekScheduleEmpty && isTotalTimeEquals0 && hasNoSubjects) {
+                        return updateDoc(userRef, { role: "exmae" });
+                    }
+                }
+
+                return Promise.resolve();
+            });
+
+            await Promise.all(promises);
+            console.log("Roles actualizados con base en weekSchedule, totalTime, y subjects.");
+        }
     } catch (error) {
         console.error("Error actualizando roles de los usuarios: ", error);
         throw error;
+    }
+}
+
+
+
+export async function updateUserToMae(data) {
+    const { role, matricula, status } = data;
+
+    // Asegurarse de que los datos necesarios no sean nulos
+    if (!role || !matricula || !status) {
+        throw new Error("role, matricula, and status are required fields.");
+    }
+
+    // Buscar el usuario en la base de datos usando la matricula
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const userQuery = query(usersRef, where("email", "==", `${matricula.toLowerCase()}@tec.mx`));
+        const querySnapshot = await getDocs(userQuery);
+
+        if (querySnapshot.empty) {
+            console.log("No user found with the given matricula.");
+            return;
+        }
+
+        // Procesar cada usuario encontrado
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref;
+
+            // Actualizar el rol y el estatus del usuario
+            return updateDoc(userRef, {
+                role: role.value,
+                status: status.value,
+                weekSchedule: {}, 
+                subjects: [],
+                totalTime: 0
+            });
+        });
+
+        await Promise.all(promises);
+        console.log("Usuarios actualizados exitosamente.");
+    } catch (error) {
+        console.error("Error al actualizar los usuarios: ", error);
     }
 }

@@ -395,3 +395,51 @@ export async function clearAllUsersWeekSchedule() {
         throw error;
     }
 }
+
+
+
+export async function checkAndUpdateUserRole() {
+    try {
+        // Referencia a la colección "users" en Firestore
+        const usersRef = collection(firestoreDB, "users");
+
+        // Obtener todos los documentos de la colección
+        const querySnapshot = await getDocs(usersRef);
+
+        // Roles que serán filtrados
+        const eligibleRoles = ['mae', 'coordi'];
+
+        // Iterar a través de cada documento
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref; // Referencia al documento específico del usuario
+            const userData = doc.data(); // Obtener los datos del usuario
+
+            // Verificar si el rol es "mae" o "coordi"
+            if (eligibleRoles.includes(userData.role)) {
+
+                // Verificar si weekSchedule está vacío
+                const isWeekScheduleEmpty = Object.values(userData.weekSchedule).every(day => day.length === 0);
+
+                // Verificar si totalTime es menor a 60
+                const isTotalTimeLessThan60 = userData.totalTime < 60;
+
+                // Si todas las condiciones se cumplen, cambiar el rol a "ex mae"
+                if (isWeekScheduleEmpty && isTotalTimeLessThan60) {
+                    return updateDoc(userRef, {
+                        role: "exmae"
+                    });
+                }
+            }
+
+            return Promise.resolve(); // Si no se cumplen las condiciones, no hace nada
+        });
+
+        // Esperar a que todas las promesas se resuelvan
+        await Promise.all(promises);
+
+        console.log("Roles actualizados exitosamente.");
+    } catch (error) {
+        console.error("Error actualizando roles de los usuarios: ", error);
+        throw error;
+    }
+}

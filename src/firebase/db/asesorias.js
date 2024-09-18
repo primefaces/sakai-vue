@@ -60,3 +60,39 @@ export async function getAsesoriasCountForUserInCurrentSemester(userId) {
         return 0;
     }
 }
+
+
+// Función para obtener asesorías en un rango de fechas
+export async function getAsesoriasInRange(startDate, endDate) {
+    try {
+    
+        const startTimestamp = Timestamp.fromDate(new Date(startDate));
+        const endTimestamp = Timestamp.fromDate(new Date(endDate));
+
+    
+        const asesoriasRef = collection(firestoreDB, "asesorias");
+
+        const q = query(
+            asesoriasRef,
+            where("date", ">=", startTimestamp),
+            where("date", "<=", endTimestamp)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+     
+        const asesorias = [];
+        querySnapshot.forEach(doc => {
+            asesorias.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+       
+        return asesorias;
+    } catch (error) {
+        console.error("Error fetching asesorias: ", error);
+        return [];
+    }
+}

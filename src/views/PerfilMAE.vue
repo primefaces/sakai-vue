@@ -483,7 +483,7 @@ const validateFile = (file) => {
     </div>
   </Dialog>
  
-  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias" class="md:w-9 ">
+  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias"  class="custom-table md:w-9" >
   <DataTable :value="subjects" paginator :rows="10" :rowsPerPageOptions="[10, 25, 50, 100]"
     v-model:filters="subjectTableFilter" :globalFilterFields="['id', 'name']"
     v-model:selection="selectedSubjects" responsiveLayout="stack"  >
@@ -572,5 +572,20 @@ const validateFile = (file) => {
 
 .border-round-lg {
   border-radius: 0.75rem;
+}
+
+.custom-table .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo para filas pares */
+    border: 1px solid #f4f4f5a9;
+
+}
+
+.custom-table .p-datatable-tbody > tr:nth-child(odd) {
+    background-color: #ffffff; /* Color de fondo para filas impares */
+    border: 1px solid #f4f4f5a9;
+}
+.custom-table .p-datatable-tbody > tr > td {
+    border-bottom: 2px solid #cccccc; /* Cambia el color y el grosor del borde */
+    padding: 1rem 1.5rem; /* Ajusta el padding si es necesario */
 }
 </style>

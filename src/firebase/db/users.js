@@ -61,6 +61,7 @@ export async function getCurrentUser() {
 }
 
 // Función para obtener el día más cercano en la semana y la hora de inicio más temprana
+// Función para obtener el día más cercano en la semana y la hora de inicio más temprana
 export const getClosestDayAndStartTime = (schedules) => {
     if (typeof schedules !== 'object' || schedules === null || Array.isArray(schedules)) {
         console.error('Expected a map of schedules, but received:', schedules);
@@ -70,14 +71,15 @@ export const getClosestDayAndStartTime = (schedules) => {
     const today = new Date().getDay(); // Día actual (0-6) donde 0 es domingo
     const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-    // Crear una lista de días cíclica que empieza desde el día actual
-    const daysOrdered = [...daysOfWeek.slice(today), ...daysOfWeek.slice(0, today)];
+    // Crear dos arrays, uno para los días futuros y otro para los pasados
+    const futureDays = daysOfWeek.slice(today);
+    const pastDays = daysOfWeek.slice(0, today);
 
     let closestDay = null;
     let earliestStartTime = null;
 
-    // Buscar el día más cercano en el ciclo comenzando desde hoy
-    daysOrdered.forEach(day => {
+    // Buscar primero entre los días futuros (desde hoy hasta el final de la semana)
+    futureDays.forEach(day => {
         if (Array.isArray(schedules[day])) {
             schedules[day].forEach(schedule => {
                 if (schedule.start) {
@@ -90,8 +92,25 @@ export const getClosestDayAndStartTime = (schedules) => {
         }
     });
 
+    // Si no se encontró ningún día en el futuro, buscar en los días pasados (inicio de semana hasta hoy)
+    if (closestDay === null) {
+        pastDays.forEach(day => {
+            if (Array.isArray(schedules[day])) {
+                schedules[day].forEach(schedule => {
+                    if (schedule.start) {
+                        if (closestDay === null || (earliestStartTime === null || schedule.start < earliestStartTime)) {
+                            closestDay = day;
+                            earliestStartTime = schedule.start;
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     return { day: closestDay, startTime: earliestStartTime };
 };
+
 
 
 export async function getMaes() {

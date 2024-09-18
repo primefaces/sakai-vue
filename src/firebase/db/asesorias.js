@@ -62,34 +62,39 @@ export async function getAsesoriasCountForUserInCurrentSemester(userId) {
 }
 
 
-// Función para obtener asesorías en un rango de fechas
-export async function getAsesoriasInRange(startDate, endDate) {
+export async function getAsesorias(startDate = null, endDate = null) {
     try {
-    
-        const startTimestamp = Timestamp.fromDate(new Date(startDate));
-        const endTimestamp = Timestamp.fromDate(new Date(endDate));
-
-    
         const asesoriasRef = collection(firestoreDB, "asesorias");
+        let q;
 
-        const q = query(
-            asesoriasRef,
-            where("date", ">=", startTimestamp),
-            where("date", "<=", endTimestamp)
-        );
+        if (startDate && endDate) {
+            // Si startDate y endDate están presentes, aplica el filtro por fecha
+            const startTimestamp = Timestamp.fromDate(startDate);
+            const endTimestamp = Timestamp.fromDate(endDate);
+
+            q = query(
+                asesoriasRef,
+                where("date", ">=", startTimestamp),
+                where("date", "<=", endTimestamp)
+            );
+        } else {
+            // Si no se proporciona startDate o endDate, obtiene todas las asesorías
+            q = query(asesoriasRef);
+        }
 
         const querySnapshot = await getDocs(q);
+        const asesorias = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
 
-     
-        const asesorias = [];
-        querySnapshot.forEach(doc => {
-            asesorias.push({
-                id: doc.id,
-                ...doc.data()
-            });
+        // Ordena las asesorías por fecha de la más reciente a la más antigua
+        asesorias.sort((a, b) => {
+            const dateA = a.date?.seconds || 0;
+            const dateB = b.date?.seconds || 0;
+            return dateB - dateA;
         });
 
-       
         return asesorias;
     } catch (error) {
         console.error("Error fetching asesorias: ", error);

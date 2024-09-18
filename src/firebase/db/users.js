@@ -70,34 +70,28 @@ export const getClosestDayAndStartTime = (schedules) => {
     const today = new Date().getDay(); // Día actual (0-6) donde 0 es domingo
     const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-    // Buscar el día más cercano con horarios
+    // Crear una lista de días cíclica que empieza desde el día actual
+    const daysOrdered = [...daysOfWeek.slice(today), ...daysOfWeek.slice(0, today)];
+
     let closestDay = null;
     let earliestStartTime = null;
 
-    Object.keys(schedules).forEach(day => {
+    // Buscar el día más cercano en el ciclo comenzando desde hoy
+    daysOrdered.forEach(day => {
         if (Array.isArray(schedules[day])) {
             schedules[day].forEach(schedule => {
                 if (schedule.start) {
-                    const dayIndex = daysOfWeek.indexOf(day);
-                    if (dayIndex >= today) {
-                        if (closestDay === null || dayIndex < daysOfWeek.indexOf(closestDay) || (dayIndex === daysOfWeek.indexOf(closestDay) && (earliestStartTime === null || schedule.start < earliestStartTime))) {
-                            closestDay = day;
-                            earliestStartTime = schedule.start;
-                        }
+                    if (closestDay === null || (earliestStartTime === null || schedule.start < earliestStartTime)) {
+                        closestDay = day;
+                        earliestStartTime = schedule.start;
                     }
                 }
             });
         }
     });
 
-    // Si no se encuentra ningún día, establecer valores nulos
-    if (closestDay === null) {
-        return { day: null, startTime: null };
-    }
-
     return { day: closestDay, startTime: earliestStartTime };
 };
-
 
 
 export async function getMaes() {
@@ -118,16 +112,24 @@ export async function getMaes() {
             return { ...item, profilePictureUrl };
         }));
 
+        // Obtener el día actual
+        const today = new Date().getDay(); // Día actual (0-6)
+
         // Ordenar por el día más cercano, la hora de inicio más temprana y alfabéticamente por nombre
         data.sort((a, b) => {
             // Obtener el día más cercano y la hora de inicio más temprana
             const { day: dayA, startTime: startTimeA } = getClosestDayAndStartTime(a.weekSchedule);
             const { day: dayB, startTime: startTimeB } = getClosestDayAndStartTime(b.weekSchedule);
 
-            const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday'];
 
-            // Comparar días más cercanos
-            const dayComparison = (dayA === null ? 1 : (dayB === null ? -1 : daysOfWeek.indexOf(dayA) - daysOfWeek.indexOf(dayB)));
+            // Crear un array cíclico desde el día actual
+            const daysOrdered = [...daysOfWeek.slice(today), ...daysOfWeek.slice(0, today)];
+
+            // Comparar días más cercanos, teniendo en cuenta el ciclo
+            const dayIndexA = daysOrdered.indexOf(dayA);
+            const dayIndexB = daysOrdered.indexOf(dayB);
+            const dayComparison = (dayIndexA === -1 ? 1 : (dayIndexB === -1 ? -1 : dayIndexA - dayIndexB));
             if (dayComparison !== 0) return dayComparison;
 
             // Comparar horas de inicio si los días son iguales

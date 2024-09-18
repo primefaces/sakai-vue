@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { FilterMatchMode } from 'primevue/api';
+
 import { getAsesorias } from '../firebase/db/asesorias';
 import * as XLSX from 'xlsx'; // Importa la biblioteca xlsx
 
@@ -9,13 +9,7 @@ const startDate = ref(null);
 const endDate = ref(null);
 const loading = ref(true);
 
-const filters = ref({
-    id: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    date: { value: null, matchMode: FilterMatchMode.BETWEEN },
-    comment: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    location: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    subjects: { value: null, matchMode: FilterMatchMode.CONTAINS }
-});
+
 
 const fetchAsesorias = async () => {
     try {
@@ -34,12 +28,41 @@ const filterByDate = () => {
     fetchAsesorias();
 };
 
+
 // Función para exportar los datos a Excel
 const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(asesorias.value);
+    // Mapear las asesorías a las columnas deseadas
+    const formattedData = asesorias.value.map(asesoria => {
+        return {
+            'ID': asesoria.id || '', // ID de la asesoría
+            'Fecha': asesoria.date ? new Date(asesoria.date.seconds * 1000).toLocaleDateString() : '', 
+            'Nombre MAE': asesoria.peerInfo?.name || '', 
+            'Matricula MAE': asesoria.peerInfo?.uid || '',
+            'Carrera MAE': asesoria.peerInfo?.career || '',
+            'Nombre Alumno': asesoria.userInfo?.name || '', 
+            'Matricula Alumno': asesoria.userInfo?.id || '', 
+            'Carrera Alumno': asesoria.userInfo?.career || '', 
+            'Materia': asesoria.subject?.name || '', 
+            'Rating': asesoria.rating || 'N/A',
+            'Comentario': asesoria.comment || '',
+            'Area MAE': asesoria.peerInfo?.area || '', 
+            'Modelo MAE':  'TEC21', 
+            'Campus MAE': asesoria.peerInfo?.campus || '',
+            'Area Alumno': asesoria.userInfo?.area || '', 
+            'Modelo Alumno': 'TEC21', 
+            'Campus Alumno': asesoria.userInfo?.campus || '', 
+            'Modalidad': asesoria.modalidad || 'Presencial', // Modalidad de la asesoría (si existe)
+            'Tipo': asesoria.type || 'Normal', // Tipo de asesoría (si existe)
+            'Formato': asesoria.formato || 'Individual', // Formato de la asesoría (si existe)
+        };
+    });
+
+    // Crear la hoja de Excel con los datos formateados
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Asesorías");
-    
+
+    // Exportar el archivo Excel
     XLSX.writeFile(workbook, "asesorias.xlsx");
 };
 
@@ -53,11 +76,12 @@ onMounted(() => {
         <h1 class="text-black text-6xl font-bold text-center m-0 sm:text-left">Asesorías</h1>
     </div>
     <div >
-        <div class="flex justify-between mb-4">
-            <Calendar v-model="startDate" placeholder="Fecha de Inicio" dateFormat="yy-mm-dd" />
-            <Calendar v-model="endDate" placeholder="Fecha de Fin" dateFormat="yy-mm-dd" />
-            <Button label="Filtrar" @click="filterByDate" />
-            <Button label="Exportar a Excel" @click="exportToExcel" /> <!-- Botón para exportar -->
+        <div class="flex md:flex-row flex-column mb-4">
+            <Calendar v-model="startDate" placeholder="Fecha de Inicio" dateFormat="yy-mm-dd" showIcon class="mb-2 mr-3 w-3 "/>
+            <span class="mx-3 text-4xl text-black font-bold ">-</span>
+            <Calendar v-model="endDate" placeholder="Fecha de Fin" dateFormat="yy-mm-dd" showIcon class="mb-2 mx-3 w-3 "/>
+            <Button label="Filtrar" @click="filterByDate" class="mb-2 mx-3 w-2 "/>
+            <Button label="Exportar a Excel" @click="exportToExcel" class="mb-2 mx-3 w-3 "/> 
         </div>
 
         <DataTable :value="asesorias"   paginator :rows="10" dataKey="id" :loading="loading" 

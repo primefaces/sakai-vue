@@ -418,7 +418,6 @@ export async function clearAllUsersWeekSchedule() {
     }
 }
 
-
 export async function checkAndUpdateUserRole(file = null) {
     try {
         const usersRef = collection(firestoreDB, "users");
@@ -521,7 +520,7 @@ export async function updateUserToMae(data) {
         const usersRef = collection(firestoreDB, "users");
         const userQuery = query(usersRef, where("email", "==", `${matricula.toLowerCase()}@tec.mx`));
         const querySnapshot = await getDocs(userQuery);
-
+    
         if (querySnapshot.empty) {
             console.log("No user found with the given matricula.");
             return;
@@ -530,15 +529,26 @@ export async function updateUserToMae(data) {
         // Procesar cada usuario encontrado
         const promises = querySnapshot.docs.map(async (doc) => {
             const userRef = doc.ref;
-
-            // Actualizar el rol y el estatus del usuario
-            return updateDoc(userRef, {
-                role: role.value,
-                status: status.value,
-                weekSchedule: {}, 
-                subjects: [],
-                totalTime: 0
-            });
+            const userData = doc.data();
+            console.log(userData.role,"Role es este")
+    
+            // Condicionar la actualización según el role o status
+            if (userData.role === 'user' || userData.status === 'estudiante') {
+                // Si role es "user" o status es "estudiante", actualizar todos los campos
+                return updateDoc(userRef, {
+                    role: role.value,
+                    status: status.value,
+                    weekSchedule: {}, 
+                    subjects: [],
+                    totalTime: 0
+                });
+            } else {
+                // De lo contrario, solo actualizar role y status
+                return updateDoc(userRef, {
+                    role: role.value,
+                    status: status.value
+                });
+            }
         });
 
         await Promise.all(promises);

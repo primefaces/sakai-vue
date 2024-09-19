@@ -116,10 +116,10 @@ const handleAddUser = async () => {
     }
 
     confirm.require({
-        message: '¿Estás seguro de que deseas agregar el usuario con la matrícula proporcionada como mae?',
-        header: 'Confirmación de agregar Mae',
+        message: '¿Estás seguro de que deseas agregar mae o editar el rol del usuario con esta matrícula ?',
+        header: 'Confirmación de agregar mae o editar rol',
         icon: 'pi pi-exclamation-circle',
-        acceptLabel: 'Sí, agregar mae',
+        acceptLabel: 'Sí, agregar mae o editar rol',
         rejectLabel: 'Cancelar',
         acceptClass: 'p-button-success',
         accept: async () => {
@@ -135,8 +135,8 @@ const handleAddUser = async () => {
                 newRole.value = null;
                 newStatus.value = null;
             } catch (error) {
-                console.error("Error al agregar mae:", error);
-                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar agregar el mae.', life: 3000 });
+                console.error("Error al agregar mae o editar rol:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar agregar mae o editar el rol.', life: 3000 });
             }
         },
         reject: () => {
@@ -171,7 +171,7 @@ const handleAddUser = async () => {
 
         <div class="flex justify-content-center w-full mt-4">
             <Button 
-                label="Agregar Mae" 
+                label="Agregar Mae/Editar Rol" 
                 icon="pi pi-user-plus" 
                 class="p-button-success p-button-rounded p-button-lg w-full md:w-6"
                 @click="openAddUserDialog" 
@@ -212,7 +212,7 @@ const handleAddUser = async () => {
         <!-- Diálogo para agregar mae -->
         <Dialog 
             v-model:visible="displayAddUserDialog" 
-            header="Agregar Mae" 
+            header="Agregar Mae o Editar Rol" 
             modal 
             :style="{ width: '50vw' }" 
             :closable="true" 
@@ -239,7 +239,7 @@ const handleAddUser = async () => {
                     class="w-full"
                 />
                 <Button 
-                    label="Agregar Mae" 
+                    label="Agregar Mae o Editar Rol" 
                     icon="pi pi-check" 
                     class="p-button-success p-button-rounded"
                     @click="handleAddUser"

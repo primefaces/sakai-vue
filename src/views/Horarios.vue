@@ -182,7 +182,9 @@ function getDisplayedSubject(subjects) {
 
                         <p class="font-bold text-lg mt-1 text-black-alpha-90">Materias</p>
                         <div class="flex items-center text-md">
-                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)"  style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)"  style="display: block; max-width: 80%;
+                             overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" 
+                             :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
                             <div v-if="mae.subjects.length > 1">
                                 <button class="p-2 text-gray-500" >
                                     {{ subjectCountDisplay(mae.subjects) }}

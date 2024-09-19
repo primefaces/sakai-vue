@@ -113,13 +113,11 @@ onMounted(() => {
             <template #empty>No se encontraron asesorías.</template>
             <template #loading>Cargando información. Por favor espera.</template>
 
-            <Column header="ID" field="id" hidden>
+            <Column header="ID" field="id"  hidden>
                 <template #body="{ data }">
                     <p class="text-sm ">{{ data.id }}</p>
                 </template>
-                <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter" placeholder="ID" />
-                </template>
+                
             </Column>
             
             <Column header="Fecha" field="date">
@@ -171,7 +169,7 @@ onMounted(() => {
 
             <Column header="Materias" field="subjects">
                 <template #body="{ data }">
-                    <p class="text-sm ">{{ data.subject.name }}</p>
+                    <p class="text-sm ">{{ data.subject?.name }}</p>
                 </template>
             </Column>
             
@@ -181,7 +179,7 @@ onMounted(() => {
                 </template>
             </Column>
             
-            <Column header="Comentario" field="comment" hidden>
+            <Column header="Comentario" field="comment" hidden >
                 <template #body="{ data }">
                     <p class="text-sm ">{{ data.comment }}</p>
                 </template>

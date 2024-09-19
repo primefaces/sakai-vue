@@ -432,12 +432,15 @@ export async function checkAndUpdateUserRole(file = null) {
                 try {
                     const data = new Uint8Array(event.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const sheet = workbook.Sheets[workbook.SheetNames[3]];
                     const excelData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
                     // Convertimos las matrículas del Excel a correos en formato lowercase@tec.mx
-                    const emailsFromExcel = excelData.slice(1).map(row => row[1]?.toLowerCase() + '@tec.mx'); // Ajusta el índice si es necesario
+                    const emailsFromExcel = excelData.slice(1)
+                        .map(row => row[1]?.toLowerCase() + '@tec.mx')
+                        .filter(email => email && !['undefined@tec.mx', 'zzzzz@tec.mx'].includes(email)); // Filtrar valores no deseados
 
+                    console.log(emailsFromExcel);
                     // Procesamos cada usuario
                     const promises = querySnapshot.docs.map(async (doc) => {
                         const userRef = doc.ref;

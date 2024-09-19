@@ -68,9 +68,12 @@ export async function getAsesorias(startDate = null, endDate = null) {
         let q;
 
         if (startDate && endDate) {
-            // Si startDate y endDate están presentes, aplica el filtro por fecha
-            const startTimestamp = Timestamp.fromDate(startDate);
-            const endTimestamp = Timestamp.fromDate(endDate);
+            // Ajustar endDate para incluir todo el último día
+            const endDateAdjusted = new Date(endDate);
+            endDateAdjusted.setHours(23, 59, 59, 999);
+
+            const startTimestamp = Timestamp.fromDate(new Date(startDate));
+            const endTimestamp = Timestamp.fromDate(endDateAdjusted);
 
             q = query(
                 asesoriasRef,
@@ -78,7 +81,6 @@ export async function getAsesorias(startDate = null, endDate = null) {
                 where("date", "<=", endTimestamp)
             );
         } else {
-            // Si no se proporciona startDate o endDate, obtiene todas las asesorías
             q = query(asesoriasRef);
         }
 

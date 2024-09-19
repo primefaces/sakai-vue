@@ -60,3 +60,46 @@ export async function getAsesoriasCountForUserInCurrentSemester(userId) {
         return 0;
     }
 }
+
+
+export async function getAsesorias(startDate = null, endDate = null) {
+    try {
+        const asesoriasRef = collection(firestoreDB, "asesorias");
+        let q;
+
+        if (startDate && endDate) {
+            // Ajustar endDate para incluir todo el último día
+            const endDateAdjusted = new Date(endDate);
+            endDateAdjusted.setHours(23, 59, 59, 999);
+
+            const startTimestamp = Timestamp.fromDate(new Date(startDate));
+            const endTimestamp = Timestamp.fromDate(endDateAdjusted);
+
+            q = query(
+                asesoriasRef,
+                where("date", ">=", startTimestamp),
+                where("date", "<=", endTimestamp)
+            );
+        } else {
+            q = query(asesoriasRef);
+        }
+
+        const querySnapshot = await getDocs(q);
+        const asesorias = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        // Ordena las asesorías por fecha de la más reciente a la más antigua
+        asesorias.sort((a, b) => {
+            const dateA = a.date?.seconds || 0;
+            const dateB = b.date?.seconds || 0;
+            return dateB - dateA;
+        });
+
+        return asesorias;
+    } catch (error) {
+        console.error("Error fetching asesorias: ", error);
+        return [];
+    }
+}

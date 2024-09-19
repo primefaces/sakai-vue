@@ -14,6 +14,7 @@ import {
     increment,
 } from 'firebase/firestore';
 import { getUserProfilePicture } from "../img/users";
+import * as XLSX from 'xlsx';
 
 function getEmailUsername(email) {
     var atIndex = email.indexOf('@');
@@ -58,26 +59,107 @@ export async function getCurrentUser() {
     }
     return null;
 }
-export async function getMaes(getProfilePicture = false) {
+
+// Función para obtener el día más cercano en la semana y la hora de inicio más temprana
+// Función para obtener el día más cercano en la semana y la hora de inicio más temprana
+export const getClosestDayAndStartTime = (schedules) => {
+    if (typeof schedules !== 'object' || schedules === null || Array.isArray(schedules)) {
+        console.error('Expected a map of schedules, but received:', schedules);
+        return { day: null, startTime: null };
+    }
+
+    const today = new Date().getDay(); // Día actual (0-6) donde 0 es domingo
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    // Crear dos arrays, uno para los días futuros y otro para los pasados
+    const futureDays = daysOfWeek.slice(today);
+    const pastDays = daysOfWeek.slice(0, today);
+
+    let closestDay = null;
+    let earliestStartTime = null;
+
+    // Buscar primero entre los días futuros (desde hoy hasta el final de la semana)
+    futureDays.forEach(day => {
+        if (Array.isArray(schedules[day])) {
+            schedules[day].forEach(schedule => {
+                if (schedule.start) {
+                    if (closestDay === null || (earliestStartTime === null || schedule.start < earliestStartTime)) {
+                        closestDay = day;
+                        earliestStartTime = schedule.start;
+                    }
+                }
+            });
+        }
+    });
+
+    // Si no se encontró ningún día en el futuro, buscar en los días pasados (inicio de semana hasta hoy)
+    if (closestDay === null) {
+        pastDays.forEach(day => {
+            if (Array.isArray(schedules[day])) {
+                schedules[day].forEach(schedule => {
+                    if (schedule.start) {
+                        if (closestDay === null || (earliestStartTime === null || schedule.start < earliestStartTime)) {
+                            closestDay = day;
+                            earliestStartTime = schedule.start;
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    return { day: closestDay, startTime: earliestStartTime };
+};
+
+
+
+export async function getMaes() {
     const usersRef = collection(firestoreDB, "users");
-    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi']));
+    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi']));
 
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot) {
         let data = querySnapshot.docs.map(doc => doc.data());
 
-        // Filtrar y ordenar por el campo name en orden alfabético
-        data = data.filter(item => item.name).sort((a, b) => a.name.localeCompare(b.name));
+        // Filtrar usuarios que tienen un nombre
+        data = data.filter(item => item.name);
 
-        if (getProfilePicture) {
-            return Promise.all(data.map(async (item) => {
-                const profilePictureUrl = await getUserProfilePicture(item.email);
-                return { ...item, profilePictureUrl };
-            }));
-        } else {
-            return data;
-        }
+        // Obtener la URL de la foto de perfil
+        data = await Promise.all(data.map(async (item) => {
+            const profilePictureUrl = await getUserProfilePicture(item.email);
+            return { ...item, profilePictureUrl };
+        }));
+
+        // Obtener el día actual
+        const today = new Date().getDay(); // Día actual (0-6)
+
+        // Ordenar por el día más cercano, la hora de inicio más temprana y alfabéticamente por nombre
+        data.sort((a, b) => {
+            // Obtener el día más cercano y la hora de inicio más temprana
+            const { day: dayA, startTime: startTimeA } = getClosestDayAndStartTime(a.weekSchedule);
+            const { day: dayB, startTime: startTimeB } = getClosestDayAndStartTime(b.weekSchedule);
+
+            const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','sunday'];
+
+            // Crear un array cíclico desde el día actual
+            const daysOrdered = [...daysOfWeek.slice(today), ...daysOfWeek.slice(0, today)];
+
+            // Comparar días más cercanos, teniendo en cuenta el ciclo
+            const dayIndexA = daysOrdered.indexOf(dayA);
+            const dayIndexB = daysOrdered.indexOf(dayB);
+            const dayComparison = (dayIndexA === -1 ? 1 : (dayIndexB === -1 ? -1 : dayIndexA - dayIndexB));
+            if (dayComparison !== 0) return dayComparison;
+
+            // Comparar horas de inicio si los días son iguales
+            const startTimeComparison = (startTimeA === null ? 1 : (startTimeB === null ? -1 : startTimeA.localeCompare(startTimeB)));
+            if (startTimeComparison !== 0) return startTimeComparison;
+
+            // Comparar alfabéticamente si ambos días y horas son iguales
+            return a.name.localeCompare(b.name);
+        });
+
+        return data;
     } else {
         return null;
     }
@@ -333,5 +415,132 @@ export async function clearAllUsersWeekSchedule() {
     } catch (error) {
         console.error("Error clearing weekSchedule content for eligible users: ", error);
         throw error;
+    }
+}
+
+
+export async function checkAndUpdateUserRole(file = null) {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const querySnapshot = await getDocs(usersRef);
+
+        // Si se subió un archivo Excel, ejecutamos la lógica relacionada con el archivo
+        if (file) {
+            // Leer y procesar el archivo Excel
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const excelData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                    // Convertimos las matrículas del Excel a correos en formato lowercase@tec.mx
+                    const emailsFromExcel = excelData.slice(1).map(row => row[1]?.toLowerCase() + '@tec.mx'); // Ajusta el índice si es necesario
+
+                    // Procesamos cada usuario
+                    const promises = querySnapshot.docs.map(async (doc) => {
+                        const userRef = doc.ref;
+                        const userData = doc.data();
+                        const eligibleRoles = ['mae', 'coordi', 'publi']; // Roles que serán filtrados
+
+                        if (eligibleRoles.includes(userData.role)) {
+                            const userEmail = userData.email?.toLowerCase(); // Convertir a minúsculas para comparar
+
+                            // Si el correo no está en la lista de correos del Excel, actualizamos el rol a "exmae"
+                            if (!emailsFromExcel.includes(userEmail)) {
+                                return updateDoc(userRef, { role: "exmae" });
+                            }
+                        }
+
+                        return Promise.resolve();
+                    });
+
+                    await Promise.all(promises);
+                    console.log("Roles actualizados con base en el archivo Excel.");
+                } catch (error) {
+                    console.error("Error al procesar el archivo Excel:", error);
+                    throw error;
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        } else {
+            // Si no hay archivo, ejecutamos la lógica normal
+            const eligibleRoles = ['mae', 'coordi', 'publi'];
+
+            const promises = querySnapshot.docs.map(async (doc) => {
+                const userRef = doc.ref;
+                const userData = doc.data();
+
+                // Verificar si el rol es "mae", "coordi" o "publi"
+                if (eligibleRoles.includes(userData.role)) {
+
+                    // Verificar si weekSchedule está vacío
+                    const isWeekScheduleEmpty = Object.values(userData.weekSchedule).every(day => day.length === 0);
+
+                    // Verificar si totalTime es 0
+                    const isTotalTimeEquals0 = userData.totalTime == 0;
+
+                    // Verificar si subjects está vacío
+                    const hasNoSubjects = !userData.subjects || userData.subjects.length === 0;
+
+                    // Si no tiene horario, su tiempo es 0 y no tiene materias, actualizar el rol
+                    if (isWeekScheduleEmpty && isTotalTimeEquals0 && hasNoSubjects) {
+                        return updateDoc(userRef, { role: "exmae" });
+                    }
+                }
+
+                return Promise.resolve();
+            });
+
+            await Promise.all(promises);
+            console.log("Roles actualizados con base en weekSchedule, totalTime, y subjects.");
+        }
+    } catch (error) {
+        console.error("Error actualizando roles de los usuarios: ", error);
+        throw error;
+    }
+}
+
+
+
+export async function updateUserToMae(data) {
+    const { role, matricula, status } = data;
+
+    // Asegurarse de que los datos necesarios no sean nulos
+    if (!role || !matricula || !status) {
+        throw new Error("role, matricula, and status are required fields.");
+    }
+
+    // Buscar el usuario en la base de datos usando la matricula
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const userQuery = query(usersRef, where("email", "==", `${matricula.toLowerCase()}@tec.mx`));
+        const querySnapshot = await getDocs(userQuery);
+
+        if (querySnapshot.empty) {
+            console.log("No user found with the given matricula.");
+            return;
+        }
+
+        // Procesar cada usuario encontrado
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref;
+
+            // Actualizar el rol y el estatus del usuario
+            return updateDoc(userRef, {
+                role: role.value,
+                status: status.value,
+                weekSchedule: {}, 
+                subjects: [],
+                totalTime: 0
+            });
+        });
+
+        await Promise.all(promises);
+        console.log("Usuarios actualizados exitosamente.");
+    } catch (error) {
+        console.error("Error al actualizar los usuarios: ", error);
     }
 }

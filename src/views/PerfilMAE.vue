@@ -8,6 +8,7 @@ import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../fireb
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 import { uploadFile } from '../firebase/img/users';
+import { enablePersistentCacheIndexAutoCreation } from 'firebase/firestore';
 
 const toast = useToast();
 const route = useRoute();
@@ -159,18 +160,93 @@ const addTimeSlot = (day, start, end) => {
   }
 }
 
+// Converitir en decimal 
+const timeToDecimal = (time) => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours + minutes / 60;
+};
+
 const saveScheduleChanges = async () => {
+  // Validación de horario
+  let hours = 0;
+
+  for (const day of daysArray) {
+    const scheduleForDay = newSchedule.value[day.en];
+    const intervals = [];
+
+    if (scheduleForDay) {
+      for (const timeSlot of scheduleForDay) {
+        const startTime = timeSlot.start;
+        const endTime = timeSlot.end;
+
+        if (startTime === endTime) {
+          toast.add({ severity: 'error', summary: 'Error de horario', detail: `La hora de inicio y la hora de fin no pueden ser iguales para el día ${day.es}`, life: 3000 });
+          return;
+        }
+
+        if (startTime > endTime) {
+          toast.add({ severity: 'error', summary: 'Error de horario', detail: `La hora de inicio no puede ser mayor que la hora de fin para el día ${day.es}`, life: 3000 });
+          return;
+        }
+
+        // Verificación de solapamientos
+        for (const existingSlot of intervals) {
+          const existingStart = existingSlot.start;
+          const existingEnd = existingSlot.end;
+          
+          if ((startTime < existingEnd && endTime > existingStart)) {
+            toast.add({ severity: 'error', summary: 'Error de horario', detail: `El intervalo de tiempo de ${startTime} a ${endTime} ya existe o se sobrepone con otro intervalo para el día ${day.es}`, life: 3000 });
+            return;
+          }
+        }
+
+        intervals.push({ start: startTime, end: endTime });
+
+        const start = timeToDecimal(timeSlot.start);
+        const end = timeToDecimal(timeSlot.end);
+        hours = hours + end - start;
+      }
+    }
+  }
+
+  // Validaciones adicionales
+  if (maeInfo.value.status === "becario" && 
+    ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") &&
+    (maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS") && 
+    hours < 3)) {
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 3 horas asignadas en total', life: 3000 });
+    return;
+  } else if (maeInfo.value.status === "becario" && 
+           ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") && 
+           !(maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS")) && 
+           hours < 5) {
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 5 horas asignadas en total', life: 3000 });
+    return;
+  } else if (maeInfo.value.status === "becario" && 
+           maeInfo.value.role === "publi" && 
+           hours < 2) {
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de 2 horas asignadas en total', life: 3000 });
+    return;
+  } else if (maeInfo.value.status === "voluntario" && 
+           hours < 1) {
+    toast.add({ severity: 'error', summary: 'Error de horas', detail: 'No puedes tener menos de una hora asignada en total', life: 3000 });
+    return;
+  }
+
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tu horario', life: 3000 });
   try {
-   await updateUserSchedule(maeInfo.value.uid, newSchedule.value); 
-   maeInfo.value = await getUser(route.params.id);
-   toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tus materias se guardaron con éxito', life: 3000 });
+    await updateUserSchedule(maeInfo.value.uid, newSchedule.value); 
+    maeInfo.value = await getUser(route.params.id);
+    toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tu horario se guardaron con éxito', life: 3000 });
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de guardar los cambios' });
   }
   showDialogHorarios.value = false;  
-  
-}
+};
+
+
+
+
 
 const showDialogAsesoria = ref(false);
 
@@ -407,7 +483,7 @@ const validateFile = (file) => {
     </div>
   </Dialog>
  
-  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias" class="md:w-9 ">
+  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias"  class="custom-table md:w-9" >
   <DataTable :value="subjects" paginator :rows="10" :rowsPerPageOptions="[10, 25, 50, 100]"
     v-model:filters="subjectTableFilter" :globalFilterFields="['id', 'name']"
     v-model:selection="selectedSubjects" responsiveLayout="stack"  >
@@ -496,5 +572,20 @@ const validateFile = (file) => {
 
 .border-round-lg {
   border-radius: 0.75rem;
+}
+
+.custom-table .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo para filas pares */
+    border: 1px solid #f4f4f5a9;
+
+}
+
+.custom-table .p-datatable-tbody > tr:nth-child(odd) {
+    background-color: #ffffff; /* Color de fondo para filas impares */
+    border: 1px solid #f4f4f5a9;
+}
+.custom-table .p-datatable-tbody > tr > td {
+    border-bottom: 2px solid #cccccc; /* Cambia el color y el grosor del borde */
+    padding: 1rem 1.5rem; /* Ajusta el padding si es necesario */
 }
 </style>

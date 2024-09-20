@@ -61,7 +61,6 @@ export async function getCurrentUser() {
 }
 
 // Función para obtener el día más cercano en la semana y la hora de inicio más temprana
-// Función para obtener el día más cercano en la semana y la hora de inicio más temprana
 export const getClosestDayAndStartTime = (schedules) => {
     if (typeof schedules !== 'object' || schedules === null || Array.isArray(schedules)) {
         console.error('Expected a map of schedules, but received:', schedules);
@@ -530,7 +529,7 @@ export async function updateUserToMae(data) {
         const promises = querySnapshot.docs.map(async (doc) => {
             const userRef = doc.ref;
             const userData = doc.data();
-            console.log(userData.role,"Role es este")
+
     
             // Condicionar la actualización según el role o status
             if (userData.role === 'user' || userData.status === 'estudiante') {

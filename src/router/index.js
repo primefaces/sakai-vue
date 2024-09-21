@@ -60,6 +60,14 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/gestionAnuncios',
+                    name: 'gestionAnuncios',
+                    component: () => import('@/views/GestionAnuncios.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi']
+                    }
+                },
+                {
                     path: '/admin/asesorias',
                     name: 'adminasesorias',
                     component: () => import('@/views/AdminAsesorias.vue'),

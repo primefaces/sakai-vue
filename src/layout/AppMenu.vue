@@ -40,7 +40,7 @@ onMounted(async () => {
                 { label: 'Asesorías', icon: 'pi pi-fw pi-list', to: '/admin/asesorias' },
                 { label: 'Usuarios', icon: 'pi pi-fw pi-users', to: '/admin/usuarios' },
                 //({ label: 'Materias', icon: 'pi pi-fw pi-book', to: '/admin/materias' },
-                { label: 'Funciones', icon: 'pi pi-fw pi-cog', to: '/admin/funciones' },
+                { label: 'Funciones', icon: 'pi pi-fw pi-star', to: '/admin/funciones' },
             ]
         })
     }
@@ -60,6 +60,7 @@ onMounted(async () => {
             label: 'Coordi',
             items: [
                 { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
+                { label: 'Gestión de anuncios', icon: 'pi pi-fw pi-cog', to: '/gestionAnuncios' },
             ]
         })
     }

@@ -119,7 +119,7 @@ export async function saveAnnouncement(announcementData, selectedFile) {
 
         // Si hay un archivo seleccionado, subirlo a Firebase Storage
         if (selectedFile) {
-            const filePath = `announcement/${selectedFile.name}`;
+            const filePath = `announcements/${announcementData.type}/${selectedFile.name}`;
             imageUrl = await addAnnoucement(selectedFile, filePath);
         }
 

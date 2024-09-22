@@ -13,14 +13,33 @@ const fileInput = ref(null);
 const showDateDialog = ref(false);
 const locationInput = ref('');
 const toast = useToast();
+const dateTime = ref(null);
+const startTime = ref(null);
+const endTime = ref(null);
+const selectedFile = ref(null);
+const titleInput = ref(''); 
+const descriptionInput = ref('');
+
 onMounted(async () => {
     subjects.value = await getSubjects();
-    console.log(subjects.value, "Este es el objeto");
 });
 
 const handleSelect = (type) => {
     selectedType.value = type;
+    if (type === 'Otro') {
+        // Limpiar campos todos los campos 
+        subjectInput.value = '';
+        locationInput.value = '';
+        titleInput.value = '';  
+        descriptionInput.value = '';  
+        startTime.value = null
+        endTime.value = null
+        dateTime.value = null 
+        locationInput.value = ''
+        selectedFile.value = null 
+    }
 };
+
 
 const filterSubjects = () => {
     const query = normalize(subjectInput.value);
@@ -28,11 +47,6 @@ const filterSubjects = () => {
         normalize(subject.name).includes(query)
     );
 };
-
-const dateTime = ref(null);
-const startTime = ref(null);
-const endTime = ref(null);
-const selectedFile = ref(null);
 
 const validateFile = (file) => {
     const allowedTypes = ['image/jpeg', 'image/png'];
@@ -94,26 +108,65 @@ const saveDateTime = () => {
 };
 
 const handleSubmit = async () => {
-    if (!selectedType.value || !subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !locationInput.value || !selectedFile.value) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
-        return;
-    }
+    if (selectedType.value === 'Asesoría') {
+        if (!subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !locationInput.value || !selectedFile.value) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
+            return;
+        }
 
-    try {
-        const announcementData = {
-            type: selectedType.value,
-            subject: subjectInput.value,
-            dateTime: dateTime.value,
-            startTime: startTime.value,
-            endTime: endTime.value,
-            location: locationInput.value
-        };
+        try {
+            const announcementData = {
+                type: selectedType.value,
+                subject: subjectInput.value,
+                dateTime: dateTime.value,
+                startTime: startTime.value,
+                endTime: endTime.value,
+                location: locationInput.value
+            };
 
-        await saveAnnouncement(announcementData, selectedFile.value);
-        toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
-    } catch (error) {
-        console.error('Error al guardar el anuncio:', error);
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
+            await saveAnnouncement(announcementData, selectedFile.value);
+            subjectInput.value = '';
+            locationInput.value = '';
+            titleInput.value = '';  
+            descriptionInput.value = '';  
+            startTime.value = null
+            endTime.value = null
+            dateTime.value = null 
+            locationInput.value = ''
+            selectedFile.value = null 
+            toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
+        } catch (error) {
+            console.error('Error al guardar el anuncio:', error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
+        }
+    } else if (selectedType.value === 'Otro') {
+        if ( !titleInput.value || !descriptionInput.value || !selectedFile.value) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos de título y descripción.', life: 3000 });
+            return;
+        }
+
+        try {
+            const announcementData = {
+                type: selectedType.value,
+                title: titleInput.value,
+                description: descriptionInput.value
+            };
+
+            await saveAnnouncement(announcementData, selectedFile.value);  
+            subjectInput.value = '';
+            locationInput.value = '';
+            titleInput.value = '';  
+            descriptionInput.value = '';  
+            startTime.value = null
+            endTime.value = null
+            dateTime.value = null 
+            locationInput.value = ''
+            selectedFile.value = null 
+            toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
+        } catch (error) {
+            console.error('Error al guardar el anuncio:', error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
+        }
     }
 };
 </script>
@@ -151,48 +204,68 @@ const handleSubmit = async () => {
         </div>
       </span>
       
-      <p class="text-black text-lg md:text-xl font-semibold text-left ">
-        Materia
-      </p>
-      <AutoComplete 
-        v-model="subjectInput" 
-        :suggestions="filteredSubjects" 
-        @complete="filterSubjects" 
-        field="name" 
-        dropdown 
-        :forceSelection="false"
-        placeholder="Buscar materia..." 
-      />
-      <span class="flex flex -column md:flex-row">
-        <span class="flex flex-column w-6">
-            <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
-                Fecha & Horas
-            </p>
-            <div class="p-inputgroup w-full">
-                <span class="p-inputgroup-addon">
-                <i class="pi pi-calendar"></i> 
-                </span>
-                <Button 
-                label=" Fecha y Horas" 
-                class="p-button-outlined w-full bg-white text-black p-inputgroup-addon text-left  w-full md:w-9" 
-                icon="pi pi-chevron-down" 
-                iconPos="right"
-                @click="openDateDialog"
-                
-                />
-            </div>
-            </span>
-
-            <span class="flex flex-column">
-              <!-- Ubicación -->
+      <!-- Campos para 'Asesoría' -->
+      <div v-if="selectedType === 'Asesoría'">
+        <p class="text-black text-lg md:text-xl font-semibold text-left ">
+          Materia
+        </p>
+        <AutoComplete 
+          class="w-full"
+          v-model="subjectInput" 
+          :suggestions="filteredSubjects" 
+          @complete="filterSubjects" 
+          field="name" 
+          dropdown 
+          :forceSelection="false"
+          placeholder="Buscar materia..." 
+        />
+        <span class="flex flex-column md:flex-row">
+          <span class="flex flex-column w-6">
               <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
-                Ubicación
-                <i class="pi pi-map-marker mr-2" style="font-size: 1.5rem;"></i>
+                  Fecha & Horas
               </p>
-              <InputText v-model="locationInput" placeholder="Ingresa la ubicación" class="w-full" />
-            </span>
+              <div class="p-inputgroup w-full">
+                  <span class="p-inputgroup-addon">
+                  <i class="pi pi-calendar"></i> 
+                  </span>
+                  <Button 
+                  label=" Fecha y Horas" 
+                  class="p-button-outlined w-full bg-white text-black p-inputgroup-addon text-left  w-full md:w-9" 
+                  icon="pi pi-chevron-down" 
+                  iconPos="right"
+                  @click="openDateDialog"
+                  />
+              </div>
+          </span>
 
-      </span>
+          <span class="flex flex-column">
+            <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
+              Ubicación
+              <i class="pi pi-map-marker mr-2" style="font-size: 1.5rem;"></i>
+            </p>
+            <InputText v-model="locationInput" placeholder="Ingresa la ubicación" class="w-full" />
+          </span>
+        </span>
+      </div>
+
+      <!-- Campos para 'Otro' -->
+      <div v-if="selectedType === 'Otro'">
+        <p class="text-black text-lg md:text-xl font-semibold text-left m-1">
+          Título
+        </p>
+        <InputText v-model="titleInput" maxlength="30" placeholder="Ingresa el título" class="w-full" />
+        <p class="text-gray-600 text-sm mt-1 ml-1">
+          {{ titleInput.length }}/30 caracteres
+        </p>
+
+        <p class="text-black text-lg md:text-xl font-semibold text-left  m-1">
+          Descripción
+        </p>
+        <InputText v-model="descriptionInput" maxlength="50" placeholder="Ingresa la descripción" class="w-full" />
+        <p class="text-gray-600 text-sm mt-1 ml-1 ">
+          {{ descriptionInput.length }}/50 caracteres
+        </p>
+      </div>
 
       <!-- Portada -->
       <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">

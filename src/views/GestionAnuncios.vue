@@ -2,23 +2,25 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-
+import { saveAnnouncement } from '@/firebase/db/asesorias';
+import { useToast } from 'primevue/usetoast';
 
 const selectedType = ref('Asesoría');
 const subjects = ref([]);
 const filteredSubjects = ref([]);
 const subjectInput = ref('');
 const fileInput = ref(null);
-const showDateDialog = ref(false); // Controla el popup de la fecha y rango de horas
-
-const handleSelect = (type) => {
-    selectedType.value = type;
-};
-
+const showDateDialog = ref(false);
+const locationInput = ref('');
+const toast = useToast();
 onMounted(async () => {
     subjects.value = await getSubjects();
     console.log(subjects.value, "Este es el objeto");
 });
+
+const handleSelect = (type) => {
+    selectedType.value = type;
+};
 
 const filterSubjects = () => {
     const query = normalize(subjectInput.value);
@@ -26,74 +28,96 @@ const filterSubjects = () => {
         normalize(subject.name).includes(query)
     );
 };
-const dateTime = ref(null);  // Variable para la fecha
-const startTime = ref(null); // Variable para la hora de inicio
-const endTime = ref(null);   // Variable para la hora de fin
+
+const dateTime = ref(null);
+const startTime = ref(null);
+const endTime = ref(null);
 const selectedFile = ref(null);
 
 const validateFile = (file) => {
-  const allowedTypes = ['image/jpeg', 'image/png'];
-  return file && allowedTypes.includes(file.type);
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    return file && allowedTypes.includes(file.type);
 };
 
 const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (file && validateFile(file)) {
-    selectedFile.value = file;
-  } else {
-    alert('Por favor, selecciona un archivo de imagen válido (JPEG o PNG).');
-  }
+    const file = event.target.files[0];
+    if (file && validateFile(file)) {
+        selectedFile.value = file;
+    } else {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor, selecciona un archivo de imagen válido (JPEG o PNG).', life: 3000 });
+    }
 };
 
 const handleDrop = (event) => {
-  const file = event.dataTransfer.files[0];
-  if (file && validateFile(file)) {
-    selectedFile.value = file;
-  } else {
-    alert('Por favor, selecciona un archivo de imagen válido (JPEG o PNG).');
-  }
+    const file = event.dataTransfer.files[0];
+    if (file && validateFile(file)) {
+        selectedFile.value = file;
+    } else {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor, selecciona un archivo de imagen válido (JPEG o PNG).', life: 3000 });
+    }
 };
 
 const triggerFileInput = () => {
-  if (fileInput.value) {
-    fileInput.value.click();
-  }
+    if (fileInput.value) {
+        fileInput.value.click();
+    }
 };
 
 const removeFile = () => {
-  selectedFile.value = null;
+    selectedFile.value = null;
 };
 
 const openDateDialog = () => {
-  showDateDialog.value = true;
+    showDateDialog.value = true;
 };
 
-// Guardar fecha, hora de inicio y fin
 const saveDateTime = () => {
-  const today = new Date(); // Obtener la fecha actual
-  const selectedDate = new Date(dateTime.value); // Convertir la fecha seleccionada
+    const today = new Date();
+    const selectedDate = new Date(dateTime.value);
 
-  if (!dateTime.value || !startTime.value || !endTime.value) {
-    alert('Por favor selecciona una fecha y un rango de horas.');
-    return;
-  }
+    if (!dateTime.value || !startTime.value || !endTime.value) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor selecciona una fecha y un rango de horas.', life: 3000 });
+        return;
+    }
 
-  // Validar que la fecha seleccionada no sea antes del día actual
-  if (selectedDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)) {
-    alert('La fecha seleccionada no puede ser antes del día de hoy.');
-    return;
-  }
+    if (selectedDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'La fecha seleccionada no puede ser antes del día de hoy.', life: 3000 });
+        return;
+    }
 
-  // Validar que la hora de inicio sea menor que la hora de fin
-  if (startTime.value >= endTime.value) {
-    alert('La hora de inicio debe ser menor que la hora de fin.');
-    return;
-  }
+    if (startTime.value >= endTime.value) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'La hora de inicio debe ser menor que la hora de fin.', life: 3000 });
+        return;
+    }
 
-  console.log(`Fecha: ${dateTime.value}, Hora de inicio: ${startTime.value}, Hora de fin: ${endTime.value}`);
-  showDateDialog.value = false;
+    showDateDialog.value = false;
+};
+
+const handleSubmit = async () => {
+    if (!selectedType.value || !subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !locationInput.value || !selectedFile.value) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
+        return;
+    }
+
+    try {
+        const announcementData = {
+            type: selectedType.value,
+            subject: subjectInput.value,
+            dateTime: dateTime.value,
+            startTime: startTime.value,
+            endTime: endTime.value,
+            location: locationInput.value
+        };
+
+        await saveAnnouncement(announcementData, selectedFile.value);
+        toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
+    } catch (error) {
+        console.error('Error al guardar el anuncio:', error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
+    }
 };
 </script>
+
 
 <template>
   <div class="flex md:flex-row flex-column">
@@ -159,14 +183,14 @@ const saveDateTime = () => {
             </div>
             </span>
 
-<span class="flex flex-column">
-  <!-- Ubicación -->
-  <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
-    Ubicación
-    <i class="pi pi-map-marker mr-2" style="font-size: 1.5rem;"></i>
-  </p>
-  <InputText v-model="locationInput" placeholder="Ingresa la ubicación" class="w-full" />
-</span>
+            <span class="flex flex-column">
+              <!-- Ubicación -->
+              <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
+                Ubicación
+                <i class="pi pi-map-marker mr-2" style="font-size: 1.5rem;"></i>
+              </p>
+              <InputText v-model="locationInput" placeholder="Ingresa la ubicación" class="w-full" />
+            </span>
 
       </span>
 
@@ -192,7 +216,7 @@ const saveDateTime = () => {
 
       <!-- Botones Agregar y Ver previsualización -->
       <span class="flex flex-column md:flex-row justify-content-between mt-3">
-        <Button label="Agregar" class="custom-button font-bold text-black w-full md:w-5 text-lg md:text-xl selected border-round-xl" />
+        <Button label="Agregar" class="custom-button font-bold text-black w-full md:w-5 text-lg md:text-xl selected border-round-xl"  @click="handleSubmit" />
         <Button class="font-bold text-black-alpha-70 w-full md:w-6 text-lg md:text-xl border-none bg-transparent">
           <p class="text-black-alpha-70 m-auto"><i class="pi pi-eye mr-2 text-md"></i> Ver previsualización</p>
         </Button>

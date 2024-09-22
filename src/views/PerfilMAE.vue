@@ -8,7 +8,6 @@ import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../fireb
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 import { uploadFile } from '../firebase/img/users';
-import { enablePersistentCacheIndexAutoCreation } from 'firebase/firestore';
 
 const toast = useToast();
 const route = useRoute();
@@ -288,7 +287,6 @@ const startSession = async () => {
 }
 
 const stopSession = async () => {
-  // Borra field de activeSession, saca la diferencia en minutos de startTime y actual para agregarla a totalTime del usuario
   try {
     const res = await stopActiveSession(userInfo.value.uid);
     if (!res.activeSessionDeleted) {

@@ -93,7 +93,8 @@ const stopSession = async () => {
             iconPos="right"
         />
 
-        <Button 
+        <Button
+            v-if="maeInfo"
             label="Solicitar Asistencia" 
             icon="pi pi-question-circle" 
             class="p-button-warn p-button-lg py-4 w-full md:w-5"
@@ -102,7 +103,7 @@ const stopSession = async () => {
         />
 
         <Button 
-            v-if="userInfo && userInfo['activeSession']"
+            v-if="maeInfo && userInfo && userInfo['activeSession']"
             label="Cerrar Sesión"
             icon="pi pi-pause" 
             class="p-button-help p-button-lg py-4 w-full md:w-5"
@@ -112,7 +113,7 @@ const stopSession = async () => {
         />
 
         <Button
-            v-else
+            v-else-if="maeInfo"
             label="Iniciar Sesión"
             icon="pi pi-play" 
             class="p-button-help p-button-lg py-4 w-full md:w-5"

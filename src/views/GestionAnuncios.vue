@@ -70,7 +70,7 @@ const removeFile = () => {
     <div class="flex md:flex-row flex-column">
         <!-- Primera columna -->
         <div class="flex flex-column md:w-6">
-            <h1 class="text-black text-2xl md:text-3xl font-bold mb-5 text-left">
+            <h1 class="text-black text-2xl md:text-3xl font-bold mb-3 text-left">
                 Gestión de Anuncios
             </h1>
             <span class="flex flex-column sm:flex-row justify-content-between items-center">
@@ -78,7 +78,6 @@ const removeFile = () => {
                     Tipo de Asesoría
                 </p>
                 <div class="flex flex-row sm:justify-content-end bg-white border-round-xl shadow-3 w-16rem">
-
                     <Button 
                         label="Asesoría" 
                         :class="[ 
@@ -98,7 +97,7 @@ const removeFile = () => {
                     />
                 </div>
             </span>
-            <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
+            <p class="text-black text-lg md:text-xl font-semibold text-left ">
                 Materia
             </p>
             <AutoComplete 
@@ -109,11 +108,10 @@ const removeFile = () => {
                 dropdown 
                 :forceSelection="false"
                 placeholder="Buscar materia..." 
-                class="mt-2 "
             />
-            <span class="flex flex-column sm:flex-row items-center w-full">
-                <span class="flex  flex-column w-6 md:mr-5"> 
-                    <p class="text-black text-lg md:text-xl font-semibold text-left mt-3 ">
+            <span class="flex flex-column sm:flex-row items-center w-full mt-2">
+                <span class="flex  flex-column w-full md:w-6 md:mr-5"> 
+                    <p class="text-black text-lg md:text-xl font-semibold text-left ">
                         Fecha & hora
                     </p>
                     <Calendar 
@@ -126,19 +124,19 @@ const removeFile = () => {
                     /> 
                 </span>
                 <span class="flex  flex-column ">
-                    <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
+                    <p class="text-black text-lg md:text-xl font-semibold text-left ">
                         Ubicación
                         <i class="pi pi-map-marker mr-2" style="font-size: 1.5rem;"></i>
                     </p> 
                     <InputText 
                         v-model="locationInput" 
                         placeholder="Ingresa la ubicación" 
-                        class="w-6 md:w-full" 
+                        class="w-full" 
                     />
                 </span>
                 
             </span>
-            <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
+            <p class="text-black text-lg md:text-xl font-semibold text-left mt-2">
                 Portada
             </p>
             <div>
@@ -150,12 +148,12 @@ const removeFile = () => {
                 @click="triggerFileInput"
                 >
                 <p  v-if="!selectedFile">
-                    <span class="flex flex-row text-center justify-content-center">
-                        Subir imagen de portada  <i class="pi pi-image text-3xl ml-2 "></i>
+                    <span class="flex flex-row items-center text-center justify-content-center mt-3">
+                        Subir imagen de portada <i class="pi pi-image text-3xl ml-2"></i>
                     </span>
                 </p>
                 <p  v-else> 
-                    <span class="flex flex-row text-center justify-content-center">
+                    <span class="flex flex-row items-center text-center justify-content-center mt-3">
                         <i class="pi pi-image text-3xl mr-2"></i>
                         {{ selectedFile.name }}
                         <button @click="removeFile" class="mr-2 text-red-500">x</button>
@@ -167,12 +165,27 @@ const removeFile = () => {
                     @change="handleFileChange" 
                     accept=".jpg, .jpeg, .png" 
                     class="hidden" 
-                />
-                
+                />  
                 </div>
             </div>
+            <span class="flex flex-column md:flex-row justify-content-between ">
+                <Button 
+                    label="Agregar" 
+                    :class="[ 
+                        'custom-button font-bold text-black w-full md:w-5 mt-3 text-lg md:text-xl selected border-round-xl ' 
+                    ]"
+                />
 
-            
+                <Button 
+                    :class="[ 
+                        'font-bold text-black-alpha-70 w-full md:w-6 mt-3 text-lg md:text-xl border-none bg-transparent ' 
+                    ]"
+                >
+                    
+                         <p class="text-black-alpha-70 m-auto "><i class="pi pi-eye mr-2 text-md"></i> Ver previsualización </p>
+                     
+                </Button>
+            </span>
         </div>
         
         
@@ -187,7 +200,6 @@ const removeFile = () => {
 
 <style scoped>
 .custom-button {
-    padding: 15px;
     border: none;
     background-color: white;
     color: black;

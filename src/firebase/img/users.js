@@ -51,3 +51,22 @@ export async function uploadFile(file, email) {
         throw error;
     }
 }
+
+/**
+ * Subir un archivo a Firebase Storage y obtener su URL de descarga.
+ *
+ * @param {File} file - El archivo a subir.
+ * @param {string} path - La ruta en Storage donde se almacenará el archivo.
+ * @returns {Promise<string>} La URL de descarga del archivo subido.
+ */
+export async function addAnnoucement(file, path) {
+    try {
+        const storageRef = ref(storage, path);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+    }
+}

@@ -9,7 +9,7 @@ const model = ref([
         label: 'Estudiante',
         items: [
             
-            //{ label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/' },
+            { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/' },
             { label: 'Maes activos', icon: 'pi pi-fw pi-globe', to: '/maesactivos' },
             { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
             //{ label: 'Asesorías grupales', icon: 'pi pi-fw pi-users', to: '/asesoriasGrupales' },

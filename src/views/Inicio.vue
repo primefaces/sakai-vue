@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router'; // Importa el router
 import { getCurrentUser, getUser, startActiveSession, stopActiveSession } from '../firebase/db/users';
 import { useToast } from 'primevue/usetoast';
 
@@ -7,19 +8,21 @@ const userInfo = ref(null);
 const maeInfo = ref(null);
 
 const toast = useToast();
-
 const showDialogSession = ref(false);
-const location = ref('Biblioteca Piso 3')
+const location = ref('Biblioteca Piso 3');
+const router = useRouter(); // Accede al router
 
 onMounted(async () => {
-    userInfo.value = await getCurrentUser();
-    console.log(userInfo.value.uid);
-    maeInfo.value = await getUser(userInfo.value.uid);
+  userInfo.value = await getCurrentUser();
+  maeInfo.value = await getUser(userInfo.value.uid);
 
-})
+  // Verifica el rol o el estado del usuario y redirige si es necesario
+  if (userInfo.value.role === 'user' || userInfo.value.status === 'estudiante') {
+    router.push('maesActivos' ); // Redirige a la página 'maesActivos'
+  }
+});
 
 const startSession = async () => {
-  // Crea field de activeSession con id, location, peerInfo, startTime, status
   try {
     const res = await startActiveSession(userInfo.value.uid, userInfo.value, location.value);
     toast.add({ severity: 'success', summary: 'Inicio de sesión exitoso', life: 3000 });
@@ -29,16 +32,15 @@ const startSession = async () => {
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de iniciar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
-}
+};
 
 const stopSession = async () => {
   try {
     const res = await stopActiveSession(userInfo.value.uid);
     if (!res.activeSessionDeleted) {
       if (res.timeLimitExceded) {
-        toast.add({ severity: 'error', summary: `Excediste el limite de tiempo de tu sesión (${ Math.round((res.differenceInMinutes / 60) * 100) / 100 } horas)`, detail: 'Consulta a un coordi para reponer las horas' });
-      }
-      else {
+        toast.add({ severity: 'error', summary: `Excediste el límite de tiempo de tu sesión (${Math.round((res.differenceInMinutes / 60) * 100) / 100} horas)`, detail: 'Consulta a un coordinador para reponer las horas' });
+      } else {
         throw new Error("Active session was not deleted");
       }
     } else {
@@ -49,7 +51,8 @@ const stopSession = async () => {
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
-}
+};
+
 
 // Agregar estos metodos mas adelante 
 // const nextSlide() {
@@ -62,8 +65,6 @@ const stopSession = async () => {
 //         this.currentIndex--;
 //       }
 </script>
-
-
 
 
 <template>
@@ -81,50 +82,53 @@ const stopSession = async () => {
     </div>
 
     <div class="flex flex-wrap gap-4 mb-4 w-full md:w-9">
-        <Button 
+        <!-- <Button 
             label="Registrar Asesoria" 
             icon="pi pi-pencil"
             class="p-button-info p-button-lg py-4 w-full md:w-5"
             :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #3a7bd5, #00d2ff)', color: '#fff', border: 'none' }"
             iconPos="right"
-        />
+        /> -->
 
-        <Button 
+        <!-- <Button 
             label="Evaluar Asesoria" 
             icon="pi pi-star" 
             class="p-button-success p-button-lg py-4 w-full md:w-5"
             :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #00b09b, #96c93d)', color: '#fff', border: 'none' }"
             iconPos="right"
-        />
-
-        <Button
+        /> -->
+        <div v-if="userInfo && userInfo.role !== 'user' " class="flex flex-wrap gap-4 mb-4 w-full md:w-9">
+          <!-- <Button
             v-if="maeInfo"
             label="Solicitar Asistencia" 
             icon="pi pi-question-circle" 
             class="p-button-warn p-button-lg py-4 w-full md:w-5"
             :style="{borderRadius: '15px',background: 'linear-gradient(to right, #CC7722, #DAA520)',color: '#fff', border: 'none'}"
             iconPos="right"
-        />
+          /> -->
 
-        <Button 
-            v-if="maeInfo && userInfo && userInfo['activeSession']"
-            label="Cerrar Sesión"
-            icon="pi pi-pause" 
-            class="p-button-help p-button-lg py-4 w-full md:w-5"
-            :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #9F2B68, #BF40BF)', color: '#fff', border: 'none' }"
-            iconPos="right"
-            @click="stopSession"
-        />
+          <Button 
+              v-if="maeInfo && userInfo && userInfo['activeSession']"
+              label="Cerrar Sesión"
+              icon="pi pi-pause" 
+              class="p-button-help p-button-lg py-4 w-full md:w-5"
+              :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #9F2B68, #BF40BF)', color: '#fff', border: 'none' }"
+              iconPos="right"
+              @click="stopSession"
+          />
 
-        <Button
-            v-else-if="maeInfo"
-            label="Iniciar Sesión"
-            icon="pi pi-play" 
-            class="p-button-help p-button-lg py-4 w-full md:w-5"
-            :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #9F2B68, #BF40BF)', color: '#fff', border: 'none' }"
-            iconPos="right"
-            @click="showDialogSession = true"
-        />
+          <Button
+              v-else-if="maeInfo"
+              label="Iniciar Sesión"
+              icon="pi pi-play" 
+              class="p-button-help p-button-lg py-4 w-full md:w-5"
+              :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #9F2B68, #BF40BF)', color: '#fff', border: 'none' }"
+              iconPos="right"
+              @click="showDialogSession = true"
+          />
+
+        </div>
+        
     </div>
 
     <div class="flex   flex-wrap border-round-3xl text-white " :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">

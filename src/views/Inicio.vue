@@ -51,15 +51,19 @@ const stopSession = async () => {
   }
 }
 
+// Agregar estos metodos mas adelante 
+// const nextSlide() {
+//       if (this.currentIndex < this.items.length - 1) {
+//         this.currentIndex++;
+//       }
+//     }
+// const   prevSlide() {
+//       if (this.currentIndex > 0) {
+//         this.currentIndex--;
+//       }
 </script>
 
-<style scoped>
-@media (min-width: 768px){
-    .clip-diagonal {
-        clip-path: polygon(0 0, 80% 0, 100% 100%, 0 100%);
-    }
-}
-</style>
+
 
 
 <template>
@@ -123,39 +127,60 @@ const stopSession = async () => {
         />
     </div>
 
-    <div class="flex w-12 md:w-9 flex-wrap" :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #4466A7, #088F8F)', color: '#fff', border: 'none' }">
-        <div class="w-full md:w-4">
-            <img class="w-full h-full object-cover clip-diagonal" src="https://i.imgur.com/C6psSY1.png">
-        </div>
-        <div class="w-full md:w-8 text-center p-4 flex gap-5">
-            <div class="w-1 grid grid-cols-1 place-content-center">
-                <Button 
-                    label="◀" 
-                    class="m-0 p-0 text-xl border-none bg-transparent"
-                />
-            </div>
-            <div>
-                <h2 class="text-white text-2xl font-bold">
-                    Asesorías Grupales
-                </h2>
-                <p class="font-medium">
-                    ¿Tienes dudas? ¡Únete a nuestras asesorías grupales! Ofrecemos sesiones cada semana de las materias más populares. ¡No te quedes atrás!
-                </p>
-                <div class="text-right">
-                    <Button 
-                        label="Ver más" 
-                        icon="pi pi-arrow-right"
-                        class="m-0 p-0 text-xl border-none bg-transparent"
-                        iconPos="right"
-                    />
-                </div>
-            </div>
-            <div class="grid grid-cols-1 place-content-center mr-2">
-                <Button 
-                    label="▶" 
-                    class="m-0 p-0 text-xl border-none bg-transparent"
-                />
-            </div>
-        </div>
+    <div class="flex   flex-wrap border-round-3xl text-white " :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
+    <div class="relative w-full md:w-4 border-round-left-3xl">
+      <span class="overlay">
+        <Button
+          label="◀"
+          class="text-xl border-none bg-transparent btn-left hidden lg:block"
+        />
+        <img class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" src="https://i.imgur.com/C6psSY1.png" />
+      </span>
     </div>
+    <div class="w-full md:w-8 text-center p-4 flex gap-5">
+      <div class="w-1 grid grid-cols-1 place-content-center lg:hidden mt-1">
+        <Button
+          label="◀"
+          class="m-0 p-0 text-xl border-none bg-transparent mt-1 ml-2"
+        />
+      </div>
+      <div>
+        <h2 class="text-white text-3xl font-bold">
+          Asesorías Grupales
+        </h2>
+        <p class="font-medium text-xl">
+          ¿Tienes dudas? ¡Únete a nuestras asesorías grupales! Ofrecemos sesiones cada semana de las materias más populares. ¡No te quedes atrás!
+        </p>
+      </div>
+      <div class="mt-1 grid grid-cols-1 place-content-center mr-2">
+        <Button
+          label="▶"
+          class="m-0 p-0 text-xl border-none bg-transparent"
+        />
+      </div>
+    </div>
+  </div>
+
 </template>
+
+
+<style scoped>
+@media (min-width: 968px) {
+  .btn-left {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    z-index: 10; 
+    color: white; 
+    
+  }
+  .arrow{
+    filter: brightness(0.8);
+  }
+
+  .clip-diagonal {
+    clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
+    
+  }
+}
+</style>

@@ -141,7 +141,7 @@ const handleSubmit = async () => {
         }
     } else if (selectedType.value === 'Otro') {
         if ( !titleInput.value || !descriptionInput.value || !selectedFile.value) {
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos de título y descripción.', life: 3000 });
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos de título,  descripción e imagen.', life: 3000 });
             return;
         }
 
@@ -261,9 +261,9 @@ const handleSubmit = async () => {
         <p class="text-black text-lg md:text-xl font-semibold text-left  m-1">
           Descripción
         </p>
-        <InputText v-model="descriptionInput" maxlength="50" placeholder="Ingresa la descripción" class="w-full" />
+        <InputText v-model="descriptionInput" maxlength="120" placeholder="Ingresa la descripción" class="w-full" />
         <p class="text-gray-600 text-sm mt-1 ml-1 ">
-          {{ descriptionInput.length }}/50 caracteres
+          {{ descriptionInput.length }}/120 caracteres
         </p>
       </div>
 

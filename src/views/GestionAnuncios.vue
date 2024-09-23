@@ -400,7 +400,7 @@ const formatTime = (date, showMeridiem = false) => {
             :closable="true"
             :dismissable-mask="true"
         >
-        <div class="flex   flex-wrap border-round-3xl text-white " :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
+        <div class="flex   flex-wrap border-round-3xl text-white  h-16rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
           <div class="relative w-full md:w-4 border-round-left-3xl">
             <span class="overlay">
               <Button
@@ -408,7 +408,7 @@ const formatTime = (date, showMeridiem = false) => {
                 class="text-xl border-none btn-left hidden block  border-round-top-left-3xl"
               />
               <img
-                class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow"
+                class="w-full h-16rem clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow"
                 :src="previewUrl || 'https://i.imgur.com/C6psSY1.png'"
               />
             </span>

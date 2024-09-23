@@ -131,18 +131,18 @@ const stopSession = async () => {
         
     </div>
 
-    <div class="flex   flex-wrap border-round-3xl text-white " :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
+    <div class="flex flex-wrap border-round-3xl text-white  h-16rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
     <div class="relative w-full md:w-4 border-round-left-3xl">
       <span class="overlay">
         <Button
           label="◀"
           class="text-xl border-none bg-transparent btn-left hidden lg:block"
         />
-        <img class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" src="https://i.imgur.com/C6psSY1.png" />
+        <img class="w-full h-16rem clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" src="https://i.imgur.com/C6psSY1.png" />
       </span>
     </div>
     <div class="w-full md:w-8 text-center p-4 flex gap-5">
-      <div class="w-1 grid grid-cols-1 place-content-center lg:hidden mt-1">
+      <div class="w-1 grid grid-cols-1 place-content-center lg:hidden mt-1  ">
         <Button
           label="◀"
           class="m-0 p-0 text-xl border-none bg-transparent mt-1 ml-2"

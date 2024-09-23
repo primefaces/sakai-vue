@@ -127,7 +127,8 @@ export async function saveAnnouncement(announcementData, selectedFile) {
         await addDoc(collection(firestoreDB, 'announcements'), {
             ...announcementData,
             imageUrl, // Incluir la URL de la imagen si fue subida
-            createdAt: new Date() // Fecha de creación del anuncio
+            createdAt: new Date(), // Fecha de creación del anuncio
+            visible: true
         });
 
         console.log('Anuncio guardado exitosamente en Firestore');

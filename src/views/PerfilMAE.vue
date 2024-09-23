@@ -243,12 +243,7 @@ const saveScheduleChanges = async () => {
   showDialogHorarios.value = false;  
 };
 
-
-
-
-
 const showDialogAsesoria = ref(false);
-
 const ratingAsesoria = ref(null);
 const comentarioAsesoria = ref('');
 const materiaAsesoria = ref(null);
@@ -306,10 +301,7 @@ const stopSession = async () => {
   }
 }
 
-
-
 const previewUrl = ref(null);
-
 
 const handleFileChange = (event) => {
   const file = event.target.files[0];

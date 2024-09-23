@@ -19,6 +19,7 @@ const endTime = ref(null);
 const selectedFile = ref(null);
 const titleInput = ref(''); 
 const descriptionInput = ref('');
+const previewUrl = ref(null);
 
 onMounted(async () => {
     subjects.value = await getSubjects();
@@ -57,6 +58,7 @@ const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && validateFile(file)) {
         selectedFile.value = file;
+        previewUrl.value = URL.createObjectURL(file);
     } else {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor, selecciona un archivo de imagen válido (JPEG o PNG).', life: 3000 });
     }
@@ -66,6 +68,7 @@ const handleDrop = (event) => {
     const file = event.dataTransfer.files[0];
     if (file && validateFile(file)) {
         selectedFile.value = file;
+        previewUrl.value = URL.createObjectURL(file);
     } else {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor, selecciona un archivo de imagen válido (JPEG o PNG).', life: 3000 });
     }
@@ -98,7 +101,7 @@ const saveDateTime = () => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'La fecha seleccionada no puede ser antes del día de hoy.', life: 3000 });
         return;
     }
-
+    console.log(startTime, endTime, "Aca estoy")
     if (startTime.value >= endTime.value) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'La hora de inicio debe ser menor que la hora de fin.', life: 3000 });
         return;
@@ -168,6 +171,38 @@ const handleSubmit = async () => {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
         }
     }
+};
+
+const displayPreviewDialog = ref(false);
+
+// Función para abrir el diálogo
+const openPreviewDialog = () => {
+    displayPreviewDialog.value = true;
+};
+
+// Función para cerrar el diálogo
+const closePreviewDialog = () => {
+    displayPreviewDialog.value = false;
+};
+
+const formatDate = (date) => {
+    if (!date) return '';
+    return new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long' }).format(new Date(date));
+};
+
+const formatTime = (date, showMeridiem = false) => {
+    if (!date) return '';
+    
+    const options = {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true, // Para mostrar el formato de 12 horas siempre
+    };
+
+    const formattedTime = new Intl.DateTimeFormat('es-MX', options).format(new Date(date));
+
+    // Solo muestra "a.m." o "p.m." si showMeridiem es true, de lo contrario elimina
+    return showMeridiem ? formattedTime : formattedTime.replace(/(a\.m\.|p\.m\.)/g, '').trim();
 };
 </script>
 
@@ -290,13 +325,14 @@ const handleSubmit = async () => {
       <!-- Botones Agregar y Ver previsualización -->
       <span class="flex flex-column md:flex-row justify-content-between mt-3">
         <Button label="Agregar" class="custom-button font-bold text-black w-full md:w-5 text-lg md:text-xl selected border-round-xl"  @click="handleSubmit" />
-        <Button class="font-bold text-black-alpha-70 w-full md:w-6 text-lg md:text-xl border-none bg-transparent">
+        <Button class="font-bold text-black-alpha-70 w-full md:w-6 text-lg md:text-xl border-none bg-transparent"
+          @click="openPreviewDialog"         
+        >
           <p class="text-black-alpha-70 m-auto"><i class="pi pi-eye mr-2 text-md"></i> Ver previsualización</p>
         </Button>
       </span>
     </div>
   </div>
-
 
   <!-- Diálogo para seleccionar la fecha y horas -->
 <Dialog 
@@ -352,11 +388,79 @@ const handleSubmit = async () => {
       />
     </div>
   </div>
+
 </Dialog>
+
+
+<Dialog 
+            v-model:visible="displayPreviewDialog" 
+            header="Previsualización"
+            modal
+            :style="{ width: '55%' }"
+            :closable="true"
+            :dismissable-mask="true"
+        >
+        <div class="flex   flex-wrap border-round-3xl text-white " :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
+          <div class="relative w-full md:w-4 border-round-left-3xl">
+            <span class="overlay">
+              <Button
+                label="Previsualización"
+                class="text-xl border-none btn-left hidden block  border-round-top-left-3xl"
+              />
+              <img
+                class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow"
+                :src="previewUrl || 'https://i.imgur.com/C6psSY1.png'"
+              />
+            </span>
+          </div>
+          <div class="w-full md:w-8 text-center p-4 flex gap-5">
+            <div>
+              <template v-if="selectedType === 'Asesoría'">
+                <h2 class="text-white text-3xl font-bold" >
+                  Asesorías Grupales
+                </h2>
+              <p class="font-medium text-xl text-left ml-5">
+                Materia: {{ subjectInput.name }} 
+              </p>
+              <p class="font-medium text-xl text-left ml-5">
+                Fecha: {{ formatDate(dateTime) }}, {{ formatTime(startTime, false) }} - {{ formatTime(endTime, true) }}
+              </p>
+              <p class="font-medium text-xl text-left ml-5">
+                Ubicación: {{ locationInput }} 
+              </p>
+              <p class="text-white text-2xl font-bold text-right text-left ml-5">
+                Pre-registro <i class="pi pi-arrow-right text-2xl font-bold"></i>
+              </p>
+              
+            </template>
+
+            <template v-if="selectedType === 'Otro'">
+              <h2 class="text-white text-3xl font-bold" >
+                {{ titleInput}}
+              </h2>
+              <p class="font-medium text-xl mr-2 text-left ml-5 w-10">
+                 {{ descriptionInput  }} 
+              </p>
+            </template>   
+          </div>
+          </div>
+        </div>
+            <!-- Botón de cerrar el diálogo -->
+             <span class="flex justify-content-center">
+              <Button 
+                label="Cerrar Previsualización" 
+                class=" p-button-rounded mt-4 selected  border-round-left-3xl"
+                @click="closePreviewDialog" 
+            />
+             </span>
+           
+        </Dialog>
 
 </template>
 
 <style scoped>
+
+
 .custom-button {
   border: none;
   background-color: white;
@@ -365,11 +469,31 @@ const handleSubmit = async () => {
 }
 
 .selected {
-  background: linear-gradient(to right, #4466A7, #51A3AC);
+  background: linear-gradient(to right, #779AC4, #29AB93);
   color: white;
 }
 
 .custom-button:focus {
   box-shadow: none;
+}
+
+
+  .btn-left {
+    position: absolute;
+    top: 0%;
+    left: 0;
+    z-index: 10; 
+    color: white; 
+    background: linear-gradient(to right, #4466A7, #51A3AC);
+  }
+  .arrow{
+    filter: brightness(0.8);
+  }
+
+  @media (min-width: 968px) {
+  .clip-diagonal {
+    clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
+    
+  }
 }
 </style>

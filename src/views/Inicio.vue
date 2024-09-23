@@ -148,8 +148,11 @@ const stopSession = async () => {
         <h2 class="text-white text-3xl font-bold">
           Asesorías Grupales
         </h2>
-        <p class="font-medium text-xl">
+        <p class="font-medium text-left ml-5 text-xl">
           ¿Tienes dudas? ¡Únete a nuestras asesorías grupales! Ofrecemos sesiones cada semana de las materias más populares. ¡No te quedes atrás!
+        </p>
+        <p class="text-white text-2xl font-bold text-right">
+          Saber más <i class="pi pi-arrow-right text-2xl font-bold"></i>
         </p>
       </div>
       <div class="mt-1 grid grid-cols-1 place-content-center mr-2">

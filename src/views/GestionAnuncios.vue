@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getSubjects } from '../firebase/db/subjects';
+import { getSubjects,  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
 import { saveAnnouncement } from '@/firebase/db/asesorias';
 import { useToast } from 'primevue/usetoast';
@@ -40,7 +40,6 @@ const handleSelect = (type) => {
         selectedFile.value = null 
     }
 };
-
 
 const filterSubjects = () => {
     const query = normalize(subjectInput.value);
@@ -333,26 +332,30 @@ const formatTime = (date, showMeridiem = false) => {
       </span>
     </div>
     <!-- Segunda columna -->
-    <div class="second-column mt-2 h-full flex flex-column md:w-6 md:ml-3">
-      <div class="bg-white m-3 border-round-3xl h-7rem p-3">
-        <p class="font-medium text-xl text-left mt-0 mb-1"> 
-          Materia: Economía clásica
-        </p>
-        <p class="font-medium text-xl text-left mt-0 mb-1"> 
-          Aulas 2
-        </p>
-        <span class="border-t border-gray-300 mt-2 mb-2 w-full block h-0.5"> <!-- Agregar h-0.5 para definir una altura -->
-        </span>
-        <div class="flex flex-row justify-content-between mb-2">
-          <div class="text-left text-xl ml-4">
-            3:00 - 5:00 p.m
-          </div>
-          <div class="text-left text-xl mr-4">
-            15 de diciembre
-          </div>
-        </div>
-      </div>  
+    <div class="second-column mt-2  flex flex-column md:w-6 md:ml-3">
+  <div class="bg-white m-3 border-round-3xl h-8rem p-3">
+    <div class="flex flex-row  justify-content-between">
+      <p class="font-medium text-xl text-left mt-0 mb-1"> 
+        Materia: Economía clásica
+      </p>
+      <i class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i> 
     </div>
+    
+    <p class="font-medium text-xl text-left mt-0 mb-1"> 
+      Aulas 2
+    </p>
+    <Divider class="m-0 second-column"/>
+    <div class="flex flex-row justify-content-between mb-2 mt-2">
+      <div class="text-left text-xl ">
+        3:00 - 5:00 p.m
+      </div>
+      <div class="text-left text-xl ">
+        15 de diciembre
+      </div>
+    </div>
+  </div>  
+</div>
+
     <!-- Fin div -->
   </div>
 

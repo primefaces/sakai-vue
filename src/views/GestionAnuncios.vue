@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects,  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement } from '@/firebase/db/asesorias';
+import { saveAnnouncement, getAnnouncements } from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 
 const selectedType = ref('Asesoría');
@@ -20,9 +20,12 @@ const selectedFile = ref(null);
 const titleInput = ref(''); 
 const descriptionInput = ref('');
 const previewUrl = ref(null);
+const anuncios = ref([]);
 
 onMounted(async () => {
     subjects.value = await getSubjects();
+    const anunciosData = await  getAnnouncements()
+    anuncios.value = anunciosData;
 });
 
 const handleSelect = (type) => {
@@ -185,24 +188,51 @@ const closePreviewDialog = () => {
 };
 
 const formatDate = (date) => {
-    if (!date) return '';
-    return new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long' }).format(new Date(date));
+    if (!date) return ''; // Si no hay fecha, retorna una cadena vacía
+
+    // Si el campo date es un Timestamp (de Firestore), lo convertimos a Date
+    if (date.toDate) {
+        date = date.toDate(); // Convertimos el Timestamp a Date
+    }
+
+    const validDate = new Date(date);
+
+    // Verificar si la fecha es válida
+    if (isNaN(validDate.getTime())) {
+        return ''; // Si no es válida, retornar cadena vacía
+    }
+
+    return new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long' }).format(validDate);
 };
 
 const formatTime = (date, showMeridiem = false) => {
-    if (!date) return '';
+    if (!date) return ''; // Si no hay fecha, retorna una cadena vacía
     
+    // Si el campo `date` es un Timestamp de Firestore, convertirlo a `Date`
+    if (date.toDate) {
+        date = date.toDate(); // Convertimos el Timestamp a Date
+    }
+
+    const validDate = new Date(date);
+
+    // Verificar si la fecha es válida
+    if (isNaN(validDate.getTime())) {
+        return ''; // Si no es válida, retornar cadena vacía
+    }
+
+    // Opciones para formatear la hora
     const options = {
         hour: 'numeric',
         minute: '2-digit',
         hour12: true, // Para mostrar el formato de 12 horas siempre
     };
 
-    const formattedTime = new Intl.DateTimeFormat('es-MX', options).format(new Date(date));
+    const formattedTime = new Intl.DateTimeFormat('es-MX', options).format(validDate);
 
-    // Solo muestra "a.m." o "p.m." si showMeridiem es true, de lo contrario elimina
+    // Solo muestra "a.m." o "p.m." si `showMeridiem` es true, de lo contrario los elimina
     return showMeridiem ? formattedTime : formattedTime.replace(/(a\.m\.|p\.m\.)/g, '').trim();
 };
+
 </script>
 
 
@@ -332,29 +362,38 @@ const formatTime = (date, showMeridiem = false) => {
       </span>
     </div>
     <!-- Segunda columna -->
-    <div class="second-column mt-2  flex flex-column md:w-6 md:ml-3">
-  <div class="bg-white m-3 border-round-3xl h-8rem p-3">
-    <div class="flex flex-row  justify-content-between">
-      <p class="font-medium text-xl text-left mt-0 mb-1"> 
-        Materia: Economía clásica
-      </p>
-      <i class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i> 
-    </div>
-    
-    <p class="font-medium text-xl text-left mt-0 mb-1"> 
-      Aulas 2
-    </p>
-    <Divider class="m-0 second-column"/>
-    <div class="flex flex-row justify-content-between mb-2 mt-2">
-      <div class="text-left text-xl ">
-        3:00 - 5:00 p.m
+    <div class="second-column mt-2 flex flex-column md:w-6 md:ml-3" style="max-height: 500px; overflow-y: auto;">
+      <div v-for="anuncio in anuncios" :key="anuncio.id" class="bg-white m-3 border-round-3xl h-auto p-3">
+        <div class="flex flex-row justify-content-between">
+          <p class="font-bold text-xl text-left mt-0 mb-1">
+            {{ anuncio.type === 'Asesoría' ?  anuncio.subject.name : anuncio.title }}
+          </p>
+          <i class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i>
+        </div>
+        
+        <p v-if="anuncio.type === 'Asesoría'" class="font-medium text-xl text-left mt-0 mb-1">
+          {{ anuncio.location }}
+        </p>
+        
+        <p v-else class="font-medium text-xl text-left mt-0 mb-1">
+          {{ anuncio.description }}
+        </p>
+
+        <Divider  v-if="anuncio.type === 'Asesoría'" class="m-0 second-column"/>
+
+         <div v-if="anuncio.type === 'Asesoría'" class="flex flex-row justify-content-between mb-2 mt-2">
+          <div class="text-left text-xl">
+            {{ formatTime(anuncio.startTime, false) }} - {{ formatTime(anuncio.endTime, true) }}
+          </div>
+          <div class="text-left text-xl">
+            {{ formatDate(anuncio.dateTime) }}
+          </div>
+        </div> 
+
+       
       </div>
-      <div class="text-left text-xl ">
-        15 de diciembre
-      </div>
     </div>
-  </div>  
-</div>
+
 
     <!-- Fin div -->
   </div>
@@ -413,9 +452,7 @@ const formatTime = (date, showMeridiem = false) => {
       />
     </div>
   </div>
-
 </Dialog>
-
 
 <Dialog 
             v-model:visible="displayPreviewDialog" 

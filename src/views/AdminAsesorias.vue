@@ -84,14 +84,13 @@ const exportData = () => {
     XLSX.writeFile(workbook, "asesorias.xlsx");
 };
 
-// Función que se llama cuando el usuario confirma la exportación
 const confirmExportAction = () => {
-    showDialog.value = false; // Oculta el diálogo
-    exportData(); // Ejecuta la exportación
+    showDialog.value = false; 
+    exportData(); 
 };
 
 onMounted(() => {
-    fetchAsesorias(); // Fetch asesorias when component mounts
+    fetchAsesorias(); 
 });
 </script>
 

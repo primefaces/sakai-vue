@@ -50,7 +50,6 @@ export async function getAnnouncements() {
     try {
         const announcementsCollection = collection(firestoreDB, 'announcements');
         
-        // Obtener todos los documentos de la colección sin filtros
         const querySnapshot = await getDocs(query(announcementsCollection));
         
         const now = new Date();
@@ -61,11 +60,7 @@ export async function getAnnouncements() {
                 id: doc.id,
                 ...doc.data(),
             }))
-            .filter(announcement => {
-                const { dateTime } = announcement;
-                // Si 'dateTime' no existe, o si existe y es mayor o igual a la fecha actual, incluir el anuncio
-                return !dateTime || new Date(dateTime) >= now;
-            });
+           
 
         console.log('Anuncios válidos obtenidos exitosamente:', announcements);
         return announcements;

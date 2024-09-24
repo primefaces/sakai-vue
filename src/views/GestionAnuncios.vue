@@ -332,6 +332,28 @@ const formatTime = (date, showMeridiem = false) => {
         </Button>
       </span>
     </div>
+    <!-- Segunda columna -->
+    <div class="second-column mt-2 h-full flex flex-column md:w-6 md:ml-3">
+      <div class="bg-white m-3 border-round-3xl h-7rem p-3">
+        <p class="font-medium text-xl text-left mt-0 mb-1"> 
+          Materia: Economía clásica
+        </p>
+        <p class="font-medium text-xl text-left mt-0 mb-1"> 
+          Aulas 2
+        </p>
+        <span class="border-t border-gray-300 mt-2 mb-2 w-full block h-0.5"> <!-- Agregar h-0.5 para definir una altura -->
+        </span>
+        <div class="flex flex-row justify-content-between mb-2">
+          <div class="text-left text-xl ml-4">
+            3:00 - 5:00 p.m
+          </div>
+          <div class="text-left text-xl mr-4">
+            15 de diciembre
+          </div>
+        </div>
+      </div>  
+    </div>
+    <!-- Fin div -->
   </div>
 
   <!-- Diálogo para seleccionar la fecha y horas -->
@@ -459,7 +481,9 @@ const formatTime = (date, showMeridiem = false) => {
 </template>
 
 <style scoped>
-
+.second-column{
+  background-color: #d2d2d2;
+}
 
 .custom-button {
   border: none;

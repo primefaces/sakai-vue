@@ -23,11 +23,13 @@ const newStatus = ref(null);
 const roles = [
     { label: 'MAE', value: 'mae' },
     { label: 'Coordi', value: 'coordi' },
-    { label: 'Publi', value: 'publi' }
+    { label: 'Publi', value: 'publi' },
+    { label: 'Usuario', value: 'user' }
 ];
 const statuses = [
     { label: 'Becario', value: 'becario' },
-    { label: 'Voluntario', value: 'voluntario' }
+    { label: 'Voluntario', value: 'voluntario' },
+    { label: 'Estudiante', value: 'estudiante' }
 ];
 
 // Función para eliminar weekSchedule

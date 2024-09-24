@@ -2,7 +2,8 @@ import { firestoreDB } from "../../main";
 import {
     addDoc,
     collection,
-
+    query,
+    getDocs,
 } from 'firebase/firestore';
 import { addAnnoucement } from "../img/users";
 
@@ -35,6 +36,41 @@ export async function saveAnnouncement(announcementData, selectedFile) {
         console.log('Anuncio guardado exitosamente en Firestore');
     } catch (error) {
         console.error('Error saving announcement:', error);
+        throw error;
+    }
+}
+
+
+/**
+ * Obtiene los anuncios de la colección "announcements" y omite los que tienen 'dateTime' menor a la fecha actual.
+ *
+ * @returns {Promise<Array>} - Una promesa que resuelve en una lista de anuncios válidos.
+ */
+export async function getAnnouncements() {
+    try {
+        const announcementsCollection = collection(firestoreDB, 'announcements');
+        
+        // Obtener todos los documentos de la colección sin filtros
+        const querySnapshot = await getDocs(query(announcementsCollection));
+        
+        const now = new Date();
+
+        // Mapear y filtrar los documentos
+        const announcements = querySnapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }))
+            .filter(announcement => {
+                const { dateTime } = announcement;
+                // Si 'dateTime' no existe, o si existe y es mayor o igual a la fecha actual, incluir el anuncio
+                return !dateTime || new Date(dateTime) >= now;
+            });
+
+        console.log('Anuncios válidos obtenidos exitosamente:', announcements);
+        return announcements;
+    } catch (error) {
+        console.error('Error fetching announcements:', error);
         throw error;
     }
 }

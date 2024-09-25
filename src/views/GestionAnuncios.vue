@@ -233,6 +233,7 @@ const formatTime = (date, showMeridiem = false) => {
     return showMeridiem ? formattedTime : formattedTime.replace(/(a\.m\.|p\.m\.)/g, '').trim();
 };
 
+
 </script>
 
 
@@ -321,7 +322,6 @@ const formatTime = (date, showMeridiem = false) => {
         <p class="text-gray-600 text-sm mt-1 ml-1">
           {{ titleInput.length }}/30 caracteres
         </p>
-
         <p class="text-black text-lg md:text-xl font-semibold text-left  m-1">
           Descripción
         </p>
@@ -330,8 +330,6 @@ const formatTime = (date, showMeridiem = false) => {
           {{ descriptionInput.length }}/120 caracteres
         </p>
       </div>
-
-      <!-- Portada -->
       <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
         Portada
       </p>
@@ -350,8 +348,6 @@ const formatTime = (date, showMeridiem = false) => {
         </p>
         <input type="file" ref="fileInput" @change="handleFileChange" accept=".jpg, .jpeg, .png" class="hidden" />  
       </div>
-
-      <!-- Botones Agregar y Ver previsualización -->
       <span class="flex flex-column md:flex-row justify-content-between mt-3">
         <Button label="Agregar" class="custom-button font-bold text-black w-full md:w-5 text-lg md:text-xl selected border-round-xl"  @click="handleSubmit" />
         <Button class="font-bold text-black-alpha-70 w-full md:w-6 text-lg md:text-xl border-none bg-transparent"
@@ -363,10 +359,10 @@ const formatTime = (date, showMeridiem = false) => {
     </div>
     <!-- Segunda columna -->
     <div class="second-column mt-2 flex flex-column md:w-6 md:ml-3" style="max-height: 500px; overflow-y: auto;">
-      <div v-for="anuncio in anuncios" :key="anuncio.id" class="bg-white m-3 border-round-3xl h-auto p-3">
+      <div v-for="anuncio in anuncios" :key="anuncio.id" class="bg-white m-4 border-round-3xl h-auto p-3">
         <div class="flex flex-row justify-content-between">
           <p class="font-bold text-xl text-left mt-0 mb-1">
-            {{ anuncio.type === 'Asesoría' ?  anuncio.subject.name : anuncio.title }}
+            {{ anuncio.type === 'Asesoría' ? (anuncio.subject.name.length > 30 ? anuncio.subject.name.slice(0, 30) + '...' : anuncio.subject.name)  : (anuncio.title.length > 30 ? anuncio.title.slice(0, 30) + '...' : anuncio.title) }}
           </p>
           <i class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i>
         </div>
@@ -394,67 +390,66 @@ const formatTime = (date, showMeridiem = false) => {
       </div>
     </div>
 
-
     <!-- Fin div -->
   </div>
 
   <!-- Diálogo para seleccionar la fecha y horas -->
-<Dialog 
-  v-model:visible="showDateDialog" 
-  header="Seleccionar Fecha y Horas" 
-  :modal="true" 
-  :closable="true"  
-  :dismissable-mask="true"
->
-  <div>
-    <!-- Selección de fecha -->
-    <Calendar 
-      v-model="dateTime" 
-      placeholder="Seleccionar Fecha" 
-      class="w-full mb-3" 
-    />
+      <Dialog 
+        v-model:visible="showDateDialog" 
+        header="Seleccionar Fecha y Horas" 
+        :modal="true" 
+        :closable="true"  
+        :dismissable-mask="true"
+      >
+        <div>
+          <!-- Selección de fecha -->
+          <Calendar 
+            v-model="dateTime" 
+            placeholder="Seleccionar Fecha" 
+            class="w-full mb-3" 
+          />
 
-    <!-- Selección de hora de inicio -->
-    <p>Hora de inicio:</p>
-    <Calendar 
-      v-model="startTime" 
-      timeOnly 
-      showTime 
-      hourFormat="24" 
-      stepMinute="30" 
-      class="w-full mb-3" 
-      placeholder="Seleccionar Hora de Inicio" 
-    />
+          <!-- Selección de hora de inicio -->
+          <p>Hora de inicio:</p>
+          <Calendar 
+            v-model="startTime" 
+            timeOnly 
+            showTime 
+            hourFormat="24" 
+            stepMinute="30" 
+            class="w-full mb-3" 
+            placeholder="Seleccionar Hora de Inicio" 
+          />
 
-    <!-- Selección de hora de fin -->
-    <p>Hora de fin:</p>
-    <Calendar 
-      v-model="endTime" 
-      timeOnly 
-      showTime 
-      hourFormat="24" 
-      stepMinute="30" 
-      class="w-full" 
-      placeholder="Seleccionar Hora de Fin" 
-    />
+          <!-- Selección de hora de fin -->
+          <p>Hora de fin:</p>
+          <Calendar 
+            v-model="endTime" 
+            timeOnly 
+            showTime 
+            hourFormat="24" 
+            stepMinute="30" 
+            class="w-full" 
+            placeholder="Seleccionar Hora de Fin" 
+          />
 
-    <!-- Botones de acción -->
-    <div class="mt-3 flex justify-content-end">
-      <Button 
-        label="Guardar" 
-        class="p-button-success mr-2" 
-        @click="saveDateTime" 
-      />
-      <Button 
-        label="Cancelar" 
-        class="p-button-secondary" 
-        @click="() => showDateDialog = false" 
-      />
-    </div>
-  </div>
-</Dialog>
+          <!-- Botones de acción -->
+          <div class="mt-3 flex justify-content-end">
+            <Button 
+              label="Guardar" 
+              class="p-button-success mr-2" 
+              @click="saveDateTime" 
+            />
+            <Button 
+              label="Cancelar" 
+              class="p-button-secondary" 
+              @click="() => { showDateDialog = false; dateTime = null;startTime = null; endTime = null; }" 
+            />
+          </div>
+        </div>
+      </Dialog>
 
-<Dialog 
+      <Dialog 
             v-model:visible="displayPreviewDialog" 
             header="Previsualización"
             modal
@@ -507,7 +502,6 @@ const formatTime = (date, showMeridiem = false) => {
           </div>
           </div>
         </div>
-            <!-- Botón de cerrar el diálogo -->
              <span class="flex justify-content-center">
               <Button 
                 label="Cerrar Previsualización" 
@@ -515,7 +509,6 @@ const formatTime = (date, showMeridiem = false) => {
                 @click="closePreviewDialog" 
             />
              </span>
-           
         </Dialog>
 
 </template>

@@ -66,7 +66,7 @@ const scrollToSection = (id) => {
                         </h1>
                     </div>
                     <div class="flex-grow flex items-end overflow-hidden">
-                        <img src="https://i.imgur.com/7WIAUHo.png" class="w-full h-full object-cover" />
+                        <img src="../../assets/img/maelanding.png" class="w-full h-full object-cover" />
                     </div>
                 </div>
             </div>
@@ -102,7 +102,7 @@ const scrollToSection = (id) => {
                         label="◀"
                         class="text-xl border-none bg-transparent btn-left hidden lg:block"
                         />
-                        <img class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" :style="{objectFit: 'cover'}" src="https://i.imgur.com/C6psSY1.png" />
+                        <img class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" :style="{objectFit: 'cover'}" src="../../assets/img/fotos/espacio-mae.png" />
                     </span>
                 </div>
                 <div class="w-full md:w-8 text-center p-4 flex gap-5">
@@ -148,30 +148,30 @@ const scrollToSection = (id) => {
             <div class="w-10 mx-auto sm:flex gap-5">
                 <div class="mb-5 p-5 border-round-3xl w-full md:w-4 text-white font-bold text-3xl flex gap-5" :style="{ background: 'linear-gradient(to right, #D96464, #F2C685)', alignItems: 'center', justifyContent: 'space-between'}">
                     <p> Escuela de Humanidades y Educación</p>
-                    <img class="object-contain w-5" src="../../assets/img/pencil.png">
+                    <img class="object-contain w-5" src="../../assets/img/iconos-landing/pencil.png">
                 </div>
                 <div class="mb-5 p-5 border-round-3xl w-full md:w-4 text-white font-bold text-3xl flex gap-5" :style="{ background: 'linear-gradient(to right, #E8C56A, #72CB6A)', alignItems: 'center', justifyContent: 'space-between'}">
                     <p> Escuela de Negocios</p>
-                    <img class="object-contain w-5" src="../../assets/img/suitcase.png">
+                    <img class="object-contain w-5" src="../../assets/img/iconos-landing/suitcase.png">
                 </div>
                 <div class="mb-5 p-5 border-round-3xl w-full md:w-4 text-white font-bold text-3xl flex gap-5" :style="{ background: 'linear-gradient(to right, #81C9E3, #4453D7)', alignItems: 'center', justifyContent: 'space-between'}">
                     <p> Escuela de Ingenieria y Ciencias</p>
-                    <img class="object-contain w-5" src="../../assets/img/gear.png">
+                    <img class="object-contain w-5" src="../../assets/img/iconos-landing/gear.png">
                 </div>
             </div>
 
             <div class="w-10 mx-auto sm:flex gap-5">
                 <div class="mb-5 p-5 border-round-3xl w-full md:w-4 text-white font-bold text-3xl flex gap-5" :style="{ background: 'linear-gradient(to right, #E59F5F, #F0E796)', alignItems: 'center', justifyContent: 'space-between'}">
                     <p> Escuela de Arquitectura y Diseño</p>
-                    <img class="object-contain w-5" src="../../assets/img/paint.png">
+                    <img class="object-contain w-5" src="../../assets/img/iconos-landing/paint.png">
                 </div>
                 <div class="mb-5 p-5 border-round-3xl w-full md:w-4 text-white font-bold text-3xl flex gap-5" :style="{ background: 'linear-gradient(to right, #8FC57C, #7AD9D3)', alignItems: 'center', justifyContent: 'space-between'}">
                     <p> Escuela de Medicina y Ciencias de la Salud</p>
-                    <img class="object-contain w-5" src="../../assets/img/heart.png">
+                    <img class="object-contain w-5" src="../../assets/img/iconos-landing/heart.png">
                 </div>
                 <div class="mb-5 p-5 border-round-3xl w-full md:w-4 text-white font-bold text-3xl flex gap-5" :style="{ background: 'linear-gradient(to right, #4C57BD, #A073BB)', alignItems: 'center', justifyContent: 'space-between'}">
                     <p> Escuela de Ciencias Sociales y Gobierno</p>
-                    <img class="object-contain w-5" src="../../assets/img/book.png">
+                    <img class="object-contain w-5" src="../../assets/img/iconos-landing/book.png">
                 </div>
             </div>
 

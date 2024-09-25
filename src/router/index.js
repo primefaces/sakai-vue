@@ -8,13 +8,23 @@ const router = createRouter({
     routes: [
         {
             path: '/',
+            children: [
+                {
+                    path: '/',
+                    name: 'landing',
+                    component: () => import('@/views/pages/Landing.vue')
+                }
+            ]
+        },
+        {
+            path: '/',
             component: AppLayout,
             meta: {
                 requiresAuth: true
             },
             children: [
                 {
-                    path: '/',
+                    path: '/inicio',
                     name: 'inicio',
                     component: () => import('@/views/Inicio.vue')
                 },
@@ -120,29 +130,34 @@ const router = createRouter({
             component: () => import('@/views/pages/NotFound.vue')
         },
         {
-            path: '/auth/login',
-            name: 'login',
-            component: () => import('@/views/pages/auth/Login.vue')
-        },
-        {
-            path: '/auth/register',
-            name: 'register',
-            component: () => import('@/views/pages/auth/Register.vue')
-        },
-        {
-            path: '/auth/password-reset',
-            name: 'password-reset',
-            component: () => import('@/views/pages/auth/PasswordReset.vue')
-        },
-        {
-            path: '/auth/access',
-            name: 'accessDenied',
-            component: () => import('@/views/pages/auth/Access.vue')
-        },
-        {
-            path: '/auth/error',
-            name: 'error',
-            component: () => import('@/views/pages/auth/Error.vue')
+            path: '/auth',
+            children: [
+                {
+                    path: '/auth/login',
+                    name: 'login',
+                    component: () => import('@/views/pages/auth/Login.vue')
+                },
+                {
+                    path: '/auth/register',
+                    name: 'register',
+                    component: () => import('@/views/pages/auth/Register.vue')
+                },
+                {
+                    path: '/auth/password-reset',
+                    name: 'password-reset',
+                    component: () => import('@/views/pages/auth/PasswordReset.vue')
+                },
+                {
+                    path: '/auth/access',
+                    name: 'access',
+                    component: () => import('@/views/pages/auth/Access.vue')
+                },
+                {
+                    path: '/auth/error',
+                    name: 'error',
+                    component: () => import('@/views/pages/auth/Error.vue')
+                }
+            ]
         }
     ]
 });

@@ -220,7 +220,6 @@ const saveAsesoria = async () => {
             Saber más <i class="pi pi-arrow-right text-2xl font-bold"></i>
           </p> -->
         </div>
-
         <div class="mt-1 grid grid-cols-1 place-content-center mr-2">
           <Button
             label="▶"
@@ -228,6 +227,7 @@ const saveAsesoria = async () => {
             @click="nextAnuncio"
           />
         </div>
+
       </div>
     </div>
   </div>

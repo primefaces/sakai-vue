@@ -1,7 +1,8 @@
 <script setup>
 import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { getCurrentUser, getUser } from '../../../firebase/db/users';
 import router from '../../../router';
 // import AppConfig from '@/layout/AppConfig.vue';
 
@@ -11,6 +12,18 @@ const email = ref('');
 const password = ref('');
 const errorMsg = ref('');
 const checked = ref(false);
+
+const userInfo = ref(null);
+const maeInfo = ref(null);
+
+onMounted(async () => {
+  userInfo.value = await getCurrentUser();
+
+  // Verifica si el usuario ya inició sesión
+  if (userInfo) {
+    router.push('/inicio'); // Redirige a la página 'maesActivos'
+  }
+});
 
 function isValidTecMxEmail(email) {
     // Regular expression to match the pattern of (string of characters)@tec.mx

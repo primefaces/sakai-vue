@@ -90,6 +90,9 @@ const saveAsesoria = async () => {
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se está registrando la asesoría', life: 3000 });
   try {
     console.log(maeAsesoria.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value,"Papa")
+    if(maeAsesoria.value.name === userInfo.value.name){
+      return toast.add({ severity: 'error', summary: 'Error', detail: 'No puedes registrarte una asesoría a ti mismo' });
+    }
     await addAsesoria(maeAsesoria.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value); 
     toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'La asesoría se registró con éxito', life: 3000 });
     ratingAsesoria.value = null;

@@ -36,7 +36,7 @@ const onLogOut = () => {
     topbarMenuActive.value = false;
 
     signOut(auth).then(() => {
-        router.push('/auth/login');
+        router.push('/');
     }).catch((error) => {
         alert('Ocurrió un error al tratar de cerrar su sesión');
         console.error(error)

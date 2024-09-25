@@ -119,11 +119,6 @@ const router = createRouter({
                 }
             ]
         },
-        // {
-        //     path: '/landing',
-        //     name: 'landing',
-        //     component: () => import('@/views/pages/Landing.vue')
-        // },
         {
             path: '/pages/notfound',
             name: 'notfound',
@@ -164,36 +159,34 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     if (!to.matched.some((record) => record.meta.requiresAuth)) {
-        // Route does not require authentication
+        // Ruta no requiere autenticación
         return next();
     }
 
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        unsubscribe(); // Unsubscribe to avoid memory leaks
+        unsubscribe(); // Desuscribirse para evitar fugas de memoria
 
         if (!user) {
-            // User is not signed in
-            
-            alert("No tienes acceso a esta página. Por favor inicia sesión");
+            // El usuario no está autenticado, redirigir al login sin alertas
             return next("/auth/login");
         }
 
-        // User is signed in
-        const { role } = await getCurrentUser()
+        // El usuario está autenticado
+        const { role } = await getCurrentUser();
 
         if (!to.meta.roles) {
-            // Route does not require roles
+            // La ruta no requiere roles específicos
             return next();
         }
 
         if (to.meta.roles.includes(role)) {
-            // User has roule privilege
+            // El usuario tiene privilegios para esta ruta
             return next();
-        }
-        else {
-            // User does not have roule privilege
-            alert("No tienes acceso a esta página");
+        } else {
+            // El usuario no tiene privilegios para esta ruta
+            // Redirigir a una página sin mostrar alert
+            return next("/pages/notfound");
         }
     });
 });

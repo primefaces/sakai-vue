@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
   stopActiveSession,updateUserProfilePicture} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
@@ -11,7 +11,6 @@ import { uploadFile } from '../firebase/img/users';
 
 const toast = useToast();
 const route = useRoute();
-const router = useRouter();
 const userId = ref(route.path.split('/').pop());
 const maeInfo = ref(null);
 const userInfo = ref(null);
@@ -45,8 +44,6 @@ watch(route, async (newroute, oldroute) => {
   selectedSubjects.value = maeInfo.value.subjects;
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
 })
-
-
 
 const uploadProfilePicture = async () => {
   if (!selectedFile.value) return;
@@ -272,12 +269,12 @@ const startSession = async () => {
   // Crea field de activeSession con id, location, peerInfo, startTime, status
   try {
     const res = await startActiveSession(userInfo.value.uid, userInfo.value, location.value);
-    toast.add({ severity: 'success', summary: 'Inicio de sesión exitoso', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Inicio de turno exitoso', life: 3000 });
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(route.params.id);
     showDialogSession.value = false;
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de iniciar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de iniciar turno', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
 }
 
@@ -286,18 +283,18 @@ const stopSession = async () => {
     const res = await stopActiveSession(userInfo.value.uid);
     if (!res.activeSessionDeleted) {
       if (res.timeLimitExceded) {
-        toast.add({ severity: 'error', summary: `Excediste el limite de tiempo de tu sesión (${ Math.round((res.differenceInMinutes / 60) * 100) / 100 } horas)`, detail: 'Consulta a un coordi para reponer las horas' });
+        toast.add({ severity: 'error', summary: `Excediste el limite de tiempo de tu turno (${ Math.round((res.differenceInMinutes / 60) * 100) / 100 } horas)`, detail: 'Consulta a un coordi para reponer las horas' });
       }
       else {
         throw new Error("Active session was not deleted");
       }
     } else {
-      toast.add({ severity: 'success', summary: 'Sesión cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
+      toast.add({ severity: 'success', summary: 'turno cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     }
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(route.params.id);
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar turno', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
 }
 
@@ -370,9 +367,9 @@ const validateFile = (file) => {
       </div>
       <div class="sm:justify-end">
         <div v-if="userInfo.uid == maeInfo.uid" class="mb-2">
-          <Button v-if="userInfo['activeSession']" label="Cerrar sesión" icon="pi pi-user-minus" size="large"
+          <Button v-if="userInfo['activeSession']" label="Cerrar turno" icon="pi pi-user-minus" size="large"
             @click="stopSession" class="w-full" severity="danger"/>
-          <Button v-else label="Iniciar sesión" icon="pi pi-user-plus" size="large"
+          <Button v-else label="Iniciar turno" icon="pi pi-user-plus" size="large"
             @click="showDialogSession = true" class="w-full"/>
         </div>
         <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-book" size="large" severity="secondary"
@@ -515,12 +512,12 @@ const validateFile = (file) => {
     </div>
   </Dialog>
 
-  <Dialog v-model:visible="showDialogSession" modal header="Iniciar sesión" class="md:w-4">
+  <Dialog v-model:visible="showDialogSession" modal header="Iniciar turno" class="md:w-4">
     <label for="location">Por favor indica donde te encuentras</label>
     <InputText id="text" v-model="location" placeholder="Biblioteca Piso 3" class="w-full mb-4"/>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogSession = false"></Button>
-      <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>
+      <Button type="button" label="Iniciar turno" :disabled="location === ''" @click="startSession"></Button>
     </div>
   </Dialog>
 

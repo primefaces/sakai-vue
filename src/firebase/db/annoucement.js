@@ -44,7 +44,7 @@ export async function saveAnnouncement(announcementData, selectedFile) {
 /**
  * Obtiene los anuncios de la colección "announcements" y omite los que tienen 'dateTime' menor a la fecha actual.
  *
- * @returns {Promise<Array>} - Una promesa que resuelve en una lista de anuncios válidos.
+ * @returns {Promise<Array>} - Una promesa que resuelve en una lista de anuncios válidos, ordenados del más viejo al más nuevo.
  */
 export async function getAnnouncements() {
     try {
@@ -52,15 +52,13 @@ export async function getAnnouncements() {
         
         const querySnapshot = await getDocs(query(announcementsCollection));
         
-        const now = new Date();
-
         // Mapear y filtrar los documentos
         const announcements = querySnapshot.docs
             .map(doc => ({
                 id: doc.id,
                 ...doc.data(),
             }))
-           
+            .sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)); // Ordenar de más viejo a más nuevo
 
         console.log('Anuncios válidos obtenidos exitosamente:', announcements);
         return announcements;

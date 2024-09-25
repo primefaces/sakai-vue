@@ -138,7 +138,7 @@ const stopSession = async () => {
           label="◀"
           class="text-xl border-none bg-transparent btn-left hidden lg:block"
         />
-        <img class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" src="https://i.imgur.com/C6psSY1.png" />
+        <img class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" src="../../assets/img/fotos/espacio-mae.png" />
       </span>
     </div>
     <div class="w-full md:w-8 text-center p-4 flex gap-5" >

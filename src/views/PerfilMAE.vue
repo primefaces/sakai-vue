@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
   stopActiveSession,updateUserProfilePicture} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
@@ -8,10 +8,9 @@ import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../fireb
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 import { uploadFile } from '../firebase/img/users';
-import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
+
 const toast = useToast();
 const route = useRoute();
-const router = useRouter();
 const userId = ref(route.path.split('/').pop());
 const maeInfo = ref(null);
 const userInfo = ref(null);

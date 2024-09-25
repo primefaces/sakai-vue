@@ -52,7 +52,7 @@ export async function getAnnouncements() {
         
         const querySnapshot = await getDocs(query(announcementsCollection));
         
-        const now = new Date();
+        //const now = new Date();
 
         // Mapear y filtrar los documentos
         const announcements = querySnapshot.docs

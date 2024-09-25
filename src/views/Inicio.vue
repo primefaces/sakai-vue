@@ -3,19 +3,24 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router'; // Importa el router
 import { getCurrentUser, getUser, startActiveSession, stopActiveSession } from '../firebase/db/users';
 import { useToast } from 'primevue/usetoast';
+import { getSubjects } from '../firebase/db/subjects';
 
 const userInfo = ref(null);
 const maeInfo = ref(null);
-
 const toast = useToast();
 const showDialogSession = ref(false);
 const location = ref('Biblioteca Piso 3');
 const router = useRouter(); // Accede al router
+const showDialogAsesoria = ref(false);
+const ratingAsesoria = ref(null);
+const comentarioAsesoria = ref('');
+const materiaAsesoria = ref(null)
+const subjects = ref([]);
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
   maeInfo.value = await getUser(userInfo.value.uid);
-
+  subjects.value = await getSubjects();
   // Verifica el rol o el estado del usuario y redirige si es necesario
   if (userInfo.value.role === 'user' || userInfo.value.status === 'estudiante') {
     router.push('maesActivos' ); // Redirige a la página 'maesActivos'
@@ -64,11 +69,121 @@ const stopSession = async () => {
 //       if (this.currentIndex > 0) {
 //         this.currentIndex--;
 //       }
+
+const saveAsesoria = async () => {
+  toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se está registrando la asesoría', life: 3000 });
+  try {
+    await addAsesoria(maeInfo.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value); 
+    maeInfo.value = await getUser(route.params.id);
+    toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'La asesoría se registró con éxito', life: 3000 });
+    ratingAsesoria.value = null;
+    comentarioAsesoria.value = '';
+    materiaAsesoria.value = null;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
+  }
+  showDialogAsesoria.value = false;  
+  asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
+  
+}
 </script>
 
 
 <template>
-    <Dialog v-model:visible="showDialogSession" modal header="Iniciar sesión" class="md:w-4">
+    
+  <div> 
+      <div v-if="userInfo">
+          <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">¡Bienvenid@, {{ userInfo.firstname }}!</h1>
+      </div>
+
+      <div class="flex flex-column md:flex-row md:justify-content-between   w-full  ">
+          <Button 
+              label="Registrar Asesoria" 
+              icon="pi pi-pencil"
+              class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4"
+              :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+              iconPos="right"
+          />
+
+          <!-- <Button 
+              label="Evaluar Asesoria" 
+              icon="pi pi-star" 
+              class="p-button-success p-button-lg py-4 w-full md:w-5  mb-4"
+              :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #00b09b, #96c93d)', color: '#fff', border: 'none' }"
+              iconPos="right"
+          /> -->
+        
+            <!-- <Button
+              v-if="maeInfo  && userInfo && userInfo.role !== 'user'"
+              label="Solicitar Asistencia" 
+              icon="pi pi-question-circle" 
+              class="p-button-warn p-button-lg py-4 w-full md:w-5   mb-4"
+              :style="{borderRadius: '15px',background: 'linear-gradient(to right, #CC7722, #DAA520)',color: '#fff', border: 'none'}"
+              iconPos="right"
+            /> -->
+
+            <Button 
+                v-if="maeInfo && userInfo && userInfo['activeSession']  && userInfo && userInfo.role !== 'user'"
+                label="Finalizar turno"
+                icon="pi pi-pause" 
+                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
+                iconPos="right"
+                @click="stopSession"
+            />
+          
+            <Button
+                v-else-if="maeInfo && userInfo && userInfo.role !== 'user'"
+                label="Iniciar turno"
+                icon="pi pi-send"
+                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4"
+                :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
+                iconPos="right"
+                @click="showDialogSession = true"
+            />
+
+      </div>
+    
+    
+    <div class="flex flex-wrap border-round-3xl text-white  h-16rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
+      <div class="relative w-full md:w-4 border-round-left-3xl">
+        <span class="overlay">
+          <Button
+            label="◀"
+            class="text-xl border-none bg-transparent btn-left hidden lg:block"
+          />
+          <img class="w-full h-16rem clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" src="https://i.imgur.com/C6psSY1.png" />
+        </span>
+      </div>
+      <div class="w-full md:w-8 text-center p-4 flex gap-5">
+        <div class="w-1 grid grid-cols-1 place-content-center lg:hidden mt-1  ">
+          <Button
+            label="◀"
+            class="m-0 p-0 text-xl border-none bg-transparent mt-1 ml-2"
+          />
+        </div>
+        <div>
+          <h2 class="text-white text-3xl font-bold">
+            Asesorías Grupales
+          </h2>
+          <p class="font-medium text-left ml-5 text-xl">
+            ¿Tienes dudas? ¡Únete a nuestras asesorías grupales! Ofrecemos sesiones cada semana de las materias más populares. ¡No te quedes atrás!
+          </p>
+          <p class="text-white text-2xl font-bold text-right">
+            Saber más <i class="pi pi-arrow-right text-2xl font-bold"></i>
+          </p>
+        </div>
+        <div class="mt-1 grid grid-cols-1 place-content-center mr-2">
+          <Button
+            label="▶"
+            class="m-0 p-0 text-xl border-none bg-transparent"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <Dialog v-model:visible="showDialogSession" modal header="Iniciar sesión" class="md:w-4">
     <label for="location">Por favor indica donde te encuentras</label>
     <InputText id="text" v-model="location" placeholder="Biblioteca Piso 3" class="w-full mb-4"/>
     <div class="flex justify-content-end gap-2">
@@ -76,99 +191,9 @@ const stopSession = async () => {
       <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>
     </div>
   </Dialog>
-
-    <div v-if="userInfo">
-        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">¡Bienvenid@, {{ userInfo.firstname }}!</h1>
-    </div>
-
-    <div class="flex flex-wrap gap-4 mb-4 w-full md:w-9">
-        <!-- <Button 
-            label="Registrar Asesoria" 
-            icon="pi pi-pencil"
-            class="p-button-info p-button-lg py-4 w-full md:w-5"
-            :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #3a7bd5, #00d2ff)', color: '#fff', border: 'none' }"
-            iconPos="right"
-        /> -->
-
-        <!-- <Button 
-            label="Evaluar Asesoria" 
-            icon="pi pi-star" 
-            class="p-button-success p-button-lg py-4 w-full md:w-5"
-            :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #00b09b, #96c93d)', color: '#fff', border: 'none' }"
-            iconPos="right"
-        /> -->
-        <div v-if="userInfo && userInfo.role !== 'user' " class="flex flex-wrap gap-4 mb-4 w-full md:w-9">
-          <!-- <Button
-            v-if="maeInfo"
-            label="Solicitar Asistencia" 
-            icon="pi pi-question-circle" 
-            class="p-button-warn p-button-lg py-4 w-full md:w-5"
-            :style="{borderRadius: '15px',background: 'linear-gradient(to right, #CC7722, #DAA520)',color: '#fff', border: 'none'}"
-            iconPos="right"
-          /> -->
-
-          <Button 
-              v-if="maeInfo && userInfo && userInfo['activeSession']"
-              label="Cerrar Sesión"
-              icon="pi pi-pause" 
-              class="p-button-help p-button-lg py-4 w-full md:w-5"
-              :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #9F2B68, #BF40BF)', color: '#fff', border: 'none' }"
-              iconPos="right"
-              @click="stopSession"
-          />
-
-          <Button
-              v-else-if="maeInfo"
-              label="Iniciar Sesión"
-              icon="pi pi-play" 
-              class="p-button-help p-button-lg py-4 w-full md:w-5"
-              :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #9F2B68, #BF40BF)', color: '#fff', border: 'none' }"
-              iconPos="right"
-              @click="showDialogSession = true"
-          />
-
-        </div>
-        
-    </div>
-
-    <div class="flex flex-wrap border-round-3xl text-white  h-16rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
-    <div class="relative w-full md:w-4 border-round-left-3xl">
-      <span class="overlay">
-        <Button
-          label="◀"
-          class="text-xl border-none bg-transparent btn-left hidden lg:block"
-        />
-        <img class="w-full h-16rem clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" src="https://i.imgur.com/C6psSY1.png" />
-      </span>
-    </div>
-    <div class="w-full md:w-8 text-center p-4 flex gap-5">
-      <div class="w-1 grid grid-cols-1 place-content-center lg:hidden mt-1  ">
-        <Button
-          label="◀"
-          class="m-0 p-0 text-xl border-none bg-transparent mt-1 ml-2"
-        />
-      </div>
-      <div>
-        <h2 class="text-white text-3xl font-bold">
-          Asesorías Grupales
-        </h2>
-        <p class="font-medium text-left ml-5 text-xl">
-          ¿Tienes dudas? ¡Únete a nuestras asesorías grupales! Ofrecemos sesiones cada semana de las materias más populares. ¡No te quedes atrás!
-        </p>
-        <p class="text-white text-2xl font-bold text-right">
-          Saber más <i class="pi pi-arrow-right text-2xl font-bold"></i>
-        </p>
-      </div>
-      <div class="mt-1 grid grid-cols-1 place-content-center mr-2">
-        <Button
-          label="▶"
-          class="m-0 p-0 text-xl border-none bg-transparent"
-        />
-      </div>
-    </div>
-  </div>
-
+  
 </template>
+
 
 
 <style scoped>

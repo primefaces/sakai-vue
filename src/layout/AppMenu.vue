@@ -51,7 +51,7 @@ onMounted(async () => {
             label: 'MAE',
             items: [
                 { label: 'Mi perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
-                { label: 'Gestión de anuncios', icon: 'pi pi-fw pi-cog', to: '/gestionAnuncios' },
+                
                 
             ]
         })
@@ -62,6 +62,7 @@ onMounted(async () => {
             label: 'Coordi',
             items: [
                 { label: 'Coordinador', icon: 'pi pi-fw pi-info', to: '/coordi' },
+                { label: 'Gestión de anuncios', icon: 'pi pi-fw pi-cog', to: '/gestionAnuncios' },
                 
             ]
         })

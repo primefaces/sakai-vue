@@ -41,7 +41,7 @@ onMounted(async () => {
                 { label: 'Usuarios', icon: 'pi pi-fw pi-users', to: '/admin/usuarios' },
                 //({ label: 'Materias', icon: 'pi pi-fw pi-book', to: '/admin/materias' },
                 { label: 'Funciones', icon: 'pi pi-fw pi-star', to: '/admin/funciones' },
-                { label: 'Gestión de anuncios', icon: 'pi pi-fw pi-cog', to: '/gestionAnuncios' },
+                
             ]
         })
     }
@@ -51,6 +51,7 @@ onMounted(async () => {
             label: 'MAE',
             items: [
                 { label: 'Mi perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
+                { label: 'Gestión de anuncios', icon: 'pi pi-fw pi-cog', to: '/gestionAnuncios' },
                 
             ]
         })

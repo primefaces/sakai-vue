@@ -44,12 +44,12 @@ onMounted(async () => {
 const startSession = async () => {
   try {
     const res = await startActiveSession(userInfo.value.uid, userInfo.value, location.value);
-    toast.add({ severity: 'success', summary: 'Inicio de sesión exitoso', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Inicio de turno exitoso', life: 3000 });
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(userInfo.value.uid);
     showDialogSession.value = false;
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de iniciar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de iniciar turno', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
 };
 
@@ -58,17 +58,17 @@ const stopSession = async () => {
     const res = await stopActiveSession(userInfo.value.uid);
     if (!res.activeSessionDeleted) {
       if (res.timeLimitExceded) {
-        toast.add({ severity: 'error', summary: `Excediste el límite de tiempo de tu sesión (${Math.round((res.differenceInMinutes / 60) * 100) / 100} horas)`, detail: 'Consulta a un coordinador para reponer las horas' });
+        toast.add({ severity: 'error', summary: `Excediste el límite de tiempo de tu turno (${Math.round((res.differenceInMinutes / 60) * 100) / 100} horas)`, detail: 'Consulta a un coordinador para reponer las horas' });
       } else {
         throw new Error("Active session was not deleted");
       }
     } else {
-      toast.add({ severity: 'success', summary: 'Sesión cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
+      toast.add({ severity: 'success', summary: 'turno cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     }
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(userInfo.value.uid);
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar turno', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
 };
 
@@ -118,129 +118,131 @@ const saveAsesoria = async () => {
       </div>
 
       <div class="flex flex-column md:flex-row md:gap-4   w-full  ">
-          <Button 
-              label="Registrar Asesoria" 
-              icon="pi pi-pencil"
-              class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4"
-              :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
-              iconPos="right"
-              @click="showDialogAsesoria = true" 
-          />
+        <Button
+          class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4 text-2xl font-bold flex justify-content-center align-items-center"
+          :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+          @click="showDialogAsesoria = true"
+        >
+            Registrar asesoría
+            <img src="/assets/mentoring.svg" class="ml-2" alt="mentoring icon" style="width: 2.5rem; height: 2.5rem;" />
+        </Button>
 
           <!-- <Button 
-              label="Evaluar Asesoria" 
+              label="Evaluar asesoria" 
               icon="pi pi-star" 
-              class="p-button-success p-button-lg py-4 w-full md:w-5  mb-4"
+              class="p-button-success p-button-lg py-4 w-full md:w-5  mb-4 text-2xl"
               :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #00b09b, #96c93d)', color: '#fff', border: 'none' }"
               iconPos="right"
           /> -->
         
             <!-- <Button
               v-if="maeInfo  && userInfo && userInfo.role !== 'user'"
-              label="Solicitar Asistencia" 
+              label="Solicitar asistencia" 
               icon="pi pi-question-circle" 
-              class="p-button-warn p-button-lg py-4 w-full md:w-5   mb-4"
+              class="p-button-warn p-button-lg py-4 w-full md:w-5   mb-4 text-2xl"
               :style="{borderRadius: '15px',background: 'linear-gradient(to right, #CC7722, #DAA520)',color: '#fff', border: 'none'}"
               iconPos="right"
             /> -->
-
+            
             <Button 
                 v-if="maeInfo && userInfo && userInfo['activeSession']  && userInfo && userInfo.role !== 'user'"
-                label="Finalizar turno"
-                icon="pi pi-pause" 
-                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4"
+                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4 text-2xl font-bold flex justify-content-center align-items-center"
                 :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
-                iconPos="right"
                 @click="stopSession"
-            />
-          
-            <Button
+            >
+                Finalizar turno
+                <img src="/assets/end.svg" class="ml-2" alt="mentoring icon" style="width: 2.5rem; height: 2.5rem;" />
+            </Button>
+
+
+            <Button 
                 v-else-if="maeInfo && userInfo && userInfo.role !== 'user'"
-                label="Iniciar turno"
-                icon="pi pi-send"
-                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4"
+                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4 text-2xl font-bold flex justify-content-center align-items-center"
                 :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
-                iconPos="right"
                 @click="showDialogSession = true"
-            />
+            >
+                Iniciar turno
+                <img src="/assets/start.svg" class="ml-2" alt="mentoring icon" style="width: 2.5rem; height: 2.5rem;" />
+            </Button>
 
       </div>
     
-      <div class="flex flex-wrap border-round-3xl text-white h-16rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)' }">
-      <div class="relative w-full md:w-4 border-round-left-3xl">
-        <span class="overlay">
-          <Button
-            label="◀"
-            class="text-xl border-none bg-transparent btn-left hidden lg:block"
-            @click="prevAnuncio"
-          />
-          <img
-            class="w-full h-16rem clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow"
-            :src="currentAnuncio.imageUrl"
-          />
-        </span>
-      </div>
-
-      <div class="w-full md:w-8 text-center p-4 flex gap-5">
-        <div class="w-1 grid grid-cols-1 place-content-center lg:hidden mt-1">
-          <Button
-            label="◀"
-            class="m-0 p-0 text-xl border-none bg-transparent mt-1 ml-2"
-            @click="prevAnuncio"
-          />
+      <div class="flex flex-wrap border-round-3xl text-white md:h-16rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)' }">
+        <div class="relative w-full md:w-4 border-round-left-3xl">
+          <span class="overlay">
+            <Button
+              label="◀"
+              class="text-xl border-none bg-transparent btn-left hidden lg:block absolute top-1/2 transform -translate-y-1/2"
+              @click="prevAnuncio"
+            />
+            <span v-if="currentAnuncio.imageUrl">
+              <img
+                class="w-full h-16rem clip-diagonal border-round-top-3xl md:border-round-left-3xl"
+                :src="currentAnuncio.imageUrl"
+              />
+            </span>
+          </span>
         </div>
 
-        <div>
-          <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-3xl font-bold">
-            Asesorías Grupales
-          </h2>
-          <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium text-left ml-5 text-xl">
-            Materia: {{ currentAnuncio.subject.name }}
-          </p>
-          <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium text-left ml-5 text-xl">
-            Fecha: {{ formatDate(currentAnuncio.dateTime) }}, {{ formatTime(currentAnuncio.startTime, false) }} - {{ formatTime(currentAnuncio.endTime, true) }}
-          </p>
-          <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium text-left ml-5 text-xl">
-            Ubicación: {{ currentAnuncio.location }}
-          </p>
+        <div class="w-full md:w-8 text-center p-4 flex justify-between items-center">
+          <div class="grid place-content-center lg:hidden">
+            <Button
+              label="◀"
+              class="m-0 p-0 text-xl border-none bg-transparent"
+              @click="prevAnuncio"
+            />
+          </div>
 
-          <h2 v-if="currentAnuncio.type === 'Otro'" class="text-white text-3xl font-bold">
-            {{ currentAnuncio.title }}
-          </h2>
-          <p v-if="currentAnuncio.type === 'Otro'" class="font-medium text-left ml-5 text-xl">
-            {{ currentAnuncio.description }}
-          </p>
-          <h2 v-if="currentAnuncio.type === 'Especial'" class="text-white text-3xl font-bold">
-            {{ currentAnuncio.title }}
-          </h2>
-          <p v-if="currentAnuncio.type === 'Especial'" class="font-medium text-left ml-5 text-xl">
-            {{ currentAnuncio.description }}
-          </p>
-          <!-- <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold text-right text-left ml-5">
-            Pre-registro <i class="pi pi-arrow-right text-2xl font-bold"></i>
-          </p> -->
-          <!-- <p v-if="currentAnuncio.type === 'Especial'" class="text-white text-2xl font-bold text-right text-left ml-5">
-            Saber más <i class="pi pi-arrow-right text-2xl font-bold"></i>
-          </p> -->
-        </div>
-        <div class="mt-1 grid grid-cols-1 place-content-center mr-2">
-          <Button
-            label="▶"
-            class="m-0 p-0 text-xl border-none bg-transparent"
-            @click="nextAnuncio"
-          />
-        </div>
+          <div class="flex-1 text-left">
+            <!-- Contenido del anuncio -->
+            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-3xl font-bold text-center m-auto mb-2">Asesorías Grupales</h2>
+            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-xl mb-1">
+              Materia: {{ currentAnuncio.subject.name }}
+            </p>
+            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-xl mb-1">
+              Fecha: {{ formatDate(currentAnuncio.dateTime) }}, {{ formatTime(currentAnuncio.startTime, false) }} - {{ formatTime(currentAnuncio.endTime, true) }}
+            </p>
+            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-xl mb-1">
+              Ubicación: {{ currentAnuncio.location }}
+            </p>
 
-      </div>
-    </div>
+            <!-- Otros tipos de anuncios -->
+            <h2 v-if="currentAnuncio.type !== 'Asesoría'" class="text-white text-3xl font-bold m-auto text-center mb-2">
+              {{ currentAnuncio.title }}
+            </h2>
+            <p v-if="currentAnuncio.type !== 'Asesoría'" class="font-medium ml-5 text-xl">
+              {{ currentAnuncio.description }}
+            </p>
+
+            <!-- Pre-registro -->
+            <!-- <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
+              Pre-registro <i class="pi pi-arrow-right text-2xl font-bold"></i>
+            </p>
+
+            <p v-if="currentAnuncio.type === 'Especial'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
+              Saber más <i class="pi pi-arrow-right text-2xl font-bold"></i>
+            </p> -->
+          </div>
+
+          <!-- Botón derecho alineado al fondo -->
+          <div class="grid place-content-center md:mr-2 ml-2">
+            <Button
+              label="▶"
+              class="m-0 p-0 text-xl border-none bg-transparent"
+              @click="nextAnuncio"
+            />
+          </div>
+        </div>
+</div>
+
   </div>
 
-  <Dialog v-model:visible="showDialogSession" modal header="Iniciar sesión" class="md:w-4">
+  <Dialog v-model:visible="showDialogSession" modal header="Iniciar turno" class="md:w-4">
     <label for="location">Por favor indica donde te encuentras</label>
     <InputText id="text" v-model="location" placeholder="Biblioteca Piso 3" class="w-full mb-4"/>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogSession = false"></Button>
-      <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>
+      <Button type="button" label="Iniciar turno" :disabled="location === ''" @click="startSession"></Button>
     </div>
   </Dialog>
   

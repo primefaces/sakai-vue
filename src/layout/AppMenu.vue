@@ -69,12 +69,12 @@ onMounted(async () => {
 
     
 
-    model.value.push({
-        label: 'Maeteca',
-        items: [
-            { label: 'Maeteca', icon: 'pi pi-fw pi-desktop', to: '/biblioteca' },
-        ]
-    })
+    // model.value.push({
+    //     label: 'Maeteca',
+    //     items: [
+    //         { label: 'Maeteca', icon: 'pi pi-fw pi-desktop', to: '/biblioteca' },
+    //     ]
+    // })
 })
 </script>
 

@@ -58,7 +58,7 @@ export async function getAnnouncements() {
                 id: doc.id,
                 ...doc.data(),
             }))
-            .sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)); 
+            .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt )); 
 
         console.log('Anuncios válidos obtenidos exitosamente:', announcements);
         return announcements;

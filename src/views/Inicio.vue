@@ -35,10 +35,6 @@ onMounted(async () => {
   subjects.value = await getSubjects();
   anuncios.value  = await  getAnnouncements()
   nextAnuncio()
-  
-  if (userInfo.value.role === 'user' || userInfo.value.status === 'estudiante') {
-    router.push('maesActivos' ); // Redirige a la página 'maesActivos'
-  }
 });
 
 const startSession = async () => {

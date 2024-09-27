@@ -58,7 +58,7 @@ const exportData = () => {
             'Matricula MAE': asesoria.peerInfo?.uid || '',
             'Carrera MAE': asesoria.peerInfo?.career || '',
             'Nombre Alumno': asesoria.userInfo?.name || '',
-            'Matricula Alumno': asesoria.userInfo?.id || '',
+            'Matricula Alumno': asesoria.userInfo?.id || asesoria.userInfo?.uid || '',
             'Carrera Alumno': asesoria.userInfo?.career || '',
             'Materia': asesoria.subject?.name || '',
             'Rating': asesoria.rating || 'N/A',

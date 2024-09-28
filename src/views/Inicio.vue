@@ -115,12 +115,12 @@ const saveAsesoria = async () => {
 
       <div class="flex flex-column md:flex-row md:gap-4   w-full  ">
         <Button
-          class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4 text-2xl font-bold flex justify-content-center align-items-center border-none	"
+          class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
           :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
           @click="showDialogAsesoria = true"
         >
             Registrar asesoría
-            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.8rem; height: 2.8rem;" />
+            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 3.0rem; height: 3.0rem;" />
         </Button>
 
           <!-- <Button 
@@ -142,23 +142,23 @@ const saveAsesoria = async () => {
             
             <Button 
                 v-if="maeInfo && userInfo && userInfo['activeSession']  && userInfo && userInfo.role !== 'user'"
-                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4 text-2xl font-bold flex justify-content-center align-items-center border-none	"
+                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
                 :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
                 @click="stopSession"
             >
                 Finalizar turno
-                <img src="/assets/end.svg" class="ml-4" alt="mentoring icon" style="width: 2.8rem; height: 2.8rem;" />
+                <img src="/assets/end.svg" class="ml-4" alt="mentoring icon" style="width: 3.0rem; height: 3.0rem;" />
             </Button>
 
 
             <Button 
                 v-else-if="maeInfo && userInfo && userInfo.role !== 'user'"
-                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-4 text-2xl font-bold flex justify-content-center align-items-center border-none	"
+                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
                 :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
                 @click="showDialogSession = true"
             >
                 Iniciar turno
-                <img src="/assets/start.svg" class="ml-4" alt="mentoring icon" style="width: 2.8rem; height: 2.8rem;" />
+                <img src="/assets/start.svg" class="ml-4" alt="mentoring icon" style="width: 3.0rem; height: 3.0rem;" />
             </Button>
 
       </div>
@@ -191,7 +191,7 @@ const saveAsesoria = async () => {
 
           <div class="flex-1 text-left">
             <!-- Contenido del anuncio -->
-            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-2">Asesorías Grupales</h2>
+            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-4">Asesorías Grupales</h2>
             <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
               Materia: {{ currentAnuncio.subject.name }}
             </p>
@@ -203,7 +203,7 @@ const saveAsesoria = async () => {
             </p>
 
             <!-- Otros tipos de anuncios -->
-            <h2 v-if="currentAnuncio.type !== 'Asesoría'" class="text-white text-4xl font-bold m-auto text-center mb-2">
+            <h2 v-if="currentAnuncio.type !== 'Asesoría' " class="text-white text-4xl font-bold m-auto text-center mb-4">
               {{ currentAnuncio.title }}
             </h2>
             <p v-if="currentAnuncio.type !== 'Asesoría'" class="font-medium ml-5 text-2xl">
@@ -211,9 +211,9 @@ const saveAsesoria = async () => {
             </p>
 
             <!-- Pre-registro -->
-           <!-- <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
+           <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
               Pre-registro <i class="pi pi-arrow-right text-3xl font-bold"></i>
-            </p> -->
+            </p>
 
             <!-- <p v-if="currentAnuncio.type === 'Especial'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
               Saber más <i class="pi pi-arrow-right text-3xl font-bold"></i>

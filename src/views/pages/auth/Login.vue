@@ -49,7 +49,7 @@ const onSignIn = () => {
     signInWithEmailAndPassword(auth, email.value, password.value)
         .then(async (data) => {
             if (auth.currentUser.emailVerified) {
-                router.push('/maesactivos');
+                router.push('/inicio');
             }
             else {
                 errorMsg.value = 'Por favor verifica tu correo para continuar. Revisa tu bandeja de entrada y spam'

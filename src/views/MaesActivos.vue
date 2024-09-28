@@ -39,7 +39,7 @@ const isZoomLink = (location) => {
 <template>
     
     <div class="flex flex-column md:flex-row md:items-center justify-content-between mb-3"> 
-        <h1 class="text-black text-4xl font-bold text-left md:text-center md:text-left   mt-3"> 
+        <h1 class="text-black text-4xl font-bold text-left md:text-center md:text-left  mt-3"> 
             MAEs Activos
         </h1>
         <AutoComplete 

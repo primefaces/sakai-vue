@@ -190,7 +190,6 @@ const saveAsesoria = async () => {
           </div>
 
           <div class="flex-1 text-left">
-            <!-- Contenido del anuncio -->
             <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-4">Asesorías Grupales</h2>
             <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
               Materia: {{ currentAnuncio.subject.name }}
@@ -202,7 +201,6 @@ const saveAsesoria = async () => {
               Ubicación: {{ currentAnuncio.location }}
             </p>
 
-            <!-- Otros tipos de anuncios -->
             <h2 v-if="currentAnuncio.type !== 'Asesoría' " class="text-white text-4xl font-bold m-auto text-center mb-4">
               {{ currentAnuncio.title }}
             </h2>
@@ -210,7 +208,6 @@ const saveAsesoria = async () => {
               {{ currentAnuncio.description }}
             </p>
 
-            <!-- Pre-registro -->
            <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
               Pre-registro <i class="pi pi-arrow-right text-3xl font-bold"></i>
             </p>
@@ -220,7 +217,6 @@ const saveAsesoria = async () => {
             </p>  -->
           </div>
 
-          <!-- Botón derecho alineado al fondo -->
           <div class="grid place-content-center md:mr-2 ml-2">
             <Button
               label="▶"

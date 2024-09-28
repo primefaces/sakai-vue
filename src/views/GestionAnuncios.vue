@@ -35,7 +35,6 @@ onMounted(async () => {
 const handleSelect = (type) => {
     selectedType.value = type;
     if (type === 'Otro') {
-        // Limpiar campos todos los campos 
         subjectInput.value = '';
         locationInput.value = '';
         titleInput.value = '';  
@@ -181,18 +180,14 @@ const handleSubmit = async () => {
 
 const displayPreviewDialog = ref(false);
 
-// Función para abrir el diálogo
 const openPreviewDialog = () => {
     displayPreviewDialog.value = true;
 };
 
-// Función para cerrar el diálogo
 const closePreviewDialog = () => {
     displayPreviewDialog.value = false;
 };
-
 </script>
-
 
 <template>
   <div class="flex md:flex-row flex-column">

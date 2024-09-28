@@ -1,31 +1,32 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { getCurrentUser, getUsersWithActiveSession} from '../firebase/db/users';
-import { getCampuses } from '../firebase/db/campuses';
-import { getMajors } from '../firebase/db/majors';
+import { getSubjects,  } from '../firebase/db/subjects';
+import { normalize } from '@/utils/HorarioUtils';
+import { getMaes} from '@/firebase/db/users';
 
 const userInfo = ref(null);
-const newUserInfo = ref(null);
 const activeMAEs = ref([]);
-const campuses = ref([]);
-const majors = ref([]);
+const subjects = ref([]);
+const subjectInput = ref('');
+const filteredSubjects = ref([]);
+const maes = ref([]);
 
 onMounted(async () => {
     activeMAEs.value = await getUsersWithActiveSession();
     userInfo.value = await getCurrentUser();
-    newUserInfo.value = {
-        "firstname": userInfo.value.firstname,
-        "lastname": userInfo.value.lastname,
-        "name": userInfo.value.name,
-        "campus": userInfo.value.campus,
-        "major": userInfo.value.major ?? userInfo.value.career,
-        "career": userInfo.value.career,
-        "area": userInfo.value.area,
-        "email": userInfo.value.email,
-    };
-    campuses.value = await getCampuses(); 
-    majors.value = await getMajors();
+    subjects.value = await getSubjects();
+    getMaes().then((data) => {
+        maes.value = data;
+    });
 })
+
+const filterSubjects = () => {
+    const query = normalize(subjectInput.value);
+    filteredSubjects.value = subjects.value.filter(subject =>
+        normalize(subject.name).includes(query)
+    );
+};
 
 const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()]);
 
@@ -36,11 +37,23 @@ const isZoomLink = (location) => {
 </script>
 
 <template>
-    <div class="md:flex">
-        <div>
-            <h1 class="text-black text-4xl font-bold text-center sm:text-left mb-5">MAEs Activos</h1>
-        </div>
+    
+    <div class="flex flex-column md:flex-row md:items-center justify-content-between mb-3"> 
+        <h1 class="text-black text-4xl font-bold text-left md:text-center md:text-left   mt-3"> 
+            MAEs Activos
+        </h1>
+        <AutoComplete 
+            class="w-full md:w-5  p-0  md:p-3 border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 transition duration-300" 
+            v-model="subjectInput" 
+            :suggestions="filteredSubjects" 
+            @complete="filterSubjects" 
+            field="name" 
+            dropdown 
+            :forceSelection="false"
+            placeholder="Buscar materia..." 
+        />
     </div>
+   
     
     <div class="grid" v-if="activeMAEs.length > 0">
         <span v-for="mae in activeMAEs" :key="mae.uid" class="col-12 md:col-6 lg:col-6 xl:col-4 ">

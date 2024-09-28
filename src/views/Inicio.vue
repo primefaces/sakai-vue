@@ -17,7 +17,7 @@ const maeInfo = ref(null);
 const toast = useToast();
 const showDialogSession = ref(false);
 const location = ref('Biblioteca Piso 3');
-const router = useRouter(); // Accede al router
+const router = useRouter(); 
 const showDialogAsesoria = ref(false);
 const ratingAsesoria = ref(null);
 const comentarioAsesoria = ref('');
@@ -59,7 +59,7 @@ const stopSession = async () => {
         throw new Error("Active session was not deleted");
       }
     } else {
-      toast.add({ severity: 'success', summary: 'turno cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
+      toast.add({ severity: 'success', summary: 'Se ha cerrado el turno con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     }
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(userInfo.value.uid);
@@ -85,7 +85,6 @@ const prevAnuncio = () => {
 const saveAsesoria = async () => {
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se está registrando la asesoría', life: 3000 });
   try {
-    console.log(maeAsesoria.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value,"Papa")
     if(maeAsesoria.value.name === userInfo.value.name){
       return toast.add({ severity: 'error', summary: 'Error', detail: 'No puedes registrarte una asesoría a ti mismo' });
     }
@@ -99,8 +98,7 @@ const saveAsesoria = async () => {
     console.log(error)
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
   }
-  showDialogAsesoria.value = false;  
-  
+  showDialogAsesoria.value = false;   
 }
 
 </script>
@@ -208,9 +206,9 @@ const saveAsesoria = async () => {
               {{ currentAnuncio.description }}
             </p>
 
-           <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
+           <!-- <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
               Pre-registro <i class="pi pi-arrow-right text-3xl font-bold"></i>
-            </p>
+            </p> -->
 
             <!-- <p v-if="currentAnuncio.type === 'Especial'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
               Saber más <i class="pi pi-arrow-right text-3xl font-bold"></i>

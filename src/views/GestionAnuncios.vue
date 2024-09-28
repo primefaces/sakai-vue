@@ -315,8 +315,8 @@ const closePreviewDialog = () => {
       </span>
     </div>
     <!-- Segunda columna -->
-    <div class="second-column mt-2 flex flex-column md:w-6 md:ml-3" style="max-height: 500px; overflow-y: auto;">
-      <div v-for="anuncio in anuncios" :key="anuncio.id" class="bg-white m-4 border-round-3xl h-auto p-3">
+    <div class="second-column mt-2 flex flex-column md:w-6 md:ml-3 border-round-3xl" style="max-height: 500px; overflow-y: auto;">
+      <div v-for="anuncio in anuncios" :key="anuncio.id" class="bg-white mx-4 my-2 border-round-3xl h-auto p-3">
         <div class="flex flex-row justify-content-between">
           <p class="font-bold text-xl text-left mt-0 mb-1">
             {{ anuncio.type === 'Asesoría' ? (anuncio.subject.name.length > 30 ? anuncio.subject.name.slice(0, 30) + '...' : anuncio.subject.name)  : (anuncio.title.length > 30 ? anuncio.title.slice(0, 30) + '...' : anuncio.title) }}
@@ -492,15 +492,14 @@ const closePreviewDialog = () => {
   box-shadow: none;
 }
 
-
-  .btn-left {
+.btn-left {
     position: absolute;
     top: 0%;
     left: 0;
     z-index: 10; 
     color: white; 
     background: linear-gradient(to right, #4466A7, #51A3AC);
-  }
+}
   .arrow{
     filter: brightness(0.8);
   }

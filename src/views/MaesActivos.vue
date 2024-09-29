@@ -15,16 +15,17 @@ onMounted(async () => {
     maes.value = await getMaes();
 });
 
-
 const filteredMAEs = computed(() => {
     const selectedSubject = subjectsFilter.value;
+    const activeMAEsList = maes.value.filter(mae => isMAEActive(mae));
+    if(selectedSubject === null){
+        return activeMAEsList
+    }
+    
     return maes.value.filter(mae => {
-      
-        if (!selectedSubject) {
-            return true;
-        }
         return mae.subjects.some(subject => subject.id === selectedSubject.id);
     });
+    
 });
 
 
@@ -49,11 +50,25 @@ const isMAEActive = (mae) => {
         </h1>
         <span class="w-full md:w-5 mt-3"> 
             <Dropdown v-model="subjectsFilter" :options="subjects" editable optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false"  
-            class="w-full  p-0 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 transition duration-300 "  />
+            class="w-full p-0 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 transition duration-300 "  />
         </span>
     </div>
 
-    <div class="grid">
+    <!-- Mensaje de búsqueda -->
+    <div v-if="subjectsFilter && filteredMAEs.length === 0" class="flex align-content-center h-full" style="min-height: 400px">
+        <h1 class="flex align-items-center justify-content-center w-full text-center mt-8">
+            <span>Buscando MAEs por materia... 🔎</span>
+        </h1>
+    </div>
+
+    
+    <div v-if="activeMAEs.length === 0 && !subjectsFilter" class="flex align-content-center h-full" style="min-height: 300px">
+        <h1 class="flex align-items-center justify-content-center w-full text-center">
+            <span>No hay MAEs conectados por ahora 😔 <br> Consulta los <router-link to="horarios">horarios</router-link> para saber cuando podemos ayudarte ❤️</span>
+        </h1>
+    </div>
+
+    <div class="grid" v-if="filteredMAEs.length > 0">
         <span v-for="mae in filteredMAEs" :key="mae.uid" class="col-12 md:col-6 lg:col-6 xl:col-4">
             <a :href="`#/mae/${mae.uid}`" v-if="isMAEActive(mae)" class="no-blue-link">
                 <div class="p-0 w-full h-full border-round-xl bg-white shadow-1 hover:shadow-3 transition-duration-300 transition-ease-out">
@@ -128,6 +143,7 @@ const isMAEActive = (mae) => {
         </span>
     </div>
 </template>
+
 
 <style>
 .no-blue-link {

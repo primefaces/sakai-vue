@@ -289,7 +289,7 @@ const stopSession = async () => {
         throw new Error("Active session was not deleted");
       }
     } else {
-      toast.add({ severity: 'success', summary: 'turno cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
+      toast.add({ severity: 'success', summary: 'Se ha cerrado el turno con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     }
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(route.params.id);

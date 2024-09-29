@@ -17,7 +17,7 @@ const maeInfo = ref(null);
 const toast = useToast();
 const showDialogSession = ref(false);
 const location = ref('Biblioteca Piso 3');
-const router = useRouter(); // Accede al router
+const router = useRouter(); 
 const showDialogAsesoria = ref(false);
 const ratingAsesoria = ref(null);
 const comentarioAsesoria = ref('');
@@ -59,7 +59,7 @@ const stopSession = async () => {
         throw new Error("Active session was not deleted");
       }
     } else {
-      toast.add({ severity: 'success', summary: 'turno cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
+      toast.add({ severity: 'success', summary: 'Se ha cerrado el turno con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     }
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(userInfo.value.uid);
@@ -85,7 +85,6 @@ const prevAnuncio = () => {
 const saveAsesoria = async () => {
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se está registrando la asesoría', life: 3000 });
   try {
-    console.log(maeAsesoria.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value,"Papa")
     if(maeAsesoria.value.name === userInfo.value.name){
       return toast.add({ severity: 'error', summary: 'Error', detail: 'No puedes registrarte una asesoría a ti mismo' });
     }
@@ -99,8 +98,7 @@ const saveAsesoria = async () => {
     console.log(error)
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
   }
-  showDialogAsesoria.value = false;  
-  
+  showDialogAsesoria.value = false;   
 }
 
 </script>
@@ -190,8 +188,7 @@ const saveAsesoria = async () => {
           </div>
 
           <div class="flex-1 text-left">
-            <!-- Contenido del anuncio -->
-            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-4">Asesorías Grupales</h2>
+            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-4">Asesorías grupales</h2>
             <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
               Materia: {{ currentAnuncio.subject.name }}
             </p>
@@ -202,7 +199,6 @@ const saveAsesoria = async () => {
               Ubicación: {{ currentAnuncio.location }}
             </p>
 
-            <!-- Otros tipos de anuncios -->
             <h2 v-if="currentAnuncio.type !== 'Asesoría' " class="text-white text-4xl font-bold m-auto text-center mb-4">
               {{ currentAnuncio.title }}
             </h2>
@@ -210,17 +206,15 @@ const saveAsesoria = async () => {
               {{ currentAnuncio.description }}
             </p>
 
-            <!-- Pre-registro -->
-           <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
+           <!-- <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
               Pre-registro <i class="pi pi-arrow-right text-3xl font-bold"></i>
-            </p>
+            </p> -->
 
             <!-- <p v-if="currentAnuncio.type === 'Especial'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
               Saber más <i class="pi pi-arrow-right text-3xl font-bold"></i>
             </p>  -->
           </div>
 
-          <!-- Botón derecho alineado al fondo -->
           <div class="grid place-content-center md:mr-2 ml-2">
             <Button
               label="▶"

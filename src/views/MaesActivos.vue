@@ -1,111 +1,37 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useToast } from 'primevue/usetoast';
-import { getCurrentUser, getUsersWithActiveSession, updateUserInfo } from '../firebase/db/users';
-import { getCampuses } from '../firebase/db/campuses';
-import { getMajors } from '../firebase/db/majors';
+import { onMounted, ref, computed } from 'vue';
+import { getCurrentUser, getUsersWithActiveSession, getMaes, getClosestDayAndStartTime } from '../firebase/db/users';
+import { getSubjects } from '../firebase/db/subjects';
+import {
+    translateDayToSpanish, 
+    formatScheduleHours,
+} from '@/utils/HorarioUtils';
 
-const router = useRouter();
-const toast = useToast();
 const userInfo = ref(null);
-const newUserInfo = ref(null);
 const activeMAEs = ref([]);
-const campuses = ref([]);
-const majors = ref([]);
-
-
+const subjects = ref([]);
+const maes = ref([]);
+const subjectsFilter = ref(null) 
 onMounted(async () => {
     activeMAEs.value = await getUsersWithActiveSession();
     userInfo.value = await getCurrentUser();
-    newUserInfo.value = {
-        "firstname": userInfo.value.firstname,
-        "lastname": userInfo.value.lastname,
-        "name": userInfo.value.name,
-        "campus": userInfo.value.campus,
-        "major": userInfo.value.major ?? userInfo.value.career,
-        "career": userInfo.value.career,
-        "area": userInfo.value.area,
-        "email": userInfo.value.email,
-    };
-    campuses.value = await getCampuses(); 
-    majors.value = await getMajors();
-})
+    subjects.value = await getSubjects();
+    maes.value = await getMaes();
+});
 
-const showDialogPerfil = ref(false);
-const saveProfileChanges = async () => {
-    toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tu perfil', life: 3000 });
-    try {
-        newUserInfo.value.career = newUserInfo.value.major.id
-        newUserInfo.value.area = newUserInfo.value.major.school
-        await updateUserInfo(userInfo.value.uid, newUserInfo.value);
-        userInfo.value = await getCurrentUser();
-        newUserInfo.value = {
-            "firstname": userInfo.value.firstname,
-            "lastname": userInfo.value.lastname,
-            "name": userInfo.value.name,
-            "campus": userInfo.value.campus,
-            "career": userInfo.value.career,
-            "email": userInfo.value.email,
-            "major": userInfo.value.major ?? userInfo.value.career,
-            "area": userInfo.value.area,
-        };
-        toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'Los cambios en tu perfil se guardaron con éxito', life: 3000 });
-
-    } catch (error) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al guardar los cambios' });
+const filteredMAEs = computed(() => {
+    const selectedSubject = subjectsFilter.value;
+    const activeMAEsList = maes.value.filter(mae => isMAEActive(mae));
+    if(selectedSubject === null){
+        return activeMAEsList
     }
-    showDialogPerfil.value = false;
-}
+    
+    return maes.value.filter(mae => {
+        return mae.subjects.some(subject => subject.id === selectedSubject.id);
+    });
+    
+});
 
-const showDialogAnnouncement = ref(false);
-const selectedAnnouncement = ref(null);
-
-const openAnnouncementDialog = (announcement) => {
-    showDialogAnnouncement.value = true;
-    selectedAnnouncement.value = announcement;
-}
-
-const responsiveOptions = ref([
-    {
-        breakpoint: '1300px',
-        numVisible: 2,
-        numScroll: 1
-    },
-    {
-        breakpoint: '1199px',
-        numVisible: 3,
-        numScroll: 1
-    },
-    {
-        breakpoint: '767px',
-        numVisible: 2,
-        numScroll: 1
-    },
-    {
-        breakpoint: '575px',
-        numVisible: 1,
-        numScroll: 1
-    }
-]);
-
-const announcements = ref([
-    // {
-    //     title: 'Asesoría grupal',
-    //     location: 'Aulas 4 - 304',
-    //     date: '27/02/2024',
-    // },
-    // {
-    //     title: 'Asesoría grupal',
-    //     location: 'Aulas 4 - 304',
-    //     date: '27/02/2024',
-    // },
-    // {
-    //     title: 'Asesoría grupal',
-    //     location: 'Aulas 4 - 304',
-    //     date: '27/02/2024',
-    // },
-])
 
 const currentDay = ref(["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()]);
 
@@ -113,158 +39,170 @@ const isZoomLink = (location) => {
     const zoomRegex = /https.*zoom/;
     return zoomRegex.test(location);
 }
+
+const isMAEActive = (mae) => {
+    return activeMAEs.value.some(active => active.uid === mae.uid);
+}
+
+function getDisplayedDay(weekSchedule) {
+    const closestDayData = getClosestDayAndStartTime(weekSchedule);
+    const displayedDay =  closestDayData.day;
+    
+    if (displayedDay) {
+        const scheduleForDay = weekSchedule[displayedDay] || [];
+        const hours = formatScheduleHours(scheduleForDay);
+        return `${translateDayToSpanish(displayedDay)} ${hours}`;
+    } else {
+        return 'Sin horario';
+    }
+}
+
+const clearFilters = () => {
+    subjectsFilter.value = null;
+};
+
 </script>
 
 <template>
-    <div class="md:flex">
-        <div>
-            <h1 class="text-black text-6xl font-bold text-center sm:text-left">Bienvenid@</h1>
-            <div v-if="userInfo">
-                <h2 class="text-black text-4xl font-semibold text-center sm:text-left">{{ userInfo.name }}</h2>
-                <div class="">
-                    <p class="text-lg font-medium text-center sm:text-left">
-                        <i class="pi pi-envelope font-medium" />
-                        {{ userInfo.email }}
-                    </p>
-                    <p class="text-center sm:text-left">
-                        <i class="pi pi-book font-medium" />
-                        {{ userInfo.career }} @ {{ userInfo.campus }}
-                        <Button @click="showDialogPerfil = !showDialogPerfil" link icon="pi pi-pencil" label="Editar" class="mb-0 ml-2 p-1" />
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div v-if="announcements.length > 0" class="md:w-9">
-            <Carousel :value="announcements" :numVisible="3" :numScroll="1" class="w-full" :autoplayInterval="announcements.length > 3 ? 5000 : null " :responsiveOptions="responsiveOptions" circular>
-                <template #item="slotProps">
-                    <div class="border-1 surface-border border-round-2xl m-2 p-3 bg-white">
-                        <div class="mb-3 font-medium">{{slotProps.data.title}}</div>
-                        <div class="flex justify-content-between align-items-center">
-                            <Skeleton size="5rem" class="mr-2"></Skeleton>
-                            <div>
-                                <p>{{slotProps.data.location}}</p>
-                                <p>{{slotProps.data.date}}</p>
+    <div class="flex flex-column md:flex-row md:items-center justify-content-between mb-3"> 
+        <span  class="flex flex-row " v-if="subjectsFilter && filteredMAEs.length > 0">
+            <button @click="clearFilters" class="mr-2 bg-transparent border-none">
+                <i class="pi pi-arrow-left text-black" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+            </button>
+            <h1 class="text-black text-4xl font-bold text-left md:text-center md:text-left mt-3"> 
+                Búsqueda de Maes
+            </h1>
+        </span>
+        
+        <h1 class="text-black text-4xl font-bold text-left md:text-center md:text-left mt-3" v-else> 
+             MAEs Activos
+        </h1>
+        <span class="w-full md:w-5 mt-3"> 
+            <Dropdown v-model="subjectsFilter" :options="subjects" editable optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false"  
+            class="w-full p-0 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 transition duration-300 "  />
+        </span>
+    </div>
+
+    <!-- Mensaje de búsqueda -->
+    <div v-if="subjectsFilter && filteredMAEs.length === 0" class="flex align-content-center h-full" style="min-height: 400px">
+        <h1 class="flex align-items-center justify-content-center w-full text-center mt-8">
+            <span>Buscando MAEs por materia... 🔎</span>
+        </h1>
+    </div>
+
+    
+    <div v-if="activeMAEs.length === 0 && !subjectsFilter" class="flex align-content-center h-full" style="min-height: 300px">
+        <h1 class="flex align-items-center justify-content-center w-full text-center">
+            <span>No hay MAEs conectados por ahora 😔 <br> Consulta los <router-link to="horarios">horarios</router-link> para saber cuando podemos ayudarte ❤️</span>
+        </h1>
+    </div>
+
+    <div class="grid" v-if="filteredMAEs.length > 0">
+        <span v-for="mae in filteredMAEs" :key="mae.uid" class="col-12 md:col-6 lg:col-6 xl:col-4">
+            <a :href="`#/mae/${mae.uid}`" v-if="isMAEActive(mae)" class="no-blue-link">
+                <div class="p-0 w-full h-full border-round-xl bg-white shadow-1 hover:shadow-3 transition-duration-300 transition-ease-out">
+                    <!-- Mostrar carta para MAEs activos -->
+                    <div class="flex flex-column">
+                        <div class="flex border-round-top-xl h-1rem w-full" v-if="mae.role === 'admin'" style="background-color: #8358CA;"></div>
+                        <div class="flex border-round-top-xl h-1rem w-full" v-if="mae.role === 'coordi'" style="background-color: #58AFCA;"></div>
+                        <div class="flex border-round-top-xl bg-white h-1rem w-full" v-if="mae.role !== 'coordi' && mae.role !== 'admin'"></div>
+                        <div class="flex flex-row items-center mt-2 ml-2 p-2">
+                            <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil" class="border-circle h-5rem w-5rem">
+                            <Skeleton v-else shape="circle" size="5rem"></Skeleton>
+                            <div class="flex flex-column justify-content-center pl-4 w-full">
+                                <span class="font-bold text-lg text-black-alpha-90 truncate mb-2" style="max-width: 75%; max-height: 38%;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ mae.name }}</span>
+                                <div class="font-bold flex align-items-center justify-content-center text-lg pr-3 flex-wrap border-round-3xl align-content-center text-white" 
+                                     :style="{ backgroundColor: mae.role === 'admin' ? '#8358CA' : '#58AFCA' }" 
+                                     style="max-width: 65%; max-height: 38%; overflow: hidden;">
+                                    <span class="flex flex-row pt-3 pl-3">
+                                        <i class="pi pi-star-fill text-lg pt-1 pr-2" v-if="mae.role === 'admin'" style="color: #FFE073;"></i>
+                                        <p class="uppercase pr-2" v-else >{{ mae.career }}</p>
+                                        <p class="pr-2"  >•</p>
+                                        <p class="uppercase">{{ mae.role }}</p>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex justify-content-center mt-3">
-                            <Button @click="openAnnouncementDialog(slotProps.data)" label="Registrarse" icon="pi pi-user-plus" raised />
-                        </div>
-                    </div>
-                </template>
-            </Carousel>
-        </div>
-        <div v-else class="md:w-9 flex justify-content-center align-items-center">
-            <Card class="md:w-4 my-2 sm:my-0">
-                <template #content>
-                    <p class="m-0 text-center text-xl font-semibold">
-                        ¡Espera nuevos avisos pronto!
-                    </p>
-                </template>
-            </Card>
-        </div>
-
-    </div>
-    <Dialog v-if="newUserInfo" v-model:visible="showDialogPerfil" modal header="Editar perfil" class="md:w-3">
-        <label for="email">Correo</label>
-        <InputText id="email" v-model="newUserInfo.email" disabled filled placeholder="Disabled" class="w-full mb-4" />
-        <label for="firstname">Nombre</label>
-        <InputText id="firstname" v-model="newUserInfo.firstname" placeholder="Nombre" class="w-full mb-4" />
-        <label for="lastname">Apellido</label>
-        <InputText id="lastname" v-model="newUserInfo.lastname" placeholder="Apellido" class="w-full mb-4" />
-        <label for="career">Carrera</label>
-        <Dropdown v-model="newUserInfo.major" :options="majors" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
-        <label for="campus">Campus</label>
-        <Dropdown v-model="newUserInfo.campus" :options="campuses" optionValue="id" filter optionLabel="name" placeholder="Campus" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
-
-        <div class="flex justify-content-end gap-2">
-            <Button type="button" label="Cerrar" severity="secondary" @click="showDialogPerfil = false"></Button>
-            <Button type="button" label="Guardar cambios " @click="saveProfileChanges"></Button>
-        </div>
-    </Dialog>
-    <Dialog v-model:visible="showDialogAnnouncement" modal header="Registrarse" class="w-3">
-        <!-- <label for="email">Correo</label>
-        <InputText id="email" v-model="newUserInfo.email" disabled filled placeholder="Disabled" class="w-full mb-4" />
-        <label for="firstname">Nombre</label>
-        <InputText id="firstname" v-model="newUserInfo.firstname" placeholder="Nombre" class="w-full mb-4" />
-        <label for="lastname">Apellido</label>
-        <InputText id="lastname" v-model="newUserInfo.lastname" placeholder="Nombre" class="w-full mb-4" />
-        <label for="career">Carrera</label>
-        <Dropdown v-model="newUserInfo.career" :options="majors" optionValue="id" filter optionLabel="name" placeholder="Carrera" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
-        <label for="campus">Campus</label>
-        <Dropdown v-model="newUserInfo.campus" :options="campuses" optionValue="id" filter optionLabel="name" placeholder="Campus" checkmark :highlightOnSelect="false" class="w-12 mb-4" />
-
-        <div class="flex justify-content-end gap-2">
-            <Button type="button" label="Cerrar" severity="secondary" @click="showDialogPerfil = false"></Button>
-            <Button type="button" label="Guardar cambios " @click="saveProfileChanges"></Button>
-        </div> -->
-    </Dialog>
-
-    <hr>
-    <div class="grid" v-if="activeMAEs.length > 0">
-    <span v-for="mae in activeMAEs" :key="mae.uid" class="col-12 md:col-6 lg:col-6 xl:col-4">
-        <div class="p-0 w-full h-full border-round-xl bg-white shadow-1 hover:shadow-3 transition-duration-300 transition-ease-out">
-            <div class="flex border-round-top-xl bg-primary">
-                <div class="pl-4 p-2">
-                    <p class="text-2xl font-semibold uppercase">{{ mae.career === 'ADMIN' ? mae.career : mae.role }}</p>
-                </div>
-                <div class="ml-auto pr-4 p-2">
-                    <p class="text-2xl font-semibold text-end uppercase">
-                        <span v-if="mae.career === 'ADMIN'" class="flex items-center">
-                            <i class="pi pi-star-fill text-yellow-500 text-3xl pt-1"></i>
-                        
-                        </span>
-                        <span v-else>
-                            {{ mae.career }}
-                        </span>
-                    </p>
-                </div>
-            </div>
-
-            <div class="flex p-3 gap-3">
-                <img v-if="true" :src="mae.profilePictureUrl" alt="Foto de perfil"
-                    class="border-circle h-6rem w-6rem">
-                <Skeleton v-else shape="circle" size="5rem"></Skeleton>
-                <div class="relative w-full">
-                    <a :href="`/#/mae/${mae.uid}`"
-                        class="font-semibold text-xl text-black-alpha-90 hover:underline hover:text-primary truncate"
-                        style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                        {{ mae.name }}
-                    </a>
-                    <div class="absolute bottom-0 w-full">
-                        <p v-if="mae.activeSession.location" class="truncate" 
-                            style="max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                        <p v-if="mae.activeSession.location" class="truncate text-center text-lg" style="max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                             <template v-if="isZoomLink(mae.activeSession.location)">
                                 <a :href="mae.activeSession.location" target="_blank" rel="noopener noreferrer">
-                                    Liga de zoom
+                                    <span class="flex flex-row items justify-content-center">
+                                        <img src="/assets/link.svg" class="ml-4 mr-2" alt="link icon" style="width: 1.4rem; height: 1.4rem;" />
+                                        <p class="underline">Liga de zoom</p>
+                                    </span>
                                 </a>
                             </template>
                             <template v-else>
-                                {{ mae.activeSession.location }}
+                                <span class="flex flex-row items justify-content-center">
+                                    <img src="/assets/ubicacion.svg" class="ml-4 mr-2" alt="ubicacion icon" style="width: 1.4rem; height: 1.4rem;" />
+                                    <p>{{ mae.activeSession.location }}</p>
+                                </span>
                             </template>
                         </p>
-                        <Tag v-if="mae.weekSchedule[currentDay]" class="text-md w-6rem" severity="success" :value="`${mae.weekSchedule[currentDay][0]['start']} - ${mae.weekSchedule[currentDay][0]['end']}`" />
+                        <p class="text-lg text-left ml-4 font-bold mb-2">Horario</p>
+                        <Tag v-if="mae.weekSchedule[currentDay]" class="text-lg w-5 ml-4 mb-3 p-2 border-round-3xl mt-0" style="background-color: #69ac51;" 
+                             :value="`${mae.weekSchedule[currentDay][0]['start']} - ${mae.weekSchedule[currentDay][0]['end']}`" />
                     </div>
                 </div>
-            </div>
-        </div>
-    </span>
-</div>
-<div v-else class="flex align-content-center h-full" style="min-height: 300px">
-    <h1 class="flex align-items-center justify-content-center w-full text-center">
-        <span>No hay MAEs conectados por ahora 😔 <br> Consulta los <router-link to="horarios">horarios</router-link> para saber cuando podemos ayudarte ❤️</span>
-    </h1>
-</div>
+            </a>
 
+            <!-- Carta para MAEs inactivos (gris) -->
+            <a :href="`#/mae/${mae.uid}`" v-else class="no-blue-link">
+                <div class="p-0 w-full h-full border-round-xl bg-white shadow-1 transition-duration-300 transition-ease-out">
+                    <div class="flex flex-column">
+                        <div class="flex border-round-top-xl h-1rem w-full" v-if="mae.role === 'admin'" style="background-color: #8358CA;"></div>
+                        <div class="flex border-round-top-xl h-1rem w-full" v-if="mae.role === 'coordi'" style="background-color: #58AFCA;"></div>
+                        <div class="flex border-round-top-xl bg-white h-1rem w-full" v-if="mae.role !== 'coordi' && mae.role !== 'admin'"></div>
+                        <div class="flex flex-row items-center mt-2 ml-2 p-2">
+                            <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil" class="border-circle h-5rem w-5rem opacity-50">
+                            <Skeleton v-else shape="circle" size="5rem"></Skeleton>
+                            <div class="flex flex-column justify-content-center pl-4 w-full">
+                                <span class="font-bold text-lg text-black-alpha-90 truncate mb-2" style="max-width: 75%; max-height: 38%;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ mae.name }}</span>
+                                <div class="font-bold flex align-items-center justify-content-center text-lg pr-3 flex-wrap border-round-3xl align-content-center text-white " 
+                                    :style="{ backgroundColor: mae.role === 'admin' ? '#8358CA' : '#58AFCA' }" 
+                                     style="max-width: 65%; max-height: 38%; overflow: hidden;"
+                                     >
+                                    <span class="flex flex-row pt-3 pl-3">
+                                        <i class="pi pi-star-fill text-lg pt-1 pr-2" v-if="mae.role === 'admin'" style="color: #FFE073;"></i>
+                                        <p class="uppercase pr-2" v-else >{{ mae.career }}</p>
+                                        <p class="pr-2">•</p>
+                                        <p class="uppercase">{{ mae.role }}</p>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="text-center text-lg flex flex-row items justify-content-center mb-3 mr-4">          
+                                <img src="/assets/desconectado.svg" class="ml-4 mr-2" alt="disconnect icon" style="width: 1.6rem; height: 1.6rem;" />
+                                <p>Desconectado</p>    
+                        </div>
+                        <p class="text-lg text-left ml-4 font-bold mb-2">Próximo horario disponible </p>
+                        <Tag class="text-lg w-8 ml-4 mb-3 p-2 border-round-3xl mt-0" style="background-color: #969696;" 
+                            :value="getDisplayedDay(mae.weekSchedule)" 
+                            />
+                        
+                    </div>
+                </div>
+            </a>
+        </span>
+    </div>
 </template>
 
+
 <style>
-.translate {
-    transition: transform 0.3s ease-in-out;
-    /* Apply a 0.3s transition with ease-in-out timing function */
-    cursor: pointer;
+.no-blue-link {
+    color: inherit;
+    text-decoration: none;
 }
 
-.translate:hover {
-    transform: translateY(-10px);
-    /* Moves the element up by 1 pixel on hover */
-}</style>
+.no-blue-link:visited {
+    color: inherit;
+}
+
+.no-blue-link:hover {
+    color: inherit;
+}
+
+.no-blue-link:active {
+    color: inherit;
+}
+</style>

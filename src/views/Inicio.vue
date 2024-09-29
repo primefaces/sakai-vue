@@ -188,7 +188,7 @@ const saveAsesoria = async () => {
           </div>
 
           <div class="flex-1 text-left">
-            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-4">Asesorías Grupales</h2>
+            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-4">Asesorías grupales</h2>
             <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
               Materia: {{ currentAnuncio.subject.name }}
             </p>

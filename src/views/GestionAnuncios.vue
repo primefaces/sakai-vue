@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getSubjects,  } from '../firebase/db/subjects';
+import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
 import { saveAnnouncement, getAnnouncements } from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
@@ -187,7 +187,9 @@ const openPreviewDialog = () => {
 const closePreviewDialog = () => {
     displayPreviewDialog.value = false;
 };
+
 </script>
+
 
 <template>
   <div class="flex md:flex-row flex-column">

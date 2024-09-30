@@ -113,7 +113,7 @@ export const getClosestDayAndStartTime = (schedules) => {
 
 export async function getMaes() {
     const usersRef = collection(firestoreDB, "users");
-    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi']));
+    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi','tec']));
 
     const querySnapshot = await getDocs(q);
 
@@ -429,7 +429,7 @@ export async function checkAndUpdateUserRole(file = null) {
                     const promises = querySnapshot.docs.map(async (doc) => {
                         const userRef = doc.ref;
                         const userData = doc.data();
-                        const eligibleRoles = ['mae', 'coordi', 'publi']; // Roles que serán filtrados
+                        const eligibleRoles = ['mae', 'coordi', 'publi','tec']; // Roles que serán filtrados
 
                         if (eligibleRoles.includes(userData.role)) {
                             const userEmail = userData.email?.toLowerCase(); // Convertir a minúsculas para comparar
@@ -454,7 +454,7 @@ export async function checkAndUpdateUserRole(file = null) {
             reader.readAsArrayBuffer(file);
         } else {
             // Si no hay archivo, ejecutamos la lógica normal
-            const eligibleRoles = ['mae', 'coordi', 'publi'];
+            const eligibleRoles = ['mae', 'coordi', 'publi','tec'];
 
             const promises = querySnapshot.docs.map(async (doc) => {
                 const userRef = doc.ref;

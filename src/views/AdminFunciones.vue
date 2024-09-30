@@ -24,6 +24,7 @@ const roles = [
     { label: 'MAE', value: 'mae' },
     { label: 'Coordi', value: 'coordi' },
     { label: 'Publi', value: 'publi' },
+    { label: 'Tecnología', value: 'tec' },
     { label: 'Usuario', value: 'user' }
 ];
 const statuses = [

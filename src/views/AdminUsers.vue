@@ -15,7 +15,7 @@ const filters = ref({
     role: { value: null, matchMode: FilterMatchMode.IN },
 });
 
-const roles = ref(["mae", "coordi", "subjectCoordi", "admin","publi"])
+const roles = ref(["mae", "coordi", "subjectCoordi", "admin","publi","tec"])
 
 onMounted(() => {
   getMaes()

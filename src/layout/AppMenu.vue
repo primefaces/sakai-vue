@@ -33,7 +33,7 @@ onMounted(async () => {
     //     })
     // }
 
-    if (['admin'].includes(role)) {
+    if (['admin', 'tec'].includes(role)) {
         model.value.push({
             label: 'Administrador',
             items: [
@@ -46,7 +46,7 @@ onMounted(async () => {
         })
     }
     
-    if (['publi','mae', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
+    if (['publi','mae', 'coordi', 'subjectCoordi', 'admin','tec'].includes(role)) {
         model.value.push({
             label: 'MAE',
             items: [
@@ -57,7 +57,7 @@ onMounted(async () => {
         })
     }
 
-    if (['coordi', 'subjectCoordi', 'admin'].includes(role)) {
+    if (['coordi', 'subjectCoordi', 'admin','tec'].includes(role)) {
         model.value.push({
             label: 'Coordi',
             items: [

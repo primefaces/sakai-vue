@@ -12,6 +12,7 @@ const activeMAEs = ref([]);
 const subjects = ref([]);
 const maes = ref([]);
 const subjectsFilter = ref(null) 
+
 onMounted(async () => {
     activeMAEs.value = await getUsersWithActiveSession();
     userInfo.value = await getCurrentUser();
@@ -141,7 +142,10 @@ const clearFilters = () => {
                         </p>
                         <p class="text-lg text-left ml-4 font-bold mb-2">Horario</p>
                         <Tag v-if="mae.weekSchedule[currentDay]" class="text-lg w-5 ml-4 mb-3 p-2 border-round-3xl mt-0" style="background-color: #69ac51;" 
-                             :value="`${mae.weekSchedule[currentDay][0]['start']} - ${mae.weekSchedule[currentDay][0]['end']}`" />
+                             :value="`${mae.weekSchedule[currentDay][0]['start']} - ${mae.weekSchedule[currentDay][0]['end']} `" />
+                             <p v-else class="text-lg font-bold w-5 ml-4 mb-3 p-2 border-round-3xl mt-0 text-white justify-content-center flex align-items-center" style="background-color: #969696;">
+                                Sin horario
+                            </p>
                     </div>
                 </div>
             </a>

@@ -6,7 +6,12 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import ConfirmDialog from 'primevue/confirmdialog';
-import { clearAllUsersWeekSchedule, checkAndUpdateUserRole,  updateUserToMae} from '../firebase/db/users';
+import { 
+    clearAllUsersWeekSchedule, 
+    checkAndUpdateUserRole,  
+    updateUserToMae,
+    saveScheduleSubjectsExperience 
+} from '../firebase/db/users';
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -148,6 +153,31 @@ const handleAddUser = async () => {
         }
     });
 };
+
+
+// Función para guardar la experiencia
+const confirmSaveExperience = () => {
+    confirm.require({
+        message: '¿Estás seguro de que deseas guardar la experiencia  de horario y materiaspara los usuarios?',
+        header: 'Confirmación de guardar experiencia',
+        icon: 'pi pi-exclamation-circle',
+        acceptLabel: 'Sí, guardar',
+        rejectLabel: 'Cancelar',
+        acceptClass: 'p-button-success',
+        accept: async () => {
+            try {
+                await saveScheduleSubjectsExperience(); 
+                toast.add({ severity: 'success', summary: 'Éxito', detail: 'Experiencia guardada exitosamente.', life: 3000 });
+            } catch (error) {
+                console.error("Error al guardar la experiencia:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar guardar la experiencia.', life: 3000 });
+            }
+        },
+        reject: () => {
+            toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
+        }
+    });
+};
 </script>
 
 <template>
@@ -178,6 +208,15 @@ const handleAddUser = async () => {
                 icon="pi pi-user-plus" 
                 class="p-button-success p-button-rounded p-button-lg w-full md:w-6"
                 @click="openAddUserDialog" 
+            />
+        </div>
+
+        <div class="flex justify-content-center w-full mt-4">
+            <Button 
+                label="Guardar experiencia de horario/materias" 
+                icon="pi pi-save" 
+                class="p-button-info p-button-rounded p-button-lg w-full md:w-6"
+                @click="confirmSaveExperience" 
             />
         </div>
 

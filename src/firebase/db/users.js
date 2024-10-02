@@ -12,9 +12,13 @@ import {
     serverTimestamp,
     deleteField,
     increment,
+    getFirestore,
 } from 'firebase/firestore';
 import { getUserProfilePicture } from "../img/users";
 import * as XLSX from 'xlsx';
+
+const db = getFirestore();
+
 
 function getEmailUsername(email) {
     var atIndex = email.indexOf('@');
@@ -541,4 +545,81 @@ export async function updateUserToMae(data) {
     } catch (error) {
         console.error("Error al actualizar los usuarios: ", error);
     }
+}
+
+export const saveScheduleSubjectsExperience = async () => {
+    try {
+        const usersRef = collection(db, 'users');
+        const usersSnap = await getDocs(usersRef);
+
+        if (usersSnap.empty) {
+            console.error("No se encontraron usuarios en la tabla 'users'.");
+            return;
+        }
+
+        const rolesPermitidos = ['admin', 'publi', 'mae', 'coordi', 'tec'];
+
+        const updatePromises = []; 
+        usersSnap.forEach(async (userDoc) => {
+            const user = userDoc.data();
+
+            if (!rolesPermitidos.includes(user.role)) {
+                return;
+            }
+
+            let puntos = 0;
+
+            if (user.subjects && user.subjects.length > 0) {
+                puntos += 15;
+            } else {
+                puntos -= 30;
+            }
+
+
+            if (user.weekSchedule && Object.keys(user.weekSchedule).length > 0) {
+                puntos += 100;
+            } else {
+                puntos -= 500;
+            }
+
+            const userRef = doc(db, 'users', userDoc.id); 
+            updatePromises.push(
+                updateDoc(userRef, {
+                    points: (user.points || 0) + puntos
+                })
+            );
+        });
+
+        // Esperar a que todas las actualizaciones se completen
+        await Promise.all(updatePromises);
+    } catch (error) {
+        console.error("Error al guardar la experiencia:", error);
+    }
+};
+
+
+export async function updatePoints(uid, newPoints) {
+    const usersRef = collection(db, 'users');
+
+    const usersSnap = await getDocs(usersRef);
+    const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    const user = users.find(user => user.uid === uid);
+
+    if (user) {
+        const userRef = doc(db, 'users', user.id); 
+        
+        // Suma los puntos actuales a los nuevos puntos
+        const updatedPoints = (user.points || 0) + newPoints; 
+        
+        await updateDoc(userRef, { points: updatedPoints });
+        console.log(`Puntos actualizados para ${user.name}: ${updatedPoints}`);
+        
+        // Actualiza la propiedad points del usuario en el objeto
+        user.points = updatedPoints; 
+    } else {
+        console.log(`Usuario con uid ${uid} no encontrado.`);
+    }
+
+    return users; 
 }

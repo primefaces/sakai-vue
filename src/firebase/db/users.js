@@ -12,9 +12,13 @@ import {
     serverTimestamp,
     deleteField,
     increment,
+    getFirestore,
 } from 'firebase/firestore';
 import { getUserProfilePicture } from "../img/users";
 import * as XLSX from 'xlsx';
+
+const db = getFirestore();
+
 
 function getEmailUsername(email) {
     var atIndex = email.indexOf('@');
@@ -542,3 +546,53 @@ export async function updateUserToMae(data) {
         console.error("Error al actualizar los usuarios: ", error);
     }
 }
+
+export const saveScheduleSubjectsExperience = async () => {
+    try {
+        const usersRef = collection(db, 'users');
+        const usersSnap = await getDocs(usersRef);
+
+        if (usersSnap.empty) {
+            console.error("No se encontraron usuarios en la tabla 'users'.");
+            return;
+        }
+
+        const rolesPermitidos = ['admin', 'publi', 'mae', 'coordi', 'tec'];
+
+        const updatePromises = []; 
+        usersSnap.forEach(async (userDoc) => {
+            const user = userDoc.data();
+
+            if (!rolesPermitidos.includes(user.role)) {
+                return;
+            }
+
+            let puntos = 0;
+
+            if (user.subjects && user.subjects.length > 0) {
+                puntos += 15;
+            } else {
+                puntos -= 30;
+            }
+
+
+            if (user.weekSchedule && Object.keys(user.weekSchedule).length > 0) {
+                puntos += 100;
+            } else {
+                puntos -= 500;
+            }
+
+            const userRef = doc(db, 'users', userDoc.id); 
+            updatePromises.push(
+                updateDoc(userRef, {
+                    points: (user.points || 0) + puntos
+                })
+            );
+        });
+
+        // Esperar a que todas las actualizaciones se completen
+        await Promise.all(updatePromises);
+    } catch (error) {
+        console.error("Error al guardar la experiencia:", error);
+    }
+};

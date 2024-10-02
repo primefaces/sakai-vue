@@ -596,3 +596,30 @@ export const saveScheduleSubjectsExperience = async () => {
         console.error("Error al guardar la experiencia:", error);
     }
 };
+
+
+export async function updatePoints(uid, newPoints) {
+    const usersRef = collection(db, 'users');
+
+    const usersSnap = await getDocs(usersRef);
+    const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    const user = users.find(user => user.uid === uid);
+
+    if (user) {
+        const userRef = doc(db, 'users', user.id); 
+        
+        // Suma los puntos actuales a los nuevos puntos
+        const updatedPoints = (user.points || 0) + newPoints; 
+        
+        await updateDoc(userRef, { points: updatedPoints });
+        console.log(`Puntos actualizados para ${user.name}: ${updatedPoints}`);
+        
+        // Actualiza la propiedad points del usuario en el objeto
+        user.points = updatedPoints; 
+    } else {
+        console.log(`Usuario con uid ${uid} no encontrado.`);
+    }
+
+    return users; 
+}

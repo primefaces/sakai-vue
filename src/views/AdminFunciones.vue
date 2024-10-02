@@ -166,7 +166,7 @@ const confirmSaveExperience = () => {
         acceptClass: 'p-button-success',
         accept: async () => {
             try {
-                await saveScheduleSubjectsExperience(); // Llama a la función para guardar la experiencia
+                await saveScheduleSubjectsExperience(); 
                 toast.add({ severity: 'success', summary: 'Éxito', detail: 'Experiencia guardada exitosamente.', life: 3000 });
             } catch (error) {
                 console.error("Error al guardar la experiencia:", error);

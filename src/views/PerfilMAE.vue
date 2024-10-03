@@ -244,8 +244,11 @@ const showDialogAsesoria = ref(false);
 const ratingAsesoria = ref(null);
 const comentarioAsesoria = ref('');
 const materiaAsesoria = ref(null);
+const isSavingAsesoria = ref(false);
 
 const saveAsesoria = async () => {
+  if (isSavingAsesoria.value) return; 
+  isSavingAsesoria.value = true; 
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se está registrando la asesoría', life: 3000 });
   try {
     await addAsesoria(maeInfo.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value); 
@@ -257,6 +260,7 @@ const saveAsesoria = async () => {
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
   }
+  isSavingAsesoria.value = false; 
   showDialogAsesoria.value = false;  
   asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
   
@@ -377,7 +381,7 @@ const validateFile = (file) => {
         <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-clock" size="large" severity="secondary"
           @click="showDialogHorarios = true" class="w-full sm:w-fit mb-2 sm:mb-0"/>
         <Button v-else label="Registrar asesoría" icon="pi pi-star" size="large"
-          @click="showDialogAsesoria = true" class="w-full sm:w-fit"/>
+          @click="showDialogAsesoria = true" :disabled=" isSavingAsesoria"  class="w-full sm:w-fit"/>
       </div>
     </div>
     <h2 class="font-bold text-center sm:text-left"> Materias </h2>

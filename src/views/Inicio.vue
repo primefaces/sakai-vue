@@ -27,7 +27,7 @@ const subjects = ref([]);
 const anuncios = ref([]);
 const currentAnuncio = ref({});
 const currentIndex = ref(-1);
-
+const isSavingAsesoria = ref(false);
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
@@ -82,24 +82,31 @@ const prevAnuncio = () => {
     currentAnuncio.value = anuncios.value[currentIndex.value];
   }
 };
+
 const saveAsesoria = async () => {
+  if (isSavingAsesoria.value) return; 
+  isSavingAsesoria.value = true; 
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se está registrando la asesoría', life: 3000 });
+
   try {
-    if(maeAsesoria.value.name === userInfo.value.name){
+    if (maeAsesoria.value.name === userInfo.value.name) {
+      isSavingAsesoria.value = false;
       return toast.add({ severity: 'error', summary: 'Error', detail: 'No puedes registrarte una asesoría a ti mismo' });
     }
-    await addAsesoria(maeAsesoria.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value); 
+    await addAsesoria(maeAsesoria.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value);
     toast.add({ severity: 'success', summary: 'Guardado exitoso', detail: 'La asesoría se registró con éxito', life: 3000 });
     ratingAsesoria.value = null;
     comentarioAsesoria.value = '';
     materiaAsesoria.value = null;
-    maeAsesoria.value = null
+    maeAsesoria.value = null;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
+  } finally {
+    isSavingAsesoria.value = false; 
+    showDialogAsesoria.value = false;
   }
-  showDialogAsesoria.value = false;   
-}
+};
 
 </script>
 
@@ -116,6 +123,7 @@ const saveAsesoria = async () => {
           class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
           :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
           @click="showDialogAsesoria = true"
+          :disabled=" isSavingAsesoria" 
         >
             Registrar asesoría
             <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 3.0rem; height: 3.0rem;" />

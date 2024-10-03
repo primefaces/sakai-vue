@@ -463,20 +463,10 @@ export async function checkAndUpdateUserRole(file = null) {
             const promises = querySnapshot.docs.map(async (doc) => {
                 const userRef = doc.ref;
                 const userData = doc.data();
-
-                // Verificar si el rol es "mae", "coordi" o "publi"
                 if (eligibleRoles.includes(userData.role)) {
-
-                    // Verificar si weekSchedule está vacío
                     const isWeekScheduleEmpty = Object.values(userData.weekSchedule).every(day => day.length === 0);
-
-                    // Verificar si totalTime es 0
                     const isTotalTimeEquals0 = userData.totalTime == 0;
-
-                    // Verificar si subjects está vacío
                     const hasNoSubjects = !userData.subjects || userData.subjects.length === 0;
-
-                    // Si no tiene horario, su tiempo es 0 y no tiene materias, actualizar el rol
                     if (isWeekScheduleEmpty && isTotalTimeEquals0 && hasNoSubjects) {
                         return updateDoc(userRef, { role: "exmae" });
                     }
@@ -609,13 +599,12 @@ export async function updatePoints(uid, newPoints) {
     if (user) {
         const userRef = doc(db, 'users', user.id); 
         
-        // Suma los puntos actuales a los nuevos puntos
         const updatedPoints = (user.points || 0) + newPoints; 
         
         await updateDoc(userRef, { points: updatedPoints });
         console.log(`Puntos actualizados para ${user.name}: ${updatedPoints}`);
         
-        // Actualiza la propiedad points del usuario en el objeto
+    
         user.points = updatedPoints; 
     } else {
         console.log(`Usuario con uid ${uid} no encontrado.`);

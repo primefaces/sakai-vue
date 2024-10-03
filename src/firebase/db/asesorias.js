@@ -154,57 +154,44 @@ export async function updateAllExperienceAsesorias() {
 // Función para actualizar puntos basados en asesorías similares
 export async function updateExperienceAsesorias(peerUid, userUid, subjectId, advisoryDate) {
     try {
-        // Verificar que advisoryDate sea un objeto Date, de lo contrario convertirlo
         if (!(advisoryDate instanceof Date)) {
-            // Si advisoryDate es un Timestamp, convertirlo a Date
             if (advisoryDate.toDate) {
                 advisoryDate = advisoryDate.toDate();
             } else {
-                advisoryDate = new Date(advisoryDate); // Convertir a Date si es un string o número
+                advisoryDate = new Date(advisoryDate); 
             }
         }
 
-        // Obtener el día actual y convertir el timestamp a Date
+
         const today = Timestamp.now().toDate();
-
-        // Establecer el inicio y el final del día para la búsqueda
         const startOfDay = new Date(today);
-        startOfDay.setHours(0, 0, 0, 0); // Establecer el inicio del día a las 00:00:00
+        startOfDay.setHours(0, 0, 0, 0); 
         const endOfDay = new Date(today);
-        endOfDay.setHours(23, 59, 59, 999); // Establecer el final del día a las 23:59:59
+        endOfDay.setHours(23, 59, 59, 999); 
 
-        // Crear la referencia a la colección de asesorías
         const asesoriasRef = collection(firestoreDB, "asesorias");
 
-        // Consulta para obtener las asesorías del día
         const q = query(
             asesoriasRef,
             where("date", ">=", startOfDay),
             where("date", "<=", endOfDay)
         );
 
-        // Ejecutar la consulta
+
         const querySnapshot = await getDocs(q);
         const asesorias = querySnapshot.docs.map(doc => doc.data());
 
-        console.log("Asesorías del día:", asesorias);
-
-        // Filtrar asesorías similares
         const similarAdvisories = asesorias.filter(ad => {
             const adDate = ad.date.toDate();
             return ad.peerInfo.uid === peerUid &&
                 ad.userInfo.uid === userUid &&
-                ad.subject.id === subjectId && // Comparación correcta de subjectId
-                Math.abs(adDate.getTime() - advisoryDate.getTime()) <= 2 * 60 * 60 * 1000; // 2 horas en milisegundos
+                ad.subject.id === subjectId && 
+                Math.abs(adDate.getTime() - advisoryDate.getTime()) <= 2 * 60 * 60 * 1000;
         });
-
-        console.log("Asesorías similares:", similarAdvisories);
-
-        // Actualizar puntos basado en asesorías similares
         if (similarAdvisories.length > 0) {
-            await updatePoints(peerUid, -150); // Restar puntos si existen asesorías similares
+            await updatePoints(peerUid, -150);
         } else {
-            await updatePoints(peerUid, 50);  // Sumar puntos si no existen asesorías similares
+            await updatePoints(peerUid, 50); 
         }
 
     } catch (error) {

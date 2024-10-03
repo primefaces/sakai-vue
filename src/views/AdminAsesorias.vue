@@ -111,7 +111,7 @@ onMounted(() => {
             <template #empty>No se encontraron asesorías.</template>
             <template #loading>Cargando información. Por favor espera.</template>
 
-            <Column header="ID" field="id"  >
+            <Column header="ID" field="id"  hidden>
                 <template #body="{ data }">
                     <p class="text-sm ">{{ data.id }}</p>
                 </template>

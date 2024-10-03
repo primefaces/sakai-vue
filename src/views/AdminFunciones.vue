@@ -310,11 +310,10 @@ const handleUpdatePoints = async () => {
             :dismissable-mask="true"
         >
             <div class="flex flex-column align-items-center gap-4">
-                <input 
-                    type="number" 
-                    v-model.number="newPoints" 
-                    min="0" 
-                    placeholder="Ingrese puntos" 
+                <InputText 
+                    v-model="newMatricula" 
+                    placeholder="Ingrese matrícula"
+                    class="w-full"
                 />
                 <Dropdown 
                     v-model="newRole" 

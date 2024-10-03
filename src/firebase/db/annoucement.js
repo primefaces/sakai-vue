@@ -60,7 +60,7 @@ export async function getAnnouncements() {
             }))
             .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt )); 
 
-        console.log('Anuncios válidos obtenidos exitosamente:', announcements);
+
         return announcements;
     } catch (error) {
         console.error('Error fetching announcements:', error);

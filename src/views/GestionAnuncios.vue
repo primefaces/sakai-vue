@@ -428,7 +428,7 @@ const closePreviewDialog = () => {
             <div>
               <template v-if="selectedType === 'Asesoría'">
                 <h2 class="text-white text-3xl font-bold" >
-                  Asesorías Grupales
+                  Asesorías grupales
                 </h2>
               <p class="font-medium text-xl text-left ml-5">
                 Materia: {{ subjectInput.name }} 
@@ -458,7 +458,7 @@ const closePreviewDialog = () => {
         </div>
              <span class="flex justify-content-center">
               <Button 
-                label="Cerrar Previsualización" 
+                label="Cerrar previsualización" 
                 class=" p-button-rounded mt-4 selected  border-round-left-3xl"
                 @click="closePreviewDialog" 
             />

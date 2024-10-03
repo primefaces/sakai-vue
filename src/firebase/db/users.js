@@ -484,8 +484,6 @@ export async function checkAndUpdateUserRole(file = null) {
     }
 }
 
-
-
 export async function updateUserToMae(data) {
     const { role, matricula, status } = data;
 
@@ -565,7 +563,6 @@ export const saveScheduleSubjectsExperience = async () => {
                 puntos -= 30;
             }
 
-
             if (user.weekSchedule && Object.keys(user.weekSchedule).length > 0) {
                 puntos += 100;
             } else {
@@ -580,7 +577,6 @@ export const saveScheduleSubjectsExperience = async () => {
             );
         });
 
-        // Esperar a que todas las actualizaciones se completen
         await Promise.all(updatePromises);
     } catch (error) {
         console.error("Error al guardar la experiencia:", error);
@@ -590,21 +586,15 @@ export const saveScheduleSubjectsExperience = async () => {
 
 export async function updatePoints(uid, newPoints) {
     const usersRef = collection(db, 'users');
-
     const usersSnap = await getDocs(usersRef);
     const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
     const user = users.find(user => user.uid === uid);
 
     if (user) {
         const userRef = doc(db, 'users', user.id); 
-        
         const updatedPoints = (user.points || 0) + newPoints; 
-        
         await updateDoc(userRef, { points: updatedPoints });
         console.log(`Puntos actualizados para ${user.name}: ${updatedPoints}`);
-        
-    
         user.points = updatedPoints; 
     } else {
         console.log(`Usuario con uid ${uid} no encontrado.`);

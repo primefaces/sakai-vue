@@ -152,7 +152,12 @@ function getDisplayedSubject(subjects) {
                         <span class="flex flex-row items-center">
                             <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
                             class="border-circle h-5rem w-5rem">
-                            <Skeleton v-else shape="circle" size="5rem"></Skeleton>
+                            <img 
+                                v-else 
+                                :src="'https://randomuser.me/api/portraits/lego/5.jpg'" 
+                                alt="Foto de perfil" 
+                                class="border-circle h-5rem w-5rem" 
+                            />
                             <div class="relative w-full pl-4 pt-3">
                                 <span class="font-bold text-lg text-black-alpha-90 truncate"
                                 style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">

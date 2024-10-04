@@ -162,7 +162,6 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
             }
         }
 
-
         const today = Timestamp.now().toDate();
         const startOfDay = new Date(today);
         startOfDay.setHours(0, 0, 0, 0); 
@@ -188,7 +187,8 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
                 ad.subject.id === subjectId && 
                 Math.abs(adDate.getTime() - advisoryDate.getTime()) <= 2 * 60 * 60 * 1000;
         });
-        if (similarAdvisories.length > 0) {
+        console.log(similarAdvisories)
+        if (similarAdvisories.length > 1) {
             await updatePoints(peerUid, -150);
         } else {
             await updatePoints(peerUid, 50); 

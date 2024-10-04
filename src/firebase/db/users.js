@@ -602,3 +602,24 @@ export async function updatePoints(uid, newPoints) {
 
     return users; 
 }
+
+export async function getExperience() {
+    const usersRef = collection(firestoreDB, "users");
+    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi','tec']));
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot) {
+        let data = querySnapshot.docs.map(doc => doc.data());
+
+        // Filtrar usuarios que tienen un nombre
+        data = data.filter(item => item.name);
+
+        // Ordenar por puntos de mayor a menor
+        data.sort((a, b) => b.points - a.points);
+
+        return data;
+    } else {
+        return null;
+    }
+}

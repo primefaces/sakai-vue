@@ -25,7 +25,7 @@ const pointsRules = {
     F: -5, // Falta
     R: 3,  // Retraso
     J: 0,   // Justificado
-    C: 10
+    C: 10 // Coordi
 };
 
 const handlePointsUpdate = async (uid, newAttendance) => {

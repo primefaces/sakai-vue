@@ -270,7 +270,6 @@ const showDialogSession = ref(false);
 const location = ref('Biblioteca Piso 3')
 
 const startSession = async () => {
-  // Crea field de activeSession con id, location, peerInfo, startTime, status
   try {
     const res = await startActiveSession(userInfo.value.uid, userInfo.value, location.value);
     toast.add({ severity: 'success', summary: 'Inicio de turno exitoso', life: 3000 });

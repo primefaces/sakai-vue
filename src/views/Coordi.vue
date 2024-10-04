@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { getTodaysMae, getUser, incrementTotalTime } from '@/firebase/db/users';
+import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser } from '@/firebase/db/users';
 import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
 import { getUsersWithActiveSession, updatePoints } from '@/firebase/db/users';
 
@@ -10,6 +10,7 @@ const loading = ref(true);
 const maes = ref(null);
 const report = ref(null);
 const selectedId = ref(null);
+const userInfo = ref(null);
 
 const currentDay = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
 const options = ref([
@@ -23,10 +24,9 @@ const pointsRules = {
     A: 5,  // Asistencia
     F: -5, // Falta
     R: 3,  // Retraso
-    J: 0   // Justificado
+    J: 0,   // Justificado
+    C: 10
 };
-
-
 
 const handlePointsUpdate = async (uid, newAttendance) => {
     const points = pointsRules[newAttendance] || 0;
@@ -45,12 +45,12 @@ watch(report, (newValue, oldValue) => {
         updateReport(maeInfo, newAttendanceValue); // Actualizamos el reporte
         if(previousAttendance === undefined){
             handlePointsUpdate(maeInfo.uid, newAttendanceValue);
+            handlePointsUpdate(userInfo.value.uid, "C");
         }
     }
 }, { deep: true });
 
 const showDialogRegister = ref(false);
-
 const maeId = ref('');
 const hours = ref(0);
 const date = ref(new Date());
@@ -90,9 +90,10 @@ const addReport = async () => {
 
 onMounted(async () => {
     try {
-        activeMAEs.value = await getUsersWithActiveSession(); // Obteniendo los MAEs activos
-        maes.value = await getTodaysMae(); // Obteniendo los MAEs del día de hoy
-        report.value = await getTodaysReport(); // Obteniendo el reporte del día de hoy
+        userInfo.value = await getCurrentUser();
+        activeMAEs.value = await getUsersWithActiveSession(); 
+        maes.value = await getTodaysMae(); 
+        report.value = await getTodaysReport(); 
         initialReport.value = JSON.parse(JSON.stringify(report.value)); 
     } catch (error) {
         console.error('Error al cargar datos:', error);

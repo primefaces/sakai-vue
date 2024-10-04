@@ -25,7 +25,7 @@ function getEmailUsername(email) {
     if (atIndex !== -1) {
         return email.slice(0, atIndex);
     }
-    return null; // Return null if there is no "@" symbol in the email
+    return null;
 }
 
 export async function createUser(userInfo) {
@@ -594,7 +594,7 @@ export async function updatePoints(uid, newPoints) {
         const userRef = doc(db, 'users', user.id); 
         const updatedPoints = (user.points || 0) + newPoints; 
         await updateDoc(userRef, { points: updatedPoints });
-        console.log(`Puntos actualizados para ${user.name}: ${updatedPoints}`);
+        //console.log(`Puntos actualizados para ${user.name}: ${updatedPoints}`);
         user.points = updatedPoints; 
     } else {
         console.log(`Usuario con uid ${uid} no encontrado.`);

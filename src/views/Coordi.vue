@@ -3,10 +3,9 @@ import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { getTodaysMae, getUser, incrementTotalTime } from '@/firebase/db/users';
 import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
-import { getUsersWithActiveSession } from '@/firebase/db/users';
+import { getUsersWithActiveSession, updatePoints } from '@/firebase/db/users';
 
 const toast = useToast();
-
 const loading = ref(true);
 const maes = ref(null);
 const report = ref(null);
@@ -20,10 +19,33 @@ const options = ref([
     { name: 'Justificado', code: 'J' },
 ]);
 
+const pointsRules = {
+    A: 5,  // Asistencia
+    F: -5, // Falta
+    R: 3,  // Retraso
+    J: 0   // Justificado
+};
+
+
+
+const handlePointsUpdate = async (uid, newAttendance) => {
+    const points = pointsRules[newAttendance] || 0;
+    await updatePoints(uid, points); 
+    toast.add({ severity: 'success', summary: 'Se ha actualizado su asistencia ', detail: `Se ha actualizo de forma correcta`, life: 3000 });
+};
+
+
 watch(report, (newValue, oldValue) => {
     if (oldValue) {
-        const maeInfo = maes.value.find(mae => mae['uid'] === selectedId.value);
-        updateReport(maeInfo, newValue[selectedId.value]);
+        const maeInfo = maes.value.find(mae => mae.uid === selectedId.value);
+        const previousAttendance = initialReport.value[selectedId.value];
+        const newAttendanceValue = newValue[selectedId.value];
+        // console.log(`Asistencia anterior: ${previousAttendance}`);
+        // console.log(`Nueva asistencia: ${newAttendanceValue}`);
+        updateReport(maeInfo, newAttendanceValue); // Actualizamos el reporte
+        if(previousAttendance === undefined){
+            handlePointsUpdate(maeInfo.uid, newAttendanceValue);
+        }
     }
 }, { deep: true });
 
@@ -34,6 +56,7 @@ const hours = ref(0);
 const date = ref(new Date());
 const maeInfo = ref(null);
 const activeMAEs = ref([]);
+const initialReport = ref(null);
 
 watch(maeId, async (newValue) => {
     if (newValue.length === 9) {
@@ -70,6 +93,7 @@ onMounted(async () => {
         activeMAEs.value = await getUsersWithActiveSession(); // Obteniendo los MAEs activos
         maes.value = await getTodaysMae(); // Obteniendo los MAEs del día de hoy
         report.value = await getTodaysReport(); // Obteniendo el reporte del día de hoy
+        initialReport.value = JSON.parse(JSON.stringify(report.value)); 
     } catch (error) {
         console.error('Error al cargar datos:', error);
     } finally {
@@ -78,7 +102,6 @@ onMounted(async () => {
 });
 
 const getSubjectColor = (area) => {
-    console.log(area)
     switch (area) {
         case 'Ingeniería y Ciencias':
             return 'bg-cyan-600';
@@ -156,7 +179,7 @@ const getSubjectColor = (area) => {
             <Column header="Asistencia" style="min-width:8rem">
                 <template #body="{ data }">
                     <Dropdown 
-                        @click="selectedId = data.uid" 
+                        @click="selectedId = data.uid " 
                         v-if="report" 
                         v-model="report[data.uid]" 
                         :options="options" 
@@ -231,10 +254,10 @@ const getSubjectColor = (area) => {
 }
 
 .active {
-    background-color: #28a745; /* Verde */
+    background-color: #28a745;
 }
 
 .inactive {
-    background-color: #6c757d; /* Gris */
+    background-color: #6c757d; 
 }
 </style>

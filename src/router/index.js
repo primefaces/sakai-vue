@@ -62,6 +62,14 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/leaderboard',
+                    name: 'leaderboard',
+                    component: () => import('@/views/Leaderboard.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae','tec']
+                    }
+                },
+                {
                     path: '/coordi',
                     name: 'coordi',
                     component: () => import('@/views/Coordi.vue'),

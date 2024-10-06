@@ -82,7 +82,7 @@ const assignRanks = (fetchedUsers) => {
                     <img v-if="index === 0" src="/assets/gold.svg" class="font-semibold mr-3 ml-4" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
                     <img v-if="index === 1" src="/assets/silver.svg" class="font-semibold mr-3 ml-4" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
                     <img v-if="index === 2" src="/assets/bronze.svg" class="font-semibold mr-3 ml-4" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
-                    <span class="font-semibold mr-4 ml-7E" v-if="index !== 0 && index !== 1 && index !== 2">
+                    <span class="font-semibold mr-4 ml-5" v-if="index !== 0 && index !== 1 && index !== 2">
                         {{ user.rank }}. 
                     </span>
                     <img v-if="user.photoURL" 

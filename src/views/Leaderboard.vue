@@ -73,16 +73,16 @@ const assignRanks = (fetchedUsers) => {
                 v-for="(user, index) in users" 
                 :key="user.uid" 
                 :class="[ 
-                    'flex justify-between items-center p-2', 
+                    'flex justify-between items-center p-2 py-4', 
                     index === 0 ? 'border-2 border-yellow-500 border-round-3xl' : '',  
                     'bg-white m-1 rounded-3xl' 
                 ]"
             >
                 <div class="flex justify-content-center align-items-center">
-                    <img v-if="index === 0" src="/assets/gold.svg" class="font-semibold mr-3" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
-                    <img v-if="index === 1" src="/assets/silver.svg" class="font-semibold mr-3" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
-                    <img v-if="index === 2" src="/assets/bronze.svg" class="font-semibold mr-3" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
-                    <span class="font-semibold mr-4 ml-3 " v-if="index !== 0 && index !== 1 && index !== 2">
+                    <img v-if="index === 0" src="/assets/gold.svg" class="font-semibold mr-3 ml-4" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
+                    <img v-if="index === 1" src="/assets/silver.svg" class="font-semibold mr-3 ml-4" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
+                    <img v-if="index === 2" src="/assets/bronze.svg" class="font-semibold mr-3 ml-4" alt="gold icon" style="width: 2.5rem; height: 2.5rem;" />
+                    <span class="font-semibold mr-4 ml-7E" v-if="index !== 0 && index !== 1 && index !== 2">
                         {{ user.rank }}. 
                     </span>
                     <img v-if="user.photoURL" 
@@ -97,7 +97,7 @@ const assignRanks = (fetchedUsers) => {
                     </div>
                 </div>
                 <div class="flex items-center ml-auto md:mt-4 mr-3">
-                    <span class="mr-2">{{ user.points }} EXP</span>
+                    <span class="mr-6">{{ user.points }} EXP</span>
                 </div>
             </li>
         </ul>

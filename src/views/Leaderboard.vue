@@ -3,14 +3,15 @@ import { ref, onMounted } from 'vue';
 import { getExperience } from '@/firebase/db/users';
 
 const users = ref([]);
+const userGold = ref(null);
 
 onMounted(async () => {
     const fetchedUsers = await getExperience();
     users.value = assignRanks(fetchedUsers);
+    userGold.value = users.value[0]; // Usar .value para reasignar
+    console.log(userGold.value, "Esto es"); // Usar .value para acceder al valor
 });
-
 const assignRanks = (fetchedUsers) => {
-    // Ordenar usuarios por puntos de mayor a menor
     const sortedUsers = fetchedUsers.sort((a, b) => b.points - a.points);
     
     let rankedUsers = [];
@@ -18,12 +19,10 @@ const assignRanks = (fetchedUsers) => {
     let rank = 0;
 
     for (const user of sortedUsers) {
-        // Incrementar el rango solo si los puntos son diferentes
         if (user.points !== lastPoints) {
             rank++;
             lastPoints = user.points;
         }
-        // Asignar el rango al usuario
         rankedUsers.push({ ...user, rank });
     }
     
@@ -32,12 +31,38 @@ const assignRanks = (fetchedUsers) => {
 </script>
 
 <template>
-    <div class="flex md:flex-row flex-column sm:flex sm:justify-content-between mb-2 sm:mb-5">
-        <div class="flex flex-column align-items-center">
+    <div class="flex md:flex-row flex-column   sm:mb-3">
+        <div class="flex flex-column align-items-start">
             <h1 class="text-black text-5xl font-bold text-center m-0 sm:text-left mb-3">Leaderboard</h1>
             <div class="bg-white border-round-3xl p-2 px-4 flex flex-row justify-content-center">
                 <img src="/assets/mundo.svg" class="mr-3 mt-1" alt="world icon" style="width: 1.5rem; height: 1.5rem;" />
                 <p class="text-xl">División general</p>
+            </div>
+        </div>
+
+
+        <div class=" justify-content-center align-items-center hidden lg:block ml-8">
+            <div v-if="userGold" class="border-round-3xl flex flex-row bg-white p-3 px-5 align-items-center border-photo" style="position: relative; width: fit-content;">
+                <div class="flex flex-column mr-3">
+                    <img src="/assets/crown.svg" alt="crown icon" 
+                        class="crown-icon -mt-2" 
+                        style="width: 2rem; height: 2rem;" />
+                    <img v-if="userGold.photoURL" 
+                        :src="userGold.photoURL" 
+                        alt="Foto de perfil"
+                        class="border-circle h-4rem w-4rem border-gold -mt-2">
+                    <img v-else 
+                        src="/assets/lego.jpg" 
+                        alt="default profile" 
+                        class="border-circle h-4rem w-4rem border-gold">
+                </div>
+                <span class="flex flex-column mt-2">
+                    <span class="font-bold mb-1">{{ userGold.name }}</span>
+                    <span class="border-round-3xl border-gold bg-gold flex flex-row mt-1 px-3 py-1 w-full">
+                        <i class="pi pi-star-fill text-lg pr-2 mt-1" style="color: #FFCB04;"></i>
+                        <p class="m-0 text-center font-semibold text-md">Top MAE</p>
+                    </span>
+                </span>
             </div>
         </div>
     </div>
@@ -64,7 +89,8 @@ const assignRanks = (fetchedUsers) => {
                          :src="user.photoURL" 
                          alt="Foto de perfil"
                          :class="['border-circle h-4rem w-4rem', { 'border-gold': index === 0, 'border-silver': index === 1, 'border-bronze': index === 2 }]">
-                    <img v-else src="/assets/lego.jpg" :class="['border-circle h-4rem w-4rem', { 'border-gold': index === 0, 'border-silver': index === 1, 'border-bronze': index === 2 }]" alt="default profile" style="width: 4rem; height: 4rem;" />
+                    <img v-else src="/assets/lego.jpg" :class="['border-circle h-4rem w-4rem', { 'border-gold': index === 0, 'border-silver': index === 1, 'border-bronze': index === 2 }]" alt="default profile" 
+                    style="width: 4rem; height: 4rem;" />
                     <div class="flex flex-column ml-3">
                         <span class="font-bold">{{ user.name }} </span>
                         <span>{{ user.career }} </span>
@@ -82,11 +108,17 @@ const assignRanks = (fetchedUsers) => {
 .border-yellow-500 {
     border-color: #FFD700;
 }
+.bg-gold{
+    background-color: #FFF5D1;
+}
 .border-gold {
     border: 3px solid #FFD700;
 }
 .border-silver {
     border: 3px solid silver; 
+}
+.border-photo {
+    border: 1px solid #c8c8c8; 
 }
 .border-bronze {
     border: 3px solid #cd7f32;    

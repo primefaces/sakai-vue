@@ -187,11 +187,16 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
                 ad.subject.id === subjectId && 
                 Math.abs(adDate.getTime() - advisoryDate.getTime()) <= 2 * 60 * 60 * 1000;
         });
-        console.log(similarAdvisories)
+        // console.log(similarAdvisories)
         if (similarAdvisories.length > 1) {
             await updatePoints(peerUid, -150);
         } else {
-            await updatePoints(peerUid, 50); 
+            if(subjectId === "MAE"){
+                await updatePoints(peerUid, 10); 
+            }else{
+                await updatePoints(peerUid, 50); 
+            }
+            
         }
 
     } catch (error) {

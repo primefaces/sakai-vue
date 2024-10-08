@@ -31,7 +31,10 @@ const pointsRules = {
 const handlePointsUpdate = async (uid, newAttendance) => {
     const points = pointsRules[newAttendance] || 0;
     await updatePoints(uid, points); 
-    toast.add({ severity: 'success', summary: 'Se ha actualizado su asistencia ', detail: `Se ha actualizo de forma correcta`, life: 3000 });
+    if (newAttendance !== "C"){
+        toast.add({ severity: 'success', summary: 'Se ha actualizado su asistencia ', detail: `Se ha actualizo de forma correcta`, life: 3000 });
+    }
+
 };
 
 
@@ -40,9 +43,7 @@ watch(report, (newValue, oldValue) => {
         const maeInfo = maes.value.find(mae => mae.uid === selectedId.value);
         const previousAttendance = initialReport.value[selectedId.value];
         const newAttendanceValue = newValue[selectedId.value];
-        // console.log(`Asistencia anterior: ${previousAttendance}`);
-        // console.log(`Nueva asistencia: ${newAttendanceValue}`);
-        updateReport(maeInfo, newAttendanceValue); // Actualizamos el reporte
+        updateReport(maeInfo, newAttendanceValue);
         if(previousAttendance === undefined){
             handlePointsUpdate(maeInfo.uid, newAttendanceValue);
             handlePointsUpdate(userInfo.value.uid, "C");

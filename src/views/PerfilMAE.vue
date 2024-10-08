@@ -14,14 +14,10 @@ const route = useRoute();
 const userId = ref(route.path.split('/').pop());
 const maeInfo = ref(null);
 const userInfo = ref(null);
-
 const asesoriasCount = ref(0);
-
 const selectedSubjects = ref([]);
 const subjects = ref([]);
-
 const newSchedule = ref({});
-
 //Imagen a actualizar
 const showDialogUpload = ref(false); 
 const selectedFile = ref(null); 
@@ -259,11 +255,11 @@ const saveAsesoria = async () => {
     materiaAsesoria.value = null;
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
+  } finally{
+    isSavingAsesoria.value = false; 
+    showDialogAsesoria.value = false;  
+    asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
   }
-  isSavingAsesoria.value = false; 
-  showDialogAsesoria.value = false;  
-  asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
-  
 }
 
 const showDialogSession = ref(false);

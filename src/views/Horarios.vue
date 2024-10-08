@@ -23,6 +23,7 @@ const filters = ref({
     subjects: { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
+
 const loading = ref(true);
 const daysOfWeek = [
     { label: 'Todos los días', value: null },
@@ -106,7 +107,6 @@ function getDisplayedDay(weekSchedule) {
         return 'Sin horario';
     }
 }
-
 
 function getDisplayedSubject(subjects) {
     if (!filters.value.subjects.value) {

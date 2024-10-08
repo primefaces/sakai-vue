@@ -70,6 +70,14 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/asesorias',
+                    name: 'asesorias',
+                    component: () => import('@/views/Asesorias.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae','tec']
+                    }
+                },
+                {
                     path: '/coordi',
                     name: 'coordi',
                     component: () => import('@/views/Coordi.vue'),

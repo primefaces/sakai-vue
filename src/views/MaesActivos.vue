@@ -111,7 +111,7 @@ const clearFilters = () => {
                             <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil" class="border-circle h-5rem w-5rem">
                             <Skeleton v-else shape="circle" size="5rem"></Skeleton>
                             <div class="flex flex-column justify-content-center pl-4 w-full">
-                                <span class="font-bold text-lg text-black-alpha-90 truncate mb-2" style="max-width: 75%; max-height: 38%;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ mae.name }}</span>
+                                <span class="font-bold text-lg text-black-alpha-90 truncate mb-2" style="max-width: 65%; max-height: 38%;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ mae.name }}</span>
                                 <div class="font-bold flex align-items-center justify-content-center text-lg pr-3 flex-wrap border-round-3xl align-content-center text-white" 
                                      :style="{ backgroundColor: mae.role === 'admin' ? '#8358CA' : '#58AFCA' }" 
                                      style="max-width: 65%; max-height: 38%; overflow: hidden;">
@@ -141,7 +141,7 @@ const clearFilters = () => {
                             </template>
                         </p>
                         <p class="text-lg text-left ml-4 font-bold mb-2">Horario</p>
-                        <Tag v-if="mae.weekSchedule[currentDay]" class="text-lg w-5 ml-4 mb-3 p-2 border-round-3xl mt-0" style="background-color: #69ac51;" 
+                        <Tag v-if="mae.weekSchedule[currentDay]" class="text-lg w-6 ml-4 mb-3 p-2 border-round-3xl mt-0" style="background-color: #69ac51;" 
                              :value="`${mae.weekSchedule[currentDay][0]['start']} - ${mae.weekSchedule[currentDay][0]['end']} `" />
                              <p v-else class="text-lg font-bold w-5 ml-4 mb-3 p-2 border-round-3xl mt-0 text-white justify-content-center flex align-items-center" style="background-color: #969696;">
                                 Sin horario
@@ -161,7 +161,7 @@ const clearFilters = () => {
                             <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil" class="border-circle h-5rem w-5rem opacity-50">
                             <Skeleton v-else shape="circle" size="5rem"></Skeleton>
                             <div class="flex flex-column justify-content-center pl-4 w-full">
-                                <span class="font-bold text-lg text-black-alpha-90 truncate mb-2" style="max-width: 75%; max-height: 38%;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ mae.name }}</span>
+                                <span class="font-bold text-lg text-black-alpha-90 truncate mb-2" style="max-width: 65%; max-height: 38%;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ mae.name }}</span>
                                 <div class="font-bold flex align-items-center justify-content-center text-lg pr-3 flex-wrap border-round-3xl align-content-center text-white " 
                                     :style="{ backgroundColor: mae.role === 'admin' ? '#8358CA' : '#58AFCA' }" 
                                      style="max-width: 65%; max-height: 38%; overflow: hidden;"
@@ -180,7 +180,7 @@ const clearFilters = () => {
                                 <p>Desconectado</p>    
                         </div>
                         <p class="text-lg text-left ml-4 font-bold mb-2">Próximo horario disponible </p>
-                        <Tag class="text-lg w-8 ml-4 mb-3 p-2 border-round-3xl mt-0" style="background-color: #969696;" 
+                        <Tag class="text-lg w-8 ml-4 mb-3 p-2 px-3 border-round-3xl mt-0" style="background-color: #969696;" 
                             :value="getDisplayedDay(mae.weekSchedule)" 
                             />
                         

@@ -24,9 +24,7 @@ const selectedFile = ref(null);
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
-
   maeInfo.value = await getUser(route.params.id);
-
   asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
   selectedSubjects.value = maeInfo.value.subjects;
   subjects.value = await getSubjects();

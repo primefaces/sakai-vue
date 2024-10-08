@@ -111,12 +111,27 @@ export async function getAsesorias(startDate = null, endDate = null) {
     }
 }
 
+// Función para obtener asesorías por UID, reutilizando getAsesorias
+export async function getAsesoriasByUid(uid) {
+    try {
+        const startDate = new Date('2024-08-05'); 
+        const today = new Date(); 
+        const asesorias = await getAsesorias(startDate, today);
+
+        const asesoriasFiltradas = asesorias.filter(asesoria => asesoria.peerInfo?.uid === uid);
+
+        return asesoriasFiltradas;
+    } catch (error) {
+        console.error("Error fetching asesorias by UID: ", error);
+        return [];
+    }
+}
 
 // Función solo para actualizar de todas las asesorías si es necesario
 export async function updateAllExperienceAsesorias() {
-    const fixedStartDate = new Date('2024-08-05'); 
+    const startDate = new Date('2024-08-05'); 
     const today = new Date(); 
-    const asesorias = await getAsesorias(fixedStartDate, today);
+    const asesorias = await getAsesorias(startDate, today);
     const processed = new Set(); 
 
     for (const advisory of asesorias) {
@@ -144,8 +159,6 @@ export async function updateAllExperienceAsesorias() {
                 // Si no hay coincidencias dentro de las 2 horas, añade 50 puntos
                 await updatePoints(peerInfo.uid, 50);
             }
-
-            // Marca esta combinación como procesada
             processed.add(key);
         }
     }

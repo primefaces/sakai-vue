@@ -98,7 +98,7 @@ const saveDateTime = () => {
     const selectedDate = new Date(dateTime.value);
 
     if (!dateTime.value || !startTime.value || !endTime.value) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor selecciona una fecha y un rango de horas.', life: 3000 });
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor selecciona una fecha y un rango de horario.', life: 3000 });
         return;
     }
 
@@ -196,11 +196,11 @@ const closePreviewDialog = () => {
     <!-- Primera columna -->
     <div class="flex flex-column md:w-6">
       <h1 class="text-black text-2xl md:text-3xl font-bold mb-3 text-left">
-        Gestión de Anuncios
+        Gestión de anuncios
       </h1>
       <span class="flex flex-column sm:flex-row justify-content-between items-center">
         <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
-          Tipo de Asesoría
+          Tipo de anuncio
         </p>
         <div class="flex flex-row sm:justify-content-end bg-white border-round-xl shadow-3 w-16rem">
           <Button 
@@ -241,14 +241,14 @@ const closePreviewDialog = () => {
         <span class="flex flex-column md:flex-row">
           <span class="flex flex-column w-6">
               <p class="text-black text-lg md:text-xl font-semibold text-left mt-3">
-                  Fecha & Horas
+                  Fecha & horario
               </p>
               <div class="p-inputgroup w-full">
                   <span class="p-inputgroup-addon">
                   <i class="pi pi-calendar"></i> 
                   </span>
                   <Button 
-                  label=" Fecha y Horas" 
+                  label=" Fecha y horario" 
                   class="p-button-outlined w-full bg-white text-black p-inputgroup-addon text-left  w-full md:w-9" 
                   icon="pi pi-chevron-down" 
                   iconPos="right"
@@ -347,10 +347,10 @@ const closePreviewDialog = () => {
     <!-- Fin div -->
   </div>
 
-  <!-- Diálogo para seleccionar la fecha y horas -->
+  <!-- Diálogo para seleccionar la fecha y horario -->
       <Dialog 
         v-model:visible="showDateDialog" 
-        header="Seleccionar Fecha y Horas" 
+        header="Seleccionar Fecha y horario" 
         :modal="true" 
         :closable="true"  
         :dismissable-mask="true"

@@ -47,6 +47,7 @@ export function getDayColor(day) {
 }
 
 export function getSubjectColor(area) {
+    console.log(area)
     switch (area) {
         case 'ING': return 'bg-cyan-600';
         case 'NEG': return 'bg-blue-600';

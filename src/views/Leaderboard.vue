@@ -11,6 +11,7 @@ onMounted(async () => {
     userGold.value = users.value[0]; // Usar .value para reasignar
     console.log(userGold.value, "Esto es"); // Usar .value para acceder al valor
 });
+
 const assignRanks = (fetchedUsers) => {
     const sortedUsers = fetchedUsers.sort((a, b) => b.points - a.points);
     
@@ -28,10 +29,16 @@ const assignRanks = (fetchedUsers) => {
     
     return rankedUsers;
 };
+
+const formatName = (name) => {
+  if (!name) return '';
+  const words = name.split(' ');
+  return words.slice(0, 2).join(' '); // Limita a dos palabras
+};
 </script>
 
 <template>
-    <div class="flex md:flex-row flex-column   sm:mb-3">
+    <div class="flex md:flex-row flex-column  md:mb-3">
         <div class="flex flex-column align-items-start">
             <h1 class="text-black text-5xl font-bold text-center m-0 sm:text-left mb-3">Leaderboard</h1>
             <div class="bg-white border-round-3xl p-2 px-4 flex flex-row justify-content-center">
@@ -41,31 +48,69 @@ const assignRanks = (fetchedUsers) => {
         </div>
 
 
-        <div class=" justify-content-center align-items-center hidden lg:block ml-8">
-            <div v-if="userGold" class="border-round-3xl flex flex-row bg-white p-3 px-5 align-items-center border-photo" style="position: relative; width: fit-content;">
-                <div class="flex flex-column mr-3">
-                    <img src="/assets/crown.svg" alt="crown icon" 
-                        class="crown-icon -mt-2" 
-                        style="width: 2rem; height: 2rem;" />
-                    <img v-if="userGold.photoURL" 
-                        :src="userGold.photoURL" 
-                        alt="Foto de perfil"
-                        class="border-circle h-4rem w-4rem border-gold -mt-2">
-                    <img v-else 
-                        src="/assets/lego.jpg" 
-                        alt="default profile" 
-                        class="border-circle h-4rem w-4rem border-gold">
+        <div class="flex justify-content-center align-items-end lg:flex-row gap-3 ml-6 mb-4 md:mb-0 mt-8 md:mt-5 ">
+            <!-- Segundo lugar (Izquierda) -->
+            <div v-if="users[1]" class="flex flex-column items-center">
+                <div class="relative">
+                <img v-if="users[1].photoURL"
+                    :src="users[1].photoURL"
+                    alt="Foto perfil"
+                    class="border-circle h-6rem w-6rem border-silver" />
+                <img v-else
+                    src="/assets/lego.jpg"
+                    alt="default profile"
+                    class="border-circle h-6rem w-6rem border-silver" />
+                <div class="circle-number border-silver bg-silver ">
+                    2
                 </div>
-                <span class="flex flex-column mt-2">
-                    <span class="font-bold mb-1">{{ userGold.name }}</span>
-                    <span class="border-round-3xl border-gold bg-gold flex flex-row mt-1 px-3 py-1 w-full">
-                        <i class="pi pi-star-fill text-lg pr-2 mt-1" style="color: #FFCB04;"></i>
-                        <p class="m-0 text-center font-semibold text-md">Top MAE</p>
-                    </span>
-                </span>
+                </div>
+                <span class="font-bold mt-3 text-center">{{ formatName(users[1].name) }}</span>
+                <span class="text-gray-500 text-center">{{ users[1].points }} EXP</span>
+            </div>
+
+            <!-- Primer lugar (Centro) -->
+            <div v-if="userGold" class="flex flex-column items-center relative" style="transform: translateY(-20%);">
+                <div class="relative">
+                <img src="/assets/crown.svg"
+                    alt="crown icon"
+                    class="absolute crown-icon"
+                    style="width: 2.5rem; height: 2.5rem; top: -20px;" />
+                <img v-if="userGold.photoURL"
+                    :src="userGold.photoURL"
+                    alt="Foto perfil"
+                    class="border-circle h-6rem w-6rem border-gold" />
+                <img v-else
+                    src="/assets/lego.jpg"
+                    alt="default profile"
+                    class="border-circle h-6rem w-6rem border-gold" />
+                <div class="circle-number border-gold bg-gold">
+                    1
+                </div>
+                </div>
+                <span class="font-bold mt-3 text-center">{{ formatName(userGold.name) }}</span>
+                <span class="text-gray-500 text-center">{{ userGold.points }} EXP</span>
+            </div>
+
+            <!-- Tercer lugar (Derecha) -->
+            <div v-if="users[2]" class="flex flex-column items-center">
+                <div class="relative">
+                <img v-if="users[2].photoURL"
+                    :src="users[2].photoURL"
+                    alt="Foto perfil"
+                    class="border-circle h-6rem w-6rem border-bronze" />
+                <img v-else
+                    src="/assets/lego.jpg"
+                    alt="default profile"
+                    class="border-circle h-6rem w-6rem border-bronze" />
+                <div class="circle-number border-bronze bg-bronze">
+                    3
+                </div>
+                </div>
+                <span class="font-bold mt-3 text-center">{{ formatName(users[2].name) }}</span>
+                <span class="text-gray-500 text-center">{{ users[2].points }} EXP</span>
+            </div>
             </div>
         </div>
-    </div>
 
     <div class="bg-white border-round-3xl p-3">
         <ul class="list-none p-0">
@@ -109,7 +154,7 @@ const assignRanks = (fetchedUsers) => {
     border-color: #FFD700;
 }
 .bg-gold{
-    background-color: #FFF5D1;
+    background-color: #FFD700;
 }
 .border-gold {
     border: 3px solid #FFD700;
@@ -123,4 +168,40 @@ const assignRanks = (fetchedUsers) => {
 .border-bronze {
     border: 3px solid #cd7f32;    
 }
+.circle-number {
+  border-radius: 50%; 
+  width: 2.5rem; 
+  height: 2.5rem; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 1rem; 
+  font-weight: bold; 
+  color: black;
+  position: absolute;
+  bottom: -10px;
+  left: 24px; 
+}
+
+.bg-silver {
+  background-color: #C0C0C0; 
+}
+
+
+
+.bg-bronze {
+  background-color: #CD7F32; 
+}
+
+.podium-container {
+  background-image: url('/assets/Leader.svg'); /* Ruta del SVG */
+    
+  background-position:bottom center; /* Centrar horizontalmente y alinear verticalmente hacia arriba */
+  padding-top: 38px;
+  padding-bottom: 38px;
+  padding-left: 26px;
+  position: relative; /* Asegúrate de que el contenedor sea relativo para manejar el posicionamiento de elementos internos */
+}
+
+
 </style>

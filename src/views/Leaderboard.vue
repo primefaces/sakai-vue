@@ -38,7 +38,7 @@ const formatName = (name) => {
 </script>
 
 <template>
-    <div class="flex md:flex-row flex-column  md:mb-7">
+    <div class="flex md:flex-row flex-column  md:mb-2">
         <div class="flex flex-column align-items-start">
             <h1 class="text-black text-5xl font-bold text-center m-0 sm:text-left mb-3">Leaderboard</h1>
             <div class="bg-white border-round-3xl p-2 px-4 flex flex-row justify-content-center">
@@ -48,7 +48,7 @@ const formatName = (name) => {
         </div>
 
 
-        <div class="flex justify-content-center align-items-center	mt-6 md:mt-0 lg:flex-row gap-3 mb-6 md:mb-0  podium-container">
+        <div class="flex justify-content-center align-items-center	mt-6 md:mt-0 lg:flex-row gap-8 mb-6 md:mb-0  podium-container">
             <div class="podium-background"></div>
 
             <!-- Segundo lugar (Izquierda) -->
@@ -57,11 +57,11 @@ const formatName = (name) => {
                 <img v-if="users[1].photoURL"
                     :src="users[1].photoURL"
                     alt="Foto perfil"
-                    class="border-circle h-6rem w-6rem border-silver" />
+                    class="border-circle h-5rem w-5rem border-silver" />
                 <img v-else
                     src="/assets/lego.jpg"
                     alt="default profile"
-                    class="border-circle h-6rem w-6rem border-silver" />
+                    class="border-circle h-5rem w-5rem border-silver" />
                 <div class="circle-number border-silver bg-silver ">
                     2
                 </div>
@@ -99,11 +99,11 @@ const formatName = (name) => {
                 <img v-if="users[2].photoURL"
                     :src="users[2].photoURL"
                     alt="Foto perfil"
-                    class="border-circle h-6rem w-6rem border-bronze" />
+                    class="border-circle h-5rem w-5rem border-bronze" />
                 <img v-else
                     src="/assets/lego.jpg"
                     alt="default profile"
-                    class="border-circle h-6rem w-6rem border-bronze" />
+                    class="border-circle h-5rem w-5rem border-bronze" />
                 <div class="circle-number border-bronze bg-bronze">
                     3
                 </div>
@@ -207,14 +207,18 @@ const formatName = (name) => {
 }
 
 .podium-container {
+    padding-top: 38px;
+  padding-bottom: 38px;
+  
   position: relative; 
   margin-left: 0%;
 }
 
 @media (min-width: 768px) {
   .podium-container {
-    margin-left: 10%;
+    margin-left: 5%;
   }
 }
 
 </style>
+

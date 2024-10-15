@@ -85,7 +85,7 @@ const formatName = (name) => {
                     src="/assets/lego.jpg"
                     alt="default profile"
                     class="border-circle h-6rem w-6rem border-gold" />
-                <div class="circle-number border-gold bg-gold">
+                <div class="circle-numberCenter border-gold bg-gold">
                     1
                 </div>
                 </div>
@@ -172,8 +172,8 @@ const formatName = (name) => {
 }
 .circle-number {
   border-radius: 50%; 
-  width: 2.5rem; 
-  height: 2.5rem; 
+  width: 2rem; 
+  height: 2rem; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
@@ -182,18 +182,32 @@ const formatName = (name) => {
   color: black;
   position: absolute;
   bottom: -10px;
-  left: 24px; 
+  left: 20px; 
+}
+
+.circle-numberCenter {
+  border-radius: 50%; 
+  width: 2rem; 
+  height: 2rem; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 1rem; 
+  font-weight: bold; 
+  color: black;
+  position: absolute;
+  bottom: -10px;
+  left: 26px; 
 }
 
 .bg-silver {
   background-color: #C0C0C0; 
 }
 
-
-
 .bg-bronze {
   background-color: #CD7F32; 
 }
+
 .podium-background {
   background-image: url('/assets/Podium.svg'); 
   mix-blend-mode: screen; 
@@ -209,7 +223,6 @@ const formatName = (name) => {
 .podium-container {
     padding-top: 38px;
   padding-bottom: 38px;
-  
   position: relative; 
   margin-left: 0%;
 }

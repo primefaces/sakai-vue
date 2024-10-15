@@ -38,7 +38,7 @@ const formatName = (name) => {
 </script>
 
 <template>
-    <div class="flex md:flex-row flex-column  md:mb-3">
+    <div class="flex md:flex-row flex-column  md:mb-7">
         <div class="flex flex-column align-items-start">
             <h1 class="text-black text-5xl font-bold text-center m-0 sm:text-left mb-3">Leaderboard</h1>
             <div class="bg-white border-round-3xl p-2 px-4 flex flex-row justify-content-center">
@@ -48,9 +48,11 @@ const formatName = (name) => {
         </div>
 
 
-        <div class="flex justify-content-center align-items-end lg:flex-row gap-3 ml-6 mb-4 md:mb-0 mt-8 md:mt-5 ">
+        <div class="flex justify-content-center align-items-center	mt-6 md:mt-0 lg:flex-row gap-3 mb-6 md:mb-0  podium-container">
+            <div class="podium-background"></div>
+
             <!-- Segundo lugar (Izquierda) -->
-            <div v-if="users[1]" class="flex flex-column items-center">
+            <div v-if="users[1]" class="flex flex-column items-center" style="transform: translateY(20%);">
                 <div class="relative">
                 <img v-if="users[1].photoURL"
                     :src="users[1].photoURL"
@@ -69,7 +71,7 @@ const formatName = (name) => {
             </div>
 
             <!-- Primer lugar (Centro) -->
-            <div v-if="userGold" class="flex flex-column items-center relative" style="transform: translateY(-20%);">
+            <div v-if="userGold" class="flex flex-column items-center relative" >
                 <div class="relative">
                 <img src="/assets/crown.svg"
                     alt="crown icon"
@@ -92,7 +94,7 @@ const formatName = (name) => {
             </div>
 
             <!-- Tercer lugar (Derecha) -->
-            <div v-if="users[2]" class="flex flex-column items-center">
+            <div v-if="users[2]" class="flex flex-column items-center" style="transform: translateY(20%);">
                 <div class="relative">
                 <img v-if="users[2].photoURL"
                     :src="users[2].photoURL"
@@ -192,16 +194,27 @@ const formatName = (name) => {
 .bg-bronze {
   background-color: #CD7F32; 
 }
+.podium-background {
+  background-image: url('/assets/Podium.svg'); 
+  mix-blend-mode: screen; 
+  background-position: bottom center; 
+  background-repeat: no-repeat; 
+  background-size: contain; 
+  position: absolute;
+  inset: 0;
+  z-index: -1;
 
-.podium-container {
-  background-image: url('/assets/Leader.svg'); /* Ruta del SVG */
-    
-  background-position:bottom center; /* Centrar horizontalmente y alinear verticalmente hacia arriba */
-  padding-top: 38px;
-  padding-bottom: 38px;
-  padding-left: 26px;
-  position: relative; /* Asegúrate de que el contenedor sea relativo para manejar el posicionamiento de elementos internos */
 }
 
+.podium-container {
+  position: relative; 
+  margin-left: 0%;
+}
+
+@media (min-width: 768px) {
+  .podium-container {
+    margin-left: 10%;
+  }
+}
 
 </style>

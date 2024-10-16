@@ -12,7 +12,7 @@ const model = ref([
             { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
             { label: 'Maes activos', icon: 'pi pi-fw pi-globe', to: '/maesactivos' },
             { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
-            //{ label: 'Asesorías grupales', icon: 'pi pi-fw pi-users', to: '/asesoriasGrupales' },
+            { label: 'Asesorías grupales', icon: 'pi pi-fw pi-users', to: '/asesoriasGrupales' },
             // { label: 'MAE', icon: 'pi pi-fw pi-user', to: '/mae' },
             // { label: 'Dashboard (Template)', icon: 'pi pi-fw pi-home', to: '/dashboard' }
         ]
@@ -52,7 +52,7 @@ onMounted(async () => {
             items: [
                 { label: 'Mi perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
                 { label: 'Leaderboard', icon: 'pi pi-fw pi-star', to: '/leaderboard'},
-                { label: 'Mis asesorías', icon:'pi pi-fw pi-book', to: '/asesorias'},
+                { label: 'Mis asesorías', icon:'pi pi-fw pi-book', to: '/misasesorias'},
             ]
         })
     }
@@ -67,8 +67,6 @@ onMounted(async () => {
             ]
         })
     }
-
-    
 
     // model.value.push({
     //     label: 'Maeteca',

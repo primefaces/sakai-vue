@@ -70,8 +70,8 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/asesorias',
-                    name: 'asesorias',
+                    path: '/misasesorias',
+                    name: 'misasesorias',
                     component: () => import('@/views/Asesorias.vue'),
                     meta: {
                         roles: ['admin', 'coordi', 'mae','tec']

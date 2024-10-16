@@ -1,6 +1,101 @@
+<script setup>
+    import { onMounted, ref } from 'vue';
+    import { getAnnouncementsGrupales } from '@/firebase/db/annoucement'; 
+    import { getSubjectColor } from '@/utils/HorarioUtils';
+    import {
+         formatDate,
+         formatTime
+    } from '@/utils/AnunciosUtils';
+
+
+    const asesorias= ref([]);
+    onMounted(async () => {
+
+        asesorias.value = await getAnnouncementsGrupales();
+    });
+
+
+
+</script>
 <template>
-   
-    <div class="flex align-content-center h-full" style="min-height: 300px">
-        <h1 class="flex align-items-center justify-content-center w-full">Asesorías Grupales: ¡En construcción! ✌</h1>
+    <div>
+        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Asesorías Grupales</h1>
+    </div>
+
+    <div class="flex flex-wrap gap-4">
+        <div 
+            v-for="asesoria in asesorias" 
+            :key="asesoria.id" 
+            class="flex flex-col md:flex-row bg-white border-round-3xl w-full md:w-5 boder-gray card-container"
+            style="height: 190px;"
+           
+        >   
+            <div 
+                class="color-bar" 
+                :class="getSubjectColor(asesoria.subject.area)"
+            ></div>
+
+            <div class="px-5  mt-4 w-full">
+                <div style="height: 50px">
+                    <p class="font-bold text-lg  text-center">
+                        {{ asesoria.subject.name }}
+                    </p>
+                </div>
+
+                <div class="flex align-items-center ">
+                    <img src="/assets/ubicacion.svg" class="mr-2" alt="ubicacion icon" style="width: 1.4rem; height: 1.4rem;" />
+                    <p>{{ asesoria.location }}</p>
+                </div>
+
+                <div class="flex align-items-center mt-2">
+                    <img src="/assets/calendar.svg" class="mr-2" alt="calendar icon" style="width: 1.5rem; height: 1.5rem;" />
+                    <p class="text-md">
+                        {{ formatDate(asesoria.dateTime) }}, 
+                        {{ formatTime(asesoria.startTime, false) }} - 
+                        {{ formatTime(asesoria.endTime, true) }}
+                    </p>
+                </div>
+                
+                <div class="flex justify-content-end mt-2">
+                <Button 
+                    label="Pre-registro" 
+                    class="custom-button font-bold text-black mt-2 text-md btn border-round-xl flex align-items-center" 
+                    @click="handleSubmit">
+                    <span>Pre-registro</span>
+                    <i class="pi pi-arrow-right text-md ml-2 font-bold text-white"></i>
+                </Button>
+                </div>
+
+
+            </div>
+        </div>
     </div>
 </template>
+
+
+<style>
+
+.card-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.color-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px; 
+    border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.boder-gray{
+    border: 2px solid #e0e0e0;
+}
+
+.btn {
+    color: white; 
+    background: linear-gradient(to right, #4466A7, #51A3AC);
+}
+
+</style>

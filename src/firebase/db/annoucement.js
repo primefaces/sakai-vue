@@ -4,6 +4,7 @@ import {
     collection,
     query,
     getDocs,
+    where,
 } from 'firebase/firestore';
 import { addAnnoucement } from "../img/users";
 
@@ -19,16 +20,15 @@ export async function saveAnnouncement(announcementData, selectedFile) {
     try {
         let imageUrl = '';
 
-        // Si hay un archivo seleccionado, subirlo a Firebase Storage
         if (selectedFile) {
             const filePath = `announcements/${announcementData.type}/${selectedFile.name}`;
             imageUrl = await addAnnoucement(selectedFile, filePath);
         }
 
-        // Agregar el anuncio a la colección "announcements" en Firestore
         await addDoc(collection(firestoreDB, 'announcements'), {
             ...announcementData,
             imageUrl, 
+            preregister: {},
             createdAt: new Date(), 
             visible: true
         });
@@ -60,6 +60,47 @@ export async function getAnnouncements() {
             }))
             .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt )); 
 
+
+        return announcements;
+    } catch (error) {
+        console.error('Error fetching announcements:', error);
+        throw error;
+    }
+}
+
+/**
+ * Obtiene los anuncios del tipo "Asesoría" con dateTime válido.
+ *
+ * @returns {Promise<Array>} - Lista de anuncios filtrados y ordenados.
+ */
+export async function getAnnouncementsGrupales() {
+    try {
+        const announcementsCollection = collection(firestoreDB, 'announcements');
+
+        // Filtra por tipo "Asesoría" y visible
+        const q = query(
+            announcementsCollection,
+            where('type', '==', 'Asesoría'),
+            where('visible', '==', true)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        // Definimos la fecha actual (ahora)
+        const now = new Date();
+        
+        // Mapeamos y filtramos los anuncios
+        const announcements = querySnapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                dateTime: doc.data().dateTime.toDate(), // Convertimos el timestamp a Date
+            }))
+            .filter(ann => ann.dateTime >= now) // Filtra los anuncios futuros
+            .sort((a, b) => a.createdAt - b.createdAt); // Ordena por createdAt
+
+        console.log('Fecha actual:', now);
+        console.log('Anuncios:', announcements);
 
         return announcements;
     } catch (error) {

@@ -39,8 +39,8 @@ const router = createRouter({
                     component: () => import('@/views/Horarios.vue')
                 },
                 {
-                    path: '/asesoriasgrupales',
-                    name: 'asesoriasgrupales',
+                    path: '/asesoriasGrupales',
+                    name: 'asesoriasGrupales',
                     component: () => import('@/views/AsesoriasGrupales.vue')
                 },
                 {

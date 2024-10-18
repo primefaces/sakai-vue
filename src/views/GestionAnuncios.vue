@@ -117,7 +117,7 @@ const saveDateTime = () => {
 
 const handleSubmit = async () => {
     if (selectedType.value === 'Asesoría') {
-        if (!subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !locationInput.value || !selectedFile.value) {
+        if (!subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !selectedFile.value) {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
             return;
         }
@@ -129,7 +129,7 @@ const handleSubmit = async () => {
                 dateTime: dateTime.value,
                 startTime: startTime.value,
                 endTime: endTime.value,
-                location: locationInput.value
+                location: locationInput.value || 'Indefinido' 
             };
 
             await saveAnnouncement(announcementData, selectedFile.value);
@@ -411,7 +411,7 @@ const closePreviewDialog = () => {
             :closable="true"
             :dismissable-mask="true"
         >
-        <div class="flex   flex-wrap border-round-3xl text-white  h-16rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
+        <div class="flex   flex-wrap border-round-3xl text-white  h-18rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
           <div class="relative w-full md:w-4 border-round-left-3xl">
             <span class="overlay">
               <Button
@@ -419,7 +419,7 @@ const closePreviewDialog = () => {
                 class="text-xl border-none btn-left hidden block  border-round-top-left-3xl"
               />
               <img
-                class="w-full h-16rem clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow"
+                class="w-full h-18rem clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow"
                 :src="previewUrl || 'https://i.imgur.com/C6psSY1.png'"
               />
             </span>

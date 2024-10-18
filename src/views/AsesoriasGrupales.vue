@@ -1,20 +1,35 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-import { getAnnouncementsGrupales } from '@/firebase/db/annoucement'; 
+import { getAnnouncementsGrupales, addUserToPreregsiter  } from '@/firebase/db/annoucement'; 
 import { getSubjects } from '../firebase/db/subjects';
 import { getSubjectColor } from '@/utils/HorarioUtils';
 import { formatDate, formatTime } from '@/utils/AnunciosUtils';
+import { getCurrentUser } from '../firebase/db/users';
+import { useToast } from 'primevue/usetoast';
+import { useRoute } from 'vue-router'; 
 
 
 const asesorias = ref([]);
 const subjects = ref([]);
+const userInfo = ref(null);
 const subjectsFilter = ref(null); 
-const selectedAsesoria = ref(null); // Para almacenar la asesoría seleccionada
-const showDialog = ref(false); // Control del modal
+const selectedAsesoria = ref(null); 
+const showDialog = ref(false); 
+const toast = useToast();
 
 onMounted(async () => {
+    const route = useRoute(); 
     subjects.value = await getSubjects();
     asesorias.value = await getAnnouncementsGrupales();
+    userInfo.value = await getCurrentUser();
+
+    const asesoríaId = route.query.asesoriaId;
+    if (asesoríaId) {
+        const selectedAsesoria = asesorias.value.find(asesoria => asesoria.id === asesoríaId);
+        if (selectedAsesoria) {
+            handlePreRegistro(selectedAsesoria); 
+        }
+    }
 });
 
 const filteredAsesorias = computed(() => {
@@ -39,12 +54,47 @@ const handlePreRegistro = (asesoria) => {
 const closeDialog = () => {
     showDialog.value = false;
 };
+
+const confirmPreRegistro = async () => {
+    try {
+        const announcementId = selectedAsesoria.value.id;
+
+        await addUserToPreregsiter(announcementId, userInfo.value);
+
+        toast.add({ 
+            severity: 'success', 
+            summary: 'Éxito', 
+            detail: 'Se te ha pre-registrado exitosamente.', 
+            life: 3000 
+        });
+
+        closeDialog();
+    } catch (error) {
+        if (error.message === 'Usuario ya registrado') {
+            toast.add({  
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'Ya te encuentras pre-registrado.', 
+                life: 3000 
+            });
+        } else {
+            console.error('Error al registrar usuario:', error);
+            toast.add({  
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'Ocurrió un problema al pre-registrarte.', 
+                life: 3000 
+            });
+        }
+    }
+};
+
 </script>
 
 <template>
     <div class="flex flex-column md:flex-row md:items-center justify-content-between mb-3">
         <div>
-            <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Asesorías Grupales</h1>
+            <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Asesorías grupales</h1>
         </div>
         <span class="w-full md:w-5 mt-2 justify-content-end">
             <Dropdown v-model="subjectsFilter" 
@@ -107,30 +157,23 @@ const closeDialog = () => {
         v-model:visible="showDialog" 
         :modal="true" 
         :closable="false" 
-        :header="'¿Quieres hacer el pre-registro?'" 
-        class="custom-dialog w-4"
-        
+        class="custom-dialog w-10 md:w-6 lg:w-4"
     >
         <template #header>
-            <h2 class="text-center">¿Deseas realizar el pre-registro para esta asesoría grupal?</h2>
+            <h2 class="text-center text-2xl ">¿Deseas realizar el pre-registro para esta asesoría grupal?</h2>
         </template>
 
-        <div class="dialog-content  border-round-3xl  boder-gray  bg-white">
-            <!-- Barra de color -->
+        <div class="dialog-content border-round-3xl boder-gray bg-white">
             <div class="color-bar" :class="getSubjectColor(selectedAsesoria?.subject.area)"></div>
 
-            <div class="px-5 mt-4 w-full ">
-                <div style="height: 50px">
-                    <p class="font-bold text-lg text-center">{{ selectedAsesoria?.subject.name }}</p>
-                </div>
+            <div class="px-5 mt-4 w-full">
+                <p class="font-bold text-lg text-center">{{ selectedAsesoria?.subject.name }}</p>
                 <div class="flex align-items-center">
-                    <img src="/assets/ubicacion.svg" class="mr-2" alt="ubicacion icon" 
-                        style="width: 1.4rem; height: 1.4rem;" />
+                    <img src="/assets/ubicacion.svg" class="mr-2" alt="ubicacion icon" style="width: 1.4rem; height: 1.4rem;" />
                     <p>{{ selectedAsesoria?.location }}</p>
                 </div>
                 <div class="flex align-items-center mt-2 mb-4">
-                    <img src="/assets/calendar.svg" class="mr-2" alt="calendar icon" 
-                        style="width: 1.5rem; height: 1.5rem;" />
+                    <img src="/assets/calendar.svg" class="mr-2" alt="calendar icon" style="width: 1.5rem; height: 1.5rem;" />
                     <p class="text-md">
                         {{ formatDate(selectedAsesoria?.dateTime) }}, 
                         {{ formatTime(selectedAsesoria?.startTime, false) }} - 
@@ -141,15 +184,14 @@ const closeDialog = () => {
         </div>
 
         <template #footer>
-            <div class="flex justify-content-between mt-4">
-                <Button label="Confirmar" class="btn" @click="closeDialog" />
-                <Button label="Cancelar" class="p-button-text" @click="closeDialog" />
+            <div class="flex justify-content-around mb-3">
+                <Button label="Confirmar" class="btn " @click="confirmPreRegistro" />
+                <Button label="Cancelar" class="p-button-text " @click="closeDialog" />
             </div>
         </template>
     </Dialog>
-
-
 </template>
+
 
 <style>
 .card-container {
@@ -179,12 +221,6 @@ const closeDialog = () => {
     background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
 }
 
-.custom-dialog .p-dialog {
-    background-color: #EFF2F7; /* Fondo blanco translúcido */
-    box-shadow: none;
-    border-radius: 1rem;
-    overflow: hidden;
-}
 
 .dialog-content .color-bar {
     position: relative;
@@ -192,6 +228,21 @@ const closeDialog = () => {
     left: 0;
     width: 100%;
     height: 10px;
-    border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.p-dialog .p-dialog-footer {
+    background:  #EFF2F7 ;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.p-dialog .p-dialog-content {
+    background:  #EFF2F7 ;
+}
+
+.p-dialog .p-dialog-header {
+    background:  #EFF2F7 ;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
 }
 </style>

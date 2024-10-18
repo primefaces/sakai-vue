@@ -5,24 +5,24 @@ import { getSubjects } from '../firebase/db/subjects';
 import { getSubjectColor } from '@/utils/HorarioUtils';
 import { formatDate, formatTime } from '@/utils/AnunciosUtils';
 
+
 const asesorias = ref([]);
 const subjects = ref([]);
-const subjectsFilter = ref(null);  // Filtro de materias
+const subjectsFilter = ref(null); 
+const selectedAsesoria = ref(null); // Para almacenar la asesoría seleccionada
+const showDialog = ref(false); // Control del modal
 
 onMounted(async () => {
     subjects.value = await getSubjects();
     asesorias.value = await getAnnouncementsGrupales();
 });
 
-// Filtrar asesorías según la materia seleccionada
 const filteredAsesorias = computed(() => {
     const selectedSubject = subjectsFilter.value;
-    
     if (selectedSubject === null) {
-        return asesorias.value;  // Mostrar todas si no hay filtro
+        return asesorias.value;
     }
-
-    return asesorias.value.filter(asesoria => 
+    return asesorias.value.filter(asesoria =>
         asesoria.subject.id === selectedSubject.id
     );
 });
@@ -30,18 +30,31 @@ const filteredAsesorias = computed(() => {
 const clearFilters = () => {
     subjectsFilter.value = null;
 };
+
+const handlePreRegistro = (asesoria) => {
+    selectedAsesoria.value = asesoria;
+    showDialog.value = true;
+};
+
+const closeDialog = () => {
+    showDialog.value = false;
+};
 </script>
 
 <template>
-    <div class="flex flex-column md:flex-row md:items-center justify-content-between mb-3"> 
+    <div class="flex flex-column md:flex-row md:items-center justify-content-between mb-3">
         <div>
             <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Asesorías Grupales</h1>
         </div>
-        <span class="w-full md:w-5 mt-2 justify-content-end"> 
+        <span class="w-full md:w-5 mt-2 justify-content-end">
             <Dropdown v-model="subjectsFilter" 
-            :options="subjects" editable optionLabel="name" 
-            placeholder="Materia" checkmark :highlightOnSelect="false"  
-            class="w-full p-0 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 transition duration-300 "  />
+                      :options="subjects" 
+                      editable 
+                      optionLabel="name" 
+                      placeholder="Materia" 
+                      checkmark 
+                      :highlightOnSelect="false"
+                      class="w-full p-0 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 transition duration-300" />
         </span>
     </div>
 
@@ -58,29 +71,18 @@ const clearFilters = () => {
     </div>
 
     <div class="flex flex-wrap gap-4">
-        <div 
-            v-for="asesoria in filteredAsesorias" 
-            :key="asesoria.id" 
-            class="flex flex-col md:flex-row bg-white border-round-3xl w-full md:w-5 boder-gray card-container"
-            style="height: 190px;"
-        >   
-            <div 
-                class="color-bar" 
-                :class="getSubjectColor(asesoria.subject.area)"
-            ></div>
-
+        <div v-for="asesoria in filteredAsesorias" :key="asesoria.id" 
+             class="flex flex-col md:flex-row bg-white border-round-3xl w-full md:w-5 boder-gray card-container"
+             style="height: 190px;">
+            <div class="color-bar" :class="getSubjectColor(asesoria.subject.area)"></div>
             <div class="px-5 mt-4 w-full">
                 <div style="height: 50px">
-                    <p class="font-bold text-lg text-center">
-                        {{ asesoria.subject.name }}
-                    </p>
+                    <p class="font-bold text-lg text-center">{{ asesoria.subject.name }}</p>
                 </div>
-
                 <div class="flex align-items-center">
                     <img src="/assets/ubicacion.svg" class="mr-2" alt="ubicacion icon" style="width: 1.4rem; height: 1.4rem;" />
                     <p>{{ asesoria.location }}</p>
                 </div>
-
                 <div class="flex align-items-center mt-2">
                     <img src="/assets/calendar.svg" class="mr-2" alt="calendar icon" style="width: 1.5rem; height: 1.5rem;" />
                     <p class="text-md">
@@ -89,13 +91,10 @@ const clearFilters = () => {
                         {{ formatTime(asesoria.endTime, true) }}
                     </p>
                 </div>
-
                 <div class="flex justify-content-end mt-2">
-                    <Button 
-                        label="Pre-registro" 
-                        class="custom-button font-bold text-black mt-2 text-md btn border-round-xl flex align-items-center" 
-                        @click="handleSubmit"
-                    >
+                    <Button label="Pre-registro" 
+                            class="custom-button font-bold text-black mt-2 text-md btn border-round-xl flex align-items-center" 
+                            @click="handlePreRegistro(asesoria)">
                         <span>Pre-registro</span>
                         <i class="pi pi-arrow-right text-md ml-2 font-bold text-white"></i>
                     </Button>
@@ -103,6 +102,53 @@ const clearFilters = () => {
             </div>
         </div>
     </div>
+
+    <Dialog 
+        v-model:visible="showDialog" 
+        :modal="true" 
+        :closable="false" 
+        :header="'¿Quieres hacer el pre-registro?'" 
+        class="custom-dialog w-4"
+        
+    >
+        <template #header>
+            <h2 class="text-center">¿Deseas realizar el pre-registro para esta asesoría grupal?</h2>
+        </template>
+
+        <div class="dialog-content  border-round-3xl  boder-gray  bg-white">
+            <!-- Barra de color -->
+            <div class="color-bar" :class="getSubjectColor(selectedAsesoria?.subject.area)"></div>
+
+            <div class="px-5 mt-4 w-full ">
+                <div style="height: 50px">
+                    <p class="font-bold text-lg text-center">{{ selectedAsesoria?.subject.name }}</p>
+                </div>
+                <div class="flex align-items-center">
+                    <img src="/assets/ubicacion.svg" class="mr-2" alt="ubicacion icon" 
+                        style="width: 1.4rem; height: 1.4rem;" />
+                    <p>{{ selectedAsesoria?.location }}</p>
+                </div>
+                <div class="flex align-items-center mt-2 mb-4">
+                    <img src="/assets/calendar.svg" class="mr-2" alt="calendar icon" 
+                        style="width: 1.5rem; height: 1.5rem;" />
+                    <p class="text-md">
+                        {{ formatDate(selectedAsesoria?.dateTime) }}, 
+                        {{ formatTime(selectedAsesoria?.startTime, false) }} - 
+                        {{ formatTime(selectedAsesoria?.endTime, true) }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <template #footer>
+            <div class="flex justify-content-between mt-4">
+                <Button label="Confirmar" class="btn" @click="closeDialog" />
+                <Button label="Cancelar" class="p-button-text" @click="closeDialog" />
+            </div>
+        </template>
+    </Dialog>
+
+
 </template>
 
 <style>
@@ -116,7 +162,7 @@ const clearFilters = () => {
     top: 0;
     left: 0;
     width: 100%;
-    height: 10px; 
+    height: 10px;
     border-radius: 1.5rem 1.5rem 0 0;
 }
 
@@ -125,7 +171,27 @@ const clearFilters = () => {
 }
 
 .btn {
-    color: white; 
+    color: white;
     background: linear-gradient(to right, #4466A7, #51A3AC);
+}
+
+.custom-dialog .p-dialog-mask {
+    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+}
+
+.custom-dialog .p-dialog {
+    background-color: #EFF2F7; /* Fondo blanco translúcido */
+    box-shadow: none;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.dialog-content .color-bar {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    border-radius: 1.5rem 1.5rem 0 0;
 }
 </style>

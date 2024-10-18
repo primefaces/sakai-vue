@@ -42,11 +42,10 @@ export async function getAsesoriasCountForUserInCurrentSemester(userId) {
             endOfSemester = new Date(currentYear, 11, 31, 23, 59, 59, 999); // December 31st, end of day
         }
 
-        // Convert to Firestore Timestamps
+
         const startTimestamp = Timestamp.fromDate(startOfSemester);
         const endTimestamp = Timestamp.fromDate(endOfSemester);
 
-        // Construct the query
         const requestsRef = collection(firestoreDB, "asesorias");
         const q = query(
             requestsRef,
@@ -54,13 +53,8 @@ export async function getAsesoriasCountForUserInCurrentSemester(userId) {
             where("date", ">=", startTimestamp),
             where("date", "<=", endTimestamp)
         );
-
-        // Execute the query
         const querySnapshot = await getDocs(q);
 
-        console.log(querySnapshot)
-
-        // Return the number of documents
         return querySnapshot.size;
     } catch (error) {
         console.error("Error fetching request count: ", error);

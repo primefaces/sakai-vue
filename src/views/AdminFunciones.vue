@@ -16,8 +16,6 @@ import {
 
 const toast = useToast();
 const confirm = useConfirm();
-
-
 const displayUploadDialog = ref(false);
 const displayAddUserDialog = ref(false);
 const displayUpdatePointsDialog = ref(false);

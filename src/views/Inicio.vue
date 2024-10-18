@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router'; // Importa el router
+import { useRouter } from 'vue-router'; 
 import { getCurrentUser, getUser, startActiveSession, stopActiveSession } from '../firebase/db/users';
 import { useToast } from 'primevue/usetoast';
 import { getSubjects } from '../firebase/db/subjects';
@@ -108,6 +108,24 @@ const saveAsesoria = async () => {
   }
 };
 
+const goToAsesoria = async (asesoria) => {
+  if (!asesoria || !asesoria.id) return; 
+
+  try {
+    toast.add({ severity: 'info', summary: 'Navegando', detail: 'Dirigiendo a la asesoría grupales ', life: 3000 });
+    
+    await router.push({ 
+      name: 'asesoriasGrupales', 
+      query: { asesoriaId: asesoria.id }
+    });
+    
+    toast.add({ severity: 'success', summary: 'Navegación exitosa', detail: 'Has sido dirigido a la asesoría grupales', life: 3000 });
+  } catch (error) {
+    console.log(error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar navegar a la asesoría' });
+  }
+};
+
 </script>
 
 
@@ -196,29 +214,32 @@ const saveAsesoria = async () => {
           </div>
 
           <div class="flex-1 text-left">
-            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-4">Asesorías grupales</h2>
-            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
+            <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-3xl font-bold text-center m-auto mb-2">Asesorías grupales</h2>
+            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-xl mb-1" >
               Materia: {{ currentAnuncio.subject.name }}
             </p>
-            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
+            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-xl mb-1">
               Fecha: {{ formatDate(currentAnuncio.dateTime) }}, {{ formatTime(currentAnuncio.startTime, false) }} - {{ formatTime(currentAnuncio.endTime, true) }}
             </p>
-            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
+            <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-xl mb-1">
               Ubicación: {{ currentAnuncio.location }}
             </p>
 
-            <h2 v-if="currentAnuncio.type !== 'Asesoría' " class="text-white text-4xl font-bold m-auto text-center mb-4">
+            <h2 v-if="currentAnuncio.type !== 'Asesoría' " class="text-white text-3xl font-bold m-auto text-center mb-2">
               {{ currentAnuncio.title }}
             </h2>
-            <p v-if="currentAnuncio.type !== 'Asesoría'" class="font-medium ml-5 text-2xl">
+            <p v-if="currentAnuncio.type !== 'Asesoría'" class="font-medium ml-5 text-xl">
               {{ currentAnuncio.description }}
             </p>
 
-           <!-- <p v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
+            <p v-if="currentAnuncio.type === 'Asesoría'" 
+              class="text-white text-2xl font-bold ml-5 text-right mr-5 cursor-pointer"
+              @click="goToAsesoria(currentAnuncio)">
               Pre-registro <i class="pi pi-arrow-right text-3xl font-bold"></i>
-            </p> -->
+            </p>
+            
 
-            <!-- <p v-if="currentAnuncio.type === 'Especial'" class="text-white text-2xl font-bold ml-5 text-right mr-5">
+            <!-- <p v-if="currentAnuncio.type === 'Especial'" class="text-white text-2xl font-bold ml-5 text-right mr-5 ">
               Saber más <i class="pi pi-arrow-right text-3xl font-bold"></i>
             </p>  -->
           </div>
@@ -279,6 +300,9 @@ const saveAsesoria = async () => {
   .clip-diagonal {
     clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
     
+  }
+  .botones{
+    margin-top: auto;
   }
 }
 </style>

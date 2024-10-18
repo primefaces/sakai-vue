@@ -39,7 +39,7 @@ const formatDate = (timestamp) => {
             v-for="asesoria in asesorias" 
             :key="asesoria.id" 
             class="flex flex-col md:flex-row bg-white border-round-3xl w-full md:w-5 boder-gray"
-            style="height: 165px;"
+            style="height: 185px;"
         >
             <div class="flex border-round-left-3xl "  :class="getSubjectColor(asesoria.subject.area)"  style="width: 1rem; height: 100%;"></div>
             

@@ -6,6 +6,8 @@ import {
     where,
     getDocs,
     Timestamp,
+    doc,
+    updateDoc
 } from 'firebase/firestore';
 import { 
     updatePoints
@@ -42,25 +44,28 @@ export async function getAsesoriasCountForUserInCurrentSemester(userId) {
             endOfSemester = new Date(currentYear, 11, 31, 23, 59, 59, 999); // December 31st, end of day
         }
 
-
         const startTimestamp = Timestamp.fromDate(startOfSemester);
         const endTimestamp = Timestamp.fromDate(endOfSemester);
-
+        const valueAsesoria = false;
         const requestsRef = collection(firestoreDB, "asesorias");
-        const q = query(
-            requestsRef,
-            where(`peerInfo.uid`, "==", userId),
-            where("date", ">=", startTimestamp),
-            where("date", "<=", endTimestamp)
-        );
+
+        // Realiza la consulta solo por userId
+        const q = query(requestsRef, where("peerInfo.uid", "==", userId));
         const querySnapshot = await getDocs(q);
 
-        return querySnapshot.size;
+        // Filtrar los resultados en el cliente
+        const filteredCount = querySnapshot.docs.filter(doc => {
+            const data = doc.data();
+            return data.date >= startTimestamp && data.date <= endTimestamp && data.duplicate === valueAsesoria;
+        }).length;
+
+        return filteredCount;
     } catch (error) {
         console.error("Error fetching request count: ", error);
         return 0;
     }
 }
+
 
 
 export async function getAsesorias(startDate = null, endDate = null) {
@@ -121,42 +126,64 @@ export async function getAsesoriasByUid(uid) {
     }
 }
 
-// Función solo para actualizar de todas las asesorías si es necesario
 export async function updateAllExperienceAsesorias() {
-    const startDate = new Date('2024-08-05'); 
-    const today = new Date(); 
+    const startDate = new Date('2024-08-05');
+    const today = new Date();
     const asesorias = await getAsesorias(startDate, today);
-    const processed = new Set(); 
+    const processed = new Set(); // Conjunto para evitar procesar la misma asesoría más de una vez
 
     for (const advisory of asesorias) {
         const { peerInfo, userInfo, date, subject } = advisory;
+        const advisoryDate = date.toDate();
 
-        // Convertir date de Firestore Timestamp a Date
-        const advisoryDate = date.toDate()
+        // Generar clave única para evitar reprocesar la misma asesoría
+        const key = `${peerInfo.uid}-${userInfo.uid}-${subject.id}-${advisoryDate.getTime()}`;
+        if (processed.has(key)) continue; // Si ya se procesó, omitimos esta asesoría
+        processed.add(key); // Marcar como procesada
 
-        // Comprueba si ya hemos procesado esta combinación
-        const key = `${peerInfo.uid}-${userInfo.uid}-${subject.name}`;
-        if (!processed.has(key)) {
-            // Encuentra otras asesorías con los mismos peerInfo.uid, userInfo.uid, y subject.name
-            const similarAdvisories = asesorias.filter(ad => {
-                const adDate = ad.date.toDate(); 
-                return ad.peerInfo.uid === peerInfo.uid &&
-                    ad.userInfo.uid === userInfo.uid &&
-                    ad.subject.name === subject.name &&
-                    Math.abs(adDate.getTime() - advisoryDate.getTime()) <= 2 * 60 * 60 * 1000; // 2 horas en milisegundos
-            });
+        // Encontrar asesorías similares en un rango de 2 horas
+        const similarAdvisories = asesorias.filter(ad => {
+            const adDate = ad.date.toDate();
+            return (
+                ad.peerInfo.uid === peerInfo.uid &&
+                ad.userInfo.uid === userInfo.uid &&
+                ad.subject.id === subject.id &&
+                Math.abs(adDate.getTime() - advisoryDate.getTime()) <= 2 * 60 * 60 * 1000 // 2 horas en ms
+            );
+        });
 
-            // Si hay otras asesorías similares, resta 150 puntos
-            if (similarAdvisories.length > 1) {
-                await updatePoints(peerInfo.uid, -150);
-            } else {
-                // Si no hay coincidencias dentro de las 2 horas, añade 50 puntos
-                await updatePoints(peerInfo.uid, 50);
+        // Iteramos sobre las asesorías similares y actualizamos el campo 'duplicate'
+        for (let i = 0; i < similarAdvisories.length; i++) {
+            const ad = similarAdvisories[i];
+            const isDuplicate = i > 0; // La primera no es duplicada, las demás sí
+
+            try {
+                await updateAdvisoryDuplicateField(ad.id, isDuplicate);
+                console.log(
+                    ad, 
+                    isDuplicate 
+                        ? "Marcada como duplicada" 
+                        : "Primera ocurrencia - No duplicada"
+                );
+            } catch (error) {
+                console.error(`Error al actualizar la asesoría con ID: ${ad.id}`, error);
             }
-            processed.add(key);
         }
     }
 }
+
+// Función auxiliar para actualizar el campo 'duplicate' en una asesoría
+async function updateAdvisoryDuplicateField(advisoryId, isDuplicate) {
+    try {
+        const advisoryRef = doc(firestoreDB, "asesorias", advisoryId);
+        await updateDoc(advisoryRef, { duplicate: isDuplicate });
+    } catch (error) {
+        console.error(`Error actualizando la asesoría ${advisoryId}:`, error);
+        throw error; // Re-lanzar el error para ser capturado arriba
+    }
+}
+
+
 
 // Función para actualizar puntos basados en asesorías similares
 export async function updateExperienceAsesorias(peerUid, userUid, subjectId, advisoryDate) {
@@ -197,7 +224,9 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
         // console.log(similarAdvisories)
         if (similarAdvisories.length > 1) {
             await updatePoints(peerUid, -150);
+            await updateAdvisoryDuplicateField(asesorias.id, true );
         } else {
+            await updateAdvisoryDuplicateField(asesorias.id, false );
             if(subjectId === "MAE"){
                 await updatePoints(peerUid, 10); 
             }else{

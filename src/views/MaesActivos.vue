@@ -114,7 +114,7 @@ const clearFilters = () => {
                                 <span class="font-bold text-lg text-black-alpha-90 truncate mb-2" style="max-width: 65%; max-height: 38%;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ mae.name }}</span>
                                 <div class="font-bold flex align-items-center justify-content-center text-lg pr-3 flex-wrap border-round-3xl align-content-center text-white" 
                                      :style="{ backgroundColor: mae.role === 'admin' ? '#8358CA' : '#58AFCA' }" 
-                                     style="max-width: 65%; max-height: 38%; overflow: hidden;">
+                                     style="max-width: 75%; max-height: 38%; overflow: hidden;">
                                     <span class="flex flex-row pt-3 pl-3">
                                         <i class="pi pi-star-fill text-lg pt-1 pr-2" v-if="mae.role === 'admin'" style="color: #FFE073;"></i>
                                         <p class="uppercase pr-2" v-else >{{ mae.career }}</p>
@@ -164,7 +164,7 @@ const clearFilters = () => {
                                 <span class="font-bold text-lg text-black-alpha-90 truncate mb-2" style="max-width: 65%; max-height: 38%;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ mae.name }}</span>
                                 <div class="font-bold flex align-items-center justify-content-center text-lg pr-3 flex-wrap border-round-3xl align-content-center text-white " 
                                     :style="{ backgroundColor: mae.role === 'admin' ? '#8358CA' : '#58AFCA' }" 
-                                     style="max-width: 65%; max-height: 38%; overflow: hidden;"
+                                     style="max-width: 75%; max-height: 38%; overflow: hidden;"
                                      >
                                     <span class="flex flex-row pt-3 pl-3">
                                         <i class="pi pi-star-fill text-lg pt-1 pr-2" v-if="mae.role === 'admin'" style="color: #FFE073;"></i>

@@ -65,7 +65,6 @@ const openUploadDialog = () => {
     displayUploadDialog.value = true;
 };
 
-// Función para manejar la carga del archivo o la actualización de roles sin archivo
 const handleFileUpload = () => {
     confirm.require({
         message: '¿Estás seguro de que deseas cambiar el rol a "ex mae" para los usuarios elegibles usando el archivo Excel?',
@@ -97,12 +96,10 @@ const handleFileUpload = () => {
     });
 };
 
-// Manejar el cambio en el input de archivo
 const onFileChange = (event) => {
     selectedFile.value = event.target.files[0];
 };
 
-// Función para cerrar el diálogo
 const closeDialog = () => {
     toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
     displayUploadDialog.value = false;
@@ -110,12 +107,10 @@ const closeDialog = () => {
     displayUpdatePointsDialog.value = false;
 };
 
-// Función para abrir el diálogo de agregar mae
 const openAddUserDialog = () => {
     displayAddUserDialog.value = true;
 };
 
-// Función para manejar la adición de mae
 const handleAddUser = async () => {
     if (!newMatricula.value || !newRole.value || !newStatus.value) {
         toast.add({ severity: 'warn', summary: 'Advertencia', detail: 'Todos los campos son obligatorios.', life: 3000 });
@@ -156,7 +151,7 @@ const handleAddUser = async () => {
 
 const confirmSaveExperience = () => {
     confirm.require({
-        message: '¿Estás seguro de que deseas guardar la experiencia  de horario y materiaspara los usuarios?',
+        message: '¿Estás seguro de que deseas guardar la experiencia  de horario y materias para los usuarios?',
         header: 'Confirmación de guardar experiencia',
         icon: 'pi pi-exclamation-circle',
         acceptLabel: 'Sí, guardar',
@@ -199,11 +194,11 @@ const handleUpdatePoints = async () => {
         acceptClass: 'p-button-success',
         accept: async () => {
             try {
-                await updatePoints(userId.value, parseInt(newPoints.value)); // Asegúrate de convertir a entero
+                await updatePoints(userId.value, parseInt(newPoints.value)); 
                 toast.add({ severity: 'success', summary: 'Éxito', detail: 'Puntos actualizados exitosamente.', life: 3000 });
-                displayUpdatePointsDialog.value = false; // Cerrar el diálogo
+                displayUpdatePointsDialog.value = false; 
                 userId.value = '';
-                newPoints.value = null; // Restablecer a 0
+                newPoints.value = null; 
             } catch (error) {
                 console.error("Error al actualizar puntos:", error);
                 toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar actualizar los puntos.', life: 3000 });
@@ -211,7 +206,7 @@ const handleUpdatePoints = async () => {
         },
         reject: () => {
             toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
-            displayUpdatePointsDialog.value = false; // Cerrar el diálogo
+            displayUpdatePointsDialog.value = false; 
         }
     });
 };

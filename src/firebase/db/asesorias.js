@@ -6,7 +6,6 @@ import {
     where,
     getDocs,
     Timestamp,
-    doc,
     updateDoc
 } from 'firebase/firestore';
 import { 
@@ -173,13 +172,26 @@ export async function updateAllExperienceAsesorias() {
 }
 
 // Función auxiliar para actualizar el campo 'duplicate' en una asesoría
-async function updateAdvisoryDuplicateField(advisoryId, isDuplicate) {
+async function updateAdvisoryDuplicateField(advisoryDate, isDuplicate) {
     try {
-        const advisoryRef = doc(firestoreDB, "asesorias", advisoryId);
-        await updateDoc(advisoryRef, { duplicate: isDuplicate });
+        const asesoriasRef = collection(firestoreDB, "asesorias");
+
+        const q = query(asesoriasRef, where("date", "==", advisoryDate));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            console.log(`No se encontró ninguna asesoría con la fecha: ${advisoryDate}`);
+            return;
+        }
+
+        const docRef = querySnapshot.docs[0].ref;
+
+        await updateDoc(docRef, { duplicate: isDuplicate });
+
+        console.log(`Asesoría actualizada correctamente con fecha: ${advisoryDate}`);
     } catch (error) {
-        console.error(`Error actualizando la asesoría ${advisoryId}:`, error);
-        throw error; // Re-lanzar el error para ser capturado arriba
+        console.error(`Error actualizando la asesoría con fecha ${advisoryDate}:`, error);
+        throw error; 
     }
 }
 
@@ -213,7 +225,7 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
 
         const querySnapshot = await getDocs(q);
         const asesorias = querySnapshot.docs.map(doc => doc.data());
-
+        console.log(asesorias, "Asesorias")
         const similarAdvisories = asesorias.filter(ad => {
             const adDate = ad.date.toDate();
             return ad.peerInfo.uid === peerUid &&
@@ -222,11 +234,14 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
                 Math.abs(adDate.getTime() - advisoryDate.getTime()) <= 2 * 60 * 60 * 1000;
         });
         // console.log(similarAdvisories)
+        const ultimoElemento = asesorias[asesorias.length - 1];
+        console.log(ultimoElemento, "Este es el ultimo elemento")
+        console.log(ultimoElemento.date, "Este es el id")
         if (similarAdvisories.length > 1) {
             await updatePoints(peerUid, -150);
-            await updateAdvisoryDuplicateField(asesorias.id, true );
+            await updateAdvisoryDuplicateField(ultimoElemento.date, true );
         } else {
-            await updateAdvisoryDuplicateField(asesorias.id, false );
+            await updateAdvisoryDuplicateField(ultimoElemento.date, false );
             if(subjectId === "MAE"){
                 await updatePoints(peerUid, 10); 
             }else{

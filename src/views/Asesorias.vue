@@ -1,17 +1,32 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { getCurrentUser} from '../firebase/db/users';
+import { getSubjects } from '../firebase/db/subjects';
 import { getAsesoriasByUid } from '../firebase/db/asesorias'
-import { getSubjectColor } from '@/utils/HorarioUtils';
+import { getSubjectColor, normalize } from '@/utils/HorarioUtils';
 
 const userInfo = ref(null);
 const asesorias = ref([]);
 const isLoading = ref(true); 
+const subjects = ref([]);
+const date = ref(null);
+const evalInput = ref(null);
+
+const subjectInput = ref('');
+const filteredSubjects = ref([]);
+
+const evaluacion = [
+    { label: 'Cualquiera', value: null },
+    { label: 'Evaluada', value: true},
+    { label: 'Sin Evaluación', value: false }
+];
 
 onMounted(async () => {
     userInfo.value = await getCurrentUser();
     asesorias.value = await getAsesoriasByUid(userInfo.value.uid);
+    subjects.value = await getSubjects();
     isLoading.value = false;  
+    
 });
 
 const formatDate = (timestamp) => {
@@ -19,24 +34,102 @@ const formatDate = (timestamp) => {
     const date = new Date(timestamp.seconds * 1000);
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
 };
+
+const filterAsesorias = computed(() => {
+    const selectedSubject = subjectInput.value;
+    const selectedDate = date.value;
+    const selectedEval = evalInput.value;
+
+    if (selectedSubject === '' && !selectedDate && selectedEval === null) {
+        return asesorias.value;
+    }
+
+    return asesorias.value.filter(asesoria => {
+        const subjectMatches = asesoria.subject.id === selectedSubject.id;
+
+        const asesoriaDate = new Date(asesoria.date.seconds * 1000);
+        const selectedDateObj = new Date(selectedDate);
+        const dateMatches = asesoriaDate.toDateString() === selectedDateObj.toDateString();
+
+        const evalMatches = (asesoria.rating && selectedEval) || (!asesoria.rating && !selectedEval);
+
+        if ((subjectMatches || selectedSubject === '') && (dateMatches || !selectedDate) && (evalMatches || selectedEval === null)) {
+            return true;
+        }
+    });
+});
+
+
+
+const clearFilters = () => {
+    subjectInput.value = '';
+    date.value = null;
+    evalInput.value = null;
+};
+
+const filterSubjects = () => {
+    const query = normalize(subjectInput.value);
+
+    //Conseguir las materias de las asesorías dadas
+    const asesoriasSubjects = asesorias.value.map(asesoria => asesoria.subject);
+    //Eliminar materias duplicadas y ordenarlas alfabéticamente
+    const uniqueSubjectsMap = new Map(asesoriasSubjects.map(subject => [subject.id, subject]));
+    const uniqueSubjects = Array.from(uniqueSubjectsMap.values());  
+    uniqueSubjects.sort((a, b) => a.name.localeCompare(b.name));
+
+    //Filtrar las materias por el query del input
+    filteredSubjects.value = uniqueSubjects.filter(subject =>
+        normalize(subject.name).includes(query)
+    );
+};
+
 </script>
 
 <template>
-    <div>
-        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Mis asesorías</h1>
+    <div v-if="subjectInput || date || evalInput != null" class="flex">
+        <button @click="clearFilters" class="mr-2 bg-transparent border-none">
+            <i class="pi pi-arrow-left text-black" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+        </button>
+        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Mis asesorías filtradas ({{ filterAsesorias.length }})</h1>
     </div>
+
+    <div v-else>
+        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Mis asesorías ({{ filterAsesorias.length }})</h1>
+    </div>
+
+    <div class="w-full mb-5">
+            <AutoComplete 
+                class="w-5 mr-3"
+                v-model="subjectInput" 
+                :suggestions="filteredSubjects" 
+                @complete="filterSubjects" 
+                field="name" 
+                dropdown 
+                :forceSelection="false"
+                placeholder="Buscar materia..." 
+            />
+            <Calendar v-model="date" placeholder="Fecha" dateFormat="yy-mm-dd" showIcon class="mb-2 mr-3 w-3 "/>
+            <Dropdown 
+                v-model="evalInput"
+                :options="evaluacion" 
+                option-label="label" 
+                option-value="value"
+                placeholder="Evaluación..." 
+                class="mb-2 w-3" 
+                />
+        </div>
 
     <div v-if="isLoading" class="text-center">
         <p class="text-lg">Cargando asesorías...</p>
     </div>
 
-    <div v-else-if="!asesorias.length" class="text-center">
+    <div v-else-if="!filterAsesorias.length" class="text-center">
         <p class="text-lg">Sin asesorías</p>
     </div>
 
     <div v-else class="flex flex-wrap gap-6">
         <div 
-            v-for="asesoria in asesorias" 
+            v-for="asesoria in filterAsesorias" 
             :key="asesoria.id" 
             class="flex flex-col md:flex-row bg-white border-round-3xl w-full md:w-5 boder-gray"
             style="height: 185px;"

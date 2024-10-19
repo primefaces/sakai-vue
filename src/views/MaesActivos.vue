@@ -2,6 +2,7 @@
 import { onMounted, ref, computed } from 'vue';
 import { getCurrentUser, getUsersWithActiveSession, getMaes, getClosestDayAndStartTime } from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
+import { normalize } from '@/utils/HorarioUtils';
 import {
     translateDayToSpanish, 
     formatScheduleHours,
@@ -11,7 +12,21 @@ const userInfo = ref(null);
 const activeMAEs = ref([]);
 const subjects = ref([]);
 const maes = ref([]);
-const subjectsFilter = ref(null) 
+
+const nombreInput = ref('');
+const diaInput = ref(null);
+const subjectInput = ref('');
+const filteredSubjects = ref([]);
+
+const daysOfWeek = [
+    { label: 'Cualquier día', value: null },
+    { label: 'Lunes', value: 'monday' },
+    { label: 'Martes', value: 'tuesday' },
+    { label: 'Miércoles', value: 'wednesday' },
+    { label: 'Jueves', value: 'thursday' },
+    { label: 'Viernes', value: 'friday' },
+
+];
 
 onMounted(async () => {
     activeMAEs.value = await getUsersWithActiveSession();
@@ -21,16 +36,39 @@ onMounted(async () => {
 });
 
 const filteredMAEs = computed(() => {
-    const selectedSubject = subjectsFilter.value;
+    const selectedSubject = subjectInput.value;
+    const selectedDay = diaInput.value;
+    const selectedName = normalize(nombreInput.value);
+
     const activeMAEsList = maes.value.filter(mae => isMAEActive(mae));
-    if(selectedSubject === null){
+    if(selectedSubject == '' && selectedDay == null && selectedName == '') {
         return activeMAEsList
     }
     
+    
     return maes.value.filter(mae => {
-        return mae.subjects.some(subject => subject.id === selectedSubject.id);
+        var subject = mae.subjects.some(subject => subject.id === selectedSubject.id);
+        var day = mae.weekSchedule[selectedDay];
+        var name = normalize(mae.name).includes(selectedName);
+        if ((subject || selectedSubject == '') && (day || selectedDay == null) && name) {
+            return true;
+        }
     });
     
+});
+
+const sortedMAEs = computed(() => {
+    return filteredMAEs.value.sort((a, b) => {
+        var maeA = isMAEActive(a);
+        var maeB = isMAEActive(b);
+        if (maeA && !maeB) {
+            return -1;
+        } else if (!maeA && maeB) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
 });
 
 
@@ -59,14 +97,24 @@ function getDisplayedDay(weekSchedule) {
 }
 
 const clearFilters = () => {
-    subjectsFilter.value = null;
+    subjectInput.value = '';
+    diaInput.value = null;
+    nombreInput.value = '';
+};
+
+
+const filterSubjects = () => {
+    const query = normalize(subjectInput.value);
+    filteredSubjects.value = subjects.value.filter(subject =>
+        normalize(subject.name).includes(query)
+    );
 };
 
 </script>
 
 <template>
     <div class="flex flex-column md:flex-row md:items-center justify-content-between mb-3"> 
-        <span  class="flex flex-row " v-if="subjectsFilter && filteredMAEs.length > 0">
+        <span  class="flex flex-row " v-if="subjectInput && sortedMAEs.length > 0">
             <button @click="clearFilters" class="mr-2 bg-transparent border-none">
                 <i class="pi pi-arrow-left text-black" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
             </button>
@@ -78,28 +126,56 @@ const clearFilters = () => {
         <h1 class="text-black text-4xl font-bold text-left md:text-center md:text-left mt-3" v-else> 
              MAEs Activos
         </h1>
-        <span class="w-full md:w-5 mt-3"> 
-            <Dropdown v-model="subjectsFilter" :options="subjects" editable optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false"  
-            class="w-full p-0 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 transition duration-300 "  />
-        </span>
     </div>
 
+    <div class="flex md:flex-row flex-column mb-4">
+            <span class="w-full md:w-5 mt-3 mr-3">
+                <InputText v-model="nombreInput" placeholder="Nombre..." class="w-full" />
+            </span>
+            
+            <span class="w-full md:w-5 mt-3"> 
+            <AutoComplete 
+                class="w-full"
+                v-model="subjectInput" 
+                :suggestions="filteredSubjects" 
+                @complete="filterSubjects" 
+                field="name" 
+                dropdown 
+                :forceSelection="false"
+                placeholder="Buscar materia..." 
+                />
+            </span>
+            
+            <span class="w-full md:w-5 mt-3">
+                <Dropdown 
+                v-model="diaInput"
+                :options="daysOfWeek" 
+                option-label="label" 
+                option-value="value"
+                placeholder="Día de la semana..." 
+                class="mb-2 md:mx-3 w-full" 
+                />
+            </span>
+            
+        </div>
+
     <!-- Mensaje de búsqueda -->
-    <div v-if="subjectsFilter && filteredMAEs.length === 0" class="flex align-content-center h-full" style="min-height: 400px">
-        <h1 class="flex align-items-center justify-content-center w-full text-center mt-8">
-            <span>Buscando MAEs por materia... 🔎</span>
+    <div v-if="subjectInput && sortedMAEs.length === 0" class="flex align-content-center h-full" style="min-height: 400px">
+        <h1 class="align-items-center justify-content-center w-full text-center mt-8">
+            <span>Buscando MAEs por materia... 🔎</span><br>
+            <span>Escribe el nombre completo o seleccionalo de las sugerencias</span>
         </h1>
     </div>
 
     
-    <div v-if="activeMAEs.length === 0 && !subjectsFilter" class="flex align-content-center h-full" style="min-height: 300px">
+    <div v-if="activeMAEs.length === 0" class="flex align-content-center h-full" style="min-height: 300px">
         <h1 class="flex align-items-center justify-content-center w-full text-center">
             <span>No hay MAEs conectados por ahora 😔 <br> Consulta los <router-link to="horarios">horarios</router-link> para saber cuando podemos ayudarte ❤️</span>
         </h1>
     </div>
 
-    <div class="grid" v-if="filteredMAEs.length > 0">
-        <span v-for="mae in filteredMAEs" :key="mae.uid" class="col-12 md:col-6 lg:col-6 xl:col-4">
+    <div class="grid" v-if="sortedMAEs.length > 0">
+        <span v-for="mae in sortedMAEs" :key="mae.uid" class="col-12 md:col-6 lg:col-6 xl:col-4">
             <a :href="`#/mae/${mae.uid}`" v-if="isMAEActive(mae)" class="no-blue-link">
                 <div class="p-0 w-full h-full border-round-xl bg-white shadow-1 hover:shadow-3 transition-duration-300 transition-ease-out">
                     <!-- Mostrar carta para MAEs activos -->

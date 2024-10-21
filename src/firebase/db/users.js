@@ -380,7 +380,7 @@ export async function clearAllUsersWeekSchedule() {
         const querySnapshot = await getDocs(usersRef);
 
         // Roles that are eligible for clearing the weekSchedule
-        const eligibleRoles = ['admin', 'coordi', 'mae'];
+        const eligibleRoles = ['admin', 'coordi', 'mae','tec','publi'];
 
         // Iterate through each document and update the weekSchedule field to an empty object if the role matches
         const promises = querySnapshot.docs.map(async (doc) => {

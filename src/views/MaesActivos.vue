@@ -12,21 +12,9 @@ const userInfo = ref(null);
 const activeMAEs = ref([]);
 const subjects = ref([]);
 const maes = ref([]);
-
 const nombreInput = ref('');
-const diaInput = ref(null);
 const subjectInput = ref('');
 const filteredSubjects = ref([]);
-
-const daysOfWeek = [
-    { label: 'Cualquier día', value: null },
-    { label: 'Lunes', value: 'monday' },
-    { label: 'Martes', value: 'tuesday' },
-    { label: 'Miércoles', value: 'wednesday' },
-    { label: 'Jueves', value: 'thursday' },
-    { label: 'Viernes', value: 'friday' },
-
-];
 
 onMounted(async () => {
     activeMAEs.value = await getUsersWithActiveSession();
@@ -37,21 +25,29 @@ onMounted(async () => {
 
 const filteredMAEs = computed(() => {
     const selectedSubject = subjectInput.value;
-    const selectedDay = diaInput.value;
     const selectedName = normalize(nombreInput.value);
 
     const activeMAEsList = maes.value.filter(mae => isMAEActive(mae));
-    if(selectedSubject == '' && selectedDay == null && selectedName == '') {
+    if(selectedSubject == '' && selectedName == '') {
         return activeMAEsList
     }
-    
-    
+     
     return maes.value.filter(mae => {
-        var subject = mae.subjects.some(subject => subject.id === selectedSubject.id);
-        var day = mae.weekSchedule[selectedDay];
-        var name = normalize(mae.name).includes(selectedName);
-        if ((subject || selectedSubject == '') && (day || selectedDay == null) && name) {
-            return true;
+        const subject = mae.subjects.some(subject => subject.id === selectedSubject?.id);
+
+        let name = false;
+        if (selectedName !== '' && mae.name) {
+            name = normalize(mae.name).includes(selectedName);
+        }
+
+        if (selectedName && selectedSubject) {
+            return subject && name; 
+        } else if (selectedName) {
+            return name;
+        } else if (selectedSubject) {
+            return subject; 
+        } else {
+            return false; 
         }
     });
     
@@ -98,10 +94,8 @@ function getDisplayedDay(weekSchedule) {
 
 const clearFilters = () => {
     subjectInput.value = '';
-    diaInput.value = null;
     nombreInput.value = '';
 };
-
 
 const filterSubjects = () => {
     const query = normalize(subjectInput.value);
@@ -145,18 +139,7 @@ const filterSubjects = () => {
                 placeholder="Buscar materia..." 
                 />
             </span>
-            
-            <span class="w-full md:w-5 mt-3">
-                <Dropdown 
-                v-model="diaInput"
-                :options="daysOfWeek" 
-                option-label="label" 
-                option-value="value"
-                placeholder="Día de la semana..." 
-                class="mb-2 md:mx-3 w-full" 
-                />
-            </span>
-            
+        
         </div>
 
     <!-- Mensaje de búsqueda -->
@@ -168,7 +151,7 @@ const filterSubjects = () => {
     </div>
 
     
-    <div v-if="activeMAEs.length === 0" class="flex align-content-center h-full" style="min-height: 300px">
+    <div v-if="activeMAEs.length === 0 && sortedMAEs.length === 0" class="flex align-content-center h-full" style="min-height: 300px">
         <h1 class="flex align-items-center justify-content-center w-full text-center">
             <span>No hay MAEs conectados por ahora 😔 <br> Consulta los <router-link to="horarios">horarios</router-link> para saber cuando podemos ayudarte ❤️</span>
         </h1>

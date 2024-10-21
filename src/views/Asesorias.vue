@@ -90,16 +90,17 @@ const filterSubjects = () => {
         <button @click="clearFilters" class="mr-2 bg-transparent border-none">
             <i class="pi pi-arrow-left text-black" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
         </button>
-        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Mis asesorías filtradas ({{ filterAsesorias.length }})</h1>
+        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Mis asesorías filtradas</h1>
     </div>
 
     <div v-else>
-        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Mis asesorías ({{ filterAsesorias.length }})</h1>
+        <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Mis asesorías </h1>
     </div>
 
-    <div class="w-full mb-5">
+    <div class="w-full mb-5 ">
+        <div class="flex lg:flex-row  flex-column"> 
             <AutoComplete 
-                class="w-5 mr-3"
+                class="md:w-5 w-full mr-3 mb-2"
                 v-model="subjectInput" 
                 :suggestions="filteredSubjects" 
                 @complete="filterSubjects" 
@@ -108,16 +109,17 @@ const filterSubjects = () => {
                 :forceSelection="false"
                 placeholder="Buscar materia..." 
             />
-            <Calendar v-model="date" placeholder="Fecha" dateFormat="yy-mm-dd" showIcon class="mb-2 mr-3 w-3 "/>
+            <Calendar v-model="date" placeholder="Fecha" dateFormat="yy-mm-dd" showIcon class="mb-2 mr-3 w-full lg:w-3  mt-2 lg:mt-0"/>
             <Dropdown 
                 v-model="evalInput"
                 :options="evaluacion" 
                 option-label="label" 
                 option-value="value"
                 placeholder="Evaluación..." 
-                class="mb-2 w-3" 
+                class="mb-2 w-full md:w-3 mt-2 lg:mt-0" 
                 />
-        </div>
+            </div>
+    </div>
 
     <div v-if="isLoading" class="text-center">
         <p class="text-lg">Cargando asesorías...</p>

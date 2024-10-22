@@ -133,7 +133,10 @@ onMounted(() => {
 
             <Column header="Alumno" field="alumnoInfo">
                 <template #body="{ data }">
-                    <p class="text-sm font-bold">{{ data.userInfo.name }}</p>
+                    <span class="flex flex-column ml-4">
+                            <p class="text-sm font-bold">{{ data.userInfo.name }}</p>
+                            <p class="text-sm">{{ data.userInfo.uid }}</p>
+                        </span>
                 </template>
             </Column>
 

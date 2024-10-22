@@ -254,3 +254,22 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
         console.error("Error actualizando la experiencia de asesorías:", error);
     }
 }
+
+
+// Función para obtener asesorías por UID, reutilizando getAsesorias
+export async function getCommentsByUid(uid) {
+    try {
+        const startDate = new Date('2024-08-05'); 
+        const today = new Date(); 
+        const asesorias = await getAsesorias(startDate, today);
+
+        const asesoriasFiltradas = asesorias.filter(asesoria => 
+            asesoria.peerInfo?.uid === uid && asesoria.comment?.trim()
+        );
+
+        return asesoriasFiltradas;
+    } catch (error) {
+        console.error("Error fetching asesorias by UID: ", error);
+        return [];
+    }
+}

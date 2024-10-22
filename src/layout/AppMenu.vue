@@ -53,6 +53,7 @@ onMounted(async () => {
                 { label: 'Mi perfil', icon: 'pi pi-fw pi-user-edit', to: `/mae/${uid}` },
                 { label: 'Leaderboard', icon: 'pi pi-fw pi-star', to: '/leaderboard'},
                 { label: 'Mis asesorías', icon:'pi pi-fw pi-book', to: '/misasesorias'},
+                { label: 'Mis evaluaciones', icon:'pi pi-fw pi-check', to: '/misevaluaciones'},
             ]
         })
     }

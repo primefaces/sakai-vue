@@ -74,7 +74,15 @@ const router = createRouter({
                     name: 'misasesorias',
                     component: () => import('@/views/Asesorias.vue'),
                     meta: {
-                        roles: ['admin', 'coordi', 'mae','tec']
+                        roles: ['admin', 'coordi', 'mae','tec','publi']
+                    }
+                },
+                {
+                    path: '/misevaluaciones',
+                    name: 'misevaluaciones',
+                    component: () => import('@/views/Evaluaciones.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae','tec','publi']
                     }
                 },
                 {

@@ -1,24 +1,24 @@
 <script setup>
-import { useLayout } from '@/layout/composables/layout';
-import { $t, updatePreset, updateSurfacePalette } from '@primevue/themes';
-import Aura from '@primevue/themes/aura';
-import Lara from '@primevue/themes/lara';
-import { ref } from 'vue';
+import { useLayout } from '~/layout/composables/layout'
+import { $t, updatePreset, updateSurfacePalette } from '@primevue/themes'
+import Aura from '@primevue/themes/aura'
+import Lara from '@primevue/themes/lara'
+import { ref } from 'vue'
 
-const { layoutConfig, setPrimary, setSurface, setPreset, isDarkTheme, setMenuMode } = useLayout();
+const { layoutConfig, setPrimary, setSurface, setPreset, isDarkTheme, setMenuMode } = useLayout()
 
 const presets = {
     Aura,
     Lara
-};
-const preset = ref(layoutConfig.preset);
-const presetOptions = ref(Object.keys(presets));
+}
+const preset = ref(layoutConfig.preset)
+const presetOptions = ref(Object.keys(presets))
 
-const menuMode = ref(layoutConfig.menuMode);
+const menuMode = ref(layoutConfig.menuMode)
 const menuModeOptions = ref([
     { label: 'Static', value: 'static' },
     { label: 'Overlay', value: 'overlay' }
-]);
+])
 
 const primaryColors = ref([
     { name: 'noir', palette: {} },
@@ -38,7 +38,7 @@ const primaryColors = ref([
     { name: 'fuchsia', palette: { 50: '#fdf4ff', 100: '#fae8ff', 200: '#f5d0fe', 300: '#f0abfc', 400: '#e879f9', 500: '#d946ef', 600: '#c026d3', 700: '#a21caf', 800: '#86198f', 900: '#701a75', 950: '#4a044e' } },
     { name: 'pink', palette: { 50: '#fdf2f8', 100: '#fce7f3', 200: '#fbcfe8', 300: '#f9a8d4', 400: '#f472b6', 500: '#ec4899', 600: '#db2777', 700: '#be185d', 800: '#9d174d', 900: '#831843', 950: '#500724' } },
     { name: 'rose', palette: { 50: '#fff1f2', 100: '#ffe4e6', 200: '#fecdd3', 300: '#fda4af', 400: '#fb7185', 500: '#f43f5e', 600: '#e11d48', 700: '#be123c', 800: '#9f1239', 900: '#881337', 950: '#4c0519' } }
-]);
+])
 
 const surfaces = ref([
     {

@@ -1,8 +1,8 @@
 <script setup>
-import { useLayout } from '@/layout/composables/layout';
-import AppConfigurator from './AppConfigurator.vue';
+import { useLayout } from '~/layout/composables/layout'
+import AppConfigurator from './AppConfigurator.vue'
 
-const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
+const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout()
 </script>
 
 <template>
@@ -12,7 +12,7 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
                 <i class="pi pi-bars"></i>
             </button>
             <router-link to="/" class="layout-topbar-logo">
-                <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!--svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         fill-rule="evenodd"
                         clip-rule="evenodd"
@@ -28,9 +28,9 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
                             fill="var(--primary-color)"
                         />
                     </g>
-                </svg>
-
-                <span>SAKAI</span>
+                </svg-->
+                <img src='/logo-Сertifyme.png' style='height:auto;'/>
+                <!--span>CertifyMe</span-->
             </router-link>
         </div>
 

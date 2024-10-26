@@ -1,13 +1,13 @@
 <script setup>
-import { useLayout } from '@/layout/composables/layout';
-import { computed, ref, watch } from 'vue';
-import AppFooter from './AppFooter.vue';
-import AppSidebar from './AppSidebar.vue';
-import AppTopbar from './AppTopbar.vue';
+import { useLayout } from '~/layout/composables/layout'
+import { computed, ref, watch } from 'vue'
+import AppFooter from './AppFooter.vue'
+import AppSidebar from './AppSidebar.vue'
+import AppTopbar from './AppTopbar.vue'
 
-const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
+const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout()
 
-const outsideClickListener = ref(null);
+const outsideClickListener = ref(null)
 
 watch(isSidebarActive, (newVal) => {
     if (newVal) {
@@ -15,7 +15,7 @@ watch(isSidebarActive, (newVal) => {
     } else {
         unbindOutsideClickListener();
     }
-});
+})
 
 const containerClass = computed(() => {
     return {
@@ -25,7 +25,7 @@ const containerClass = computed(() => {
         'layout-overlay-active': layoutState.overlayMenuActive,
         'layout-mobile-active': layoutState.staticMenuMobileActive
     };
-});
+})
 
 function bindOutsideClickListener() {
     if (!outsideClickListener.value) {

@@ -21,6 +21,8 @@ const newSchedule = ref({});
 //Imagen a actualizar
 const showDialogUpload = ref(false); 
 const selectedFile = ref(null); 
+const horasAsignadas = ref(0);
+const horasTotales = ref(5);
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
@@ -32,6 +34,39 @@ onMounted(async () => {
   // JSON Parse es para que pase por valor en lugar de referencia
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
 })
+
+const getHorasHorario = () => {
+  let hours = 0;
+  for (const day of daysArray) {
+    const scheduleForDay = newSchedule.value[day.en];
+    if (scheduleForDay) {
+      for (const timeSlot of scheduleForDay) {
+        const start = timeToDecimal(timeSlot.start);
+        const end = timeToDecimal(timeSlot.end);
+        hours = hours + end - start;
+      }
+    }
+  }
+  return hours;
+}
+
+const getHorasRequeridas = () => {
+  if (maeInfo.value.status === "becario" && 
+    ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") &&
+    (maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS"))) {
+    return 3;
+  } else if (maeInfo.value.status === "becario" && 
+           ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") && 
+           !(maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS"))) {
+    return 5;
+  } else if (maeInfo.value.status === "becario" && maeInfo.value.role === "publi") {
+    return 2;
+  } else if (maeInfo.value.status === "voluntario") {
+    return 1;
+  } else{
+    return 5;
+  }
+}
 
 watch(route, async (newroute, oldroute) => {
   maeInfo.value = await getUser(route.params.id);
@@ -95,8 +130,28 @@ const searchQuery = ref('');
 
 const showDialogMaterias = ref(false);
 const subjectTableFilter = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  semester: { value: null, matchMode: FilterMatchMode.EQUALS },
+  area: { value: null, matchMode: FilterMatchMode.EQUALS },
+  top: { value: null, matchMode: FilterMatchMode.EQUALS }
 });
+
+const areaOptions = [
+  {label: 'Todos', value: null},
+  { label: 'Ingeniería y Ciencias', value: 'ING' },
+  { label: 'Salud y Medicina', value: 'SLD' },
+  { label: 'Negocios', value: 'NEG' },
+  { label: 'Ciencias Sociales', value: 'CIS' },
+  { label: 'Arquitectura y Diseño', value: 'AMC' },
+  { label: 'General', value: 'GEN' },
+  { label: 'Artes', value: 'ART' }
+];
+
+const topOptions = [
+  {label: 'Todos', value: null},
+  {label: 'Si', value: true},
+  {label: 'No', value: false}
+];
 
 const saveSubjectChanges = async () => {
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tus materias', life: 3000 });
@@ -462,35 +517,44 @@ const validateFile = (file) => {
       </div>
   </div>
     <div class="flex justify-content-end gap-2">
+      <div class="bg-black">
+        {{ getHorasHorario() }}  / {{ getHorasRequeridas() }}
+        <br> Horas
+      </div>
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogHorarios = false"></Button>
       <Button type="button" label="Guardar cambios " @click="saveScheduleChanges"></Button>
     </div>
   </Dialog>
- 
-  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias"  class="custom-table md:w-9" >
+
+  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias" class="custom-table md:w-9">
+  <div class="flex flex-col gap-2 my-4">
+    <InputText v-model="subjectTableFilter['global'].value" placeholder="Buscar materia por nombre o código" class="w-full" />
+    <InputText v-model="subjectTableFilter['semester'].value"  placeholder="Semestre" class="" />
+    <Dropdown :options="areaOptions" option-label="label" option-value="value" v-model="subjectTableFilter['area'].value" placeholder="Área" class="" />
+    <Dropdown :options="topOptions" option-label="label" option-value="value" v-model="subjectTableFilter['top'].value" placeholder="Top" class="" />
+  </div>
   <DataTable :value="subjects" paginator :rows="10" :rowsPerPageOptions="[10, 25, 50, 100]"
-    v-model:filters="subjectTableFilter" :globalFilterFields="['id', 'name']"
-    v-model:selection="selectedSubjects" responsiveLayout="stack"  >
-    <template #header>
-      <InputText v-model="subjectTableFilter['global'].value" placeholder="Buscar materia" class="w-full" />
-    </template>
+    v-model:filters="subjectTableFilter" :globalFilterFields="['id', 'name', 'semester', 'area', 'top']"
+    v-model:selection="selectedSubjects" responsiveLayout="stack">
     <template #empty>No se encontraron resultados.</template>
     <Column selectionMode="multiple" headerStyle="visibility:hidden"></Column>
-    <Column field="id" header="Código" ></Column>
+    <Column field="id" header="Código"></Column>
     <Column field="name" class="text-right sm:text-left" header="Nombre"></Column>
     <Column field="semester" header="Semestre"></Column>
-    <Column field="area" header="Area"></Column>
-    <Column field="top" header="Top"   >
+    <Column field="area" header="Área"></Column>
+    <Column field="top" header="Top">
       <template #body="slotProps">
-         <i v-if="slotProps.data.top" class="pi pi-star-fill" style="color: gold;"></i>
+        <i v-if="slotProps.data.top" class="pi pi-star-fill" style="color: gold;"></i>
       </template>
     </Column>
   </DataTable>
+
   <div class="flex justify-content-end gap-2">
     <Button type="button" label="Cerrar" severity="secondary" @click="showDialogMaterias = false"></Button>
     <Button type="button" label="Guardar cambios" @click="saveSubjectChanges"></Button>
   </div>
 </Dialog>
+
 
 
   <Dialog v-model:visible="showDialogAsesoria" modal header="Registrar asesoría" class="md:w-4">

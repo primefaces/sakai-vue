@@ -55,6 +55,7 @@ export async function getAnnouncements() {
         
         const querySnapshot = await getDocs(query(announcementsCollection));
         
+        const now = new Date();
         // Mapear y filtrar los documentos
         const announcements = querySnapshot.docs
             .map(doc => ({
@@ -125,13 +126,9 @@ export async function addUserToPreregsiter(announcementId, user) {
 
         const announcementData = announcementSnapshot.data();
         const currentPreregs = announcementData.preregister || {};
-
-        // Si el usuario ya está registrado, lanzamos una excepción específica
         if (currentPreregs[user.uid]) {
-            throw new Error('Usuario ya registrado'); // Excepción personalizada
+            throw new Error('Usuario ya registrado'); 
         }
-
-        // Agregar el usuario al mapa de preregister
         const updatedPreregs = {
             ...currentPreregs,
             [user.uid]: user,

@@ -217,6 +217,8 @@ const saveScheduleChanges = async () => {
 };
 
 const showDialogAsesoria = ref(false);
+const showDialogTienda = ref(false);
+const showDialogEvaluacion = ref(false);
 const ratingAsesoria = ref(null);
 const comentarioAsesoria = ref('');
 const materiaAsesoria = ref(null);
@@ -326,10 +328,10 @@ const validateFile = (file) => {
       </div>
   </div>
 
-  <div v-if="maeInfo && userInfo" class="bg-white px-6 mb-0 w-full">
-    <div class="sm:flex justify-content-end">
-      <div class="mt-2 w-4">
-        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2">
+  <div v-if="maeInfo && userInfo" class="bg-white px-6 mb-0 w-full  ">
+    <div class="sm:flex justify-content-end ">
+      <div class="mt-2 w-4 hidden md:block">
+        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2 ">
           <Button 
                 v-if=" userInfo['activeSession']"
                 class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	"
@@ -351,7 +353,7 @@ const validateFile = (file) => {
         </div>
           <Button
           v-if="userInfo.uid != maeInfo.uid" 
-           class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	"
+           class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
           :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
           @click="showDialogAsesoria = true"
           :disabled=" isSavingAsesoria" 
@@ -361,45 +363,96 @@ const validateFile = (file) => {
         </Button>
       </div>
     </div>
-    <div class="flex flex-row">
-      <div class="w-8 justify-content-center">
+    <div class="flex flex-column md:flex-row">
+      <div class="w-8 justify-content-center md:mt-0 mt-8">
         <div class="">
-          <p class="text-xl font-bold text-center sm:text-left "> {{ maeInfo.name }} </p>
-          <p class="text-lg font-medium text-center sm:text-left">  {{ maeInfo.career }} | Campus {{ maeInfo.campus }}</p>  
+          <p class="text-xl font-bold text-left "> {{ maeInfo.name }} </p>
+          <p class="text-lg font-medium text-left">  {{ maeInfo.career }} | Campus {{ maeInfo.campus }}</p>  
         </div>
       </div>
-      <div class="sm:flex justify-content-end w-4">
+      
+      <div class="mt-2  w-full md:w-4  md:hidden block">
+        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2 ">
+          <Button 
+                v-if=" userInfo['activeSession']"
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
+                @click="stopSession"
+            >
+                Finalizar turno
+                <img src="/assets/end.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+            <Button 
+                v-else
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+                :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
+                @click="showDialogSession = true"
+            >
+                Iniciar turno
+                <img src="/assets/start.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+        </div>
+          <Button
+          v-if="userInfo.uid != maeInfo.uid" 
+           class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+          :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+          @click="showDialogAsesoria = true"
+          :disabled=" isSavingAsesoria" 
+        >
+            Registrar asesoría
+            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+        </Button>
+      </div>
+
+      <div class="sm:flex justify-content-end w-full md:w-4">
         <div class="mt-2 w-full">
           <Button
             v-if="userInfo.uid == maeInfo.uid" 
             class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
-            :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
-            @click="showDialogAsesoria = true"
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogTienda = true"
             :disabled=" isSavingAsesoria" 
           >
             Tienda MAE
-              <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+              <img src="/assets/store.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
           </Button>
           <Button
             v-if="userInfo.uid != maeInfo.uid" 
             class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 px-4"
-            :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
-            @click="showDialogAsesoria = true"
+            :style="{ background: 'linear-gradient(to right, #44A79b, #69ac51)' }"
+            @click="showDialogEvaluacion = true"
             :disabled=" isSavingAsesoria" 
           >
               Evaluar asesoría
-              <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+              <img src="/assets/evaluate.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
           </Button>
         </div>
       </div>
     </div>
-
-    <!-- <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-clock font-medium"></i> {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas de servicio </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-star font-medium"></i> {{ asesoriasCount }} Asesorías </p> -->
-
-    <div class="flex flex-row mb-4">
-      <div class="w-3">
-
+          
+    <div class="flex flex-column md:flex-row ">
+      <div class="md:w-3 w-full  mt-2 mr-4">
+        <div class="border-round-lg border-gray-300 flex flex-row p-2 shadow-md card align-items-center justify-content-center">
+          <img src="/assets/coins.svg" class="ml-2" alt="mentoring icon" style="width: 2.5rem; height: 2.5rem;" />
+          <p class="text-lg font-bold mt-3 ml-2 "> {{ Math.floor(maeInfo.points / 10) }} monedas</p>
+          <div class="ml-2 cursor-pointer mt-2" style="position: relative;">
+            <i class="pi pi-question-circle text-gray-500" style="font-size: 1.2rem;" v-tooltip="'Las monedas se ganan através de puntos de experiencia. Utilizas para personalizar en tu pérfil en la tienda MAE'"></i>
+          </div>
+        </div> 
+        <div class="border-round-lg border-gray-300 flex flex-row p-2 shadow-md card  flex flex-column mb-2">
+          <span class="flex flex-row justify-content-center text-center ml-2">
+            <p class="text-lg font-bold">Mis estadísticas</p>
+            <img src="/assets/est.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+          </span>
+          <span class="flex flex-row  mb-2">
+            <img src="/assets/grad.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+            <p class="text-lg font-medium  ml-2">{{ asesoriasCount }} Asesorías </p> 
+          </span>
+          <span class="flex flex-row  mb-2">
+            <img src="/assets/clock.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+            <p class="text-lg font-medium  ml-2">  {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas </p>
+          </span>      
+        </div>
       </div>
       <div class="w-9">
         <h2 class="font-bold text-center sm:text-left"> Materias </h2>
@@ -416,12 +469,17 @@ const validateFile = (file) => {
         </div>
       </div>
     </div>
-    <div class="flex flex-row mb-4">
-      <div class="w-3">
-        
+    <div class="flex flex-column md:flex-row mb-4">
+      <div class="md:w-3  w-full mt-2 mr-4 ">
+        <!--TODO: LOGROS -->
+        <div class="border-round-lg border-gray-300 flex flex-col p-4 shadow-md card align-items-start gap-2 ">
+          <p class="text-lg font-semibold text-primary">🎖️ Logros</p>
+          <p class="text-base text-gray-600">En construcción </p>
+        </div>
+
       </div>
       <div class="w-9">
-        <h2 class="font-bold text-center sm:text-left"> Horario </h2>
+        <h2 class="font-bold text-center sm:text-left mt-2"> Horario </h2>
         <div>
           <div class="grid">
             <div v-for="day in daysArray" class="md:col col-12">
@@ -490,14 +548,23 @@ const validateFile = (file) => {
   <Dialog v-model:visible="showDialogAsesoria" modal header="Registrar asesoría" class="md:w-4">
     <p class="font-bold">Materia</p>
     <Dropdown v-model="materiaAsesoria" :options="subjects" filter optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false" class="w-12 mb-2" />
-    <p class="font-bold">Comentario</p>
+    <!-- <p class="font-bold">Comentario</p>
     <Textarea v-model="comentarioAsesoria" placeholder="Agrega un comentario" variant="filled" rows="5" cols="30" class="w-12" />
     <p class="font-bold mt-3">Califica tu asesoría</p>
-    <Rating v-model="ratingAsesoria" :cancel="false"/>
+    <Rating v-model="ratingAsesoria" :cancel="false"/> -->
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
       <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null)" @click="saveAsesoria"></Button>
     </div>
+  </Dialog>
+
+
+  <Dialog v-model:visible="showDialogTienda" modal header="Tienda MAE" class="md:w-4">
+    ¡En construcción! ✌
+  </Dialog>
+
+  <Dialog v-model:visible="showDialogEvaluacion" modal header="Evaluar Mae" class="md:w-4">
+    ¡En construcción! ✌
   </Dialog>
 
   <Dialog v-model:visible="showDialogSession" modal header="Iniciar turno" class="md:w-4">

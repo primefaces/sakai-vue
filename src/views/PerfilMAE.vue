@@ -318,7 +318,7 @@ const validateFile = (file) => {
   <div class="flex border-round-top-xl h-7rem w-full" style="background-color: #58AFCA; align-items: center; justify-content: center;">
     <div class="sm:flex sm:flex-1 justify-center w-full  px-6">
         <div class="relative flex align-items-center justify-content-center mr-4 ">
-            <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-10rem w-10rem border-3 border-white mt-8">
+          <img v-if="maeInfo" :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-10rem w-10rem border-3 border-white mt-8">
             <!-- <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
                 <Button icon="pi pi-pencil"  class="border-3 border-white" rounded @click="showDialogUpload = true" />
             </div> -->
@@ -393,34 +393,48 @@ const validateFile = (file) => {
         </div>
       </div>
     </div>
-    
-
-    
 
     <!-- <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-clock font-medium"></i> {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas de servicio </p>
           <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-star font-medium"></i> {{ asesoriasCount }} Asesorías </p> -->
-    <h2 class="font-bold text-center sm:text-left"> Materias </h2>
-    <div class="mb-2">
-      <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" />
-    </div>
-    <div class="flex flex-wrap">
-        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
-          {{ subject.name }}
-        </Tag>
-        <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
-          severity="secondary" rounded class="text-lg font-semibold text-white mx-1 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
-    </div>
 
-    <hr />
-    <h2 class="font-bold text-center sm:text-left"> Horario </h2>
-    <div>
-      <div class="grid">
-        <div v-for="day in daysArray" class="md:col col-12">
-          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
-            <div v-if="maeInfo.weekSchedule[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']]" :key="`${day['en']}-${index}`" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
-            <div v-else class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
+    <div class="flex flex-row mb-4">
+      <div class="w-3">
+
+      </div>
+      <div class="w-9">
+        <h2 class="font-bold text-center sm:text-left"> Materias </h2>
+        <div class="mb-2">
+          <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" />
         </div>
+        <div class="flex flex-wrap">
+            <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 3)" v-tooltip.top="subject.id" :key="index"
+             rounded class="text-base font-semibold text-white text-center sm:mx-1 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
+              {{ subject.name }}
+            </Tag>
+            <Button v-if="maeInfo.subjects.length > 3" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
+              severity="secondary" rounded class="text-base font-semibold text-white mx-1 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
+        </div>
+      </div>
     </div>
+    <div class="flex flex-row mb-4">
+      <div class="w-3">
+        
+      </div>
+      <div class="w-9">
+        <h2 class="font-bold text-center sm:text-left"> Horario </h2>
+        <div>
+          <div class="grid">
+            <div v-for="day in daysArray" class="md:col col-12">
+              <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
+                <div v-if="maeInfo.weekSchedule[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']]" :key="`${day['en']}-${index}`" 
+                class="text-center p-2 border-round-sm bg-green-500 text-white text-base font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
+                <div v-else class="text-center p-2 border-round-sm bg-gray-100 text-black text-base font-bold mt-2"> N/A </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    
     </div>
   </div>
   

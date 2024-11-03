@@ -86,11 +86,10 @@ onMounted(async () => {
   border: 2px solid #e0e0e0;
 }
 
-/* Estilo para los comentarios con scroll */
 .comentario {
-  max-height: 110px; /* Altura máxima antes de mostrar scroll */
-  overflow-y: auto; /* Habilitar scroll vertical */
-  padding-right: 0.5rem; /* Espacio para que el scroll no tape el texto */
+  max-height: 110px;
+  overflow-y: auto; 
+  padding-right: 0.5rem; 
   
 }
 

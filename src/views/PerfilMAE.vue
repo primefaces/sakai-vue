@@ -8,6 +8,16 @@ import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../fireb
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 import { uploadFile } from '../firebase/img/users';
+import {
+    getSubjectColor,
+} from '@/utils/HorarioUtils';
+import {
+  topOptions,
+  areaOptions,
+  daysArray,
+  timeSlots,
+  timeToDecimal 
+} from '@/utils/PerfilUtils';
 
 const toast = useToast();
 const route = useRoute();
@@ -18,11 +28,8 @@ const asesoriasCount = ref(0);
 const selectedSubjects = ref([]);
 const subjects = ref([]);
 const newSchedule = ref({});
-//Imagen a actualizar
 const showDialogUpload = ref(false); 
 const selectedFile = ref(null); 
-const horasAsignadas = ref(0);
-const horasTotales = ref(5);
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
@@ -30,25 +37,24 @@ onMounted(async () => {
   asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
   selectedSubjects.value = maeInfo.value.subjects;
   subjects.value = await getSubjects();
-
-  // JSON Parse es para que pase por valor en lugar de referencia
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
 })
 
 const getHorasHorario = () => {
-  let hours = 0;
-  for (const day of daysArray) {
-    const scheduleForDay = newSchedule.value[day.en];
-    if (scheduleForDay) {
-      for (const timeSlot of scheduleForDay) {
-        const start = timeToDecimal(timeSlot.start);
-        const end = timeToDecimal(timeSlot.end);
-        hours = hours + end - start;
+    let hours = 0;
+    for (const day of daysArray) {
+      const scheduleForDay = newSchedule.value[day.en];
+      if (scheduleForDay) {
+        for (const timeSlot of scheduleForDay) {
+          const start = timeToDecimal(timeSlot.start);
+          const end = timeToDecimal(timeSlot.end);
+          hours = hours + end - start;
+        }
       }
     }
+    return hours;
   }
-  return hours;
-}
+
 
 const getHorasRequeridas = () => {
   if (maeInfo.value.status === "becario" && 
@@ -107,51 +113,15 @@ const filteredSubjects = computed(() => {
   return [];
 });
 
-const getSubjectColor = (area) => {
-    switch (area) {
-        case 'ING':
-            return 'bg-cyan-600';
-        case 'NEG':
-            return 'bg-blue-600';
-        case 'SLD':
-            return 'bg-teal-600';
-        case 'CIS':
-            return 'bg-red-600';
-        case 'AMC':
-            return 'bg-green-600';
-        case 'ART':
-            return 'bg-purple-600';
-        default:
-            return 'bg-yellow-600';
-    }
-}
-
 const searchQuery = ref('');
-
 const showDialogMaterias = ref(false);
+
 const subjectTableFilter = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   semester: { value: null, matchMode: FilterMatchMode.EQUALS },
   area: { value: null, matchMode: FilterMatchMode.EQUALS },
   top: { value: null, matchMode: FilterMatchMode.EQUALS }
 });
-
-const areaOptions = [
-  {label: 'Todos', value: null},
-  { label: 'Ingeniería y Ciencias', value: 'ING' },
-  { label: 'Salud y Medicina', value: 'SLD' },
-  { label: 'Negocios', value: 'NEG' },
-  { label: 'Ciencias Sociales', value: 'CIS' },
-  { label: 'Arquitectura y Diseño', value: 'AMC' },
-  { label: 'General', value: 'GEN' },
-  { label: 'Artes', value: 'ART' }
-];
-
-const topOptions = [
-  {label: 'Todos', value: null},
-  {label: 'Si', value: true},
-  {label: 'No', value: false}
-];
 
 const saveSubjectChanges = async () => {
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se están guardando los cambios en tus materias', life: 3000 });
@@ -165,36 +135,6 @@ const saveSubjectChanges = async () => {
   showDialogMaterias.value = false;    
 }
 
-const daysArray = [
-  { en: 'monday', es: 'Lunes' },
-  { en: 'tuesday', es: 'Martes' },
-  { en: 'wednesday', es: 'Miércoles' },
-  { en: 'thursday', es: 'Jueves' },
-  { en: 'friday', es: 'Viernes' }
-];
-
-const timeSlots = [
-  { name: '09:00 AM', code: '09:00' },
-  { name: '09:30 AM', code: '09:30' },
-  { name: '10:00 AM', code: '10:00' },
-  { name: '10:30 AM', code: '10:30' },
-  { name: '11:00 AM', code: '11:00' },
-  { name: '11:30 AM', code: '11:30' },
-  { name: '12:00 PM', code: '12:00' },
-  { name: '12:30 PM', code: '12:30' },
-  { name: '01:00 PM', code: '13:00' },
-  { name: '01:30 PM', code: '13:30' },
-  { name: '02:00 PM', code: '14:00' },
-  { name: '02:30 PM', code: '14:30' },
-  { name: '03:00 PM', code: '15:00' },
-  { name: '03:30 PM', code: '15:30' },
-  { name: '04:00 PM', code: '16:00' },
-  { name: '04:30 PM', code: '16:30' },
-  { name: '05:00 PM', code: '17:00' },
-  { name: '05:30 PM', code: '17:30' },
-  { name: '06:00 PM', code: '18:00' }
-];
-
 const showDialogHorarios = ref(false);
 
 const addTimeSlot = (day, start, end) => {
@@ -205,14 +145,7 @@ const addTimeSlot = (day, start, end) => {
   }
 }
 
-// Converitir en decimal 
-const timeToDecimal = (time) => {
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours + minutes / 60;
-};
-
 const saveScheduleChanges = async () => {
-  // Validación de horario
   let hours = 0;
 
   for (const day of daysArray) {
@@ -234,27 +167,21 @@ const saveScheduleChanges = async () => {
           return;
         }
 
-        // Verificación de solapamientos
         for (const existingSlot of intervals) {
           const existingStart = existingSlot.start;
           const existingEnd = existingSlot.end;
-          
           if ((startTime < existingEnd && endTime > existingStart)) {
             toast.add({ severity: 'error', summary: 'Error de horario', detail: `El intervalo de tiempo de ${startTime} a ${endTime} ya existe o se sobrepone con otro intervalo para el día ${day.es}`, life: 3000 });
             return;
           }
         }
-
         intervals.push({ start: startTime, end: endTime });
-
         const start = timeToDecimal(timeSlot.start);
         const end = timeToDecimal(timeSlot.end);
         hours = hours + end - start;
       }
     }
   }
-
-  // Validaciones adicionales
   if (maeInfo.value.status === "becario" && 
     ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") &&
     (maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS") && 
@@ -290,6 +217,8 @@ const saveScheduleChanges = async () => {
 };
 
 const showDialogAsesoria = ref(false);
+const showDialogTienda = ref(false);
+const showDialogEvaluacion = ref(false);
 const ratingAsesoria = ref(null);
 const comentarioAsesoria = ref('');
 const materiaAsesoria = ref(null);
@@ -374,7 +303,6 @@ const handleDrop = (event) => {
 
 const showError = () => {
   toast.add({ severity: 'error', summary: 'Error', detail: 'Solo puedes subir archivos JPG o PNG', life: 3000 });
-  
 };
 
 const triggerFileInput = () => {
@@ -389,122 +317,185 @@ const validateFile = (file) => {
 </script>
 
 <template>
-  <div class="flex relative">
-    <div class="flex-1">
-      <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Perfil</h1>
-    </div>
-    <div class="justify-end hidden md:block">
-      <!-- <i class="pi pi-bell text-4xl"></i> -->
-    </div>
+  <div class="flex border-round-top-xl h-7rem w-full" style="background-color: #58AFCA; align-items: center; justify-content: center;">
+    <div class="sm:flex sm:flex-1 justify-center w-full  px-6">
+        <div class="relative flex align-items-center justify-content-center mr-4 ">
+          <img v-if="maeInfo" :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-10rem w-10rem border-3 border-white mt-8">
+            <!-- <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
+                <Button icon="pi pi-pencil"  class="border-3 border-white" rounded @click="showDialogUpload = true" />
+            </div> -->
+        </div>  
+      </div>
   </div>
 
-  <div v-if="maeInfo && userInfo" class="card mb-0 w-full">
-    <div class="sm:flex">
-      <div class="sm:flex sm:flex-1 justify-center w-full">
-        <div class="relative flex align-items-center justify-content-center mr-4">
-            <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-16rem w-16rem">
-            <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
-                <Button icon="pi pi-pencil"  class="border-3 border-white" rounded @click="showDialogUpload = true" />
+  <div v-if="maeInfo && userInfo" class="bg-white px-6 mb-0 w-full  ">
+    <div class="sm:flex justify-content-end ">
+      <div class="mt-2 w-4 hidden md:block">
+        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2 ">
+          <Button 
+                v-if=" userInfo['activeSession']"
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
+                @click="stopSession"
+            >
+                Finalizar turno
+                <img src="/assets/end.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+            <Button 
+                v-else
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+                :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
+                @click="showDialogSession = true"
+            >
+                Iniciar turno
+                <img src="/assets/start.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+        </div>
+          <Button
+          v-if="userInfo.uid != maeInfo.uid" 
+           class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+          :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+          @click="showDialogAsesoria = true"
+          :disabled=" isSavingAsesoria" 
+        >
+            Registrar asesoría
+            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+        </Button>
+      </div>
+    </div>
+    <div class="flex flex-column md:flex-row">
+      <div class="w-8 justify-content-center md:mt-0 mt-8">
+        <div class="">
+          <p class="text-xl font-bold text-left "> {{ maeInfo.name }} </p>
+          <p class="text-lg font-medium text-left">  {{ maeInfo.career }} | Campus {{ maeInfo.campus }}</p>  
+        </div>
+      </div>
+      
+      <div class="mt-2  w-full md:w-4  md:hidden block">
+        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2 ">
+          <Button 
+                v-if=" userInfo['activeSession']"
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
+                @click="stopSession"
+            >
+                Finalizar turno
+                <img src="/assets/end.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+            <Button 
+                v-else
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+                :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
+                @click="showDialogSession = true"
+            >
+                Iniciar turno
+                <img src="/assets/start.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+        </div>
+          <Button
+          v-if="userInfo.uid != maeInfo.uid" 
+           class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+          :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+          @click="showDialogAsesoria = true"
+          :disabled=" isSavingAsesoria" 
+        >
+            Registrar asesoría
+            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+        </Button>
+      </div>
+
+      <div class="sm:flex justify-content-end w-full md:w-4">
+        <div class="mt-2 w-full">
+          <Button
+            v-if="userInfo.uid == maeInfo.uid" 
+            class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogTienda = true"
+            :disabled=" isSavingAsesoria" 
+          >
+            Tienda MAE
+              <img src="/assets/store.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+          </Button>
+          <Button
+            v-if="userInfo.uid != maeInfo.uid" 
+            class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 px-4"
+            :style="{ background: 'linear-gradient(to right, #44A79b, #69ac51)' }"
+            @click="showDialogEvaluacion = true"
+            :disabled=" isSavingAsesoria" 
+          >
+              Evaluar asesoría
+              <img src="/assets/evaluate.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+          </Button>
+        </div>
+      </div>
+    </div>
+          
+    <div class="flex flex-column md:flex-row ">
+      <div class="md:w-3 w-full  mt-2 mr-4">
+        <div class="border-round-lg border-gray-300 flex flex-row p-2 shadow-md card align-items-center justify-content-center">
+          <img src="/assets/coins.svg" class="ml-2" alt="mentoring icon" style="width: 2.5rem; height: 2.5rem;" />
+          <p class="text-lg font-bold mt-3 ml-2 "> {{ Math.floor(maeInfo.points / 10) }} monedas</p>
+          <div class="ml-2 cursor-pointer mt-2" style="position: relative;">
+            <i class="pi pi-question-circle text-gray-500" style="font-size: 1.2rem;" v-tooltip="'Las monedas se ganan através de puntos de experiencia. Utilizas para personalizar en tu pérfil en la tienda MAE'"></i>
+          </div>
+        </div> 
+        <div class="border-round-lg border-gray-300 flex flex-row p-2 shadow-md card  flex flex-column mb-2">
+          <span class="flex flex-row justify-content-center text-center ml-2">
+            <p class="text-lg font-bold">Mis estadísticas</p>
+            <img src="/assets/est.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+          </span>
+          <span class="flex flex-row  mb-2">
+            <img src="/assets/grad.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+            <p class="text-lg font-medium  ml-2">{{ asesoriasCount }} Asesorías </p> 
+          </span>
+          <span class="flex flex-row  mb-2">
+            <img src="/assets/clock.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+            <p class="text-lg font-medium  ml-2">  {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas </p>
+          </span>      
+        </div>
+      </div>
+      <div class="w-9">
+        <h2 class="font-bold text-center sm:text-left"> Materias </h2>
+        <div class="mb-2">
+          <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" />
+        </div>
+        <div class="flex flex-wrap">
+            <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 3)" v-tooltip.top="subject.id" :key="index"
+             rounded class="text-base font-semibold text-white text-center sm:mx-1 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
+              {{ subject.name }}
+            </Tag>
+            <Button v-if="maeInfo.subjects.length > 3" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
+              severity="secondary" rounded class="text-base font-semibold text-white mx-1 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-column md:flex-row mb-4">
+      <div class="md:w-3  w-full mt-2 mr-4 ">
+        <!--TODO: LOGROS -->
+        <div class="border-round-lg border-gray-300 flex flex-col p-4 shadow-md card align-items-start gap-2 ">
+          <p class="text-lg font-semibold text-primary">🎖️ Logros</p>
+          <p class="text-base text-gray-600">En construcción </p>
+        </div>
+
+      </div>
+      <div class="w-9">
+        <h2 class="font-bold text-center sm:text-left mt-2"> Horario </h2>
+        <div>
+          <div class="grid">
+            <div v-for="day in daysArray" class="md:col col-12">
+              <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
+                <div v-if="maeInfo.weekSchedule[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']]" :key="`${day['en']}-${index}`" 
+                class="text-center p-2 border-round-sm bg-green-500 text-white text-base font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
+                <div v-else class="text-center p-2 border-round-sm bg-gray-100 text-black text-base font-bold mt-2"> N/A </div>
             </div>
         </div>
-        
-        <div class="mb-2 sm:mb-0">
-          <p class="text-3xl font-bold text-center sm:text-left"> {{ maeInfo.name }} </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-book font-medium"></i> {{ maeInfo.career }} </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-building font-medium"></i> Campus {{ maeInfo.campus }} </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-clock font-medium"></i> {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas de servicio </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-star font-medium"></i> {{ asesoriasCount }} Asesorías </p>
-        </div>
-      </div>
-      <div class="sm:justify-end">
-        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2">
-          <Button v-if="userInfo['activeSession']" label="Cerrar turno" icon="pi pi-user-minus" size="large"
-            @click="stopSession" class="w-full" severity="danger"/>
-          <Button v-else label="Iniciar turno" icon="pi pi-user-plus" size="large"
-            @click="showDialogSession = true" class="w-full"/>
-        </div>
-        <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-book" size="large" severity="secondary"
-          @click="showDialogMaterias = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
-        <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-clock" size="large" severity="secondary"
-          @click="showDialogHorarios = true" class="w-full sm:w-fit mb-2 sm:mb-0"/>
-        <Button v-else label="Registrar asesoría" icon="pi pi-star" size="large"
-          @click="showDialogAsesoria = true" :disabled=" isSavingAsesoria"  class="w-full sm:w-fit"/>
       </div>
     </div>
-    <h2 class="font-bold text-center sm:text-left"> Materias </h2>
-    <div class="mb-2">
-      <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" />
-    </div>
-    <div class="flex flex-wrap">
-      <!-- Mostrar las primeras dos filas de etiquetas -->
-        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
-          {{ subject.name }}
-        </Tag>
-        <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
-          severity="secondary" rounded class="text-lg font-semibold text-white mx-1 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
-    </div>
-
-    <hr />
-    <h2 class="font-bold text-center sm:text-left"> Horario </h2>
-
-    <div>
-      <div class="grid">
-        <div v-for="day in daysArray" class="md:col col-12">
-          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
-            <div v-if="maeInfo.weekSchedule[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']]" :key="`${day['en']}-${index}`" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
-            <div v-else class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
-        </div>
-    </div>
+    
+    
     </div>
   </div>
-  <div v-else class="card mb-0 w-full">
-    <div class="sm:flex">
-      <div class="sm:flex sm:flex-1 justify-center w-full">
-        <div class="flex">
-          <Skeleton size="16rem" shape="circle" class="mb-2 sm:mr-5"></Skeleton>
-        </div>
-        <div class="mb-2 sm:mb-0 justify-center">
-          <Skeleton height="36px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-        </div>
-      </div>
-    </div>
-    <h2 class="font-bold text-center sm:text-left"> Materias </h2>
-    <div class="mb-2">
-      <Skeleton height="34px" class="p-mr-2"></Skeleton>
-    </div>
-    <div class="flex">
-      <!-- Mostrar las primeras dos filas de etiquetas -->
-      <Skeleton width="20%" height="34px" borderRadius="16px" class="mr-2"></Skeleton>
-      <Skeleton width="60%" height="34px" borderRadius="16px" class="mx-2"></Skeleton>
-      <Skeleton width="40%" height="34px" borderRadius="16px" class="ml-2"></Skeleton>
-        <!-- <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-2 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
-          {{ subject.name }}
-        </Tag>
-        <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
-          severity="secondary" rounded class="text-lg font-semibold text-white mx-2 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" /> -->
-    </div>
-
-    <hr />
-    <h2 class="font-bold text-center sm:text-left"> Horario </h2>
-
-    <div>
-      <div class="grid">
-        <div v-for="day in daysArray" class="md:col col-12">
-          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
-            <div class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
-        </div>
-    </div>
-    </div>
-  </div>
-
-  <!-- Dialogos -->
-
+  
   <Dialog v-model:visible="showDialogHorarios" modal header="Editar horario" class="w-9">
     <div class="grid">
       <div v-for="day in daysArray" class="md:col-4 col-12">
@@ -548,29 +539,32 @@ const validateFile = (file) => {
       </template>
     </Column>
   </DataTable>
-
   <div class="flex justify-content-end gap-2">
     <Button type="button" label="Cerrar" severity="secondary" @click="showDialogMaterias = false"></Button>
     <Button type="button" label="Guardar cambios" @click="saveSubjectChanges"></Button>
   </div>
 </Dialog>
 
-
-
   <Dialog v-model:visible="showDialogAsesoria" modal header="Registrar asesoría" class="md:w-4">
-    
     <p class="font-bold">Materia</p>
     <Dropdown v-model="materiaAsesoria" :options="subjects" filter optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false" class="w-12 mb-2" />
-
-    <p class="font-bold">Comentario</p>
+    <!-- <p class="font-bold">Comentario</p>
     <Textarea v-model="comentarioAsesoria" placeholder="Agrega un comentario" variant="filled" rows="5" cols="30" class="w-12" />
-
     <p class="font-bold mt-3">Califica tu asesoría</p>
-    <Rating v-model="ratingAsesoria" :cancel="false"/>
+    <Rating v-model="ratingAsesoria" :cancel="false"/> -->
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
       <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null)" @click="saveAsesoria"></Button>
     </div>
+  </Dialog>
+
+
+  <Dialog v-model:visible="showDialogTienda" modal header="Tienda MAE" class="md:w-4">
+    ¡En construcción! ✌
+  </Dialog>
+
+  <Dialog v-model:visible="showDialogEvaluacion" modal header="Evaluar Mae" class="md:w-4">
+    ¡En construcción! ✌
   </Dialog>
 
   <Dialog v-model:visible="showDialogSession" modal header="Iniciar turno" class="md:w-4">
@@ -583,12 +577,9 @@ const validateFile = (file) => {
   </Dialog>
 
   <Dialog v-model:visible="showDialogUpload" modal header="Cambiar foto de perfil" class="md:w-4">
-    <!-- Vista previa de la imagen -->
     <div v-if="previewUrl" class="mb-3 flex justify-content-center">
       <img :src="previewUrl" alt="Vista previa" class="border-circle h-16rem w-16rem">
     </div>
-
-    <!-- Área de arrastrar y soltar y seleccionar archivo -->
     <div
       class="border-2 border-dashed p-3 text-center cursor-pointer"
       @dragover.prevent
@@ -607,33 +598,26 @@ const validateFile = (file) => {
 </template>
 
 <style scoped>
-
-/* Horizontal spacing utility class */
 .space-x > * {
   margin-left: 1rem;
 }
-
-/* Vertical spacing utility class */
 .space-y > * {
   margin-bottom: 1rem; 
 }
-
 .border-round-lg {
   border-radius: 0.75rem;
 }
-
 .custom-table .p-datatable-tbody > tr:nth-child(even) {
-    background-color: #f2f2f2; /* Color de fondo para filas pares */
+    background-color: #f2f2f2; 
     border: 1px solid #f4f4f5a9;
 
 }
-
 .custom-table .p-datatable-tbody > tr:nth-child(odd) {
-    background-color: #ffffff; /* Color de fondo para filas impares */
+    background-color: #ffffff; 
     border: 1px solid #f4f4f5a9;
 }
 .custom-table .p-datatable-tbody > tr > td {
-    border-bottom: 2px solid #cccccc; /* Cambia el color y el grosor del borde */
-    padding: 1rem 1.5rem; /* Ajusta el padding si es necesario */
+    border-bottom: 2px solid #cccccc; 
+    padding: 1rem 1.5rem; 
 }
 </style>

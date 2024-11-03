@@ -233,10 +233,7 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
                 ad.subject.id === subjectId && 
                 Math.abs(adDate.getTime() - advisoryDate.getTime()) <= 2 * 60 * 60 * 1000;
         });
-        // console.log(similarAdvisories)
         const ultimoElemento = asesorias[asesorias.length - 1];
-        console.log(ultimoElemento, "Este es el ultimo elemento")
-        console.log(ultimoElemento.date, "Este es el id")
         if (similarAdvisories.length > 1) {
             await updatePoints(peerUid, -150);
             await updateAdvisoryDuplicateField(ultimoElemento.date, true );
@@ -254,7 +251,6 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
         console.error("Error actualizando la experiencia de asesorías:", error);
     }
 }
-
 
 // Función para obtener asesorías por UID, reutilizando getAsesorias
 export async function getCommentsByUid(uid) {

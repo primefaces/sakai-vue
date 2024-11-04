@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser } from '@/firebase/db/users';
+import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser,updateUserAchievementBadge} from '@/firebase/db/users';
 import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
 import { getUsersWithActiveSession, updatePoints } from '@/firebase/db/users';
 
@@ -31,6 +31,7 @@ const pointsRules = {
 const handlePointsUpdate = async (uid, newAttendance) => {
     const points = pointsRules[newAttendance] || 0;
     await updatePoints(uid, points); 
+   
     if (newAttendance !== "C"){
         toast.add({ severity: 'success', summary: 'Se ha actualizado su asistencia ', detail: `Se ha actualizo de forma correcta`, life: 3000 });
     }

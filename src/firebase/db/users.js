@@ -595,6 +595,9 @@ export async function updatePoints(uid, newPoints) {
         await updateDoc(userRef, { points: updatedPoints });
         //console.log(`Puntos actualizados para ${user.name}: ${updatedPoints}`);
         user.points = updatedPoints; 
+        if (newPoints < 0){
+            await updateUserAchievementBadge(uid, "18")
+        }
     } else {
         console.log(`Usuario con uid ${uid} no encontrado.`);
     }

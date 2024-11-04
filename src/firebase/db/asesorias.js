@@ -9,7 +9,8 @@ import {
     updateDoc
 } from 'firebase/firestore';
 import { 
-    updatePoints
+    updatePoints,
+    updateUserAchievementBadge
 } from './users'; 
 
 
@@ -237,6 +238,7 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
         if (similarAdvisories.length > 1) {
             await updatePoints(peerUid, -150);
             await updateAdvisoryDuplicateField(ultimoElemento.date, true );
+            await updateUserAchievementBadge(userUid, "18");
         } else {
             await updateAdvisoryDuplicateField(ultimoElemento.date, false );
             if(subjectId === "MAE"){

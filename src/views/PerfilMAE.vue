@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
-  stopActiveSession,updateUserProfilePicture,  countAchievedBadges} from '../firebase/db/users';
+  stopActiveSession,updateUserProfilePicture,  countAchievedBadges, updateUserAchievementBadge} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
 import { FilterMatchMode } from 'primevue/api';
@@ -31,6 +31,7 @@ const subjects = ref([]);
 const newSchedule = ref({});
 const showDialogUpload = ref(false); 
 const selectedFile = ref(null); 
+const showDialogLogros = ref(false);
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
@@ -39,6 +40,60 @@ onMounted(async () => {
   selectedSubjects.value = maeInfo.value.subjects;
   subjects.value = await getSubjects();
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
+  badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
+  if (asesoriasCount.value >= 1 && maeInfo.value.badges[0].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "1");
+  } 
+  if (asesoriasCount.value >= 10 && maeInfo.value.badges[1].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "2");
+  } 
+  if (asesoriasCount.value >= 30 && maeInfo.value.badges[2].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "3");
+  } 
+  if (asesoriasCount.value >= 50 && maeInfo.value.badges[3].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "4");
+  } 
+  if (asesoriasCount.value >= 100 && maeInfo.value.badges[4].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "5");
+  } 
+  if (asesoriasCount.value >= 200 && maeInfo.value.badges[5].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "6");
+  } 
+  if (asesoriasCount.value >= 500 && maeInfo.value.badges[6].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "7");
+  } 
+  if ( maeInfo.value.profilePictureUrl !== "https://randomuser.me/api/portraits/lego/5.jpg"
+  && maeInfo.value.badges[7].achieved === false
+  ){
+    await updateUserAchievementBadge(maeInfo.value.uid, "8");
+  }
+  if ((Math.round((maeInfo.value.totalTime / 60) * 100) / 100) >= 80 && maeInfo.value.badges[8].achieved === false) {
+      await updateUserAchievementBadge(maeInfo.value.uid, "9");
+  }
+  if ( maeInfo.value.badges[11].achieved === false 
+    && maeInfo.value.role == "mae" || asesoriasCount.value >= 1
+  ) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "12");
+  } 
+  if ( maeInfo.value.badges[12].achieved === false 
+    && maeInfo.value.role == "coordi" || maeInfo.value.role == "admin"
+     || maeInfo.value.role == "tec"
+  ) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "13");
+  } 
+  if ( maeInfo.value.badges[13].achieved === false 
+    &&  maeInfo.value.role == "admin"
+     || maeInfo.value.role == "tec"
+  ) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "14");
+  } 
+  if ( maeInfo.value.badges[14].achieved === false 
+    &&  maeInfo.value.role == "publi"
+  ) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "15");
+  } 
+  
+  maeInfo.value = await getUser(route.params.id);
   badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
 })
 
@@ -319,8 +374,8 @@ const validateFile = (file) => {
 </script>
 
 <template>
-  <div class="flex border-round-top-xl h-7rem w-full" style="background-color: #58AFCA; align-items: center; justify-content: center;">
-    <div class="sm:flex sm:flex-1 justify-center w-full  px-6">
+  <div class="flex border-round-top-xl h-8rem w-full" style="background-color: #58AFCA; align-items: center; justify-content: center;">
+    <div class="sm:flex sm:flex-1 justify-center w-full  px-3">
         <div class="relative flex align-items-center justify-content-center mr-4 ">
           <img v-if="maeInfo" :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-10rem w-10rem border-3 border-white mt-8">
             <!-- <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
@@ -330,7 +385,7 @@ const validateFile = (file) => {
       </div>
   </div>
 
-  <div v-if="maeInfo && userInfo" class="bg-white px-6 mb-0 w-full  ">
+  <div v-if="maeInfo && userInfo" class="bg-white px-3 mb-0 w-full  ">
     <div class="sm:flex justify-content-end ">
       <div class="mt-2 w-4 hidden md:block">
         <div v-if="userInfo.uid == maeInfo.uid" class="mb-2 ">
@@ -433,7 +488,7 @@ const validateFile = (file) => {
     </div>
           
     <div class="flex flex-column md:flex-row ">
-      <div class="md:w-3 w-full  mt-2 mr-4">
+      <div class="md:w-4 w-full  mt-2 mr-4">
         <div class="border-round-lg border-gray-300 flex flex-row p-2 shadow-md card align-items-center justify-content-center">
           <img src="/assets/coins.svg" class="ml-2" alt="mentoring icon" style="width: 2.5rem; height: 2.5rem;" />
           <p class="text-lg font-bold mt-3 ml-2 "> {{ Math.floor(maeInfo.points / 10) }} monedas</p>
@@ -452,11 +507,11 @@ const validateFile = (file) => {
           </span>
           <span class="flex flex-row  mb-2">
             <img src="/assets/clock.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
-            <p class="text-lg font-medium  ml-2">  {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas </p>
+            <p class="text-lg font-medium  ml-2">  {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas de servicio </p>
           </span>      
         </div>
       </div>
-      <div class="w-9">
+      <div class="w-8">
         <h2 class="font-bold text-center sm:text-left"> Materias </h2>
         <div class="mb-2">
           <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" />
@@ -471,20 +526,46 @@ const validateFile = (file) => {
         </div>
       </div>
     </div>
-    <div class="flex flex-column md:flex-row mb-4">
-      <div class="md:w-3  w-full mt-2 mr-4 ">
-        <!--TODO: LOGROS -->
-        <div class="border-round-lg border-gray-300 flex flex-col p-4 shadow-md card align-items-start gap-2 ">
+    <div class="flex flex-column md:flex-row mb-4 ">
+      <div class="md:w-4  w-full mt-2 mr-4  mb-4">
+        <div class="border-round-lg border-gray-300 flex flex-col p-4 shadow-md card align-items-start gap-2 flex flex-column">
           <div class="flex flex-row">
             <img src="/assets/trophy.svg" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
-            <p class="text-lg font-bold ml-2 mr-2">Logros</p>
-            <p class="text-base font-medium ">{{ badgesCount }} / 18</p>
-            <i class="pi pi-angle-right text-lg ml-3 mt-1 cursor-pointer"></i>
+            <p class="text-lg font-bold ml-2 mr-4">Logros</p>
+            <p class="text-lg font-medium ">{{ badgesCount }} / 18</p>
+            <i class="pi pi-angle-right text-xl ml-5 mt-1 cursor-pointer" @click="showDialogLogros = true"></i>
+          </div>
+          <div class="flex flex-row">
+            <img 
+                :src="maeInfo.badges[0].image_url" 
+                alt="Logro 1"
+                class="border-circle mr-4 h-4rem w-4rem p-2" 
+                :style="{ border: maeInfo.badges[0].achieved ? '3px solid #00ACC1' : '3px solid #808080', 
+                          filter: maeInfo.badges[0].achieved ? 'none' : 'grayscale(100%)' }" 
+              />
+
+              <div class="flex flex-column mt-2" v-if="maeInfo.badges && maeInfo.badges.length > 0">
+                  <p class="text-base font-bold m-0">{{ maeInfo.badges[0].name }}</p>
+                  <p class="text-md font-medium m-0">{{ maeInfo.badges[0].description }}</p>
+              </div>
+          </div>
+          <div class="flex flex-row">
+            <img 
+                :src="maeInfo.badges[1].image_url" 
+                alt="Logro 1"
+                class="border-circle mr-4 h-4rem w-4rem p-2" 
+                :style="{ border: maeInfo.badges[1].achieved ? '3px solid #00ACC1' : '3px solid #808080', 
+                          filter: maeInfo.badges[1].achieved ? 'none' : 'grayscale(100%)' }" 
+              />
+              <div class="flex flex-column mt-2" v-if="maeInfo.badges && maeInfo.badges.length > 0">
+                  <p class="text-md font-bold m-0">{{ maeInfo.badges[1].name }}</p>
+                  <p class="text-sm font-medium m-0">{{ maeInfo.badges[1].description }}</p>
+              </div>
           </div>
         </div>
-
+        
       </div>
-      <div class="w-9">
+      <div class="w-8">
         <h2 class="font-bold text-center sm:text-left mt-2"> Horario </h2>
         <div>
           <div class="grid">
@@ -564,6 +645,43 @@ const validateFile = (file) => {
     </div>
   </Dialog>
 
+  <Dialog v-model:visible="showDialogLogros" modal class="mr-3 w-10">
+  <template #header>
+    <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+      <p class="text-2xl font-bold mr-2 mt-3">Logros</p>
+      <img src="/assets/trophy.svg" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+    </div>
+  </template>
+
+  <!-- Contenedor de los logros en un layout de grilla sin gap -->
+  <div class="grid md:ml-8">
+    <div
+      v-for="(badge) in maeInfo.badges"
+      :key="badge.id"
+      class="col-11 ml-3 md:col-5 lg:col-3 flex flex-row align-items-center card p-3 md:mx-3 lg:mx-5  h-10rem   border-round shadow-2 hover:shadow-4 transition-shadow duration-200 border-round-xl"
+    >
+        <img
+          :src="badge.image_url"
+          alt="Logro"
+          class="border-circle h-4rem w-4rem p-2 mb-2 mr-3"
+          :style="{ 
+            border: badge.achieved ? '3px solid #00ACC1' : '3px solid #808080', 
+            filter: badge.achieved ? 'none' : 'grayscale(100%)' 
+          }"
+        />
+        <div class="text-center ">
+          <p :class="['text-base font-bold m-0', badge.achieved ? 'text-black' : 'text-gray-500']">
+            {{ badge.name }}
+          </p>
+          <p :class="['text-md font-medium m-0', badge.achieved ? 'text-black' : 'text-gray-500']">
+            {{ badge.description }}
+          </p>
+        </div>
+    </div>
+  </div>
+</Dialog>
+
+
 
   <Dialog v-model:visible="showDialogTienda" modal header="Tienda MAE" class="md:w-4">
     ¡En construcción! ✌
@@ -625,5 +743,17 @@ const validateFile = (file) => {
 .custom-table .p-datatable-tbody > tr > td {
     border-bottom: 2px solid #cccccc; 
     padding: 1rem 1.5rem; 
+}
+
+.p-dialog .p-dialog-footer {
+    background:  #EFF2F7 ;
+}
+
+.p-dialog .p-dialog-content {
+    background:  #EFF2F7 ;
+}
+
+.p-dialog .p-dialog-header {
+    background:  #EFF2F7 ;
 }
 </style>

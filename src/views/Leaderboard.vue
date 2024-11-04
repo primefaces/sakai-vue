@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getExperience } from '@/firebase/db/users';
+import { getExperience,updateUserAchievementBadge } from '@/firebase/db/users';
 
 const users = ref([]);
 const userGold = ref(null);
@@ -9,7 +9,7 @@ onMounted(async () => {
     const fetchedUsers = await getExperience();
     users.value = assignRanks(fetchedUsers);
     userGold.value = users.value[0]; // Usar .value para reasignar
-    console.log(userGold.value, "Esto es"); // Usar .value para acceder al valor
+    await updateUserAchievementBadge(users.value[0].uid, "11");
 });
 
 const assignRanks = (fetchedUsers) => {

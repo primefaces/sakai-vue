@@ -558,12 +558,14 @@ export const saveScheduleSubjectsExperience = async () => {
                 puntos += 15;
             } else {
                 puntos -= 30;
+                await  updateUserAchievementBadge(user.uid, "18");
             }
 
             if (user.weekSchedule && Object.keys(user.weekSchedule).length > 0) {
                 puntos += 100;
             } else {
                 puntos -= 500;
+                await updateUserAchievementBadge(user.uid, "18");
             }
 
             const userRef = doc(db, 'users', userDoc.id); 
@@ -676,6 +678,7 @@ export async function addBadgesToEligibleUsers() {
 // actualizar le achieved del usuario 
 export async function updateUserAchievementBadge(uid, badgeId) {
     try {
+        console.log("Ya llegue", uid, badgeId)
         // Obtiene la referencia al documento del usuario en Firestore
         const userRef = doc(firestoreDB, "users", uid);
 

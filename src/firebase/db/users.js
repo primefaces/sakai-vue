@@ -373,31 +373,28 @@ export async function updateUserProfilePicture(userId, photoURL) {
  */
 export async function clearAllUsersWeekSchedule() {
     try {
-        // Get a reference to the "users" collection
+
         const usersRef = collection(firestoreDB, "users");
 
-        // Get all user documents from the collection
         const querySnapshot = await getDocs(usersRef);
 
-        // Roles that are eligible for clearing the weekSchedule
+
         const eligibleRoles = ['admin', 'coordi', 'mae','tec','publi'];
 
-        // Iterate through each document and update the weekSchedule field to an empty object if the role matches
         const promises = querySnapshot.docs.map(async (doc) => {
-            const userRef = doc.ref; // Reference to the specific user document
-            const userData = doc.data(); // Get the user data
+            const userRef = doc.ref; 
+            const userData = doc.data(); 
 
-            // Check if the user's role is in the list of eligible roles
+    
             if (eligibleRoles.includes(userData.role)) {
                 return updateDoc(userRef, {
-                    weekSchedule: {} // Set weekSchedule to an empty object
+                    weekSchedule: {} 
                 });
             } else {
-                return Promise.resolve(); // Skip the update for users with other roles
+                return Promise.resolve();
             }
         });
 
-        // Wait for all promises to resolve
         await Promise.all(promises);
 
         console.log("Week schedule content has been successfully cleared for eligible users.");
@@ -621,5 +618,125 @@ export async function getExperience() {
         return data;
     } else {
         return null;
+    }
+}
+
+// Funcion especial si mas adelante quieren agregar logros
+export async function addBadgesToEligibleUsers() {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const querySnapshot = await getDocs(usersRef);
+
+        const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
+
+        const badges = [
+            { "id": "1", "name": "Mi primera asesoría", "description": "Da tu primera asesoría", "image_url": "/assets/badges/1.svg", "achieved": false },
+            { "id": "2", "name": "MAE aprendiz", "description": "Da 10 asesorías", "image_url": "/assets/badges/2.svg", "achieved": false },
+            { "id": "3", "name": "MAE en ascenso", "description": "Da 30 asesorías", "image_url": "/assets/badges/3.svg", "achieved": false },
+            { "id": "4", "name": "MAE destacado", "description": "Da 50 asesorías", "image_url": "/assets/badges/4.svg", "achieved": false },
+            { "id": "5", "name": "Super MAE", "description": "Da 100 asesorías", "image_url": "/assets/badges/5.svg", "achieved": false },
+            { "id": "6", "name": "Leyenda MAE", "description": "Da 200 asesorías", "image_url": "/assets/badges/6.svg", "achieved": false },
+            { "id": "7", "name": "MAE de MAEs", "description": "Da 500 asesorías", "image_url": "/assets/badges/7.svg", "achieved": false },
+            { "id": "8", "name": "Cambio de look", "description": "Añade una foto de perfil", "image_url": "/assets/badges/8.svg", "achieved": false },
+            { "id": "9", "name": "Trabajo bien hecho", "description": "Completa 80 horas", "image_url": "/assets/badges/9.svg", "achieved": false },
+            { "id": "10", "name": "Siempre a tiempo", "description": "Obtén asistencia perfecta durante 1 periodo", "image_url": "/assets/badges/10.svg", "achieved": false },
+            { "id": "11", "name": "Top MAE", "description": "Se #1 en el leaderboard", "image_url": "/assets/badges/11.svg", "achieved": false },
+            { "id": "12", "name": "MAE", "description": "Obtén el rol de MAE", "image_url": "/assets/badges/12.svg", "achieved": false },
+            { "id": "13", "name": "Coordi", "description": "Obtén el rol de coordi", "image_url": "/assets/badges/13.svg", "achieved": false },
+            { "id": "14", "name": "Tecnológico", "description": "Obtén el rol de tecnología", "image_url": "/assets/badges/14.svg", "achieved": false },
+            { "id": "15", "name": "Publicista", "description": "Obtén el rol de publicidad", "image_url": "/assets/badges/15.svg", "achieved": false },
+            { "id": "16", "name": "Especialista", "description": "Mete 3 materias top", "image_url": "/assets/badges/16.svg", "achieved": false },
+            { "id": "17", "name": "Trabajo de campo", "description": "Da 5 asesorías de materias top", "image_url": "/assets/badges/17.svg", "achieved": false },
+            { "id": "18", "name": "Ups...", "description": "Pierde puntos de experiencia una vez", "image_url": "/assets/badges/18.svg", "achieved": false }
+        ];
+
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref;
+            const userData = doc.data();
+
+            if (eligibleRoles.includes(userData.role)) {
+                return updateDoc(userRef, {
+                    badges: badges
+                });
+            } else {
+                return Promise.resolve();
+            }
+        });
+
+        await Promise.all(promises);
+
+        console.log("Badges have been successfully added to eligible users.");
+    } catch (error) {
+        console.error("Error adding badges to eligible users: ", error);
+        throw error;
+    }
+}
+
+
+// actualizar le achieved del usuario 
+export async function updateUserAchievementBadge(uid, badgeId) {
+    try {
+        // Obtiene la referencia al documento del usuario en Firestore
+        const userRef = doc(firestoreDB, "users", uid);
+
+        // Obtiene los datos actuales del usuario
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            console.error("Usuario no encontrado");
+            return;
+        }
+
+        // Obtiene el array de badges del usuario
+        const userData = userDoc.data();
+        const badges = userData.badges || [];
+
+        // Encuentra el logro correspondiente y actualiza `achieved` a `true`
+        const updatedBadges = badges.map((badge) => {
+            if (badge.id === badgeId) {
+                return { ...badge, achieved: true };
+            }
+            return badge;
+        });
+
+        // Actualiza el documento del usuario en Firestore con los badges actualizados
+        await updateDoc(userRef, {
+            badges: updatedBadges
+        });
+
+        console.log(`El logro con id ${badgeId} se ha actualizado correctamente para el usuario ${uid}.`);
+    } catch (error) {
+        console.error("Error al actualizar el logro del usuario:", error);
+        throw error;
+    }
+}
+
+
+// Contador de badges
+export async function countAchievedBadges(uid) {
+    try {
+        // Obtiene la referencia al documento del usuario en Firestore
+        const userRef = doc(firestoreDB, "users", uid);
+
+        // Obtiene los datos actuales del usuario
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            console.error("Usuario no encontrado");
+            return 0;
+        }
+
+        // Obtiene el array de badges del usuario
+        const badges = userDoc.data().badges || [];
+
+        // Cuenta los badges que tienen achieved: true
+        const achievedCount = badges.reduce((count, badge) => {
+            return count + (badge.achieved ? 1 : 0);
+        }, 0);
+
+        return achievedCount;
+    } catch (error) {
+        console.error("Error al contar los logros alcanzados:", error);
+        throw error;
     }
 }

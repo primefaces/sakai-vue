@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
-  stopActiveSession,updateUserProfilePicture} from '../firebase/db/users';
+  stopActiveSession,updateUserProfilePicture,  countAchievedBadges} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
 import { FilterMatchMode } from 'primevue/api';
@@ -25,6 +25,7 @@ const userId = ref(route.path.split('/').pop());
 const maeInfo = ref(null);
 const userInfo = ref(null);
 const asesoriasCount = ref(0);
+const badgesCount = ref(0);
 const selectedSubjects = ref([]);
 const subjects = ref([]);
 const newSchedule = ref({});
@@ -38,6 +39,7 @@ onMounted(async () => {
   selectedSubjects.value = maeInfo.value.subjects;
   subjects.value = await getSubjects();
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
+  badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
 })
 
 const getHorasHorario = () => {
@@ -473,8 +475,12 @@ const validateFile = (file) => {
       <div class="md:w-3  w-full mt-2 mr-4 ">
         <!--TODO: LOGROS -->
         <div class="border-round-lg border-gray-300 flex flex-col p-4 shadow-md card align-items-start gap-2 ">
-          <p class="text-lg font-semibold text-primary">🎖️ Logros</p>
-          <p class="text-base text-gray-600">En construcción </p>
+          <div class="flex flex-row">
+            <img src="/assets/trophy.svg" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+            <p class="text-lg font-bold ml-2 mr-2">Logros</p>
+            <p class="text-base font-medium ">{{ badgesCount }} / 18</p>
+            <i class="pi pi-angle-right text-lg ml-3 mt-1 cursor-pointer"></i>
+          </div>
         </div>
 
       </div>

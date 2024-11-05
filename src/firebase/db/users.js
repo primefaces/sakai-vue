@@ -483,6 +483,26 @@ export async function checkAndUpdateUserRole(file = null) {
 
 export async function updateUserToMae(data) {
     const { role, matricula, status } = data;
+    const badges = [
+        { "id": "1", "name": "Mi primera asesoría", "description": "Da tu primera asesoría", "image_url": "/assets/badges/1.svg", "achieved": false },
+        { "id": "2", "name": "MAE aprendiz", "description": "Da 10 asesorías", "image_url": "/assets/badges/2.svg", "achieved": false },
+        { "id": "3", "name": "MAE en ascenso", "description": "Da 30 asesorías", "image_url": "/assets/badges/3.svg", "achieved": false },
+        { "id": "4", "name": "MAE destacado", "description": "Da 50 asesorías", "image_url": "/assets/badges/4.svg", "achieved": false },
+        { "id": "5", "name": "Super MAE", "description": "Da 100 asesorías", "image_url": "/assets/badges/5.svg", "achieved": false },
+        { "id": "6", "name": "Leyenda MAE", "description": "Da 200 asesorías", "image_url": "/assets/badges/6.svg", "achieved": false },
+        { "id": "7", "name": "MAE de MAEs", "description": "Da 500 asesorías", "image_url": "/assets/badges/7.svg", "achieved": false },
+        { "id": "8", "name": "Cambio de look", "description": "Añade una foto de perfil", "image_url": "/assets/badges/8.svg", "achieved": false },
+        { "id": "9", "name": "Trabajo bien hecho", "description": "Completa 80 horas", "image_url": "/assets/badges/9.svg", "achieved": false },
+        { "id": "10", "name": "Siempre a tiempo", "description": "Obtén asistencia perfecta durante 1 periodo", "image_url": "/assets/badges/10.svg", "achieved": false },
+        { "id": "11", "name": "Top MAE", "description": "Se #1 en el leaderboard", "image_url": "/assets/badges/11.svg", "achieved": false },
+        { "id": "12", "name": "MAE", "description": "Obtén el rol de MAE", "image_url": "/assets/badges/12.svg", "achieved": false },
+        { "id": "13", "name": "Coordi", "description": "Obtén el rol de coordi", "image_url": "/assets/badges/13.svg", "achieved": false },
+        { "id": "14", "name": "Tecnológico", "description": "Obtén el rol de tecnología", "image_url": "/assets/badges/14.svg", "achieved": false },
+        { "id": "15", "name": "Publicista", "description": "Obtén el rol de publicidad", "image_url": "/assets/badges/15.svg", "achieved": false },
+        { "id": "16", "name": "Especialista", "description": "Mete 3 materias top", "image_url": "/assets/badges/16.svg", "achieved": false },
+        { "id": "17", "name": "Trabajo de campo", "description": "Da 5 asesorías de materias top", "image_url": "/assets/badges/17.svg", "achieved": false },
+        { "id": "18", "name": "Ups...", "description": "Pierde puntos de experiencia una vez", "image_url": "/assets/badges/18.svg", "achieved": false }
+    ];
 
     // Asegurarse de que los datos necesarios no sean nulos
     if (!role || !matricula || !status) {
@@ -514,7 +534,8 @@ export async function updateUserToMae(data) {
                     status: status.value,
                     weekSchedule: {}, 
                     subjects: [],
-                    totalTime: 0
+                    totalTime: 0,
+                    badges: badges
                 });
             } else {
                 // De lo contrario, solo actualizar role y status

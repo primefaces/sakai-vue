@@ -76,10 +76,8 @@ const handleFileUpload = () => {
         accept: async () => {
             try {
                 if (selectedFile.value) {
-                    // Si hay un archivo seleccionado, actualizar roles con el archivo
                     await checkAndUpdateUserRole(selectedFile.value); 
                 } else {
-                    // Si no hay archivo, actualizar roles sin archivo
                     await checkAndUpdateUserRole(null);
                 }
                 toast.add({ severity: 'success', summary: 'Éxito', detail: 'Se han actualzado los maes inactivos a exmaes.', life: 3000 });
@@ -132,7 +130,7 @@ const handleAddUser = async () => {
                     status: newStatus.value
                 });
                 toast.add({ severity: 'success', summary: 'Éxito', detail: 'Mae agregado exitosamente.', life: 3000 });
-                displayAddUserDialog.value = false; // Cerrar el diálogo
+                displayAddUserDialog.value = false; 
                 newMatricula.value = '';
                 newRole.value = null;
                 newStatus.value = null;
@@ -143,7 +141,7 @@ const handleAddUser = async () => {
         },
         reject: () => {
             toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
-            displayAddUserDialog.value = false; // Cerrar el diálogo
+            displayAddUserDialog.value = false; 
         }
     });
 };
@@ -180,7 +178,7 @@ const openUpdatePointsDialog = () => {
 };
 
 const handleUpdatePoints = async () => {
-    if (!userId.value || newPoints.value === null) { // Verifica si es null o indefinido
+    if (!userId.value || newPoints.value === null) {
         toast.add({ severity: 'warn', summary: 'Advertencia', detail: 'Todos los campos son obligatorios.', life: 3000 });
         return;
     }

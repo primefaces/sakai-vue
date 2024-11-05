@@ -35,6 +35,8 @@ onMounted(async () => {
   subjects.value = await getSubjects();
   anuncios.value  = await  getAnnouncements()
   nextAnuncio()
+  autoAdvance();
+
 });
 
 const startSession = async () => {
@@ -72,15 +74,26 @@ const stopSession = async () => {
 const nextAnuncio = () => {
   if (currentIndex.value < anuncios.value.length - 1) {
     currentIndex.value++;
-    currentAnuncio.value = anuncios.value[currentIndex.value];
+  } else {
+    currentIndex.value = 0; // Reinicia al primer anuncio
   }
+  currentAnuncio.value = anuncios.value[currentIndex.value];
 };
 
 const prevAnuncio = () => {
   if (currentIndex.value > 0) {
     currentIndex.value--;
-    currentAnuncio.value = anuncios.value[currentIndex.value];
+  } else {
+    currentIndex.value = anuncios.value.length - 1; // Regresa al último anuncio
   }
+  currentAnuncio.value = anuncios.value[currentIndex.value];
+};
+
+// Función para avanzar automáticamente cada 5 segundos
+const autoAdvance = () => {
+  setInterval(() => {
+    nextAnuncio();
+  }, 5000);
 };
 
 const saveAsesoria = async () => {
@@ -238,10 +251,12 @@ const goToAsesoria = async (asesoria) => {
               Pre-registro <i class="pi pi-arrow-right text-3xl font-bold"></i>
             </p>
             
-
-            <!-- <p v-if="currentAnuncio.type === 'Especial'" class="text-white text-2xl font-bold ml-5 text-right mr-5 ">
-              Saber más <i class="pi pi-arrow-right text-3xl font-bold"></i>
-            </p>  -->
+            <a :href="`#/asesoriasGrupales`" class="no-blue-link">
+              <p v-if="currentAnuncio.type !== 'Asesoría' && currentAnuncio.type !== 'otro'"  class="text-white text-2xl font-bold ml-5 text-right mr-5 ">
+                Saber más <i class="pi pi-arrow-right text-3xl font-bold "></i>
+              </p>  
+            </a>
+           
           </div>
 
           <div class="grid place-content-center md:mr-2 ml-2">
@@ -304,5 +319,22 @@ const goToAsesoria = async (asesoria) => {
   .botones{
     margin-top: auto;
   }
+}
+
+.no-blue-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.no-blue-link:visited {
+    color: inherit;
+}
+
+.no-blue-link:hover {
+    color: inherit;
+}
+
+.no-blue-link:active {
+    color: inherit;
 }
 </style>

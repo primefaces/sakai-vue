@@ -2,7 +2,8 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
-  stopActiveSession,updateUserProfilePicture,  countAchievedBadges, updateUserAchievementBadge} from '../firebase/db/users';
+  stopActiveSession,updateUserProfilePicture,  countAchievedBadges, 
+  updateUserAchievementBadge, updateUserBackground, updateUserBackgroundImage} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
 import { FilterMatchMode } from 'primevue/api';
@@ -41,6 +42,7 @@ onMounted(async () => {
   subjects.value = await getSubjects();
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
   badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
+  
   if (asesoriasCount.value >= 1 && maeInfo.value.badges[0].achieved === false) {
     await updateUserAchievementBadge(maeInfo.value.uid, "1");
   } 
@@ -95,6 +97,7 @@ onMounted(async () => {
   
   maeInfo.value = await getUser(route.params.id);
   badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
+
 })
 
 const getHorasHorario = () => {
@@ -366,6 +369,33 @@ const triggerFileInput = () => {
   document.querySelector('input[type="file"]').click();
 };
 
+
+const buyThings = async (backId, price) => {
+  const availableCoins = Math.floor(maeInfo.value.points / 10) - maeInfo.value.useCoins - price;
+
+  if (availableCoins < 0) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Monedas insuficientes' });
+    return;
+  }
+
+  await updateUserBackground(maeInfo.value.uid, backId, price, maeInfo.value.useCoins);
+  maeInfo.value = await getUser(route.params.id);
+  toast.add({ severity: 'success', summary: 'Has comprado un nuevo fondo', life: 3000 });
+};
+
+const changeBackground = async (backImageUrl) => {
+        await updateUserBackgroundImage(maeInfo.value.uid, backImageUrl);
+        maeInfo.value = await getUser(route.params.id);
+        toast.add({ severity: 'success', summary: 'Has actualizado el fondo', life: 3000 });
+};
+
+
+const validateBackground = async () => {
+        toast.add({ severity: 'success', summary: 'Ya has equipado ese fondo', life: 3000 });
+};
+
+
+
 const validateFile = (file) => {
   const validTypes = ['image/jpeg', 'image/png'];
   return validTypes.includes(file.type);
@@ -374,15 +404,25 @@ const validateFile = (file) => {
 </script>
 
 <template>
-  <div class="flex border-round-top-xl h-8rem w-full" style="background-color: #58AFCA; align-items: center; justify-content: center;">
-    <div class="sm:flex sm:flex-1 justify-center w-full  px-3">
-        <div class="relative flex align-items-center justify-content-center mr-4 ">
-          <img v-if="maeInfo" :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-10rem w-10rem border-3 border-white mt-8">
-            <!-- <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
-                <Button icon="pi pi-pencil"  class="border-3 border-white" rounded @click="showDialogUpload = true" />
-            </div> -->
-        </div>  
+  <div class="flex border-round-top-xl h-8rem w-full" v-if="maeInfo"
+      :style="{
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: `url(${maeInfo.myBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }">
+    
+    <div class="sm:flex sm:flex-1 justify-center w-full px-3">
+      <div class="relative flex align-items-center justify-content-center mr-4">
+        <img v-if="maeInfo" :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-10rem w-10rem border-3 border-white mt-8 ml-6">
+        <!-- 
+        <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
+          <Button icon="pi pi-pencil" class="border-3 border-white" rounded @click="showDialogUpload = true" />
+        </div> 
+        -->
       </div>
+    </div>
   </div>
 
   <div v-if="maeInfo && userInfo" class="bg-white px-3 mb-0 w-full  ">
@@ -491,7 +531,9 @@ const validateFile = (file) => {
       <div class="md:w-4 w-full  mt-2 mr-4">
         <div class="border-round-lg border-gray-300 flex flex-row p-2 shadow-md card align-items-center justify-content-center">
           <img src="/assets/coins.svg" class="ml-2" alt="mentoring icon" style="width: 2.5rem; height: 2.5rem;" />
-          <p class="text-lg font-bold mt-3 ml-2 "> {{ Math.floor(maeInfo.points / 10) }} monedas</p>
+          <p class="text-lg font-bold mt-3 ml-2"> 
+            {{ Math.max(0, Math.floor(maeInfo.points / 10) - maeInfo.useCoins) }} monedas
+          </p>
           <div class="ml-2 cursor-pointer mt-2" style="position: relative;">
             <i class="pi pi-question-circle text-gray-500" style="font-size: 1.2rem;" v-tooltip="'Las monedas se ganan através de puntos de experiencia. Utilizas para personalizar en tu pérfil en la tienda MAE'"></i>
           </div>
@@ -649,11 +691,10 @@ const validateFile = (file) => {
   <template #header>
     <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
       <p class="text-2xl font-bold mr-2 mt-3">Logros</p>
-      <img src="/assets/trophy.svg" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+      <img src="/assets/trophy.svg" alt="trophy icon" style="width: 1.6rem; height: 1.6rem;" />
     </div>
   </template>
 
-  <!-- Contenedor de los logros en un layout de grilla sin gap -->
   <div class="grid md:ml-8">
     <div
       v-for="(badge) in maeInfo.badges"
@@ -683,8 +724,95 @@ const validateFile = (file) => {
 
 
 
-  <Dialog v-model:visible="showDialogTienda" modal header="Tienda MAE" class="md:w-4">
-    ¡En construcción! ✌
+  <Dialog v-model:visible="showDialogTienda" modal class="mr-3 w-10">
+    <template #header>
+      <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+        <p class="text-2xl font-bold mr-2 mt-3">Tienda MAE</p>
+        <img src="/assets/store.svg" alt="mentoring icon" class="icon-blue" style="width: 1.6rem; height: 1.6rem;" />
+
+      </div>
+    </template>
+
+    <div class="grid md:ml-8 mt-3">
+      <div
+        v-for="(back) in maeInfo.background"
+        :key="back.id"
+        class="col-11 ml-3 md:col-5 lg:col-3 flex flex-column align-items-center card p-0 md:mx-3 lg:mx-5 h-auto border-round shadow-2 hover:shadow-4 transition-shadow duration-200 border-round-xl">
+        
+        <!-- Fondo que ocupa todo el ancho -->
+        <div class="w-full h-7rem border-round-top-xl"
+            :style="{
+              backgroundImage: `url(${back.image_url})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }">
+        </div>
+
+        <!-- Contenedor para precio e íconos -->
+        <div class="p-3 w-full text-center flex flex-row justify-content-between align-items-center">
+          
+          <!-- Precio con icono de moneda -->
+          <div class="flex flex-row align-items-center">
+            <img src="/assets/coins.svg" class="ml-2" alt="mentoring icon" style="width: 1.5rem; height: 1.5rem;" />
+            <p class="text-lg font-bold ml-2">{{ back.price }}</p>
+          </div>
+          
+          <!-- Botones con lógica condicional -->
+          <Button 
+            v-if="!back.bought && maeInfo.myBackground !== back.image_url"
+            class="p-button-help p-button-sm text-white font-bold flex justify-content-center align-items-center border-none border-round-3xl"
+            :style="{
+              background: 'linear-gradient(to right, #4466a7, #51a3ac)',
+              padding: '1.2rem 1rem',
+              height: '1.5rem',
+              lineHeight: '1.5rem',
+              fontSize: '0.875rem'
+            }"
+             @click="buyThings(back.id, back.price)"
+          >
+            Comprar
+            <img src="/assets/store.svg" class="ml-2" alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
+          </Button>
+
+          <Button 
+            v-else-if="back.bought && maeInfo.myBackground !== back.image_url"
+            class="p-button-help p-button-sm text-white font-bold flex justify-content-center align-items-center border-none border-round-3xl"
+            :style="{
+              background: 'linear-gradient(to right, #7044a7, #a551ac',
+              padding: '1.2rem 1rem',
+              height: '1.5rem',
+              lineHeight: '1.5rem',
+              fontSize: '0.875rem'
+            }"
+             @click="changeBackground(back.image_url)"
+          >
+            Equipar
+            <img src="/assets/add.svg" class="ml-2" alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
+          </Button>
+
+          <Button 
+            v-else
+            class="p-button-help p-button-sm text-white font-bold flex justify-content-center align-items-center border-none border-round-3xl"
+            :style="{
+              background: 'linear-gradient(to right, #00ad11, #51ac91)',
+              padding: '1.2rem 1rem',
+              height: '1.5rem',
+              lineHeight: '1.5rem',
+              fontSize: '0.875rem'
+            }"
+            @click="validateBackground()"
+          >
+            Equipado
+            <img src="/assets/ok.svg" class="ml-2" alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
+          </Button>
+          
+        </div>
+      </div>
+    </div>
+
+
+
+    
   </Dialog>
 
   <Dialog v-model:visible="showDialogEvaluacion" modal header="Evaluar Mae" class="md:w-4">
@@ -755,5 +883,8 @@ const validateFile = (file) => {
 
 .p-dialog .p-dialog-header {
     background:  #EFF2F7 ;
+}
+.icon-blue {
+  filter: hue-rotate(200deg) saturate(100%) brightness(0.5); 
 }
 </style>

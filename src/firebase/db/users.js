@@ -702,11 +702,8 @@ export async function addBadgesToEligibleUsers() {
 // actualizar le achieved del usuario 
 export async function updateUserAchievementBadge(uid, badgeId) {
     try {
-        console.log("Ya llegue", uid, badgeId)
-        // Obtiene la referencia al documento del usuario en Firestore
-        const userRef = doc(firestoreDB, "users", uid);
 
-        // Obtiene los datos actuales del usuario
+        const userRef = doc(firestoreDB, "users", uid);
         const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists()) {
@@ -714,11 +711,9 @@ export async function updateUserAchievementBadge(uid, badgeId) {
             return;
         }
 
-        // Obtiene el array de badges del usuario
         const userData = userDoc.data();
         const badges = userData.badges || [];
 
-        // Encuentra el logro correspondiente y actualiza `achieved` a `true`
         const updatedBadges = badges.map((badge) => {
             if (badge.id === badgeId) {
                 return { ...badge, achieved: true };
@@ -726,7 +721,6 @@ export async function updateUserAchievementBadge(uid, badgeId) {
             return badge;
         });
 
-        // Actualiza el documento del usuario en Firestore con los badges actualizados
         await updateDoc(userRef, {
             badges: updatedBadges
         });
@@ -742,10 +736,7 @@ export async function updateUserAchievementBadge(uid, badgeId) {
 // Contador de badges
 export async function countAchievedBadges(uid) {
     try {
-        // Obtiene la referencia al documento del usuario en Firestore
         const userRef = doc(firestoreDB, "users", uid);
-
-        // Obtiene los datos actuales del usuario
         const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists()) {
@@ -753,10 +744,8 @@ export async function countAchievedBadges(uid) {
             return 0;
         }
 
-        // Obtiene el array de badges del usuario
         const badges = userDoc.data().badges || [];
 
-        // Cuenta los badges que tienen achieved: true
         const achievedCount = badges.reduce((count, badge) => {
             return count + (badge.achieved ? 1 : 0);
         }, 0);
@@ -764,6 +753,97 @@ export async function countAchievedBadges(uid) {
         return achievedCount;
     } catch (error) {
         console.error("Error al contar los logros alcanzados:", error);
+        throw error;
+    }
+}
+
+// Añadir el background a los usuarios
+export async function addBackgroundUsers() {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const querySnapshot = await getDocs(usersRef);
+
+        const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
+
+        const background = [
+            { "id": "1", "image_url": "/assets/back/1.svg", "bought": true, "price": 0 },
+            { "id": "2", "image_url": "/assets/back/2.svg", "bought": false, "price": 25 },
+            { "id": "3", "image_url": "/assets/back/3.svg", "bought": false, "price": 25},
+            { "id": "4", "image_url": "/assets/back/4.svg", "bought": false, "price": 25 },
+            { "id": "5", "image_url": "/assets/back/5.svg", "bought": false, "price": 50 },
+            { "id": "6", "image_url": "/assets/back/6.svg", "bought": false, "price": 50 },
+            { "id": "7", "image_url": "/assets/back/7.svg", "bought": false, "price": 75 },
+        ];
+
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref;
+            const userData = doc.data();
+
+            if (eligibleRoles.includes(userData.role)) {
+                return updateDoc(userRef, {
+                    background:  background,
+                    myBackground: "/assets/back/1.svg",
+                    useCoins: 0,
+                });
+            } else {
+                return Promise.resolve();
+            }
+        });
+
+        await Promise.all(promises);
+
+        console.log("Background have been successfully added to eligible users.");
+    } catch (error) {
+        console.error("Error adding background to eligible users: ", error);
+        throw error;
+    }
+}
+
+
+
+// actualizar le achieved del usuario 
+export async function updateUserBackground(uid, backId, coins, userCoins) {
+    try {
+        const userRef = doc(firestoreDB, "users", uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            console.error("Usuario no encontrado");
+            return;
+        }
+
+        const userData = userDoc.data();
+        const background = userData.background || [];
+
+        const updatedBackground = background.map((back) => {
+            if (back.id === backId) {
+                return { ...back, bought: true };
+            }
+            return back;
+        });
+       
+        await updateDoc(userRef, {
+            background: updatedBackground,  
+            useCoins: userCoins + coins
+        });
+
+        console.log(`El fondo con id ${backId} se ha actualizado correctamente para el usuario ${uid}.`);
+    } catch (error) {
+        console.error("Error al actualizar el fondo del usuario:", error);
+        throw error;
+    }
+}
+
+// Actualizar fondo
+export async function updateUserBackgroundImage(uid, backgroundUrl) {
+    try {
+        const userRef = doc(firestoreDB, "users", uid);
+        await updateDoc(userRef, {
+            myBackground: backgroundUrl
+        });
+        console.log(`El fondo se ha actualizado a ${backgroundUrl} para el usuario ${uid}.`);
+    } catch (error) {
+        console.error("Error al actualizar el fondo del usuario:", error);
         throw error;
     }
 }

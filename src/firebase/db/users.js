@@ -353,8 +353,7 @@ export async function incrementTotalTime(userId, time) {
 export async function updateUserProfilePicture(userId, photoURL) {
     try {
         const userRef = doc(firestoreDB, 'users', userId);
-        console.log(userId)
-        // Actualizar el documento con la nueva URL de la foto
+  
         await updateDoc(userRef, {
             photoURL: photoURL
         });
@@ -425,7 +424,7 @@ export async function checkAndUpdateUserRole(file = null) {
                         .map(row => row[1]?.toLowerCase() + '@tec.mx')
                         .filter(email => email && !['undefined@tec.mx', 'zzzzz@tec.mx'].includes(email)); // Filtrar valores no deseados
 
-                    console.log(emailsFromExcel);
+                    //console.log(emailsFromExcel);
                     // Procesamos cada usuario
                     const promises = querySnapshot.docs.map(async (doc) => {
                         const userRef = doc.ref;
@@ -445,7 +444,7 @@ export async function checkAndUpdateUserRole(file = null) {
                     });
 
                     await Promise.all(promises);
-                    console.log("Roles actualizados con base en el archivo Excel.");
+                   // console.log("Roles actualizados con base en el archivo Excel.");
                 } catch (error) {
                     console.error("Error al procesar el archivo Excel:", error);
                     throw error;
@@ -538,7 +537,7 @@ export async function updateUserToMae(data) {
                     badges: badges
                 });
             } else {
-                // De lo contrario, solo actualizar role y status
+            
                 return updateDoc(userRef, {
                     role: role.value,
                     status: status.value
@@ -725,7 +724,7 @@ export async function updateUserAchievementBadge(uid, badgeId) {
             badges: updatedBadges
         });
 
-        console.log(`El logro con id ${badgeId} se ha actualizado correctamente para el usuario ${uid}.`);
+       // console.log(`El logro con id ${badgeId} se ha actualizado correctamente para el usuario ${uid}.`);
     } catch (error) {
         console.error("Error al actualizar el logro del usuario:", error);
         throw error;

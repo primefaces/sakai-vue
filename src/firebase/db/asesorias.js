@@ -6,7 +6,9 @@ import {
     where,
     getDocs,
     Timestamp,
-    updateDoc
+    updateDoc, 
+    doc,
+    orderBy
 } from 'firebase/firestore';
 import { 
     updatePoints,
@@ -197,7 +199,6 @@ async function updateAdvisoryDuplicateField(advisoryDate, isDuplicate) {
 }
 
 
-
 // Función para actualizar puntos basados en asesorías similares
 export async function updateExperienceAsesorias(peerUid, userUid, subjectId, advisoryDate) {
     try {
@@ -226,7 +227,6 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
 
         const querySnapshot = await getDocs(q);
         const asesorias = querySnapshot.docs.map(doc => doc.data());
-        console.log(asesorias, "Asesorias")
         const similarAdvisories = asesorias.filter(ad => {
             const adDate = ad.date.toDate();
             return ad.peerInfo.uid === peerUid &&
@@ -242,9 +242,9 @@ export async function updateExperienceAsesorias(peerUid, userUid, subjectId, adv
         } else {
             await updateAdvisoryDuplicateField(ultimoElemento.date, false );
             if(subjectId === "MAE"){
-                await updatePoints(peerUid, 10); 
+                await updatePoints(peerUid, 15); 
             }else{
-                await updatePoints(peerUid, 50); 
+                await updatePoints(peerUid, 60); 
             }
             
         }
@@ -271,3 +271,45 @@ export async function getCommentsByUid(uid) {
         return [];
     }
 }
+
+
+export async function getAsesoriasByUidAndRating(uidUser , uidPeer = null) {
+    try {
+        const asesoriasRef = collection(firestoreDB, "asesorias");
+
+        let queryConstraints = [
+            where("userInfo.uid", "==", uidUser),           
+            where("rating", "==", null),
+            where("duplicate", "==", false),
+        ];
+
+        if (uidPeer) {
+            queryConstraints.unshift( where("peerInfo.uid", "==", uidPeer));
+        }
+
+        const q = query(asesoriasRef, ...queryConstraints);
+        const querySnapshot = await getDocs(q);
+
+        const asesorias = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        return asesorias;
+    } catch (error) {
+        console.error("Error fetching asesorias: ", error);
+        return [];
+    }
+}
+export async function updateAsesoria(id, data) {
+    try {
+     
+      const asesoriaRef = doc(firestoreDB, "asesorias", id);
+      await updateDoc(asesoriaRef, data);
+      
+      console.log("Asesoria actualizada exitosamente");
+    } catch (error) {
+      console.error("Error updating asesoria: ", error);
+    }
+  }
+  

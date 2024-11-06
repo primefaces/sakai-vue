@@ -3,9 +3,13 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
   stopActiveSession,updateUserProfilePicture,  countAchievedBadges, 
-  updateUserAchievementBadge, updateUserBackground, updateUserBackgroundImage} from '../firebase/db/users';
+  updateUserAchievementBadge, updateUserBackground, updateUserBackgroundImage
+,updatePoints} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
-import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
+import { addAsesoria, getAsesoriasCountForUserInCurrentSemester,getAsesoriasByUidAndRating,
+  updateAsesoria
+ } from '../firebase/db/asesorias';
+ import { formatDate } from '@/utils/AnunciosUtils';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 import { uploadFile } from '../firebase/img/users';
@@ -24,6 +28,7 @@ const toast = useToast();
 const route = useRoute();
 const userId = ref(route.path.split('/').pop());
 const maeInfo = ref(null);
+const evalInfo = ref(null);
 const userInfo = ref(null);
 const asesoriasCount = ref(0);
 const badgesCount = ref(0);
@@ -42,7 +47,7 @@ onMounted(async () => {
   subjects.value = await getSubjects();
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
   badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
-  
+  evalInfo.value = await getAsesoriasByUidAndRating(userInfo.value.uid, maeInfo.value.uid);
   if (asesoriasCount.value >= 1 && maeInfo.value.badges[0].achieved === false) {
     await updateUserAchievementBadge(maeInfo.value.uid, "1");
   } 
@@ -114,6 +119,18 @@ const getHorasHorario = () => {
     }
     return hours;
   }
+
+  const formattedEvaluations = () => {
+  return evalInfo.value.map(asesoria => {
+    const peerName = asesoria.peerInfo && asesoria.peerInfo.name ? asesoria.peerInfo.name : 'Desconocido';
+    const formattedDate = asesoria.date ? formatDate(asesoria.date) : 'Fecha no disponible';
+
+    return {
+      id: asesoria.id,
+      label: `${formattedDate} - ${peerName}`,
+    };
+  });
+};
 
 
 const getHorasRequeridas = () => {
@@ -279,6 +296,7 @@ const saveScheduleChanges = async () => {
 const showDialogAsesoria = ref(false);
 const showDialogTienda = ref(false);
 const showDialogEvaluacion = ref(false);
+const showDialogEditar = ref(false);
 const ratingAsesoria = ref(null);
 const comentarioAsesoria = ref('');
 const materiaAsesoria = ref(null);
@@ -389,17 +407,50 @@ const changeBackground = async (backImageUrl) => {
         toast.add({ severity: 'success', summary: 'Has actualizado el fondo', life: 3000 });
 };
 
-
 const validateBackground = async () => {
         toast.add({ severity: 'success', summary: 'Ya has equipado ese fondo', life: 3000 });
 };
-
-
 
 const validateFile = (file) => {
   const validTypes = ['image/jpeg', 'image/png'];
   return validTypes.includes(file.type);
 }
+
+const selectedAsesoria = ref(null); 
+
+const guardarEvaluacion = async () => {
+  if (!selectedAsesoria.value) {
+    toast.add({ severity: 'warn', summary: 'Asesoría no seleccionada', detail: 'Selecciona una asesoría antes de guardar', life: 3000 });
+    return;
+  }
+  if (ratingAsesoria.value === null ) {
+    toast.add({ severity: 'warn', summary: 'Debes llenar la evaluación', detail: 'Selecciona una asesoría antes de guardar', life: 3000 });
+    return;
+  }
+  
+    await updateAsesoria(selectedAsesoria.value, {
+      comment: comentarioAsesoria.value,
+      rating: ratingAsesoria.value,
+    });
+    if(ratingAsesoria.value > 3){
+      await updatePoints(maeInfo.value.uid, ratingAsesoria.value * 5)
+      if(comentarioAsesoria.value !== ""){
+        await updatePoints(maeInfo.value.uid, 25)
+      }
+    }
+
+    ratingAsesoria.value = null;
+    comentarioAsesoria.value = '';
+    selectedAsesoria.value = null;
+    evalInfo.value = await getAsesoriasByUidAndRating(userInfo.value.uid, maeInfo.value.uid);
+    toast.add({
+      severity: 'success',
+      summary: 'Guardado exitoso',
+      detail: 'La evaluación se registró con éxito',
+      life: 3000,
+    });
+  
+};
 
 </script>
 
@@ -416,16 +467,28 @@ const validateFile = (file) => {
     <div class="sm:flex sm:flex-1 justify-center w-full px-3">
       <div class="relative flex align-items-center justify-content-center mr-4">
         <img v-if="maeInfo" :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-10rem w-10rem border-3 border-white mt-8 ml-6">
-        <!-- 
-        <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
-          <Button icon="pi pi-pencil" class="border-3 border-white" rounded @click="showDialogUpload = true" />
-        </div> 
-        -->
       </div>
+      
     </div>
+    <Button 
+    v-if="userInfo.uid == userId" 
+            class="p-button-help p-button-sm font-bold flex  border-none border-round-3xl mr-4 mb-6 texto-negro bg-white border-3 border-white"
+            :style="{
+              padding: '1.2rem 1rem',
+              height: '1.5rem',
+              lineHeight: '1.5rem',
+              fontSize: '0.875rem',
+            }"
+             @click="showDialogEditar = true"
+          >
+            Editar perfil
+            <img src="/assets/edit.svg" class="ml-2 " alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
+          </Button>
+          
   </div>
 
   <div v-if="maeInfo && userInfo" class="bg-white px-3 mb-0 w-full  ">
+    
     <div class="sm:flex justify-content-end ">
       <div class="mt-2 w-4 hidden md:block">
         <div v-if="userInfo.uid == maeInfo.uid" class="mb-2 ">
@@ -677,10 +740,6 @@ const validateFile = (file) => {
   <Dialog v-model:visible="showDialogAsesoria" modal header="Registrar asesoría" class="md:w-4">
     <p class="font-bold">Materia</p>
     <Dropdown v-model="materiaAsesoria" :options="subjects" filter optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false" class="w-12 mb-2" />
-    <!-- <p class="font-bold">Comentario</p>
-    <Textarea v-model="comentarioAsesoria" placeholder="Agrega un comentario" variant="filled" rows="5" cols="30" class="w-12" />
-    <p class="font-bold mt-3">Califica tu asesoría</p>
-    <Rating v-model="ratingAsesoria" :cancel="false"/> -->
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
       <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null)" @click="saveAsesoria"></Button>
@@ -695,7 +754,7 @@ const validateFile = (file) => {
     </div>
   </template>
 
-  <div class="grid md:ml-8">
+  <div class="grid md:ml-8 mt-3">
     <div
       v-for="(badge) in maeInfo.badges"
       :key="badge.id"
@@ -729,7 +788,6 @@ const validateFile = (file) => {
       <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
         <p class="text-2xl font-bold mr-2 mt-3">Tienda MAE</p>
         <img src="/assets/store.svg" alt="mentoring icon" class="icon-blue" style="width: 1.6rem; height: 1.6rem;" />
-
       </div>
     </template>
 
@@ -738,8 +796,6 @@ const validateFile = (file) => {
         v-for="(back) in maeInfo.background"
         :key="back.id"
         class="col-11 ml-3 md:col-5 lg:col-3 flex flex-column align-items-center card p-0 md:mx-3 lg:mx-5 h-auto border-round shadow-2 hover:shadow-4 transition-shadow duration-200 border-round-xl">
-        
-        <!-- Fondo que ocupa todo el ancho -->
         <div class="w-full h-7rem border-round-top-xl"
             :style="{
               backgroundImage: `url(${back.image_url})`,
@@ -747,19 +803,16 @@ const validateFile = (file) => {
               backgroundPosition: 'center'
             }">
         </div>
-
-        <!-- Contenedor para precio e íconos -->
+>
         <div class="p-3 w-full text-center flex flex-row justify-content-between align-items-center">
-          
-          <!-- Precio con icono de moneda -->
+
           <div class="flex flex-row align-items-center">
             <img src="/assets/coins.svg" class="ml-2" alt="mentoring icon" style="width: 1.5rem; height: 1.5rem;" />
             <p class="text-lg font-bold ml-2">{{ back.price }}</p>
           </div>
-          
-          <!-- Botones con lógica condicional -->
+        
           <Button 
-            v-if="!back.bought && maeInfo.myBackground !== back.image_url"
+            v-if="back && !back.bought && maeInfo.myBackground !== back.image_url"
             class="p-button-help p-button-sm text-white font-bold flex justify-content-center align-items-center border-none border-round-3xl"
             :style="{
               background: 'linear-gradient(to right, #4466a7, #51a3ac)',
@@ -775,7 +828,7 @@ const validateFile = (file) => {
           </Button>
 
           <Button 
-            v-else-if="back.bought && maeInfo.myBackground !== back.image_url"
+            v-else-if="back &&  back.bought && maeInfo.myBackground !== back.image_url"
             class="p-button-help p-button-sm text-white font-bold flex justify-content-center align-items-center border-none border-round-3xl"
             :style="{
               background: 'linear-gradient(to right, #7044a7, #a551ac',
@@ -809,14 +862,102 @@ const validateFile = (file) => {
         </div>
       </div>
     </div>
-
-
-
-    
   </Dialog>
 
-  <Dialog v-model:visible="showDialogEvaluacion" modal header="Evaluar Mae" class="md:w-4">
-    ¡En construcción! ✌
+
+  <Dialog v-model:visible="showDialogEditar" modal class="mr-3 w-4">
+  <template #header>
+    <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+      <p class="text-2xl font-bold mr-2 mt-3">Editar perfil </p>
+      <img src="/assets/edit.svg" alt="trophy icon" style="width: 1.6rem; height: 1.6rem;" />
+    </div>
+  </template>
+
+  <div class="flex flex-column"> 
+      <Button
+            class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogUpload = true"
+          >
+            Editar foto
+            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+      </Button>    
+      <Button
+            class="p-button-help p-button-lg w-full mt-3 text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogMaterias= true"
+          >
+            Materias
+            <img src="/assets/mundo.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+      </Button>     
+      <Button
+            class="p-button-help p-button-lg w-full mt-3 text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogHorarios= true"
+          >
+            Horarios
+          <img src="/assets/clock.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+      </Button>
+    </div>
+ 
+</Dialog>
+
+
+
+<Dialog v-model:visible="showDialogEvaluacion" modal class="md:w-4 border-round-lg shadow-2">
+  <template #header>
+    <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+      <p class="text-2xl font-bold mr-2 mt-3">Evaluar Mae </p>
+    </div>
+  </template>
+    <div v-if="evalInfo && evalInfo.length">
+      <p class="font-bold text-2xl">Asesoría</p>
+
+      <Dropdown 
+        v-model="selectedAsesoria" 
+        :options="formattedEvaluations()"
+        optionLabel="label"
+        optionValue="id"
+        placeholder="Selecciona una asesoría"
+        class="w-full mb-3"
+      />
+
+      <p class="font-bold mt-3 text-2xl">Comentarios</p>
+      <Textarea 
+        v-model="comentarioAsesoria" 
+        placeholder="Agrega un comentario" 
+        autoResize 
+        rows="5" 
+        class="w-full border-round-lg p-inputtext-lg" 
+      />
+
+      <p class="font-bold mt-3 text-2xl">Evaluación</p>
+      <div class="flex justify-content-center  ">
+        <Rating 
+          v-model="ratingAsesoria" 
+          :cancel="false" 
+        />
+      </div>
+    </div>
+    
+    <div v-else class="text-center p-4">
+      <p class="text-gray-600 font-bold">Sin asesorías para evaluar</p>
+    </div>
+    <template #footer v-if="evalInfo && evalInfo.length">
+      <div class="flex justify-content-end mt-4">
+        <Button 
+          label="Confirmar" 
+          @click="guardarEvaluacion" 
+           :style="{ background: 'linear-gradient(to right, #44a79b, #69ac51)' }"
+        />
+        <Button 
+          label="Cancelar" 
+          class="p-button-text mr-2" 
+          @click="showDialogEvaluacion = false"
+        />
+       
+      </div>
+    </template>
   </Dialog>
 
   <Dialog v-model:visible="showDialogSession" modal header="Iniciar turno" class="md:w-4">
@@ -887,4 +1028,8 @@ const validateFile = (file) => {
 .icon-blue {
   filter: hue-rotate(200deg) saturate(100%) brightness(0.5); 
 }
+.texto-negro {
+  color: black !important;
+}
+
 </style>

@@ -1,7 +1,6 @@
 import { getClosestDayAndStartTime } from "../firebase/db/users";
 
 export function normalize(objecto) {
-    console.log(objecto)
     return objecto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
@@ -47,7 +46,6 @@ export function getDayColor(day) {
 }
 
 export function getSubjectColor(area) {
-    console.log(area)
     switch (area) {
         case 'ING': return 'bg-cyan-600';
         case 'NEG': return 'bg-blue-600';

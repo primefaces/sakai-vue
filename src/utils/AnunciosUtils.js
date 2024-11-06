@@ -1,16 +1,13 @@
 export const formatDate = (date) => {
-    if (!date) return ''; // Si no hay fecha, retorna una cadena vacía
-
-    // Si el campo date es un Timestamp (de Firestore), lo convertimos a Date
+    if (!date) return ''; 
     if (date.toDate) {
-        date = date.toDate(); // Convertimos el Timestamp a Date
+        date = date.toDate(); 
     }
 
     const validDate = new Date(date);
 
-    // Verificar si la fecha es válida
     if (isNaN(validDate.getTime())) {
-        return ''; // Si no es válida, retornar cadena vacía
+        return ''; 
     }
 
     return new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long' }).format(validDate);

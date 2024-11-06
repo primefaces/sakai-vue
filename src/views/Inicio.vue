@@ -1,10 +1,11 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router'; 
-import { getCurrentUser, getUser, startActiveSession, stopActiveSession } from '../firebase/db/users';
+import { getCurrentUser, getUser, startActiveSession, stopActiveSession,updatePoints } from '../firebase/db/users';
 import { useToast } from 'primevue/usetoast';
 import { getSubjects } from '../firebase/db/subjects';
-import { addAsesoria} from '../firebase/db/asesorias';
+import { addAsesoria,getAsesoriasByUidAndRating,
+  updateAsesoria} from '../firebase/db/asesorias';
 import { getMaes} from '@/firebase/db/users';
 import { getAnnouncements } from '@/firebase/db/annoucement'; 
 import {
@@ -28,15 +29,17 @@ const anuncios = ref([]);
 const currentAnuncio = ref({});
 const currentIndex = ref(-1);
 const isSavingAsesoria = ref(false);
+const evalInfo = ref(null);
+const showDialogEvaluacion = ref(false);
 
 onMounted(async () => {
   userInfo.value = await getCurrentUser();
   maeInfo.value = await getMaes()
   subjects.value = await getSubjects();
   anuncios.value  = await  getAnnouncements()
+  evalInfo.value = await getAsesoriasByUidAndRating(  userInfo.value.uid,);
   nextAnuncio()
   autoAdvance();
-
 });
 
 const startSession = async () => {
@@ -75,7 +78,7 @@ const nextAnuncio = () => {
   if (currentIndex.value < anuncios.value.length - 1) {
     currentIndex.value++;
   } else {
-    currentIndex.value = 0; // Reinicia al primer anuncio
+    currentIndex.value = 0;
   }
   currentAnuncio.value = anuncios.value[currentIndex.value];
 };
@@ -89,7 +92,6 @@ const prevAnuncio = () => {
   currentAnuncio.value = anuncios.value[currentIndex.value];
 };
 
-// Función para avanzar automáticamente cada 5 segundos
 const autoAdvance = () => {
   setInterval(() => {
     nextAnuncio();
@@ -139,6 +141,54 @@ const goToAsesoria = async (asesoria) => {
   }
 };
 
+const formattedEvaluations = () => {
+  return evalInfo.value.map(asesoria => {
+    const peerName = asesoria.peerInfo && asesoria.peerInfo.name ? asesoria.peerInfo.name : 'Desconocido';
+    const formattedDate = asesoria.date ? formatDate(asesoria.date) : 'Fecha no disponible';
+
+    return {
+      id: asesoria.id,
+      label: `${formattedDate} - ${peerName}`,
+    };
+  });
+};
+
+const selectedAsesoria = ref(null); 
+
+const guardarEvaluacion = async () => {
+  if (!selectedAsesoria.value) {
+    toast.add({ severity: 'warn', summary: 'Asesoría no seleccionada', detail: 'Selecciona una asesoría antes de guardar', life: 3000 });
+    return;
+  }
+  if (ratingAsesoria.value === null ) {
+    toast.add({ severity: 'warn', summary: 'Debes llenar la evaluación', detail: 'Selecciona una asesoría antes de guardar', life: 3000 });
+    return;
+  }
+  
+    await updateAsesoria(selectedAsesoria.value, {
+      comment: comentarioAsesoria.value,
+      rating: ratingAsesoria.value,
+    });
+    if(ratingAsesoria.value > 3){
+      await updatePoints(maeInfo.value.uid, ratingAsesoria.value * 5)
+      if(comentarioAsesoria.value !== ""){
+        await updatePoints(maeInfo.value.uid, 25)
+      }
+    }
+
+    ratingAsesoria.value = null;
+    comentarioAsesoria.value = '';
+    selectedAsesoria.value = null;
+    evalInfo.value = await getAsesoriasByUidAndRating(userInfo.value.uid);
+    toast.add({
+      severity: 'success',
+      summary: 'Guardado exitoso',
+      detail: 'La evaluación se registró con éxito',
+      life: 3000,
+    });
+  
+};
+
 </script>
 
 
@@ -160,15 +210,22 @@ const goToAsesoria = async (asesoria) => {
             <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 3.0rem; height: 3.0rem;" />
         </Button>
 
-          <!-- <Button 
-              label="Evaluar asesoria" 
-              icon="pi pi-star" 
-              class="border-none p-button-success p-button-lg py-4 w-full md:w-5  mb-4 text-2xl"
-              :style="{ borderRadius: '15px', background: 'linear-gradient(to right, #00b09b, #96c93d)', color: '#fff', border: 'none' }"
-              iconPos="right"
-          /> -->
         
-            <!-- <Button
+          <Button
+            class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
+            :style="{ background: 'linear-gradient(to right, #44A79b, #69ac51)' }"
+            @click="showDialogEvaluacion = true"
+            :disabled=" isSavingAsesoria" 
+          >
+              Evaluar asesoría
+              <img src="/assets/evaluate.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+          </Button>
+        
+            
+
+      </div>
+      <div class="flex flex-column md:flex-row md:gap-4   w-full  ">
+        <!-- <Button
               v-if="maeInfo  && userInfo && userInfo.role !== 'user'"
               label="Solicitar asistencia" 
               icon="pi pi-question-circle" 
@@ -197,7 +254,6 @@ const goToAsesoria = async (asesoria) => {
                 Iniciar turno
                 <img src="/assets/start.svg" class="ml-4" alt="mentoring icon" style="width: 3.0rem; height: 3.0rem;" />
             </Button>
-
       </div>
     
       <div class="flex flex-wrap border-round-3xl text-white md:h-16rem" :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)' }">
@@ -292,6 +348,63 @@ const goToAsesoria = async (asesoria) => {
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
       <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null)" @click="saveAsesoria"></Button>
     </div>
+  </Dialog>
+
+
+  <Dialog v-model:visible="showDialogEvaluacion" modal class="md:w-4 border-round-lg shadow-2">
+  <template #header>
+    <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+      <p class="text-2xl font-bold mr-2 mt-3">Evaluar Mae </p>
+    </div>
+  </template>
+    <div v-if="evalInfo && evalInfo.length">
+      <p class="font-bold text-2xl">Asesoría</p>
+
+      <Dropdown 
+        v-model="selectedAsesoria" 
+        :options="formattedEvaluations()"
+        optionLabel="label"
+        optionValue="id"
+        placeholder="Selecciona una asesoría"
+        class="w-full mb-3"
+      />
+
+      <p class="font-bold mt-3 text-2xl">Comentarios</p>
+      <Textarea 
+        v-model="comentarioAsesoria" 
+        placeholder="Agrega un comentario" 
+        autoResize 
+        rows="5" 
+        class="w-full border-round-lg p-inputtext-lg" 
+      />
+
+      <p class="font-bold mt-3 text-2xl">Evaluación</p>
+      <div class="flex justify-content-center  ">
+        <Rating 
+          v-model="ratingAsesoria" 
+          :cancel="false" 
+        />
+      </div>
+    </div>
+    
+    <div v-else class="text-center p-4">
+      <p class="text-gray-600 font-bold">Sin asesorías para evaluar</p>
+    </div>
+    <template #footer v-if="evalInfo && evalInfo.length">
+      <div class="flex justify-content-end mt-4">
+        <Button 
+          label="Confirmar" 
+          @click="guardarEvaluacion" 
+           :style="{ background: 'linear-gradient(to right, #44a79b, #69ac51)' }"
+        />
+        <Button 
+          label="Cancelar" 
+          class="p-button-text mr-2" 
+          @click="showDialogEvaluacion = false"
+        />
+       
+      </div>
+    </template>
   </Dialog>
 
 </template>

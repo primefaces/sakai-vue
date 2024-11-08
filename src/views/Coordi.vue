@@ -1,9 +1,12 @@
+
 <script setup>
+ import { getSubjectColor, pointsRules  } from '@/utils/CoordiUtils';
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser,updateUserAchievementBadge} from '@/firebase/db/users';
 import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
 import { getUsersWithActiveSession, updatePoints } from '@/firebase/db/users';
+import { nextTick } from 'vue';
 
 const toast = useToast();
 const loading = ref(true);
@@ -20,13 +23,6 @@ const options = ref([
     { name: 'Justificado', code: 'J' },
 ]);
 
-const pointsRules = {
-    A: 5,  // Asistencia
-    F: -5, // Falta
-    R: 3,  // Retraso
-    J: 0,   // Justificado
-    C: 10 // Coordi
-};
 
 const handlePointsUpdate = async (uid, newAttendance) => {
     const points = pointsRules[newAttendance] || 0;
@@ -49,6 +45,7 @@ watch(report, (newValue, oldValue) => {
             handlePointsUpdate(maeInfo.uid, newAttendanceValue);
             handlePointsUpdate(userInfo.value.uid, "C");
         }
+      
     }
 }, { deep: true });
 
@@ -97,6 +94,14 @@ onMounted(async () => {
         maes.value = await getTodaysMae(); 
         report.value = await getTodaysReport(); 
         initialReport.value = JSON.parse(JSON.stringify(report.value)); 
+        maes.value.forEach(mae => {
+            const scheduleToday = mae.weekSchedule[currentDay];
+            if (scheduleToday) {        
+                scheduleToday.forEach(({ start }) => {
+                    handleAutoMarkAbsence(start, mae.uid);
+                });
+            }
+        });
     } catch (error) {
         console.error('Error al cargar datos:', error);
     } finally {
@@ -104,24 +109,39 @@ onMounted(async () => {
     }
 });
 
-const getSubjectColor = (area) => {
-    switch (area) {
-        case 'Ingeniería y Ciencias':
-            return 'bg-cyan-600';
-        case 'Negocios':
-            return 'bg-blue-600';
-        case 'Salud':
-            return 'bg-teal-600';
-        case 'Derecho, Economía y Relaciones Internacionales':
-            return 'bg-red-600';
-        case 'Ambiente Construido':
-            return 'bg-green-600';
-        case 'Estudios Creativos':
-            return 'bg-purple-600';
-        default:
-            return 'bg-yellow-600';
-    }
-}
+
+const handleAutoMarkAbsence = async (startTime, uid) => {
+      const now = new Date();
+      const [startHour, startMinute] = startTime.split(':').map(Number);
+      const startDateTime = new Date();
+      startDateTime.setHours(startHour, startMinute, 0, 0);
+      const diffInMinutes = (now - startDateTime) / 60000;
+      if (
+        diffInMinutes > 30 &&
+        report.value[uid] !== 'A' &&
+        report.value[uid] !== 'J' &&
+        report.value[uid] !== 'R' &&
+        report.value[uid] !== 'F'
+        &&
+        report.value[uid] !== 'C'
+      ) {
+        const maeInfo = maes.value.find(mae => mae.uid === uid);
+        report.value[uid] = 'F';
+        
+        report.value = { ...report.value };
+        updateReport(maeInfo, 'F');
+        await updatePoints('jackpot', 10);
+        // toast.add({
+        //   severity: 'warn',
+        //   summary: 'Falta automática',
+        //   detail: 'El MAE fue marcado como falta',
+        //   life: 3000,
+        // });
+
+        await nextTick();
+      }
+    };
+
 
 </script>
 
@@ -182,7 +202,7 @@ const getSubjectColor = (area) => {
             <Column header="Asistencia" style="min-width:8rem">
                 <template #body="{ data }">
                     <Dropdown 
-                        @click="selectedId = data.uid " 
+     
                         v-if="report" 
                         v-model="report[data.uid]" 
                         :options="options" 
@@ -197,6 +217,7 @@ const getSubjectColor = (area) => {
                             'attendance-blue': report[data.uid] === 'J'
                         }"
                     />
+
                 </template>
             </Column>
         </DataTable>

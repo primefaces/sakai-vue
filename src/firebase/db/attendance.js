@@ -37,8 +37,9 @@ export async function getTodaysReport() {
 
 export async function updateReport(userInfo, report) {
     try {
+        console.log(userInfo, report, "Esto es ")
         const reportRef = doc(firestoreDB, "attendance", getCurrentDateFormatted(), "report", userInfo.uid);
-
+        
         return await setDoc(reportRef, {
             ...userInfo,
             report

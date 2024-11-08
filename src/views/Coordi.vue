@@ -131,6 +131,7 @@ const handleAutoMarkAbsence = async (startTime, uid) => {
         report.value = { ...report.value };
         updateReport(maeInfo, 'F');
         await updatePoints('jackpot', 10);
+        await updatePoints(uid, -5);
         // toast.add({
         //   severity: 'warn',
         //   summary: 'Falta automática',

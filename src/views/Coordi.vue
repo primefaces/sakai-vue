@@ -3,7 +3,7 @@
  import { getSubjectColor, pointsRules  } from '@/utils/CoordiUtils';
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser,updateUserAchievementBadge} from '@/firebase/db/users';
+import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser} from '@/firebase/db/users';
 import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
 import { getUsersWithActiveSession, updatePoints } from '@/firebase/db/users';
 import { nextTick } from 'vue';
@@ -203,7 +203,7 @@ const handleAutoMarkAbsence = async (startTime, uid) => {
             <Column header="Asistencia" style="min-width:8rem">
                 <template #body="{ data }">
                     <Dropdown 
-     
+                    @click="selectedId = data.uid " 
                         v-if="report" 
                         v-model="report[data.uid]" 
                         :options="options" 

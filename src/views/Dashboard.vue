@@ -165,7 +165,7 @@ const barChartOptions2 = {
         <ProgressSpinner style="width: 60px; height: 60px; animation: spin-fast 0.5s linear infinite;" strokeWidth="6" fill="var(--surface-ground)" />
     </div>
 
-    <div v-else class="w-full gap-8 flex flex-row">
+    <div v-else class="w-full gap-2 flex flex-row">
         <div class="w-3 card p-4 flex flex-row h-8rem align-items-center ">
             <img src="/assets/mentoringAdmin.svg" class="border-circle h-4rem w-4rem p-3 mb-2 mr-3 " alt="flag icon"
                 :style="{ background: '#DCFAF8' , }"/>

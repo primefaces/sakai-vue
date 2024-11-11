@@ -846,3 +846,21 @@ export async function updateUserBackgroundImage(uid, backgroundUrl) {
         throw error;
     }
 }
+
+
+export async function getTotalMaes() {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+
+        const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
+
+        const q = query(usersRef, where("role", "in", eligibleRoles));
+
+        const querySnapshot = await getDocs(q);
+        console.log(querySnapshot.size)
+        return querySnapshot.size -1 ; 
+    } catch (error) {
+        console.error("Error al obtener el total de MAEs: ", error);
+        throw error;
+    }
+}

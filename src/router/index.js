@@ -133,6 +133,14 @@ const router = createRouter({
                         roles: ['admin','tec']
                     }
                 },
+                {
+                    path: '/admin/dashboard',
+                    name: 'dashboard',
+                    component: () => import('@/views/Dashboard.vue'),
+                    meta: {
+                        roles: ['admin','tec']
+                    }
+                },
                 /* 
                     TEMPLATE
                 */

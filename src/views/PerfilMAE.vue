@@ -499,7 +499,7 @@ const guardarEvaluacion = async () => {
                 @click="stopSession"
             >
                 Finalizar turno
-                <img src="/assets/end.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+                <img src="/assets/end.svg" class="ml-4" alt="flag icon" style="width: 2.0rem; height: 2.0rem;" />
             </Button>
             <Button 
                 v-else

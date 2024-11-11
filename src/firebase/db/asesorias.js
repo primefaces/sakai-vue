@@ -313,3 +313,62 @@ export async function updateAsesoria(id, data) {
     }
   }
   
+
+  export async function getTotalAsesorias(startDate = null, endDate = null) {
+    try {
+        const asesorias = await getAsesorias(startDate, endDate);
+        const totalAsesorias = asesorias.length;
+        return totalAsesorias;
+    } catch (error) {
+        console.error("Error fetching total asesorias: ", error);
+        return 0; 
+    }
+}
+
+
+export async function getAsesoriasCountByUser() {
+    try {
+        const querySnapshot = await getDocs(collection(firestoreDB, "asesorias"));
+        const userAsesoriasSet = new Set(
+            querySnapshot.docs.map(doc => doc.data().userInfo?.uid).filter(Boolean)
+        );
+        return userAsesoriasSet.size;
+    } catch (error) {
+        console.error("Error al obtener el conteo de asesorías por usuario: ", error);
+        throw error;
+    }
+}
+
+export async function getAsesoriasCountByArea() {
+    try {
+        const querySnapshot = await getDocs(collection(firestoreDB, "asesorias"));
+        const areasCount = {};
+
+        querySnapshot.docs.forEach(doc => {
+            const asesoríaData = doc.data();
+            const subjectArea = asesoríaData?.subject?.area;
+            const userUid = asesoríaData?.userInfo?.uid;
+
+            if (subjectArea && userUid) {
+                if (!areasCount[subjectArea]) {
+                    areasCount[subjectArea] = {
+                        totalAsesorias: 0,
+                        userUids: new Set()
+                    };
+                }
+
+                areasCount[subjectArea].totalAsesorias++;
+                areasCount[subjectArea].userUids.add(userUid);
+            }
+        });
+
+        return Object.keys(areasCount).map(area => ({
+            area,
+            totalAsesorias: areasCount[area].totalAsesorias,
+            totalUniqueUsers: areasCount[area].userUids.size
+        }));
+    } catch (error) {
+        console.error("Error al obtener el conteo de asesorías y usuarios por área: ", error);
+        throw error;
+    }
+}

@@ -857,7 +857,7 @@ export async function getTotalMaes() {
         const q = query(usersRef, where("role", "in", eligibleRoles));
 
         const querySnapshot = await getDocs(q);
-        console.log(querySnapshot.size)
+
         return querySnapshot.size -1 ; 
     } catch (error) {
         console.error("Error al obtener el total de MAEs: ", error);

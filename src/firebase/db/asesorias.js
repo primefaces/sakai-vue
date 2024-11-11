@@ -8,7 +8,6 @@ import {
     Timestamp,
     updateDoc, 
     doc,
-    orderBy
 } from 'firebase/firestore';
 import { 
     updatePoints,
@@ -369,6 +368,29 @@ export async function getAsesoriasCountByArea() {
         }));
     } catch (error) {
         console.error("Error al obtener el conteo de asesorías y usuarios por área: ", error);
+        throw error;
+    }
+}
+
+
+export async function getAsesoriasCountByCampus() {
+    try {
+        const querySnapshot = await getDocs(collection(firestoreDB, "asesorias"));
+        const campusCount = {};
+
+        querySnapshot.forEach(doc => {
+            const campus = doc.data()?.userInfo?.campus;
+            if (campus) {
+                campusCount[campus] = (campusCount[campus] || 0) + 1;
+            }
+        });
+
+        return Object.keys(campusCount).map(campus => ({
+            campus,
+            totalAsesorias: campusCount[campus]
+        }));
+    } catch (error) {
+        console.error("Error al obtener el conteo de asesorías por campus: ", error);
         throw error;
     }
 }

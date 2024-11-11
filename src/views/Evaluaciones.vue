@@ -49,7 +49,7 @@ onMounted(async () => {
     <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Mis evaluaciones</h1>
 
     <div v-if="isLoading" class="text-center">
-      <p class="text-lg">Cargando evaluaciones...</p>
+      <ProgressSpinner style="width: 60px; height: 60px; animation: spin-fast 0.5s linear infinite;" strokeWidth="6" fill="var(--surface-ground)" />
     </div>
 
     <div v-else-if="!asesorias.length" class="text-center">

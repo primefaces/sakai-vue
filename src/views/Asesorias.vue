@@ -122,7 +122,7 @@ const filterSubjects = () => {
     </div>
 
     <div v-if="isLoading" class="text-center">
-        <p class="text-lg">Cargando asesorías...</p>
+        <ProgressSpinner style="width: 60px; height: 60px; animation: spin-fast 0.5s linear infinite;" strokeWidth="6" fill="var(--surface-ground)" />
     </div>
 
     <div v-else-if="!filterAsesorias.length" class="text-center">

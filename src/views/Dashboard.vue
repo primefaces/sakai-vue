@@ -129,7 +129,7 @@ const barChartOptions2 = {
         x: {
             beginAtZero: true,
             grid: {
-                color: '#EFEFEF'
+                color: '#FFFFFF' 
             },
             ticks: {
                 display: true,
@@ -140,7 +140,7 @@ const barChartOptions2 = {
         },
         y: {
             grid: {
-                color: '#EFEFEF'
+                color: '#FFFFFF' 
             },
             ticks: {
                 display: true,
@@ -213,7 +213,7 @@ const barChartOptions2 = {
         </div>
 
         <div class="card mt-5 p-4 w-6">
-            <h3 class="text-black text-2xl font-bold mb-4">Estadísticas de Asesorías por Campus</h3>
+            <h3 class="text-black text-2xl font-bold mb-4">Estadísticas de asesorías por campus</h3>
             <Chart type="bar" :data="barChartData2" :options="barChartOptions2" />
         </div>
     </div>

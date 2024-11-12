@@ -41,7 +41,7 @@ onMounted(async () => {
                 { label: 'Usuarios', icon: 'pi pi-fw pi-users', to: '/admin/usuarios' },
                 //({ label: 'Materias', icon: 'pi pi-fw pi-book', to: '/admin/materias' },
                 { label: 'Funciones', icon: 'pi pi-fw pi-star', to: '/admin/funciones' },
-                { label: 'Dashboard', icon: 'pi pi-fw pi-star', to: '/admin/dashboard' },
+                { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/admin/dashboard' },
                 
             ]
         })

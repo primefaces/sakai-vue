@@ -201,7 +201,7 @@ const guardarEvaluacion = async () => {
 
       <div class="flex flex-column md:flex-row md:gap-4   w-full  ">
         <Button
-          class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
+          class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-3 text-2xl font-bold flex justify-content-center align-items-center border-none	"
           :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
           @click="showDialogAsesoria = true"
           :disabled=" isSavingAsesoria" 
@@ -212,7 +212,7 @@ const guardarEvaluacion = async () => {
 
         
           <Button
-            class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
+            class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-3 text-2xl font-bold flex justify-content-center align-items-center border-none	"
             :style="{ background: 'linear-gradient(to right, #44A79b, #69ac51)' }"
             @click="showDialogEvaluacion = true"
             :disabled=" isSavingAsesoria" 
@@ -220,8 +220,6 @@ const guardarEvaluacion = async () => {
               Evaluar asesoría
               <img src="/assets/evaluate.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
           </Button>
-        
-            
 
       </div>
       <div class="flex flex-column md:flex-row md:gap-4   w-full  ">
@@ -229,14 +227,14 @@ const guardarEvaluacion = async () => {
               v-if="maeInfo  && userInfo && userInfo.role !== 'user'"
               label="Solicitar asistencia" 
               icon="pi pi-question-circle" 
-              class="border-none p-button-warn p-button-lg py-4 w-full md:w-5   mb-4 text-2xl"
+              class="border-none p-button-warn p-button-lg py-4 w-full md:w-5   mb-3 text-2xl"
               :style="{borderRadius: '15px',background: 'linear-gradient(to right, #CC7722, #DAA520)',color: '#fff', border: 'none'}"
               iconPos="right"
             /> -->
             
             <Button 
                 v-if="maeInfo && userInfo && userInfo['activeSession']  && userInfo && userInfo.role !== 'user'"
-                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
+                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-5 text-2xl font-bold flex justify-content-center align-items-center border-none	"
                 :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
                 @click="stopSession"
             >
@@ -244,10 +242,9 @@ const guardarEvaluacion = async () => {
                 <img src="/assets/end.svg" class="ml-4" alt="mentoring icon" style="width: 3.0rem; height: 3.0rem;" />
             </Button>
 
-
             <Button 
                 v-else-if="maeInfo && userInfo && userInfo.role !== 'user'"
-                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-6 text-2xl font-bold flex justify-content-center align-items-center border-none	"
+                class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-5 text-2xl font-bold flex justify-content-center align-items-center border-none	"
                 :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
                 @click="showDialogSession = true"
             >

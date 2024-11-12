@@ -118,7 +118,7 @@ const filterSubjects = () => {
         </span>
         
         <h1 class="text-black text-4xl font-bold text-left md:text-center md:text-left mt-3" v-else> 
-             MAEs Activos
+             MAEs activos
         </h1>
     </div>
 

@@ -1,9 +1,8 @@
-
 <script setup>
- import { getSubjectColor, pointsRules  } from '@/utils/CoordiUtils';
+import { getSubjectColor, pointsRules } from '@/utils/CoordiUtils';
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser} from '@/firebase/db/users';
+import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser } from '@/firebase/db/users';
 import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
 import { getUsersWithActiveSession, updatePoints } from '@/firebase/db/users';
 import { nextTick } from 'vue';
@@ -14,6 +13,7 @@ const maes = ref(null);
 const report = ref(null);
 const selectedId = ref(null);
 const userInfo = ref(null);
+const ubicacion = ref(true);
 
 const currentDay = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
 const options = ref([
@@ -26,85 +26,102 @@ const options = ref([
 // Calcula la distancia entre dos puntos geográficos usando la fórmula de Haversine
 const toRadians = (degree) => degree * (Math.PI / 180);
 
-
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371000; 
-  const φ1 = toRadians(lat1);
-  const φ2 = toRadians(lat2);
-  const Δφ = toRadians(lat2 - lat1);
-  const Δλ = toRadians(lon2 - lon1);
+    const R = 6371000; // Radio de la Tierra en metros
+    const φ1 = toRadians(lat1);
+    const φ2 = toRadians(lat2);
+    const Δφ = toRadians(lat2 - lat1);
+    const Δλ = toRadians(lon2 - lon1);
 
-  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) * 
-            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return R * c; 
+    return R * c;
 };
 
 const checkLocationAndAttendance = () => {
   const fixedLat = 25.650472; 
   const fixedLon = -100.289667;
 
-  if (userInfo.value.role !== 'tec') {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const userLat = position.coords.latitude;
-        const userLon = position.coords.longitude;
+  return new Promise((resolve, reject) => {
+    if (userInfo.value.role !== 'tec') {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const userLat = position.coords.latitude;
+          const userLon = position.coords.longitude;
 
-        const distance = calculateDistance(userLat, userLon, fixedLat, fixedLon);
+          const distance = calculateDistance(userLat, userLon, fixedLat, fixedLon);
 
-        if (distance <= 10) {
-          console.log('El usuario está dentro del rango de 10 metros. Puede registrar asistencia.');
-          return true;
-        } else {
-          console.log('El usuario está fuera del rango de 10 metros. No puede registrar asistencia.');
-          return false 
-        }
-      }, (error) => {
-        console.error("Error al obtener la ubicación: ", error);
-      });
+          if (distance <= 10) {
+            console.log('El usuario está dentro del rango de 10 metros. Puede registrar asistencia.');
+            
+            ubicacion.value = true;
+            resolve(true);
+          } else {
+            console.log('El usuario está fuera del rango de 10 metros. No puede registrar asistencia.');
+            toast.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'No se puede poner asistencia estas fuera de rango ', 
+                life: 5000 
+            });
+            ubicacion.value = false;
+            resolve(false);
+          }
+        }, (error) => {
+          console.error("Error al obtener la ubicación: ", error);
+          reject(error);
+        });
+      } else {
+        console.log("La geolocalización no está disponible en este navegador.");
+        reject(new Error("La geolocalización no está disponible"));
+      }
     } else {
-      console.log("La geolocalización no está disponible en este navegador.");
+      console.log('El usuario es admin y no requiere comprobación de ubicación.');
+      ubicacion.value = true;
+      console.log(ubicacion.value, "ubicacion")
+      resolve(true);
     }
-  } else {
-    console.log('El usuario es admin y no requiere comprobación de ubicación.');
-  }
+  });
 };
-
-
 
 const handlePointsUpdate = async (uid, newAttendance) => {
     const points = pointsRules[newAttendance] || 0;
     await updatePoints(uid, points); 
    
-    if (newAttendance !== "C"){
-        toast.add({ severity: 'success', summary: 'Se ha actualizado su asistencia ', detail: `Se ha actualizo de forma correcta`, life: 3000 });
+    if (newAttendance !== "C") {
+        toast.add({ severity: 'success', summary: 'Se ha actualizado su asistencia ', detail: 'Se ha actualizo de forma correcta', life: 3000 });
     }
-
 };
 
-watch(report, (newValue, oldValue) => {
+watch(report, async (newValue, oldValue) => {
     if (oldValue) {
-        const ubicacion = checkLocationAndAttendance()
-        console.log(ubicacion)
+        await checkLocationAndAttendance();
+     
+        if (!ubicacion.value) {
+            console.error('No se pudo pasar asistencia');
+            return;
+        }
+
         if (!userInfo.value) {
             console.error('userInfo is undefined');
             return;
         }
+        
         const maeInfo = maes.value.find(mae => mae.uid === selectedId.value);
         const uidUser = userInfo.value.uid;
 
-        if(maeInfo && maeInfo.uid === uidUser &&
-        maeInfo.role === "coordi")  {
+        if (maeInfo && maeInfo.uid === uidUser && maeInfo.role === "coordi")  {
             toast.add({ 
                 severity: 'error', 
                 summary: 'Error', 
                 detail: 'No te puedes poner autoasistencia', 
                 life: 5000 
             });
-            return
-        }else{
+            return;
+        } else {
             const previousAttendance = initialReport.value[selectedId.value];
             const newAttendanceValue = newValue[selectedId.value];
             updateReport(maeInfo, newAttendanceValue);
@@ -114,11 +131,8 @@ watch(report, (newValue, oldValue) => {
                 handlePointsUpdate(userInfo.value.uid, "C");
             }
         }
-
-        
     }
 }, { deep: true });
-
 
 const showDialogRegister = ref(false);
 const maeId = ref('');
@@ -165,11 +179,12 @@ onMounted(async () => {
         maes.value = await getTodaysMae(); 
         report.value = await getTodaysReport(); 
         initialReport.value = JSON.parse(JSON.stringify(report.value)); 
+        await checkLocationAndAttendance();
         maes.value.forEach(mae => {
             const scheduleToday = mae.weekSchedule[currentDay];
             if (scheduleToday) {        
                 scheduleToday.forEach(({ start, end }) => {
-                    handleAutoMarkAbsence(start,end, mae.uid);
+                    handleAutoMarkAbsence(start, end, mae.uid);
                 });
             }
         });
@@ -180,61 +195,39 @@ onMounted(async () => {
     }
 });
 
+const handleAutoMarkAbsence = async (startTime, endTime, uid) => {
+    const now = new Date();
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+    const startDateTime = new Date();
+    const endDateTime = new Date();
+    startDateTime.setHours(startHour, startMinute, 0, 0);
+    endDateTime.setHours(endHour, endMinute, 0, 0);
+    const diffInMinutes = (now - startDateTime) / 60000;
+    const activo = activeMAEs.value.some(mae => mae.uid === uid);
 
-const handleAutoMarkAbsence = async (startTime,endTime ,uid) => {
-    
-      const now = new Date();
-      const [startHour, startMinute] = startTime.split(':').map(Number);
-      const [endHour, endMinute] = endTime.split(':').map(Number);
-      const startDateTime = new Date();
-      const endDateTime = new Date();
-      startDateTime.setHours(startHour, startMinute, 0, 0);
-      endDateTime.setHours(endHour, endMinute, 0 ,0 );
-      const diffInMinutes = (now - startDateTime) / 60000;
-      const activo = activeMAEs.value.some(mae => mae.uid === uid)
-        if (activo &&  diffInMinutes > 45 && now < endDateTime &&
-            report.value[uid] === 'F'  ){
-                
-            const maeInfo = maes.value.find(mae => mae.uid === uid);
-            report.value[uid] = 'R';
-            report.value = { ...report.value };
-            updateReport(maeInfo, 'R');
-            await updatePoints('jackpot', 10);
-            await updatePoints(uid, 8);
-            await nextTick();
-        }
-      if (activo && diffInMinutes > 20 && diffInMinutes < 40 && report.value[uid] !== 'A' &&
+    if (activo && diffInMinutes > 45 && now < endDateTime && report.value[uid] === 'F') {
+        const maeInfo = maes.value.find(mae => mae.uid === uid);
+        report.value[uid] = 'R';
+        report.value = { ...report.value };
+        updateReport(maeInfo, 'R');
+        await updatePoints('jackpot', 10);
+        await updatePoints(uid, 8);
+        await nextTick();
+    }
+    if (activo && diffInMinutes > 20 && diffInMinutes < 40 && report.value[uid] !== 'A' &&
         report.value[uid] !== 'J' &&
         report.value[uid] !== 'R' &&
-        report.value[uid] !== 'F'){
+        report.value[uid] !== 'F') {
         const maeInfo = maes.value.find(mae => mae.uid === uid);
         report.value[uid] = 'A';
         report.value = { ...report.value };
         updateReport(maeInfo, 'A');
         await updatePoints('jackpot', 10);
-        await updatePoints(uid, 10);
+        await updatePoints(uid, 8);
         await nextTick();
-      }
-      if (
-        diffInMinutes > 40 &&
-        report.value[uid] !== 'A' &&
-        report.value[uid] !== 'J' &&
-        report.value[uid] !== 'R' &&
-        report.value[uid] !== 'F'
-        &&
-        report.value[uid] !== 'C'
-      ) {
-        const maeInfo = maes.value.find(mae => mae.uid === uid);
-        report.value[uid] = 'F';
-        report.value = { ...report.value };
-        updateReport(maeInfo, 'F');
-        await updatePoints('jackpot', 10);
-        await updatePoints(uid, -5);
-        await nextTick();
-      } 
-    };
-
-
+    }
+};
 </script>
 
 <template>
@@ -308,6 +301,8 @@ const handleAutoMarkAbsence = async (startTime,endTime ,uid) => {
                             'attendance-yellow': report[data.uid] === 'R',
                             'attendance-blue': report[data.uid] === 'J'
                         }"
+                        :disabled="!ubicacion " 
+                        
                     />
 
                 </template>

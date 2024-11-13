@@ -59,27 +59,13 @@ const checkLocationAndAttendance = () => {
           return true;
         } else {
           console.log('El usuario está fuera del rango de 10 metros. No puede registrar asistencia.');
-          return false; 
+          return false 
         }
       }, (error) => {
-        // Manejo de errores mejorado
-        if (error.code === error.PERMISSION_DENIED) {
-          console.error("El usuario ha denegado el permiso para acceder a la ubicación.");
-          alert("No se puede obtener la ubicación. Asegúrate de haber permitido el acceso a la ubicación.");
-        } else if (error.code === error.POSITION_UNAVAILABLE) {
-          console.error("La ubicación no está disponible.");
-          alert("No se pudo obtener la ubicación. Intenta nuevamente más tarde.");
-        } else if (error.code === error.TIMEOUT) {
-          console.error("La solicitud de ubicación ha excedido el tiempo de espera.");
-          alert("La solicitud de ubicación ha tardado demasiado. Intenta nuevamente.");
-        } else {
-          console.error("Error desconocido al obtener la ubicación.");
-          alert("Ha ocurrido un error desconocido al obtener la ubicación.");
-        }
+        console.error("Error al obtener la ubicación: ", error);
       });
     } else {
       console.log("La geolocalización no está disponible en este navegador.");
-      alert("La geolocalización no está disponible en tu navegador. Intenta con otro.");
     }
   } else {
     console.log('El usuario es admin y no requiere comprobación de ubicación.');

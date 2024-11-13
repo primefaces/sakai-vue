@@ -23,7 +23,6 @@ const options = ref([
     { name: 'Justificado', code: 'J' },
 ]);
 
-
 const handlePointsUpdate = async (uid, newAttendance) => {
     const points = pointsRules[newAttendance] || 0;
     await updatePoints(uid, points); 
@@ -33,7 +32,6 @@ const handlePointsUpdate = async (uid, newAttendance) => {
     }
 
 };
-
 
 watch(report, (newValue, oldValue) => {
     if (oldValue) {
@@ -97,8 +95,8 @@ onMounted(async () => {
         maes.value.forEach(mae => {
             const scheduleToday = mae.weekSchedule[currentDay];
             if (scheduleToday) {        
-                scheduleToday.forEach(({ start }) => {
-                    handleAutoMarkAbsence(start, mae.uid);
+                scheduleToday.forEach(({ start, end }) => {
+                    handleAutoMarkAbsence(start,end, mae.uid);
                 });
             }
         });
@@ -110,14 +108,41 @@ onMounted(async () => {
 });
 
 
-const handleAutoMarkAbsence = async (startTime, uid) => {
+const handleAutoMarkAbsence = async (startTime,endTime ,uid) => {
       const now = new Date();
       const [startHour, startMinute] = startTime.split(':').map(Number);
+      const [endHour, endMinute] = endTime.split(':').map(Number);
       const startDateTime = new Date();
+      const endDateTime = new Date();
       startDateTime.setHours(startHour, startMinute, 0, 0);
+      endDateTime.setHours(endHour, endMinute, 0 ,0 );
       const diffInMinutes = (now - startDateTime) / 60000;
+      const activo = activeMAEs.value.some(mae => mae.uid === uid)
+        if (activo &&  diffInMinutes > 45 && now < endDateTime &&
+            report.value[uid] === 'F'  ){
+                
+            const maeInfo = maes.value.find(mae => mae.uid === uid);
+            report.value[uid] = 'R';
+            report.value = { ...report.value };
+            updateReport(maeInfo, 'R');
+            await updatePoints('jackpot', 10);
+            await updatePoints(uid, 8);
+            await nextTick();
+        }
+      if (activo && diffInMinutes > 20 && diffInMinutes < 40 && report.value[uid] !== 'A' &&
+        report.value[uid] !== 'J' &&
+        report.value[uid] !== 'R' &&
+        report.value[uid] !== 'F'){
+        const maeInfo = maes.value.find(mae => mae.uid === uid);
+        report.value[uid] = 'A';
+        report.value = { ...report.value };
+        updateReport(maeInfo, 'A');
+        await updatePoints('jackpot', 10);
+        await updatePoints(uid, 10);
+        await nextTick();
+      }
       if (
-        diffInMinutes > 30 &&
+        diffInMinutes > 40 &&
         report.value[uid] !== 'A' &&
         report.value[uid] !== 'J' &&
         report.value[uid] !== 'R' &&
@@ -127,20 +152,12 @@ const handleAutoMarkAbsence = async (startTime, uid) => {
       ) {
         const maeInfo = maes.value.find(mae => mae.uid === uid);
         report.value[uid] = 'F';
-        
         report.value = { ...report.value };
         updateReport(maeInfo, 'F');
         await updatePoints('jackpot', 10);
         await updatePoints(uid, -5);
-        // toast.add({
-        //   severity: 'warn',
-        //   summary: 'Falta automática',
-        //   detail: 'El MAE fue marcado como falta',
-        //   life: 3000,
-        // });
-
         await nextTick();
-      }
+      } 
     };
 
 

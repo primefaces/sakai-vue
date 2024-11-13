@@ -23,6 +23,71 @@ const options = ref([
     { name: 'Justificado', code: 'J' },
 ]);
 
+// Calcula la distancia entre dos puntos geográficos usando la fórmula de Haversine
+const toRadians = (degree) => degree * (Math.PI / 180);
+
+
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371000; 
+  const φ1 = toRadians(lat1);
+  const φ2 = toRadians(lat2);
+  const Δφ = toRadians(lat2 - lat1);
+  const Δλ = toRadians(lon2 - lon1);
+
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) * 
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c; 
+};
+
+const checkLocationAndAttendance = () => {
+  const fixedLat = 25.650472; 
+  const fixedLon = -100.289667;
+
+  if (userInfo.value.role !== 'tec') {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const userLat = position.coords.latitude;
+        const userLon = position.coords.longitude;
+
+        const distance = calculateDistance(userLat, userLon, fixedLat, fixedLon);
+
+        if (distance <= 10) {
+          console.log('El usuario está dentro del rango de 10 metros. Puede registrar asistencia.');
+          return true;
+        } else {
+          console.log('El usuario está fuera del rango de 10 metros. No puede registrar asistencia.');
+          return false; 
+        }
+      }, (error) => {
+        // Manejo de errores mejorado
+        if (error.code === error.PERMISSION_DENIED) {
+          console.error("El usuario ha denegado el permiso para acceder a la ubicación.");
+          alert("No se puede obtener la ubicación. Asegúrate de haber permitido el acceso a la ubicación.");
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          console.error("La ubicación no está disponible.");
+          alert("No se pudo obtener la ubicación. Intenta nuevamente más tarde.");
+        } else if (error.code === error.TIMEOUT) {
+          console.error("La solicitud de ubicación ha excedido el tiempo de espera.");
+          alert("La solicitud de ubicación ha tardado demasiado. Intenta nuevamente.");
+        } else {
+          console.error("Error desconocido al obtener la ubicación.");
+          alert("Ha ocurrido un error desconocido al obtener la ubicación.");
+        }
+      });
+    } else {
+      console.log("La geolocalización no está disponible en este navegador.");
+      alert("La geolocalización no está disponible en tu navegador. Intenta con otro.");
+    }
+  } else {
+    console.log('El usuario es admin y no requiere comprobación de ubicación.');
+  }
+};
+
+
+
 const handlePointsUpdate = async (uid, newAttendance) => {
     const points = pointsRules[newAttendance] || 0;
     await updatePoints(uid, points); 
@@ -35,17 +100,39 @@ const handlePointsUpdate = async (uid, newAttendance) => {
 
 watch(report, (newValue, oldValue) => {
     if (oldValue) {
-        const maeInfo = maes.value.find(mae => mae.uid === selectedId.value);
-        const previousAttendance = initialReport.value[selectedId.value];
-        const newAttendanceValue = newValue[selectedId.value];
-        updateReport(maeInfo, newAttendanceValue);
-        if(previousAttendance === undefined){
-            handlePointsUpdate(maeInfo.uid, newAttendanceValue);
-            handlePointsUpdate(userInfo.value.uid, "C");
+        const ubicacion = checkLocationAndAttendance()
+        console.log(ubicacion)
+        if (!userInfo.value) {
+            console.error('userInfo is undefined');
+            return;
         }
-      
+        const maeInfo = maes.value.find(mae => mae.uid === selectedId.value);
+        const uidUser = userInfo.value.uid;
+
+        if(maeInfo && maeInfo.uid === uidUser &&
+        maeInfo.role === "coordi")  {
+            toast.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'No te puedes poner autoasistencia', 
+                life: 5000 
+            });
+            return
+        }else{
+            const previousAttendance = initialReport.value[selectedId.value];
+            const newAttendanceValue = newValue[selectedId.value];
+            updateReport(maeInfo, newAttendanceValue);
+
+            if (previousAttendance === undefined) {
+                handlePointsUpdate(maeInfo.uid, newAttendanceValue);
+                handlePointsUpdate(userInfo.value.uid, "C");
+            }
+        }
+
+        
     }
 }, { deep: true });
+
 
 const showDialogRegister = ref(false);
 const maeId = ref('');
@@ -109,6 +196,7 @@ onMounted(async () => {
 
 
 const handleAutoMarkAbsence = async (startTime,endTime ,uid) => {
+    
       const now = new Date();
       const [startHour, startMinute] = startTime.split(':').map(Number);
       const [endHour, endMinute] = endTime.split(':').map(Number);
@@ -240,7 +328,6 @@ const handleAutoMarkAbsence = async (startTime,endTime ,uid) => {
             </Column>
         </DataTable>
     </div>
-    <!-- FIX: the coordi can put himself hours  -->
     <Dialog v-model:visible="showDialogRegister" modal header="Crear registro" class="md:w-4">
         
         <p class="font-bold text-lg">Matricula del MAE</p>

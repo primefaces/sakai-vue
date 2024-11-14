@@ -46,17 +46,17 @@ const checkLocationAndAttendance = () => {
   const fixedLon = -100.289667;
 
   return new Promise((resolve, reject) => {
-    if (userInfo.value.role !== 'tec') {
+    if (userInfo.value.role !== 'coordi') {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           const userLat = position.coords.latitude;
           const userLon = position.coords.longitude;
 
           const distance = calculateDistance(userLat, userLon, fixedLat, fixedLon);
-
+            
           if (distance <= 10) {
             console.log('El usuario está dentro del rango de 10 metros. Puede registrar asistencia.');
-            
+            console.log(distance)
             ubicacion.value = true;
             resolve(true);
           } else {

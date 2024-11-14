@@ -55,12 +55,12 @@ const checkLocationAndAttendance = () => {
           const distance = calculateDistance(userLat, userLon, fixedLat, fixedLon);
             
           if (distance <= 15) {
-            console.log('El usuario está dentro del rango de 10 metros. Puede registrar asistencia.');
+            console.log('El usuario está dentro del rango de 15 metros. Puede registrar asistencia.');
             console.log(distance)
             ubicacion.value = true;
             resolve(true);
           } else {
-            console.log('El usuario está fuera del rango de 10 metros. No puede registrar asistencia.');
+            console.log('El usuario está fuera del rango de 15 metros. No puede registrar asistencia.');
             console.log(distance)
             toast.add({ 
                 severity: 'error', 

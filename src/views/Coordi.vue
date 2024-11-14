@@ -245,7 +245,7 @@ const handleAutoMarkAbsence = async (startTime, endTime, uid) => {
         await updatePoints(uid, -5);
         await nextTick();
       } 
-    };
+  
 };
 </script>
 

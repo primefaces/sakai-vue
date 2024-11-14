@@ -228,6 +228,24 @@ const handleAutoMarkAbsence = async (startTime, endTime, uid) => {
         await updatePoints(uid, 8);
         await nextTick();
     }
+    if (
+        diffInMinutes > 40 &&
+        report.value[uid] !== 'A' &&
+        report.value[uid] !== 'J' &&
+        report.value[uid] !== 'R' &&
+        report.value[uid] !== 'F'
+        &&
+        report.value[uid] !== 'C'
+      ) {
+        const maeInfo = maes.value.find(mae => mae.uid === uid);
+        report.value[uid] = 'F';
+        report.value = { ...report.value };
+        updateReport(maeInfo, 'F');
+        await updatePoints('jackpot', 10);
+        await updatePoints(uid, -5);
+        await nextTick();
+      } 
+    };
 };
 </script>
 

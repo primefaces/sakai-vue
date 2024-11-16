@@ -37,7 +37,6 @@ onMounted(async () => {
   maeInfo.value = await getMaes()
   subjects.value = await getSubjects();
   anuncios.value  = await  getAnnouncements()
-  console.log(anuncios.value)
   evalInfo.value = await getAsesoriasByUidAndRating(  userInfo.value.uid,);
   nextAnuncio()
   autoAdvance();
@@ -45,7 +44,7 @@ onMounted(async () => {
 
 const startSession = async () => {
   try {
-    const res = await startActiveSession(userInfo.value.uid, userInfo.value, location.value);
+    await startActiveSession(userInfo.value.uid, userInfo.value, location.value);
     toast.add({ severity: 'success', summary: 'Inicio de turno exitoso', life: 3000 });
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(userInfo.value.uid);

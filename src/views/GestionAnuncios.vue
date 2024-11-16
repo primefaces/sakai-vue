@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncements } from '@/firebase/db/annoucement';
+import { saveAnnouncement, getAnnouncementsEdit } from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
   formatDate,
@@ -28,7 +28,7 @@ const anuncios = ref([]);
 
 onMounted(async () => {
     subjects.value = await getSubjects();
-    const anunciosData = await  getAnnouncements()
+    const anunciosData = await  getAnnouncementsEdit()
     anuncios.value = anunciosData;
 });
 
@@ -190,7 +190,6 @@ const closePreviewDialog = () => {
 
 </script>
 
-
 <template>
   <div class="flex md:flex-row flex-column">
     <!-- Primera columna -->
@@ -311,7 +310,6 @@ const closePreviewDialog = () => {
         </Button>
       </span>
     </div>
-    <!-- Segunda columna -->
     <div class="second-column mt-2 pt-3 flex flex-column md:w-6 md:ml-3 border-round-3xl" style="max-height: 500px; overflow-y: auto;">
       <div v-for="anuncio in anuncios" :key="anuncio.id" class="bg-white mx-4 my-2 border-round-3xl h-auto p-3 ">
         <div class="flex flex-row justify-content-between">
@@ -343,11 +341,8 @@ const closePreviewDialog = () => {
        
       </div>
     </div>
-
-    <!-- Fin div -->
   </div>
 
-  <!-- Diálogo para seleccionar la fecha y horario -->
       <Dialog 
         v-model:visible="showDateDialog" 
         header="Seleccionar Fecha y horario" 
@@ -356,14 +351,12 @@ const closePreviewDialog = () => {
         :dismissable-mask="true"
       >
         <div>
-          <!-- Selección de fecha -->
           <Calendar 
             v-model="dateTime" 
             placeholder="Seleccionar Fecha" 
             class="w-full mb-3" 
           />
 
-          <!-- Selección de hora de inicio -->
           <p>Hora de inicio:</p>
           <Calendar 
             v-model="startTime" 
@@ -375,7 +368,6 @@ const closePreviewDialog = () => {
             placeholder="Seleccionar Hora de Inicio" 
           />
 
-          <!-- Selección de hora de fin -->
           <p>Hora de fin:</p>
           <Calendar 
             v-model="endTime" 
@@ -387,7 +379,6 @@ const closePreviewDialog = () => {
             placeholder="Seleccionar Hora de Fin" 
           />
 
-          <!-- Botones de acción -->
           <div class="mt-3 flex justify-content-end">
             <Button 
               label="Guardar" 

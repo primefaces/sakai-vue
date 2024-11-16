@@ -49,6 +49,28 @@ export async function saveAnnouncement(announcementData, selectedFile) {
  *
  * @returns {Promise<Array>} - Una promesa que resuelve en una lista de anuncios válidos, ordenados del más viejo al más nuevo.
  */
+export async function getAnnouncementsEdit() {
+    try {
+        const announcementsCollection = collection(firestoreDB, 'announcements');
+        
+        const querySnapshot = await getDocs(query(announcementsCollection));
+        
+        const announcements = querySnapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }))
+            .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt )); 
+
+
+        return announcements;
+    } catch (error) {
+        console.error('Error fetching announcements:', error);
+        throw error;
+    }
+}
+
+
 export async function getAnnouncements() {
     try {
         const announcementsCollection = collection(firestoreDB, 'announcements');
@@ -80,7 +102,6 @@ export async function getAnnouncements() {
         throw error;
     }
 }
-
 
 /**
  * Obtiene los anuncios del tipo "Asesoría" con dateTime válido.

@@ -37,6 +37,7 @@ onMounted(async () => {
   maeInfo.value = await getMaes()
   subjects.value = await getSubjects();
   anuncios.value  = await  getAnnouncements()
+  console.log(anuncios.value)
   evalInfo.value = await getAsesoriasByUidAndRating(  userInfo.value.uid,);
   nextAnuncio()
   autoAdvance();

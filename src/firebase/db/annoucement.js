@@ -52,18 +52,27 @@ export async function saveAnnouncement(announcementData, selectedFile) {
 export async function getAnnouncements() {
     try {
         const announcementsCollection = collection(firestoreDB, 'announcements');
-        
         const querySnapshot = await getDocs(query(announcementsCollection));
-        
         const now = new Date();
-        // Mapear y filtrar los documentos
         const announcements = querySnapshot.docs
             .map(doc => ({
                 id: doc.id,
                 ...doc.data(),
             }))
-            .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt )); 
-
+            .filter(announcement => {
+                if (announcement.dateTime) {
+                    const dateTime = announcement.dateTime.seconds 
+                        ? new Date(announcement.dateTime.seconds * 1000) 
+                        : new Date(announcement.dateTime);
+                    return dateTime >= now;
+                }
+                return true; 
+            })
+            .sort((a, b) => {
+                const dateA = a.createdAt.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(a.createdAt);
+                const dateB = b.createdAt.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(b.createdAt);
+                return dateA - dateB;
+            });
 
         return announcements;
     } catch (error) {
@@ -71,6 +80,7 @@ export async function getAnnouncements() {
         throw error;
     }
 }
+
 
 /**
  * Obtiene los anuncios del tipo "Asesoría" con dateTime válido.

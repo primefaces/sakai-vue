@@ -25,6 +25,24 @@ const titleInput = ref('');
 const descriptionInput = ref('');
 const previewUrl = ref(null);
 const anuncios = ref([]);
+const showInfoDialog = ref(false);
+const selectedOption = ref('informacion');
+const selectedAnuncio = ref(null); 
+
+const menuItems = [
+  {
+    label: 'Información',
+    command: () => { selectedOption.value = 'informacion'; }
+  },
+  {
+    label: 'Pre-registro',
+    command: () => { selectedOption.value = 'pre-registro'; }
+  },
+  {
+    label: 'Asistencia',
+    command: () => { selectedOption.value = 'asistencia'; }
+  }
+];
 
 onMounted(async () => {
     subjects.value = await getSubjects();
@@ -35,15 +53,7 @@ onMounted(async () => {
 const handleSelect = (type) => {
     selectedType.value = type;
     if (type === 'Otro') {
-        subjectInput.value = '';
-        locationInput.value = '';
-        titleInput.value = '';  
-        descriptionInput.value = '';  
-        startTime.value = null
-        endTime.value = null
-        dateTime.value = null 
-        locationInput.value = ''
-        selectedFile.value = null 
+      reset() 
     }
 };
 
@@ -93,15 +103,18 @@ const openDateDialog = () => {
     showDateDialog.value = true;
 };
 
+const openInfoDialog = (anuncio) => {
+  selectedAnuncio.value = anuncio;
+  showInfoDialog.value = true;
+};
+
 const saveDateTime = () => {
     const today = new Date();
     const selectedDate = new Date(dateTime.value);
-
     if (!dateTime.value || !startTime.value || !endTime.value) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor selecciona una fecha y un rango de horario.', life: 3000 });
         return;
     }
-
     if (selectedDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'La fecha seleccionada no puede ser antes del día de hoy.', life: 3000 });
         return;
@@ -111,7 +124,6 @@ const saveDateTime = () => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'La hora de inicio debe ser menor que la hora de fin.', life: 3000 });
         return;
     }
-
     showDateDialog.value = false;
 };
 
@@ -121,7 +133,6 @@ const handleSubmit = async () => {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
             return;
         }
-
         try {
             const announcementData = {
                 type: selectedType.value,
@@ -131,17 +142,8 @@ const handleSubmit = async () => {
                 endTime: endTime.value,
                 location: locationInput.value || 'Indefinido' 
             };
-
             await saveAnnouncement(announcementData, selectedFile.value);
-            subjectInput.value = '';
-            locationInput.value = '';
-            titleInput.value = '';  
-            descriptionInput.value = '';  
-            startTime.value = null
-            endTime.value = null
-            dateTime.value = null 
-            locationInput.value = ''
-            selectedFile.value = null 
+            reset() 
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
         } catch (error) {
             console.error('Error al guardar el anuncio:', error);
@@ -152,24 +154,14 @@ const handleSubmit = async () => {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos de título,  descripción e imagen.', life: 3000 });
             return;
         }
-
         try {
             const announcementData = {
                 type: selectedType.value,
                 title: titleInput.value,
                 description: descriptionInput.value
             };
-
             await saveAnnouncement(announcementData, selectedFile.value);  
-            subjectInput.value = '';
-            locationInput.value = '';
-            titleInput.value = '';  
-            descriptionInput.value = '';  
-            startTime.value = null
-            endTime.value = null
-            dateTime.value = null 
-            locationInput.value = ''
-            selectedFile.value = null 
+            reset() 
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
         } catch (error) {
             console.error('Error al guardar el anuncio:', error);
@@ -180,6 +172,18 @@ const handleSubmit = async () => {
 
 const displayPreviewDialog = ref(false);
 
+const reset = () => {
+  subjectInput.value = '';
+  locationInput.value = '';
+  titleInput.value = '';  
+  descriptionInput.value = '';  
+  startTime.value = null
+  endTime.value = null
+  dateTime.value = null 
+  locationInput.value = ''
+  selectedFile.value = null 
+}
+
 const openPreviewDialog = () => {
     displayPreviewDialog.value = true;
 };
@@ -188,6 +192,12 @@ const closePreviewDialog = () => {
     displayPreviewDialog.value = false;
 };
 
+const formatDateComplete = (date, start, end) => {
+  const formattedDate = formatDate(date); 
+  const formattedStartTime = formatTime(start, false); 
+  const formattedEndTime = formatTime(end, true);
+  return `${formattedDate}, ${formattedStartTime} - ${formattedEndTime}`;
+};
 </script>
 
 <template>
@@ -316,7 +326,7 @@ const closePreviewDialog = () => {
           <p class="font-bold text-xl text-left mt-0 mb-1">
             {{ anuncio.type === 'Asesoría' ? (anuncio.subject.name.length > 30 ? anuncio.subject.name.slice(0, 30) + '...' : anuncio.subject.name)  : (anuncio.title.length > 30 ? anuncio.title.slice(0, 30) + '...' : anuncio.title) }}
           </p>
-          <i class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i>
+          <i @click="openInfoDialog(anuncio)" class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i>
         </div>
         
         <p v-if="anuncio.type === 'Asesoría'" class="font-medium text-xl text-left mt-0 mb-1">
@@ -336,9 +346,7 @@ const closePreviewDialog = () => {
           <div class="text-left text-xl">
             {{ formatDate(anuncio.dateTime) }}
           </div>
-        </div> 
-
-       
+        </div>
       </div>
     </div>
   </div>
@@ -455,7 +463,109 @@ const closePreviewDialog = () => {
             />
              </span>
         </Dialog>
+        
+        <Dialog 
+          v-model:visible="showInfoDialog"
+          :modal="true" 
+          :closable="true"  
+          :dismissable-mask="true"
+          class="mr-3 w-8"
+        >
+          <template #header>
+            <Menubar :model="menuItems" />
+          </template>
+         
+          <div v-if="selectedOption === 'informacion' && selectedAnuncio.type != 'Asesoría'">
+            <h3>Información</h3>
+            <p>{{ selectedAnuncio?.title || 'No hay información disponible' }}</p>
+            <p>{{ selectedAnuncio?.description || 'Sin descripción' }}</p>
+          </div>
 
+          <div class="flex flex-row" v-if="selectedOption === 'informacion' && selectedAnuncio.type == 'Asesoría'">
+            <div class="w-8 ml-5">
+              <p class="text-black text-xl font-semibold text-left ">
+                Materia
+              </p>
+              <InputText 
+                :value="selectedAnuncio?.subject.name" 
+                class="w-full text-lg" 
+                readonly 
+              />
+              <p class="text-black text-xl font-semibold text-left  mt-4">
+                Fecha y hora
+              </p>
+              <InputText 
+                :value="`${formatDateComplete(selectedAnuncio?.dateTime, selectedAnuncio?.startTime, selectedAnuncio?.endTime)}`" 
+                class="w-full text-lg" 
+                readonly 
+              />
+              <p class="text-black text-xl font-semibold text-left  mt-4">
+                Ubicación
+              </p>
+              <InputText 
+                :value="selectedAnuncio?.location" 
+                class="w-full text-lg" 
+                readonly 
+              />
+            </div>
+            <div class="w-4 flex  flex-column justify-content-center align-items-center ml-5">
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: '#4484A7' }"
+                @click="showDialogAsesoria = true"
+                :disabled="isSavingAsesoria"
+              >
+                Editar
+                <img src="/assets/editAnun.svg" class="ml-4" alt="edit icon" style="width: 2.0rem; height: 2.0rem;" />
+              </Button>
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: '#646464' }"
+                @click="showDialogAsesoria = true"
+                :disabled="isSavingAsesoria"
+              >
+                Ocultar
+                <img src="/assets/hide.svg" class="ml-4" alt="hide icon" style="width: 2.0rem; height: 2.0rem;" />
+              </Button>
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: '#C55F5F' }"
+                @click="showDialogAsesoria = true"
+                :disabled="isSavingAsesoria"
+              >
+                Eliminar
+                <img src="/assets/trash.svg" class="ml-4" alt="trash icon" style="width: 2.0rem; height: 2.0rem;" />
+              </Button>
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mt-6 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+                @click="showInfoDialog= false"
+                :disabled="isSavingAsesoria"
+              >
+                Cerrar
+              </Button>
+            </div>
+
+
+          </div>
+
+          <div v-else-if="selectedOption === 'pre-registro' && selectedAnuncio.type == 'Asesoría'">
+            <h3>Pre-registro</h3>
+            <p>Formulario o contenido relacionado con el pre-registro.</p>
+          </div>
+          <div v-else-if="selectedOption === 'pre-registro' && selectedAnuncio.type != 'Asesoría'">
+            <h3>Pre-registro</h3>
+            <p>No esta disponible.</p>
+          </div>
+          <div v-else-if="selectedOption === 'asistencia' && selectedAnuncio.type == 'Asesoría'">
+            <h3>Asistencia</h3>
+            <p>Contenido relacionado con la asistencia o cualquier detalle adicional.</p>
+          </div>
+          <div v-else-if="selectedOption === 'asistencia' && selectedAnuncio.type != 'Asesoría'">
+            <h3>Asistencia</h3>
+            <p>No esta disponible.</p>
+          </div>
+        </Dialog>
 </template>
 
 <style scoped>

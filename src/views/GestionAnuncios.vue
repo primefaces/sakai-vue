@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit } from '@/firebase/db/annoucement';
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence } from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
   formatDate,
@@ -28,6 +28,7 @@ const anuncios = ref([]);
 const showInfoDialog = ref(false);
 const selectedOption = ref('informacion');
 const selectedAnuncio = ref(null); 
+const processedAsistence =ref(null); 
 
 const menuItems = [
   {
@@ -45,10 +46,15 @@ const menuItems = [
 ];
 
 onMounted(async () => {
-    subjects.value = await getSubjects();
-    const anunciosData = await  getAnnouncementsEdit()
-    anuncios.value = anunciosData;
+  subjects.value = await getSubjects();
+  const anunciosData = await getAnnouncementsEdit();
+  anuncios.value = anunciosData;
 });
+
+const loadAsistance = async () => {
+  processedAsistence.value = await processAsistence(selectedAnuncio.value);
+  console.log(processAsistence.value)
+};
 
 const handleSelect = (type) => {
     selectedType.value = type;
@@ -103,9 +109,11 @@ const openDateDialog = () => {
     showDateDialog.value = true;
 };
 
-const openInfoDialog = (anuncio) => {
+const openInfoDialog = async (anuncio) => {
   selectedAnuncio.value = anuncio;
+  await loadAsistance();
   showInfoDialog.value = true;
+
 };
 
 const saveDateTime = () => {
@@ -513,7 +521,7 @@ const formatDateComplete = (date, start, end) => {
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: '#4484A7' }"
                 @click="showDialogAsesoria = true"
-                :disabled="isSavingAsesoria"
+              
               >
                 Editar
                 <img src="/assets/editAnun.svg" class="ml-4" alt="edit icon" style="width: 2.0rem; height: 2.0rem;" />
@@ -522,7 +530,7 @@ const formatDateComplete = (date, start, end) => {
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: '#646464' }"
                 @click="showDialogAsesoria = true"
-                :disabled="isSavingAsesoria"
+             
               >
                 Ocultar
                 <img src="/assets/hide.svg" class="ml-4" alt="hide icon" style="width: 2.0rem; height: 2.0rem;" />
@@ -531,7 +539,7 @@ const formatDateComplete = (date, start, end) => {
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: '#C55F5F' }"
                 @click="showDialogAsesoria = true"
-                :disabled="isSavingAsesoria"
+          
               >
                 Eliminar
                 <img src="/assets/trash.svg" class="ml-4" alt="trash icon" style="width: 2.0rem; height: 2.0rem;" />
@@ -540,18 +548,59 @@ const formatDateComplete = (date, start, end) => {
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mt-6 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
                 @click="showInfoDialog= false"
-                :disabled="isSavingAsesoria"
               >
                 Cerrar
               </Button>
             </div>
-
-
           </div>
 
           <div v-else-if="selectedOption === 'pre-registro' && selectedAnuncio.type == 'Asesoría'">
-            <h3>Pre-registro</h3>
-            <p>Formulario o contenido relacionado con el pre-registro.</p>
+            <div class="w-8 ml-5">
+              <DataTable 
+                :value="processedAsistence" 
+                paginator 
+                :rows="3" 
+                dataKey="id" 
+                :loading="loading" 
+                responsiveLayout="scroll" 
+                class="custom-table"
+              >
+                <template #empty>No se encontraron alumnos pregistrados.</template>
+                <template #loading>Cargando información. Por favor espera.</template>
+
+                <Column header="Fecha" field="date">
+                  <template #body="{ data }">
+                    <p class="text-sm">{{ formatDate(data.dateTime) }}</p>
+                  </template>
+                </Column>
+
+                <Column header="Estudiante" field="student">
+                    <template #body="{ data }">
+                        <span class="flex flex-column ml-4">
+                                <p class="text-sm font-bold">{{ data.name }}</p>
+                                <p class="text-sm">{{ data.uid }}</p>
+                            </span>
+                    </template>
+                </Column>
+
+                <Column header="Carrera" field="career">
+                    <template #body="{ data }">
+                        <span class="flex flex-column ml-4">
+                                <p class="text-sm font-bold">{{ data.career }}</p>
+                                <p class="text-sm">{{ data.area }}</p>
+                            </span>
+                    </template>
+                </Column>
+                
+                <Column header="Asistencia" field="asistence">
+                  <template #body="{ data }">
+                    <p class="text-sm">{{ data.asistence }}</p>
+                  </template>
+                </Column>
+              </DataTable>
+
+            </div>
+            
           </div>
           <div v-else-if="selectedOption === 'pre-registro' && selectedAnuncio.type != 'Asesoría'">
             <h3>Pre-registro</h3>
@@ -607,4 +656,31 @@ const formatDateComplete = (date, start, end) => {
     
   }
 }
+
+
+.custom-table .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.custom-table .p-datatable-tbody > tr:nth-child(odd) {
+    background-color: #f2f2f2 ;
+}
+
+.custom-table {
+    border-radius: 12px; 
+    overflow: hidden; 
+    border: 1px solid #e4e7e6; 
+}
+
+
+.custom-table .p-datatable-tbody > tr > td span p {
+    margin: 0;
+}
+
+.custom-table .p-datatable-tbody > tr > td {
+    border-bottom: 1px solid #e4e7e6;
+    padding: 1rem 1.5rem;
+    text-align: left;
+}
+
 </style>

@@ -8,7 +8,7 @@ const startDate = ref(null);
 const endDate = ref(null);
 const loading = ref(true);
 const showDialog = ref(false);
-const isFiltered = ref(false); // Estado para saber si hay filtro activo
+const isFiltered = ref(false); 
 
 const fetchAsesorias = async () => {
     try {
@@ -17,10 +17,10 @@ const fetchAsesorias = async () => {
         if (startDate.value && endDate.value) {
             const asesoriasData = await getAsesorias(startDate.value, endDate.value);
             asesorias.value = asesoriasData;
-            isFiltered.value = true; // Indicar que se aplicó un filtro
+            isFiltered.value = true; 
         } else {
             asesorias.value = await getAsesorias();
-            isFiltered.value = false; // No hay filtro activo
+            isFiltered.value = false; 
         }
     } catch (error) {
         console.error("Error fetching asesorias: ", error);
@@ -36,10 +36,10 @@ const filterByDate = () => {
 
 const exportToExcel = () => {
     if (!isFiltered.value) {
-        showDialog.value = true; // Mostrar diálogo si no hay filtro
+        showDialog.value = true; 
         return;
     }
-    exportData(); // Exportar si hay filtro aplicado
+    exportData(); 
 };
 
 const exportData = () => {
@@ -170,28 +170,45 @@ onMounted(() => {
 
 
 .custom-table .p-datatable-tbody > tr:nth-child(even) {
-    background-color: #ffffff; /* Color de fondo para filas pares */
+    background-color: #ffffff;
 }
 
 .custom-table .p-datatable-tbody > tr:nth-child(odd) {
-    background-color: #f2f2f2 ; /* Color de fondo para filas impares */
+    background-color: #f2f2f2 ;
 }
 
 .custom-table {
-    border-radius: 12px; /* Bordes redondeados para la tabla */
-    overflow: hidden; /* Para asegurar que los bordes redondeados funcionen bien */
-    border: 1px solid #e4e7e6; /* Color del borde de la tabla */
+    border-radius: 12px; 
+    overflow: hidden; 
+    border: 1px solid #e4e7e6; 
 }
 
 
 .custom-table .p-datatable-tbody > tr > td span p {
-    margin: 0; /* Elimina el margen por defecto */
+    margin: 0;
 }
 
 .custom-table .p-datatable-tbody > tr > td {
-    border-bottom: 1px solid #e4e7e6; /* Cambia el color y el grosor del borde */
-    padding: 1rem 1.5rem; /* Ajusta el padding si es necesario */
+    border-bottom: 1px solid #e4e7e6;
+    padding: 1rem 1.5rem;
     text-align: left;
+}
+
+
+.p-dialog .p-dialog-footer {
+    background:  #EFF2F7 ;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.p-dialog .p-dialog-content {
+    background:  #EFF2F7 ;
+}
+
+.p-dialog .p-dialog-header {
+    background:  #EFF2F7 ;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
 }
 
 </style>

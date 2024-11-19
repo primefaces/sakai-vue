@@ -42,10 +42,6 @@ const filteredAsesorias = computed(() => {
     );
 });
 
-const clearFilters = () => {
-    subjectsFilter.value = null;
-};
-
 const handlePreRegistro = (asesoria) => {
     selectedAsesoria.value = asesoria;
     showDialog.value = true;

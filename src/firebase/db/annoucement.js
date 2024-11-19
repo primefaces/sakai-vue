@@ -32,6 +32,7 @@ export async function saveAnnouncement(announcementData, selectedFile) {
             ...announcementData,
             imageUrl, 
             preregister: {},
+            asistence: {},
             createdAt: new Date(),
             visible: true
         });
@@ -43,12 +44,6 @@ export async function saveAnnouncement(announcementData, selectedFile) {
     }
 }
 
-
-/**
- * Obtiene los anuncios de la colección "announcements" y omite los que tienen 'dateTime' menor a la fecha actual.
- *
- * @returns {Promise<Array>} - Una promesa que resuelve en una lista de anuncios válidos, ordenados del más viejo al más nuevo.
- */
 export async function getAnnouncementsEdit() {
     try {
         const announcementsCollection = collection(firestoreDB, 'announcements');
@@ -146,32 +141,80 @@ export async function getAnnouncementsGrupales() {
  * @param {Object} user - El objeto del usuario que se agregará (debe incluir al menos `uid`).
  * @returns {Promise<void>}
  */
+
 export async function addUserToPreregsiter(announcementId, user) {
     try {
+        // Obtener referencia al documento del anuncio
         const announcementRef = doc(firestoreDB, 'announcements', announcementId);
 
+        // Obtener datos del anuncio
         const announcementSnapshot = await getDoc(announcementRef);
         if (!announcementSnapshot.exists()) {
             throw new Error(`El anuncio con ID ${announcementId} no existe.`);
         }
 
         const announcementData = announcementSnapshot.data();
+
+        // Actualizar `preregister` con el usuario
         const currentPreregs = announcementData.preregister || {};
         if (currentPreregs[user.uid]) {
-            throw new Error('Usuario ya registrado'); 
+            throw new Error('Usuario ya registrado');
         }
         const updatedPreregs = {
             ...currentPreregs,
             [user.uid]: user,
         };
 
+        // Actualizar `asistence` con el valor `false` para el usuario
+        const currentAsistence = announcementData.asistence || {};
+        const updatedAsistence = {
+            ...currentAsistence,
+            [user.uid]: false,
+        };
+
+        // Actualizar el documento en Firestore
         await updateDoc(announcementRef, {
             preregister: updatedPreregs,
+            asistence: updatedAsistence,
         });
 
-        console.log(`Usuario ${user.uid} agregado exitosamente a preregister.`);
+        console.log(`Usuario ${user.uid} agregado exitosamente a preregister y asistencia.`);
     } catch (error) {
         console.error('Error añadiendo usuario a preregister:', error);
         throw error; 
     }
 }
+
+
+
+export async function processAsistence(data) {
+
+    const preregister = data.preregister || {};
+    const asistence = data.asistence || {};
+    const dateTime = data.dateTime || '';
+
+    const preregisterKeys = Object.keys(preregister);
+    if (preregisterKeys.length === 0) {
+        console.log("No preregister data found.");
+        return [];  
+    }
+
+    const result = preregisterKeys.map(uid => {
+        const user = preregister[uid];
+        console.log("Processing user:", user);
+
+        return {
+            uid: uid,
+            dateTime: dateTime,
+            name: user.name || '',
+            career: user.career || '',
+            area: user.area || '',
+            asistence: asistence[uid] || false 
+        };
+    });
+
+    console.log("Result:", result);
+    return result;
+}
+
+  

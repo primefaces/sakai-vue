@@ -187,8 +187,11 @@ export async function addUserToPreregsiter(announcementId, user) {
 
 
 
-export async function processAsistence(data) {
-
+export async function processAsistence(announcementId) {
+    const announcementRef = doc(firestoreDB, 'announcements', announcementId);
+    const announcementSnapshot = await getDoc(announcementRef);
+    const data = announcementSnapshot.data();
+    console.log(data.asistence, "Esta es la data")
     const preregister = data.preregister || {};
     const asistence = data.asistence || {};
     const dateTime = data.dateTime || '';
@@ -217,4 +220,31 @@ export async function processAsistence(data) {
     return result;
 }
 
-  
+export async function updateUserAsistence(announcementId, userId) {
+    try {
+        console.log(announcementId, userId, "Ids ")
+        const announcementRef = doc(firestoreDB, 'announcements', announcementId);
+
+        const announcementSnapshot = await getDoc(announcementRef);
+        if (!announcementSnapshot.exists()) {
+            throw new Error(`El anuncio con ID ${announcementId} no existe.`);
+        }
+
+        const announcementData = announcementSnapshot.data();
+        const currentAsistence = announcementData.asistence || {};
+
+        const updatedAsistence = {
+            ...currentAsistence,
+            [userId]: true,
+        };
+
+        await updateDoc(announcementRef, {
+            asistence: updatedAsistence,
+        });
+
+        console.log(`Asistencia para el usuario ${userId} actualizada exitosamente a true.`);
+    } catch (error) {
+        console.error('Error actualizando la asistencia del usuario:', error);
+        throw error;
+    }
+}

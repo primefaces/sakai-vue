@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit,processAsistence } from '@/firebase/db/annoucement';
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence} from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
   formatDate,
@@ -29,6 +29,7 @@ const showInfoDialog = ref(false);
 const selectedOption = ref('informacion');
 const selectedAnuncio = ref(null); 
 const processedAsistence =ref(null); 
+const displayPreviewDialog = ref(false);
 
 const menuItems = [
   {
@@ -47,12 +48,11 @@ const menuItems = [
 
 onMounted(async () => {
   subjects.value = await getSubjects();
-  const anunciosData = await getAnnouncementsEdit();
-  anuncios.value = anunciosData;
+  anuncios.value = await getAnnouncementsEdit();
 });
 
 const loadAsistance = async () => {
-  processedAsistence.value = await processAsistence(selectedAnuncio.value);
+  processedAsistence.value = await processAsistence(selectedAnuncio.value.id);
   console.log(processAsistence.value)
 };
 
@@ -113,7 +113,6 @@ const openInfoDialog = async (anuncio) => {
   selectedAnuncio.value = anuncio;
   await loadAsistance();
   showInfoDialog.value = true;
-
 };
 
 const saveDateTime = () => {
@@ -178,8 +177,6 @@ const handleSubmit = async () => {
     }
 };
 
-const displayPreviewDialog = ref(false);
-
 const reset = () => {
   subjectInput.value = '';
   locationInput.value = '';
@@ -206,6 +203,9 @@ const formatDateComplete = (date, start, end) => {
   const formattedEndTime = formatTime(end, true);
   return `${formattedDate}, ${formattedStartTime} - ${formattedEndTime}`;
 };
+
+
+
 </script>
 
 <template>
@@ -480,11 +480,13 @@ const formatDateComplete = (date, start, end) => {
           class="mr-3 w-8"
         >
           <template #header>
-            <Menubar :model="menuItems" />
+            <Menubar v-if="selectedAnuncio?.type === 'Asesoría'" :model="menuItems" />
+            <span v-else>
+              <h3>Información</h3>
+            </span>
           </template>
          
           <div v-if="selectedOption === 'informacion' && selectedAnuncio.type != 'Asesoría'">
-            <h3>Información</h3>
             <p>{{ selectedAnuncio?.title || 'No hay información disponible' }}</p>
             <p>{{ selectedAnuncio?.description || 'Sin descripción' }}</p>
           </div>
@@ -559,11 +561,11 @@ const formatDateComplete = (date, start, end) => {
               <DataTable 
                 :value="processedAsistence" 
                 paginator 
-                :rows="3" 
+                :rows="4" 
                 dataKey="id" 
                 :loading="loading" 
                 responsiveLayout="scroll" 
-                class="custom-table"
+                class="custom-table "
               >
                 <template #empty>No se encontraron alumnos pregistrados.</template>
                 <template #loading>Cargando información. Por favor espera.</template>
@@ -594,27 +596,39 @@ const formatDateComplete = (date, start, end) => {
                 
                 <Column header="Asistencia" field="asistence">
                   <template #body="{ data }">
-                    <p class="text-sm">{{ data.asistence }}</p>
+                    <p class="text-sm">
+                      <img 
+                        v-if="!data.asistence" 
+                        src="/assets/cancel.svg" 
+                        class="ml-4" 
+                        alt="cancel icon" 
+                        style="width: 2.0rem; height: 2.0rem;" 
+                      />
+                      <img 
+                        v-else 
+                        src="/assets/check.svg" 
+                        class="ml-4" 
+                        alt="check icon" 
+                        style="width: 2.0rem; height: 2.0rem;" 
+                      />
+                    </p>
                   </template>
                 </Column>
+
               </DataTable>
 
             </div>
             
           </div>
-          <div v-else-if="selectedOption === 'pre-registro' && selectedAnuncio.type != 'Asesoría'">
-            <h3>Pre-registro</h3>
-            <p>No esta disponible.</p>
-          </div>
+      
           <div v-else-if="selectedOption === 'asistencia' && selectedAnuncio.type == 'Asesoría'">
             <h3>Asistencia</h3>
             <p>Contenido relacionado con la asistencia o cualquier detalle adicional.</p>
           </div>
-          <div v-else-if="selectedOption === 'asistencia' && selectedAnuncio.type != 'Asesoría'">
-            <h3>Asistencia</h3>
-            <p>No esta disponible.</p>
-          </div>
+          
         </Dialog>
+
+
 </template>
 
 <style scoped>

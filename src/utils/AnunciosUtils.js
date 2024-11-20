@@ -35,3 +35,4 @@ export const formatTime = (date, showMeridiem = false) => {
     // Solo muestra "a.m." o "p.m." si `showMeridiem` es true, de lo contrario los elimina
     return showMeridiem ? formattedTime : formattedTime.replace(/(a\.m\.|p\.m\.)/g, '').trim();
 };
+

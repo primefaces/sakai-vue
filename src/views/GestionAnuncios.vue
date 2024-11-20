@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit } from '@/firebase/db/annoucement';
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence,processConfirms} from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
   formatDate,
@@ -25,25 +25,45 @@ const titleInput = ref('');
 const descriptionInput = ref('');
 const previewUrl = ref(null);
 const anuncios = ref([]);
+const showInfoDialog = ref(false);
+const selectedOption = ref('informacion');
+const selectedAnuncio = ref(null); 
+const processedAsistence = ref(null); 
+const displayPreviewDialog = ref(false);
+const processedConfirm = ref(null); 
+
+const menuItems = [
+  {
+    label: 'Información',
+    command: () => { selectedOption.value = 'informacion'; }
+  },
+  {
+    label: 'Pre-registro',
+    command: () => { selectedOption.value = 'pre-registro'; }
+  },
+  {
+    label: 'Asistencia',
+    command: () => { selectedOption.value = 'asistencia'; }
+  }
+];
 
 onMounted(async () => {
-    subjects.value = await getSubjects();
-    const anunciosData = await  getAnnouncementsEdit()
-    anuncios.value = anunciosData;
+  subjects.value = await getSubjects();
+  anuncios.value = await getAnnouncementsEdit();
 });
+
+const loadAsistance = async () => {
+  processedAsistence.value = await processAsistence(selectedAnuncio.value.id);
+};
+
+const loadConfirm = async () => {
+  processedConfirm.value = await processConfirms(selectedAnuncio.value.id);
+};
 
 const handleSelect = (type) => {
     selectedType.value = type;
     if (type === 'Otro') {
-        subjectInput.value = '';
-        locationInput.value = '';
-        titleInput.value = '';  
-        descriptionInput.value = '';  
-        startTime.value = null
-        endTime.value = null
-        dateTime.value = null 
-        locationInput.value = ''
-        selectedFile.value = null 
+      reset() 
     }
 };
 
@@ -93,15 +113,20 @@ const openDateDialog = () => {
     showDateDialog.value = true;
 };
 
+const openInfoDialog = async (anuncio) => {
+  selectedAnuncio.value = anuncio;
+  await loadAsistance();
+  await loadConfirm();
+  showInfoDialog.value = true;
+};
+
 const saveDateTime = () => {
     const today = new Date();
     const selectedDate = new Date(dateTime.value);
-
     if (!dateTime.value || !startTime.value || !endTime.value) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor selecciona una fecha y un rango de horario.', life: 3000 });
         return;
     }
-
     if (selectedDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'La fecha seleccionada no puede ser antes del día de hoy.', life: 3000 });
         return;
@@ -111,7 +136,6 @@ const saveDateTime = () => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'La hora de inicio debe ser menor que la hora de fin.', life: 3000 });
         return;
     }
-
     showDateDialog.value = false;
 };
 
@@ -121,7 +145,6 @@ const handleSubmit = async () => {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
             return;
         }
-
         try {
             const announcementData = {
                 type: selectedType.value,
@@ -131,17 +154,8 @@ const handleSubmit = async () => {
                 endTime: endTime.value,
                 location: locationInput.value || 'Indefinido' 
             };
-
             await saveAnnouncement(announcementData, selectedFile.value);
-            subjectInput.value = '';
-            locationInput.value = '';
-            titleInput.value = '';  
-            descriptionInput.value = '';  
-            startTime.value = null
-            endTime.value = null
-            dateTime.value = null 
-            locationInput.value = ''
-            selectedFile.value = null 
+            reset() 
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
         } catch (error) {
             console.error('Error al guardar el anuncio:', error);
@@ -152,24 +166,14 @@ const handleSubmit = async () => {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos de título,  descripción e imagen.', life: 3000 });
             return;
         }
-
         try {
             const announcementData = {
                 type: selectedType.value,
                 title: titleInput.value,
                 description: descriptionInput.value
             };
-
             await saveAnnouncement(announcementData, selectedFile.value);  
-            subjectInput.value = '';
-            locationInput.value = '';
-            titleInput.value = '';  
-            descriptionInput.value = '';  
-            startTime.value = null
-            endTime.value = null
-            dateTime.value = null 
-            locationInput.value = ''
-            selectedFile.value = null 
+            reset() 
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
         } catch (error) {
             console.error('Error al guardar el anuncio:', error);
@@ -178,7 +182,17 @@ const handleSubmit = async () => {
     }
 };
 
-const displayPreviewDialog = ref(false);
+const reset = () => {
+  subjectInput.value = '';
+  locationInput.value = '';
+  titleInput.value = '';  
+  descriptionInput.value = '';  
+  startTime.value = null
+  endTime.value = null
+  dateTime.value = null 
+  locationInput.value = ''
+  selectedFile.value = null 
+}
 
 const openPreviewDialog = () => {
     displayPreviewDialog.value = true;
@@ -187,6 +201,15 @@ const openPreviewDialog = () => {
 const closePreviewDialog = () => {
     displayPreviewDialog.value = false;
 };
+
+const formatDateComplete = (date, start, end) => {
+  const formattedDate = formatDate(date); 
+  const formattedStartTime = formatTime(start, false); 
+  const formattedEndTime = formatTime(end, true);
+  return `${formattedDate}, ${formattedStartTime} - ${formattedEndTime}`;
+};
+
+
 
 </script>
 
@@ -316,7 +339,7 @@ const closePreviewDialog = () => {
           <p class="font-bold text-xl text-left mt-0 mb-1">
             {{ anuncio.type === 'Asesoría' ? (anuncio.subject.name.length > 30 ? anuncio.subject.name.slice(0, 30) + '...' : anuncio.subject.name)  : (anuncio.title.length > 30 ? anuncio.title.slice(0, 30) + '...' : anuncio.title) }}
           </p>
-          <i class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i>
+          <i @click="openInfoDialog(anuncio)" class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i>
         </div>
         
         <p v-if="anuncio.type === 'Asesoría'" class="font-medium text-xl text-left mt-0 mb-1">
@@ -336,9 +359,7 @@ const closePreviewDialog = () => {
           <div class="text-left text-xl">
             {{ formatDate(anuncio.dateTime) }}
           </div>
-        </div> 
-
-       
+        </div>
       </div>
     </div>
   </div>
@@ -455,6 +476,199 @@ const closePreviewDialog = () => {
             />
              </span>
         </Dialog>
+        
+        <Dialog 
+          v-model:visible="showInfoDialog"
+          :modal="true" 
+          :closable="true"  
+          :dismissable-mask="true"
+          class="mr-3 w-8"
+        >
+          <template #header>
+            <Menubar v-if="selectedAnuncio?.type === 'Asesoría'" :model="menuItems" />
+            <span v-else>
+              <h3>Información</h3>
+            </span>
+          </template>
+         
+          <div v-if="selectedOption === 'informacion' && selectedAnuncio.type != 'Asesoría'">
+            <p>{{ selectedAnuncio?.title || 'No hay información disponible' }}</p>
+            <p>{{ selectedAnuncio?.description || 'Sin descripción' }}</p>
+          </div>
+
+          <div class="flex flex-row" v-if="selectedOption === 'informacion' && selectedAnuncio.type == 'Asesoría'">
+            <div class="w-8 ml-5">
+              <p class="text-black text-xl font-semibold text-left ">
+                Materia
+              </p>
+              <InputText 
+                :value="selectedAnuncio?.subject.name" 
+                class="w-full text-lg" 
+                readonly 
+              />
+              <p class="text-black text-xl font-semibold text-left  mt-4">
+                Fecha y hora
+              </p>
+              <InputText 
+                :value="`${formatDateComplete(selectedAnuncio?.dateTime, selectedAnuncio?.startTime, selectedAnuncio?.endTime)}`" 
+                class="w-full text-lg" 
+                readonly 
+              />
+              <p class="text-black text-xl font-semibold text-left  mt-4">
+                Ubicación
+              </p>
+              <InputText 
+                :value="selectedAnuncio?.location" 
+                class="w-full text-lg" 
+                readonly 
+              />
+            </div>
+            <div class="w-4 flex  flex-column justify-content-center align-items-center ml-5">
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: '#4484A7' }"
+                @click="showDialogAsesoria = true"
+              
+              >
+                Editar
+                <img src="/assets/editAnun.svg" class="ml-4" alt="edit icon" style="width: 2.0rem; height: 2.0rem;" />
+              </Button>
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: '#646464' }"
+                @click="showDialogAsesoria = true"
+             
+              >
+                Ocultar
+                <img src="/assets/hide.svg" class="ml-4" alt="hide icon" style="width: 2.0rem; height: 2.0rem;" />
+              </Button>
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: '#C55F5F' }"
+                @click="showDialogAsesoria = true"
+          
+              >
+                Eliminar
+                <img src="/assets/trash.svg" class="ml-4" alt="trash icon" style="width: 2.0rem; height: 2.0rem;" />
+              </Button>
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mt-6 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+                @click="showInfoDialog= false"
+              >
+                Cerrar
+              </Button>
+            </div>
+          </div>
+
+          <div v-else-if="selectedOption === 'pre-registro' && selectedAnuncio.type == 'Asesoría'">
+            <div class="w-8 ml-5">
+              <DataTable 
+                :value="processedAsistence" 
+                paginator 
+                :rows="4" 
+                dataKey="id" 
+                :loading="loading" 
+                responsiveLayout="scroll" 
+                class="custom-table "
+              >
+                <template #empty>No se encontraron alumnos pregistrados.</template>
+                <template #loading>Cargando información. Por favor espera.</template>
+
+                <Column header="Fecha" field="date">
+                  <template #body="{ data }">
+                    <p class="text-sm">{{ formatDate(data.dateTime) }}</p>
+                  </template>
+                </Column>
+
+                <Column header="Estudiante" field="student">
+                    <template #body="{ data }">
+                        <span class="flex flex-column ml-4">
+                                <p class="text-sm font-bold">{{ data.name }}</p>
+                                <p class="text-sm">{{ data.uid }}</p>
+                            </span>
+                    </template>
+                </Column>
+
+                <Column header="Carrera" field="career">
+                    <template #body="{ data }">
+                        <span class="flex flex-column ml-4">
+                                <p class="text-sm font-bold">{{ data.career }}</p>
+                                <p class="text-sm">{{ data.area }}</p>
+                            </span>
+                    </template>
+                </Column>
+                
+                <Column header="Asistencia" field="asistence">
+                  <template #body="{ data }">
+                    <p class="text-sm">
+                      <img 
+                        v-if="!data.asistence" 
+                        src="/assets/cancel.svg" 
+                        class="ml-4" 
+                        alt="cancel icon" 
+                        style="width: 2.0rem; height: 2.0rem;" 
+                      />
+                      <img 
+                        v-else 
+                        src="/assets/check.svg" 
+                        class="ml-4" 
+                        alt="check icon" 
+                        style="width: 2.0rem; height: 2.0rem;" 
+                      />
+                    </p>
+                  </template>
+                </Column>
+
+              </DataTable>
+
+            </div>
+            
+          </div>
+      
+          <div v-else-if="selectedOption === 'asistencia' && selectedAnuncio.type == 'Asesoría'">
+            <div class="w-8 ml-5">
+              <DataTable 
+                :value="processedConfirm" 
+                paginator 
+                :rows="4" 
+                dataKey="id" 
+                :loading="loading" 
+                responsiveLayout="scroll" 
+                class="custom-table "
+              >
+                <template #empty>No se encontraron alumnos que hayan asistido.</template>
+                <template #loading>Cargando información. Por favor espera.</template>
+                
+                <Column header="Fecha" field="date">
+                  <template #body="{ data }">
+                    <p class="text-sm">{{ formatDate(data.dateTime) }}</p>
+                  </template>
+                </Column>
+
+                <Column header="Estudiante" field="student">
+                    <template #body="{ data }">
+                        <span class="flex flex-column ml-4">
+                                <p class="text-sm font-bold">{{ data.name }}</p>
+                                <p class="text-sm">{{ data.uid }}</p>
+                            </span>
+                    </template>
+                </Column>
+
+                <Column header="Carrera" field="career">
+                    <template #body="{ data }">
+                        <span class="flex flex-column ml-4">
+                                <p class="text-sm font-bold">{{ data.career }}</p>
+                                <p class="text-sm">{{ data.area }}</p>
+                            </span>
+                    </template>
+                </Column>
+              </DataTable>
+            </div>
+          </div>
+          
+        </Dialog>
+
 
 </template>
 
@@ -497,4 +711,31 @@ const closePreviewDialog = () => {
     
   }
 }
+
+
+.custom-table .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.custom-table .p-datatable-tbody > tr:nth-child(odd) {
+    background-color: #f2f2f2 ;
+}
+
+.custom-table {
+    border-radius: 12px; 
+    overflow: hidden; 
+    border: 1px solid #e4e7e6; 
+}
+
+
+.custom-table .p-datatable-tbody > tr > td span p {
+    margin: 0;
+}
+
+.custom-table .p-datatable-tbody > tr > td {
+    border-bottom: 1px solid #e4e7e6;
+    padding: 1rem 1.5rem;
+    text-align: left;
+}
+
 </style>

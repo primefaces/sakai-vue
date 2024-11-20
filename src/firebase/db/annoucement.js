@@ -32,6 +32,7 @@ export async function saveAnnouncement(announcementData, selectedFile) {
             ...announcementData,
             imageUrl, 
             preregister: {},
+            asistence: {},
             createdAt: new Date(),
             visible: true
         });
@@ -43,12 +44,6 @@ export async function saveAnnouncement(announcementData, selectedFile) {
     }
 }
 
-
-/**
- * Obtiene los anuncios de la colección "announcements" y omite los que tienen 'dateTime' menor a la fecha actual.
- *
- * @returns {Promise<Array>} - Una promesa que resuelve en una lista de anuncios válidos, ordenados del más viejo al más nuevo.
- */
 export async function getAnnouncementsEdit() {
     try {
         const announcementsCollection = collection(firestoreDB, 'announcements');
@@ -103,11 +98,6 @@ export async function getAnnouncements() {
     }
 }
 
-/**
- * Obtiene los anuncios del tipo "Asesoría" con dateTime válido.
- *
- * @returns {Promise<Array>} - Lista de anuncios filtrados y ordenados.
- */
 export async function getAnnouncementsGrupales() {
     try {
         const announcementsCollection = collection(firestoreDB, 'announcements');
@@ -139,14 +129,77 @@ export async function getAnnouncementsGrupales() {
 }
 
 
-/**
- * Añade un usuario completo a la lista de preregister en un anuncio específico.
- *
- * @param {string} announcementId - El ID del anuncio al que se agregará el usuario.
- * @param {Object} user - El objeto del usuario que se agregará (debe incluir al menos `uid`).
- * @returns {Promise<void>}
- */
 export async function addUserToPreregsiter(announcementId, user) {
+    try {
+        const announcementRef = doc(firestoreDB, 'announcements', announcementId);
+        const announcementSnapshot = await getDoc(announcementRef);
+        if (!announcementSnapshot.exists()) {
+            throw new Error(`El anuncio con ID ${announcementId} no existe.`);
+        }
+
+        const announcementData = announcementSnapshot.data();
+
+        const currentPreregs = announcementData.preregister || {};
+        if (currentPreregs[user.uid]) {
+            throw new Error('Usuario ya registrado');
+        }
+        const updatedPreregs = {
+            ...currentPreregs,
+            [user.uid]: user,
+        };
+
+        const currentAsistence = announcementData.asistence || {};
+        const updatedAsistence = {
+            ...currentAsistence,
+            [user.uid]: false,
+        };
+
+        await updateDoc(announcementRef, {
+            preregister: updatedPreregs,
+            asistence: updatedAsistence,
+        });
+
+        console.log(`Usuario ${user.uid} agregado exitosamente a preregister y asistencia.`);
+    } catch (error) {
+        console.error('Error añadiendo usuario a preregister:', error);
+        throw error; 
+    }
+}
+
+
+export async function processAsistence(announcementId) {
+    const announcementRef = doc(firestoreDB, 'announcements', announcementId);
+    const announcementSnapshot = await getDoc(announcementRef);
+    const data = announcementSnapshot.data();
+
+    const preregister = data.preregister || {};
+    const asistence = data.asistence || {};
+    const dateTime = data.dateTime || '';
+
+    const preregisterKeys = Object.keys(preregister);
+    if (preregisterKeys.length === 0) {
+        console.log("No preregister data found.");
+        return [];  
+    }
+
+    const result = preregisterKeys.map(uid => {
+        const user = preregister[uid];
+
+        return {
+            uid: uid,
+            dateTime: dateTime,
+            name: user.name || '',
+            career: user.career || '',
+            area: user.area || '',
+            asistence: asistence[uid] || false 
+        };
+    });
+
+    console.log("Result:", result);
+    return result;
+}
+
+export async function updateUserAsistence(announcementId, userId) {
     try {
         const announcementRef = doc(firestoreDB, 'announcements', announcementId);
 
@@ -156,22 +209,54 @@ export async function addUserToPreregsiter(announcementId, user) {
         }
 
         const announcementData = announcementSnapshot.data();
-        const currentPreregs = announcementData.preregister || {};
-        if (currentPreregs[user.uid]) {
-            throw new Error('Usuario ya registrado'); 
-        }
-        const updatedPreregs = {
-            ...currentPreregs,
-            [user.uid]: user,
+        const currentAsistence = announcementData.asistence || {};
+
+        const updatedAsistence = {
+            ...currentAsistence,
+            [userId]: true,
         };
 
         await updateDoc(announcementRef, {
-            preregister: updatedPreregs,
+            asistence: updatedAsistence,
         });
 
-        console.log(`Usuario ${user.uid} agregado exitosamente a preregister.`);
+        console.log(`Asistencia para el usuario ${userId} actualizada exitosamente a true.`);
     } catch (error) {
-        console.error('Error añadiendo usuario a preregister:', error);
-        throw error; 
+        console.error('Error actualizando la asistencia del usuario:', error);
+        throw error;
     }
+}
+
+export async function processConfirms(announcementId) {
+    const announcementRef = doc(firestoreDB, 'announcements', announcementId);
+    const announcementSnapshot = await getDoc(announcementRef);
+    const data = announcementSnapshot.data();
+    console.log(data.asistence, "Esta es la data");
+
+    const preregister = data.preregister || {};  
+    const asistence = data.asistence || {}; 
+    const dateTime = data.dateTime || '';  
+
+    const preregisterKeys = Object.keys(preregister);  
+    if (preregisterKeys.length === 0) {
+        console.log("No preregister data found.");
+        return [];  
+    }
+
+    const result = preregisterKeys
+        .filter(uid => asistence[uid] === true)  
+        .map(uid => {
+            const user = preregister[uid];  
+            console.log("Processing user:", user);
+
+            return {
+                uid: uid,
+                dateTime: dateTime,
+                name: user.name || '',
+                career: user.career || '',
+                area: user.area || '',
+                asistence: true 
+            };
+        });
+    return result; 
 }

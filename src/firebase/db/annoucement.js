@@ -98,11 +98,6 @@ export async function getAnnouncements() {
     }
 }
 
-/**
- * Obtiene los anuncios del tipo "Asesoría" con dateTime válido.
- *
- * @returns {Promise<Array>} - Lista de anuncios filtrados y ordenados.
- */
 export async function getAnnouncementsGrupales() {
     try {
         const announcementsCollection = collection(firestoreDB, 'announcements');
@@ -134,20 +129,9 @@ export async function getAnnouncementsGrupales() {
 }
 
 
-/**
- * Añade un usuario completo a la lista de preregister en un anuncio específico.
- *
- * @param {string} announcementId - El ID del anuncio al que se agregará el usuario.
- * @param {Object} user - El objeto del usuario que se agregará (debe incluir al menos `uid`).
- * @returns {Promise<void>}
- */
-
 export async function addUserToPreregsiter(announcementId, user) {
     try {
-        // Obtener referencia al documento del anuncio
         const announcementRef = doc(firestoreDB, 'announcements', announcementId);
-
-        // Obtener datos del anuncio
         const announcementSnapshot = await getDoc(announcementRef);
         if (!announcementSnapshot.exists()) {
             throw new Error(`El anuncio con ID ${announcementId} no existe.`);
@@ -155,7 +139,6 @@ export async function addUserToPreregsiter(announcementId, user) {
 
         const announcementData = announcementSnapshot.data();
 
-        // Actualizar `preregister` con el usuario
         const currentPreregs = announcementData.preregister || {};
         if (currentPreregs[user.uid]) {
             throw new Error('Usuario ya registrado');
@@ -165,14 +148,12 @@ export async function addUserToPreregsiter(announcementId, user) {
             [user.uid]: user,
         };
 
-        // Actualizar `asistence` con el valor `false` para el usuario
         const currentAsistence = announcementData.asistence || {};
         const updatedAsistence = {
             ...currentAsistence,
             [user.uid]: false,
         };
 
-        // Actualizar el documento en Firestore
         await updateDoc(announcementRef, {
             preregister: updatedPreregs,
             asistence: updatedAsistence,
@@ -186,12 +167,11 @@ export async function addUserToPreregsiter(announcementId, user) {
 }
 
 
-
 export async function processAsistence(announcementId) {
     const announcementRef = doc(firestoreDB, 'announcements', announcementId);
     const announcementSnapshot = await getDoc(announcementRef);
     const data = announcementSnapshot.data();
-    console.log(data.asistence, "Esta es la data")
+
     const preregister = data.preregister || {};
     const asistence = data.asistence || {};
     const dateTime = data.dateTime || '';
@@ -204,7 +184,6 @@ export async function processAsistence(announcementId) {
 
     const result = preregisterKeys.map(uid => {
         const user = preregister[uid];
-        console.log("Processing user:", user);
 
         return {
             uid: uid,
@@ -222,7 +201,6 @@ export async function processAsistence(announcementId) {
 
 export async function updateUserAsistence(announcementId, userId) {
     try {
-        console.log(announcementId, userId, "Ids ")
         const announcementRef = doc(firestoreDB, 'announcements', announcementId);
 
         const announcementSnapshot = await getDoc(announcementRef);
@@ -247,4 +225,38 @@ export async function updateUserAsistence(announcementId, userId) {
         console.error('Error actualizando la asistencia del usuario:', error);
         throw error;
     }
+}
+
+export async function processConfirms(announcementId) {
+    const announcementRef = doc(firestoreDB, 'announcements', announcementId);
+    const announcementSnapshot = await getDoc(announcementRef);
+    const data = announcementSnapshot.data();
+    console.log(data.asistence, "Esta es la data");
+
+    const preregister = data.preregister || {};  
+    const asistence = data.asistence || {}; 
+    const dateTime = data.dateTime || '';  
+
+    const preregisterKeys = Object.keys(preregister);  
+    if (preregisterKeys.length === 0) {
+        console.log("No preregister data found.");
+        return [];  
+    }
+
+    const result = preregisterKeys
+        .filter(uid => asistence[uid] === true)  
+        .map(uid => {
+            const user = preregister[uid];  
+            console.log("Processing user:", user);
+
+            return {
+                uid: uid,
+                dateTime: dateTime,
+                name: user.name || '',
+                career: user.career || '',
+                area: user.area || '',
+                asistence: true 
+            };
+        });
+    return result; 
 }

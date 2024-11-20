@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit,processAsistence} from '@/firebase/db/annoucement';
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence,processConfirms} from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
   formatDate,
@@ -28,8 +28,9 @@ const anuncios = ref([]);
 const showInfoDialog = ref(false);
 const selectedOption = ref('informacion');
 const selectedAnuncio = ref(null); 
-const processedAsistence =ref(null); 
+const processedAsistence = ref(null); 
 const displayPreviewDialog = ref(false);
+const processedConfirm = ref(null); 
 
 const menuItems = [
   {
@@ -53,7 +54,10 @@ onMounted(async () => {
 
 const loadAsistance = async () => {
   processedAsistence.value = await processAsistence(selectedAnuncio.value.id);
-  console.log(processAsistence.value)
+};
+
+const loadConfirm = async () => {
+  processedConfirm.value = await processConfirms(selectedAnuncio.value.id);
 };
 
 const handleSelect = (type) => {
@@ -112,6 +116,7 @@ const openDateDialog = () => {
 const openInfoDialog = async (anuncio) => {
   selectedAnuncio.value = anuncio;
   await loadAsistance();
+  await loadConfirm();
   showInfoDialog.value = true;
 };
 
@@ -622,8 +627,44 @@ const formatDateComplete = (date, start, end) => {
           </div>
       
           <div v-else-if="selectedOption === 'asistencia' && selectedAnuncio.type == 'Asesoría'">
-            <h3>Asistencia</h3>
-            <p>Contenido relacionado con la asistencia o cualquier detalle adicional.</p>
+            <div class="w-8 ml-5">
+              <DataTable 
+                :value="processedConfirm" 
+                paginator 
+                :rows="4" 
+                dataKey="id" 
+                :loading="loading" 
+                responsiveLayout="scroll" 
+                class="custom-table "
+              >
+                <template #empty>No se encontraron alumnos que hayan asistido.</template>
+                <template #loading>Cargando información. Por favor espera.</template>
+                
+                <Column header="Fecha" field="date">
+                  <template #body="{ data }">
+                    <p class="text-sm">{{ formatDate(data.dateTime) }}</p>
+                  </template>
+                </Column>
+
+                <Column header="Estudiante" field="student">
+                    <template #body="{ data }">
+                        <span class="flex flex-column ml-4">
+                                <p class="text-sm font-bold">{{ data.name }}</p>
+                                <p class="text-sm">{{ data.uid }}</p>
+                            </span>
+                    </template>
+                </Column>
+
+                <Column header="Carrera" field="career">
+                    <template #body="{ data }">
+                        <span class="flex flex-column ml-4">
+                                <p class="text-sm font-bold">{{ data.career }}</p>
+                                <p class="text-sm">{{ data.area }}</p>
+                            </span>
+                    </template>
+                </Column>
+              </DataTable>
+            </div>
           </div>
           
         </Dialog>

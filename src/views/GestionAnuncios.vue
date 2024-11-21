@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit,processAsistence,processConfirms} from '@/firebase/db/annoucement';
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence} from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
   formatDate,
@@ -30,7 +30,6 @@ const selectedOption = ref('informacion');
 const selectedAnuncio = ref(null); 
 const processedAsistence = ref(null); 
 const displayPreviewDialog = ref(false);
-const processedConfirm = ref(null); 
 
 const menuItems = [
   {
@@ -40,10 +39,6 @@ const menuItems = [
   {
     label: 'Pre-registro',
     command: () => { selectedOption.value = 'pre-registro'; }
-  },
-  {
-    label: 'Asistencia',
-    command: () => { selectedOption.value = 'asistencia'; }
   }
 ];
 
@@ -56,9 +51,6 @@ const loadAsistance = async () => {
   processedAsistence.value = await processAsistence(selectedAnuncio.value.id);
 };
 
-const loadConfirm = async () => {
-  processedConfirm.value = await processConfirms(selectedAnuncio.value.id);
-};
 
 const handleSelect = (type) => {
     selectedType.value = type;
@@ -116,7 +108,6 @@ const openDateDialog = () => {
 const openInfoDialog = async (anuncio) => {
   selectedAnuncio.value = anuncio;
   await loadAsistance();
-  await loadConfirm();
   showInfoDialog.value = true;
 };
 
@@ -208,8 +199,6 @@ const formatDateComplete = (date, start, end) => {
   const formattedEndTime = formatTime(end, true);
   return `${formattedDate}, ${formattedStartTime} - ${formattedEndTime}`;
 };
-
-
 
 </script>
 
@@ -339,7 +328,7 @@ const formatDateComplete = (date, start, end) => {
           <p class="font-bold text-xl text-left mt-0 mb-1">
             {{ anuncio.type === 'Asesoría' ? (anuncio.subject.name.length > 30 ? anuncio.subject.name.slice(0, 30) + '...' : anuncio.subject.name)  : (anuncio.title.length > 30 ? anuncio.title.slice(0, 30) + '...' : anuncio.title) }}
           </p>
-          <i @click="openInfoDialog(anuncio)" class="pi pi-info-circle mr-2 text-gray-500 text-2xl"></i>
+          <i @click="openInfoDialog(anuncio)" class="pi pi-info-circle mr-2 text-gray-500 text-2xl cursor-pointer"></i>
         </div>
         
         <p v-if="anuncio.type === 'Asesoría'" class="font-medium text-xl text-left mt-0 mb-1">
@@ -561,7 +550,7 @@ const formatDateComplete = (date, start, end) => {
             </div>
           </div>
 
-          <div v-else-if="selectedOption === 'pre-registro' && selectedAnuncio.type == 'Asesoría'">
+          <div v-else-if="selectedOption === 'pre-registro' && selectedAnuncio.type == 'Asesoría'" class="flex flex-row">
             <div class="w-8 ml-5">
               <DataTable 
                 :value="processedAsistence" 
@@ -623,48 +612,17 @@ const formatDateComplete = (date, start, end) => {
               </DataTable>
 
             </div>
-            
-          </div>
-      
-          <div v-else-if="selectedOption === 'asistencia' && selectedAnuncio.type == 'Asesoría'">
-            <div class="w-8 ml-5">
-              <DataTable 
-                :value="processedConfirm" 
-                paginator 
-                :rows="4" 
-                dataKey="id" 
-                :loading="loading" 
-                responsiveLayout="scroll" 
-                class="custom-table "
+
+            <div class="w-4 ml-5">
+              <Button
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mt-6 text-xl font-bold flex justify-content-center align-items-center border-none"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+                @click="showInfoDialog= false"
               >
-                <template #empty>No se encontraron alumnos que hayan asistido.</template>
-                <template #loading>Cargando información. Por favor espera.</template>
-                
-                <Column header="Fecha" field="date">
-                  <template #body="{ data }">
-                    <p class="text-sm">{{ formatDate(data.dateTime) }}</p>
-                  </template>
-                </Column>
-
-                <Column header="Estudiante" field="student">
-                    <template #body="{ data }">
-                        <span class="flex flex-column ml-4">
-                                <p class="text-sm font-bold">{{ data.name }}</p>
-                                <p class="text-sm">{{ data.uid }}</p>
-                            </span>
-                    </template>
-                </Column>
-
-                <Column header="Carrera" field="career">
-                    <template #body="{ data }">
-                        <span class="flex flex-column ml-4">
-                                <p class="text-sm font-bold">{{ data.career }}</p>
-                                <p class="text-sm">{{ data.area }}</p>
-                            </span>
-                    </template>
-                </Column>
-              </DataTable>
+                Cerrar
+              </Button>
             </div>
+            
           </div>
           
         </Dialog>

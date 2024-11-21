@@ -191,6 +191,7 @@ export async function processAsistence(announcementId) {
             name: user.name || '',
             career: user.career || '',
             area: user.area || '',
+            campus: user.campus || '',
             asistence: asistence[uid] || false 
         };
     });
@@ -255,6 +256,7 @@ export async function processConfirms(announcementId) {
                 name: user.name || '',
                 career: user.career || '',
                 area: user.area || '',
+                campus: user.campus || '',
                 asistence: true 
             };
         });

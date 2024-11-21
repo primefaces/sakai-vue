@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue';
 import { getAsesorias } from '../firebase/db/asesorias';
 import * as XLSX from 'xlsx';
-
 const asesorias = ref([]);
 const startDate = ref(null);
 const endDate = ref(null);
@@ -45,26 +44,29 @@ const exportToExcel = () => {
 const exportData = () => {
     const formattedData = asesorias.value.map(asesoria => ({
         'ID': asesoria.id || '',
-        'Fecha': asesoria.date ? new Date(asesoria.date.seconds * 1000).toLocaleDateString() : '',
-        'Nombre MAE': asesoria.peerInfo?.name || '',
         'Matricula MAE': asesoria.peerInfo?.uid || '',
+        'Nombre MAE': asesoria.peerInfo?.name || '',
         'Carrera MAE': asesoria.peerInfo?.career || '',
-        'Nombre Alumno': asesoria.userInfo?.name || '',
-        'Matricula Alumno': asesoria.userInfo?.id || asesoria.userInfo?.uid || '',
-        'Carrera Alumno': asesoria.userInfo?.career || '',
-        'Clave Materia': asesoria.subject?.id || '',
-        'Materia': asesoria.subject?.name || '',
-        'Rating': asesoria.rating || 'N/A',
-        'Comentario': asesoria.comment || '',
         'Area MAE': asesoria.peerInfo?.area || '',
         'Modelo MAE': 'TEC21',
         'Campus MAE': asesoria.peerInfo?.campus || '',
+        'Matricula Alumno': asesoria.userInfo?.id || asesoria.userInfo?.uid || '',
+        'Nombre Alumno': asesoria.userInfo?.name || '',
+        'Carrera Alumno': asesoria.userInfo?.career || '',
         'Area Alumno': asesoria.userInfo?.area || '',
-        'Modelo Alumno': 'TEC21',
+        'Modelo Alumno': 'TEC21', 
         'Campus Alumno': asesoria.userInfo?.campus || '',
+        'Fecha': asesoria.date 
+    ? new Date(asesoria.date.seconds * 1000) 
+    : null,
+
+        'Clave Materia': asesoria.subject?.id || '',
+        'Materia': asesoria.subject?.name || '',
         'Modalidad': asesoria.modalidad || 'Presencial',
         'Tipo': asesoria.type || 'Normal',
         'Formato': asesoria.formato || 'Individual',
+        'Rating': asesoria.rating || 'N/A',
+        'Comentario': asesoria.comment || '',
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(formattedData);

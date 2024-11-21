@@ -864,3 +864,35 @@ export async function getTotalMaes() {
         throw error;
     }
 }
+
+
+
+// Añadir nuevas variables
+export async function addExtraVariables() {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const querySnapshot = await getDocs(usersRef);
+
+        const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
+
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref;
+            const userData = doc.data();
+
+            if (eligibleRoles.includes(userData.role)) {
+                return updateDoc(userRef, {
+                    asesoriasGrupales: 0,
+                });
+            } else {
+                return Promise.resolve();
+            }
+        });
+
+        await Promise.all(promises);
+
+        console.log("Background have been successfully added to eligible users.");
+    } catch (error) {
+        console.error("Error adding background to eligible users: ", error);
+        throw error;
+    }
+}

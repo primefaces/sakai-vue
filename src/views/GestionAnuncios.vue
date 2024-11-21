@@ -2,12 +2,15 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit,processAsistence} from '@/firebase/db/annoucement';
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence}
+ from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
   formatDate,
   formatTime
 } from '@/utils/AnunciosUtils';
+import { getMaes} from '@/firebase/db/users';
+import MultiSelect from 'primevue/multiselect';
 
 const selectedType = ref('Asesoría');
 const subjects = ref([]);
@@ -30,7 +33,9 @@ const selectedOption = ref('informacion');
 const selectedAnuncio = ref(null); 
 const processedAsistence = ref(null); 
 const displayPreviewDialog = ref(false);
-
+const maeInfo = ref(null);
+const showDialogAsesoria = ref(false);
+const maeSelect = ref([])
 const menuItems = [
   {
     label: 'Información',
@@ -45,6 +50,7 @@ const menuItems = [
 onMounted(async () => {
   subjects.value = await getSubjects();
   anuncios.value = await getAnnouncementsEdit();
+  maeInfo.value = await getMaes()
 });
 
 const loadAsistance = async () => {
@@ -131,22 +137,44 @@ const saveDateTime = () => {
 };
 
 const handleSubmit = async () => {
+
+      
     if (selectedType.value === 'Asesoría') {
         if (!subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !selectedFile.value) {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
             return;
         }
+        if (maeSelect.value.length === 0) {
+            toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Por favor asigna los maes y al coordinador que darán la asesoría.',
+              life: 3000
+            });
+            return;
+          }
+
         try {
+          const selectedMaes = maeSelect.value.map(mae => ({
+            uid: mae.uid,
+            name: mae.name,
+            career: mae.career,
+            campus: mae.campus,
+            area: mae.area,
+          }));
+
             const announcementData = {
                 type: selectedType.value,
                 subject: subjectInput.value,
                 dateTime: dateTime.value,
                 startTime: startTime.value,
                 endTime: endTime.value,
-                location: locationInput.value || 'Indefinido' 
+                location: locationInput.value || 'Indefinido',
+                maesAsignados: selectedMaes
             };
             await saveAnnouncement(announcementData, selectedFile.value);
             reset() 
+            showDialogAsesoria.value = false
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
         } catch (error) {
             console.error('Error al guardar el anuncio:', error);
@@ -183,6 +211,7 @@ const reset = () => {
   dateTime.value = null 
   locationInput.value = ''
   selectedFile.value = null 
+  maeSelect.value = []
 }
 
 const openPreviewDialog = () => {
@@ -314,7 +343,7 @@ const formatDateComplete = (date, start, end) => {
         <input type="file" ref="fileInput" @change="handleFileChange" accept=".jpg, .jpeg, .png" class="hidden" />  
       </div>
       <span class="flex flex-column md:flex-row justify-content-between mt-3">
-        <Button label="Agregar" class="custom-button font-bold text-black w-full md:w-5 text-lg md:text-xl selected border-round-xl"  @click="handleSubmit" />
+        <Button label="Agregar" class="custom-button font-bold text-black w-full md:w-5 text-lg md:text-xl selected border-round-xl"   @click="showDialogAsesoria = true" />
         <Button class="font-bold text-black-alpha-70 w-full md:w-6 text-lg md:text-xl border-none bg-transparent"
           @click="openPreviewDialog"         
         >
@@ -626,7 +655,45 @@ const formatDateComplete = (date, start, end) => {
           </div>
           
         </Dialog>
+        
+        <Dialog 
+    v-model:visible="showDialogAsesoria" 
+    modal 
+    header="Seleccionar MAEs" 
+    class="md:w-4"
+  >
+    <p> Selecciona a los MAEs y coordinador que participarán en esta asesoría grupal</p>
+    <MultiSelect
+      v-model="maeSelect" 
+      :options="maeInfo"
+      optionLabel="name"
+      placeholder="Seleccione Maes"
+      filter
+      class="w-12 mb-2"
+      showClear
+    />
+    <div v-if="maeSelect.length > 0" class="mt-4">
+      <p><strong> MAEs y coordinador seleccionados:</strong></p>
+      <ul>
+        <li v-for="mae in maeSelect" :key="mae.uid">{{ mae.name }}</li>
+      </ul>
+    </div>
 
+    <template #footer>
+      <div class="flex justify-content-end mt-4">
+        <Button 
+          label="Confirmar" 
+          @click="handleSubmit"
+          :style="{ background: 'linear-gradient(to right, #44a79b, #69ac51)' }"
+        />
+        <Button 
+          label="Cancelar" 
+          class="p-button-text mr-2" 
+          @click="showDialogAsesoria = false"
+        />
+      </div>
+    </template>
+  </Dialog>
 
 </template>
 
@@ -669,7 +736,6 @@ const formatDateComplete = (date, start, end) => {
     
   }
 }
-
 
 .custom-table .p-datatable-tbody > tr:nth-child(even) {
     background-color: #ffffff;

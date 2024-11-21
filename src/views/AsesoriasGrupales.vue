@@ -63,7 +63,6 @@ const closeDialogAsistence  = () => {
 const confirmPreRegistro = async () => {
     try {
         const announcementId = selectedAsesoria.value.id;
-
         await addUserToPreregsiter(announcementId, userInfo.value);
 
         toast.add({ 

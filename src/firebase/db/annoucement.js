@@ -11,14 +11,6 @@ import {
 } from 'firebase/firestore';
 import { addAnnoucement } from "../img/users";
 
-
-/**
- * Guarda un nuevo anuncio en la colección "announcements".
- *
- * @param {Object} announcementData - Los datos del anuncio a guardar.
- * @param {File} selectedFile - El archivo de imagen seleccionado.
- * @returns {Promise<string>} - El ID del anuncio guardado.
- */
 export async function saveAnnouncement(announcementData, selectedFile) {
     try {
         let imageUrl = '';
@@ -71,6 +63,8 @@ export async function getAnnouncements() {
         const announcementsCollection = collection(firestoreDB, 'announcements');
         const querySnapshot = await getDocs(query(announcementsCollection));
         const now = new Date();
+        
+        
         const announcements = querySnapshot.docs
             .map(doc => ({
                 id: doc.id,
@@ -81,7 +75,7 @@ export async function getAnnouncements() {
                     const dateTime = announcement.dateTime.seconds 
                         ? new Date(announcement.dateTime.seconds * 1000) 
                         : new Date(announcement.dateTime);
-                    return dateTime >= now;
+                    return dateTime >= now || dateTime.toDateString() === now.toDateString() ;
                 }
                 return true; 
             })
@@ -111,16 +105,20 @@ export async function getAnnouncementsGrupales() {
         const querySnapshot = await getDocs(q);
 
         const now = new Date();
-        
+        console.log(now);
+
         const announcements = querySnapshot.docs
             .map(doc => ({
                 id: doc.id,
                 ...doc.data(),
                 dateTime: doc.data().dateTime.toDate(), 
             }))
-            .filter(ann => ann.dateTime >= now) 
-            .sort((a, b) => a.createdAt - b.createdAt); 
+            .filter(ann => {
+                return ann.dateTime >= now || ann.dateTime.toDateString() === now.toDateString();
+            })
+            .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds); // Ordenar por fecha de creación
 
+        console.log(announcements);
         return announcements;
     } catch (error) {
         console.error('Error fetching announcements:', error);
@@ -232,7 +230,6 @@ export async function processConfirms(announcementId) {
     const announcementRef = doc(firestoreDB, 'announcements', announcementId);
     const announcementSnapshot = await getDoc(announcementRef);
     const data = announcementSnapshot.data();
-    console.log(data.asistence, "Esta es la data");
 
     const preregister = data.preregister || {};  
     const asistence = data.asistence || {}; 
@@ -261,4 +258,26 @@ export async function processConfirms(announcementId) {
             };
         });
     return result; 
+}
+
+
+export async function addExtraVariables() {
+    try {
+        const usersRef = collection(firestoreDB, 'announcements');
+        const querySnapshot = await getDocs(usersRef);
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref; 
+                return updateDoc(userRef, {
+                    maesAsignados: []
+                });
+          
+        });
+
+        await Promise.all(promises);
+
+        console.log("Background have been successfully added to eligible users.");
+    } catch (error) {
+        console.error("Error adding background to eligible users: ", error);
+        throw error;
+    }
 }

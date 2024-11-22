@@ -27,18 +27,19 @@ onMounted(async () => {
     const asesoríaId = route.query.asesoriaId;
     if (asesoríaId) {
         const selectedAsesoria = asesorias.value.find(asesoria => asesoria.id === asesoríaId);
-        if(shouldShowConfirmButton(selectedAsesoria)){
+        if(hasAttended(selectedAsesoria)){
+            toast.add({  
+                severity: 'error', 
+                summary: 'Error', 
+                detail: `Ya confirmaste esta asesoría de ${selectedAsesoria.subject.name}.`, 
+                life: 3000 
+            });
+        }
+        else if(shouldShowConfirmButton(selectedAsesoria)){
             handleAsistence(selectedAsesoria); 
         }
         else if (selectedAsesoria ) {
             handlePreRegistro(selectedAsesoria); 
-        }else{
-            toast.add({  
-                severity: 'error', 
-                summary: 'Error', 
-                detail: 'Ya te confirmaste la asesoría.', 
-                life: 3000 
-            });
         }
     }
 });
@@ -65,6 +66,10 @@ const handlePreRegistro = (asesoria) => {
 const handleAsistence = (asesoria) => {
     selectedAsesoria.value = asesoria;
     showDialogAsistence.value = true;
+    router.push({
+        path: 'asesoriasGrupales',
+        query: { asesoriaId: asesoria.id },
+    });
 };
 
 const closeDialog = () => {

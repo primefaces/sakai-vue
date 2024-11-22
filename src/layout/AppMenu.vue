@@ -13,8 +13,6 @@ const model = ref([
             { label: 'Maes activos', icon: 'pi pi-fw pi-globe', to: '/maesactivos' },
             { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
             { label: 'Asesorías grupales', icon: 'pi pi-fw pi-users', to: '/asesoriasGrupales' },
-            // { label: 'MAE', icon: 'pi pi-fw pi-user', to: '/mae' },
-            // { label: 'Dashboard (Template)', icon: 'pi pi-fw pi-home', to: '/dashboard' }
         ]
     },
 ]);
@@ -22,16 +20,7 @@ const model = ref([
 onMounted(async () => {
     const { role, uid } = await getCurrentUser();
 
-    // if (['user', 'mae', 'Academic', 'coordi', 'subjectCoordi', 'admin'].includes(role)) {
-    //     model.value.push({
-    //         label: 'Estudiante',
-    //         items: [
-    //             { label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/inicio' },
-    //             { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
-                
-    //         ]
-    //     })
-    // }
+   
 
     if (['admin', 'tec'].includes(role)) {
         model.value.push({
@@ -55,6 +44,7 @@ onMounted(async () => {
                 { label: 'Leaderboard', icon: 'pi pi-fw pi-star', to: '/leaderboard'},
                 { label: 'Mis asesorías', icon:'pi pi-fw pi-book', to: '/misasesorias'},
                 { label: 'Mis evaluaciones', icon:'pi pi-fw pi-check', to: '/misevaluaciones'},
+                { label: 'Asistencia grupales', icon:'pi pi-fw pi-list', to: '/asistenciaGrupales'},
             ]
         })
     }

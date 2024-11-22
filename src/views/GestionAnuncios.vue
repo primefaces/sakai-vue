@@ -657,43 +657,43 @@ const formatDateComplete = (date, start, end) => {
         </Dialog>
         
         <Dialog 
-    v-model:visible="showDialogAsesoria" 
-    modal 
-    header="Seleccionar MAEs" 
-    class="md:w-4"
-  >
-    <p> Selecciona a los MAEs y coordinador que participarán en esta asesoría grupal</p>
-    <MultiSelect
-      v-model="maeSelect" 
-      :options="maeInfo"
-      optionLabel="name"
-      placeholder="Seleccione Maes"
-      filter
-      class="w-12 mb-2"
-      showClear
-    />
-    <div v-if="maeSelect.length > 0" class="mt-4">
-      <p><strong> MAEs y coordinador seleccionados:</strong></p>
-      <ul>
-        <li v-for="mae in maeSelect" :key="mae.uid">{{ mae.name }}</li>
-      </ul>
-    </div>
+          v-model:visible="showDialogAsesoria" 
+          modal 
+          header="Seleccionar MAEs" 
+          class="md:w-4"
+        >
+          <p> Selecciona a los MAEs y coordinador que participarán en esta asesoría grupal</p>
+          <MultiSelect
+            v-model="maeSelect" 
+            :options="maeInfo"
+            optionLabel="name"
+            placeholder="Seleccione Maes"
+            filter
+            class="w-12 mb-2"
+            showClear
+          />
+          <div v-if="maeSelect.length > 0" class="mt-4">
+            <p><strong> MAEs y coordinador seleccionados:</strong></p>
+            <ul>
+              <li v-for="mae in maeSelect" :key="mae.uid">{{ mae.name }}</li>
+            </ul>
+          </div>
 
-    <template #footer>
-      <div class="flex justify-content-end mt-4">
-        <Button 
-          label="Confirmar" 
-          @click="handleSubmit"
-          :style="{ background: 'linear-gradient(to right, #44a79b, #69ac51)' }"
-        />
-        <Button 
-          label="Cancelar" 
-          class="p-button-text mr-2" 
-          @click="showDialogAsesoria = false"
-        />
-      </div>
-    </template>
-  </Dialog>
+          <template #footer>
+            <div class="flex justify-content-end mt-4">
+              <Button 
+                label="Confirmar" 
+                @click="handleSubmit"
+                :style="{ background: 'linear-gradient(to right, #44a79b, #69ac51)' }"
+              />
+              <Button 
+                label="Cerrar" 
+                class="p-button-text mr-2" 
+                @click="showDialogAsesoria = false"
+              />
+            </div>
+          </template>
+        </Dialog>
 
 </template>
 

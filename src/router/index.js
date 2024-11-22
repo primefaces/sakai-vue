@@ -86,6 +86,14 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/asistenciaGrupales',
+                    name: 'asistenciaGrupales',
+                    component: () => import('@/views/AsistenciaGrupales.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae','tec','publi']
+                    }
+                },
+                {
                     path: '/coordi',
                     name: 'coordi',
                     component: () => import('@/views/Coordi.vue'),
@@ -191,33 +199,30 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     if (!to.matched.some((record) => record.meta.requiresAuth)) {
-        // Ruta no requiere autenticación
         return next();
     }
 
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        unsubscribe(); // Desuscribirse para evitar fugas de memoria
-
+        unsubscribe(); 
         if (!user) {
-            // El usuario no está autenticado, redirigir al login sin alertas
-            return next("/auth/login");
-        }
+            if (to.path === "/asesoriasGrupales" && to.query.asesoriaId) {
+                console.log("papa")
+              const asesoriaId = to.query.asesoriaId;
+              return next(`/auth/login?redirect=/asesoriasGrupales&asesoriaId=${asesoriaId}`);
+            }
+            return next("/auth/login"); 
+          }
 
-        // El usuario está autenticado
         const { role } = await getCurrentUser();
 
         if (!to.meta.roles) {
-            // La ruta no requiere roles específicos
             return next();
         }
 
         if (to.meta.roles.includes(role)) {
-            // El usuario tiene privilegios para esta ruta
             return next();
         } else {
-            // El usuario no tiene privilegios para esta ruta
-            // Redirigir a una página sin mostrar alert
             return next("/pages/notfound");
         }
     });

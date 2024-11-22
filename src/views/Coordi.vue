@@ -46,7 +46,7 @@ const checkLocationAndAttendance = () => {
   const fixedLon = -100.289667;
 
   return new Promise((resolve, reject) => {
-    if (userInfo.value.role !== 'mae') {
+    if (userInfo.value.role !== 'admin' || userInfo.value.role !== 'coordi' ) {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           const userLat = position.coords.latitude;

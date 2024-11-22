@@ -6,10 +6,10 @@ import router from '../../../router';
 import { getCampuses } from '../../../firebase/db/campuses';
 import { getMajors } from '../../../firebase/db/majors';
 import { createUser } from '../../../firebase/db/users';
-// import AppConfig from '@/layout/AppConfig.vue';
+import {  useRoute } from 'vue-router';
 
 const toast = useToast();
-
+const route = useRoute(); 
 const campuses = ref([]);
 const majors = ref([]);
 
@@ -34,7 +34,7 @@ const newUserInfo = ref({
 const password1 = ref('');
 const password2 = ref('');
 const errorMsg = ref('');
-const checked = ref(false);
+
 
 onMounted(async () => {
     campuses.value = await getCampuses();
@@ -143,8 +143,10 @@ const sendVerificationEmail = (user) => {
 const saveUserToDatabase = (userInfo) => {
     createUser(userInfo)
         .then(() => {
-            // Navigate to login page and show success message after saving the user
-            router.push('/auth/login');
+            const asesoriaId = route.query.asesoriaId || ''; 
+            const targetPath = `/auth/login`;
+            const targetPathWithQuery = asesoriaId ? `${targetPath}?redirect=&asesoriaId=${asesoriaId}` : targetPath;
+            router.push(targetPathWithQuery); 
             toast.add({ severity: 'info', summary: 'Cuenta creada correctamente', detail: 'Por favor verifica tu correo para continuar. Revisa tu bandeja de entrada y spam' });
         })
         .catch(error => {
@@ -153,6 +155,13 @@ const saveUserToDatabase = (userInfo) => {
         });
 };
 
+function handleLoginClick() {
+  const asesoriaId = route.query.asesoriaId || ''; 
+  const targetPath = `/auth/login`;
+  const targetPathWithQuery = asesoriaId ? `${targetPath}?redirect=&asesoriaId=${asesoriaId}` : targetPath;
+
+  router.push(targetPathWithQuery); 
+}
 </script>
 
 <template>
@@ -261,7 +270,7 @@ const saveUserToDatabase = (userInfo) => {
                         <Button @click="onSignUp" label="Registrarse"
                             :disabled="newUserInfo.email == '' || password1 == '' || password2 == '' || newUserInfo.firstname == null || newUserInfo.lastname == null || newUserInfo.campus == null || newUserInfo.major == null"
                             class="w-full p-3 mb-3 text-xl"></Button>
-                        <Button @click="router.push('/auth/login')" label="Iniciar sesión"
+                        <Button @click="handleLoginClick" label="Iniciar sesión"
                             class="w-full p-3 mb-3 text-xl" severity="secondary"></Button>
                         <a href="https://firebasestorage.googleapis.com/v0/b/peer-teaching.appspot.com/o/documents%2FAvisoPrivacidadMaesMx.pdf?alt=media&token=425380a0-f154-4723-b73a-4505a8a4fae2">
                             <p class="text-center text-indigo-800 w-full mt-4 underline cursor-pointer">Aviso de privacidad</p>

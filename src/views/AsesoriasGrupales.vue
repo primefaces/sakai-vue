@@ -6,9 +6,9 @@ import { getSubjectColor } from '@/utils/HorarioUtils';
 import { formatDate, formatTime } from '@/utils/AnunciosUtils';
 import { getCurrentUser } from '../firebase/db/users';
 import { useToast } from 'primevue/usetoast';
-import { useRoute } from 'vue-router'; 
+import { useRoute,useRouter } from 'vue-router'; 
 
-
+const router = useRouter();
 const asesorias = ref([]);
 const subjects = ref([]);
 const userInfo = ref(null);
@@ -27,8 +27,18 @@ onMounted(async () => {
     const asesoríaId = route.query.asesoriaId;
     if (asesoríaId) {
         const selectedAsesoria = asesorias.value.find(asesoria => asesoria.id === asesoríaId);
-        if (selectedAsesoria) {
+        if(shouldShowConfirmButton(selectedAsesoria)){
+            handleAsistence(selectedAsesoria); 
+        }
+        else if (selectedAsesoria ) {
             handlePreRegistro(selectedAsesoria); 
+        }else{
+            toast.add({  
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'Ya te confirmaste la asesoría.', 
+                life: 3000 
+            });
         }
     }
 });
@@ -46,6 +56,10 @@ const filteredAsesorias = computed(() => {
 const handlePreRegistro = (asesoria) => {
     selectedAsesoria.value = asesoria;
     showDialog.value = true;
+    router.push({
+        path: 'asesoriasGrupales',
+        query: { asesoriaId: asesoria.id },
+    });
 };
 
 const handleAsistence = (asesoria) => {
@@ -139,7 +153,6 @@ const hasAttended = (asesoria) => {
 
     return asesoria.asistence[userInfo.value.uid] === true;
 };
-
 </script>
 
 <template>
@@ -278,7 +291,7 @@ const hasAttended = (asesoria) => {
         class="custom-dialog w-10 md:w-6 lg:w-4"
     >
         <template #header>
-            <h2 class="text-center text-2xl ">"¿Deseas confirmar tu asistencia a la siguiente asesoría grupal?"</h2>
+            <h2 class="text-center text-2xl ">¿Deseas confirmar tu asistencia a la siguiente asesoría grupal?</h2>
         </template>
 
         <div class="dialog-content border-round-3xl boder-gray bg-white">
@@ -337,9 +350,8 @@ const hasAttended = (asesoria) => {
 }
 
 .custom-dialog .p-dialog-mask {
-    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    background: rgba(0, 0, 0, 0.5); 
 }
-
 
 .dialog-content .color-bar {
     position: relative;

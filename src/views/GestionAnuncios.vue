@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit,processAsistence}
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence, deleteAnnouncementById}
  from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
@@ -35,6 +35,7 @@ const processedAsistence = ref(null);
 const displayPreviewDialog = ref(false);
 const maeInfo = ref(null);
 const showDialogAsesoria = ref(false);
+const showDialogDelete = ref(false);
 const maeSelect = ref([])
 const menuItems = [
   {
@@ -128,7 +129,6 @@ const saveDateTime = () => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'La fecha seleccionada no puede ser antes del día de hoy.', life: 3000 });
         return;
     }
-    console.log(startTime, endTime, "Aca estoy")
     if (startTime.value >= endTime.value) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'La hora de inicio debe ser menor que la hora de fin.', life: 3000 });
         return;
@@ -228,6 +228,33 @@ const formatDateComplete = (date, start, end) => {
   const formattedEndTime = formatTime(end, true);
   return `${formattedDate}, ${formattedStartTime} - ${formattedEndTime}`;
 };
+
+
+
+const handleDelete = async () => {
+      try {
+        if (selectedAnuncio.value?.id) {
+          await deleteAnnouncementById(selectedAnuncio.value.id); 
+          showDialogDelete.value = false;
+          showInfoDialog.value = false;
+          toast.add({
+            severity: "success",
+            summary: "Éxito",
+            detail: "Anuncio eliminado con éxito",
+            life: 3000,
+          });
+        }
+      } catch (error) {
+        console.error("Error al eliminar el anuncio:", error);
+
+        toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudo eliminar el anuncio",
+          life: 3000,
+        });
+      }
+    };
 
 </script>
 
@@ -563,7 +590,7 @@ const formatDateComplete = (date, start, end) => {
               <Button
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: '#C55F5F' }"
-                @click="showDialogAsesoria = true"
+                @click="showDialogDelete = true"
           
               >
                 Eliminar
@@ -694,6 +721,30 @@ const formatDateComplete = (date, start, end) => {
             </div>
           </template>
         </Dialog>
+
+        <Dialog 
+          v-model:visible="showDialogDelete" 
+          modal  
+          :header="`¿Deseas eliminar esta asesoria ${selectedAnuncio?.title || selectedAnuncio?.subject.name}?`" 
+          class="md:w-4"
+        >
+
+          <template #footer>
+            <div class="flex justify-content-end mt-4">
+              <Button 
+                label="Eliminar" 
+                @click="handleDelete"
+               :style="{ background: '#C55F5F' }"
+              />
+              <Button 
+                label="Cerrar" 
+                class="p-button-text mr-2" 
+                @click="showDialogDelete= false"
+              />
+            </div>
+          </template>
+        </Dialog>
+
 
 </template>
 

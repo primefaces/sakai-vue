@@ -58,12 +58,9 @@ const closeDialogAsistence  = () => {
 };
 
 const isMaeAssign = (asesoria) => {
-    // Verifica si asesoria.asistence es un objeto y no es nulo, además de verificar que userInfo esté definido
     if (typeof asesoria.asistence !== 'object' || asesoria.asistence === null || !userInfo.value) {
         return false;
     }
-
-    // Busca si el uid de userInfo está en maesAsignados y si está asignado (es decir, si no es false)
     const isAssigned = asesoria.maesAsignados.some(maes => maes.uid === userInfo.value.uid && maes.assigned !== false);
 
     return isAssigned;
@@ -204,20 +201,20 @@ const isMaeAssign = (asesoria) => {
         v-model:visible="showDialogAsistence" 
         :modal="true" 
         :closable="false" 
-        class="custom-dialog w-6"
+        class="custom-dialog md:w-6 w-10"
     >
         <template #header>
-            <h2 class="text-center text-2xl ">Pasar asistencia</h2>
+            <h2 class="text-center text-2xl ">Pasar asistencia de {{selectedAsesoria.subject.name}}</h2>
         </template>
 
         <DataTable 
             :value="processedAsistence" 
             paginator 
-            :rows="4" 
+            :rows="3" 
             dataKey="id" 
             :loading="loading" 
             responsiveLayout="scroll" 
-            class="custom-table"
+            class="custom-table w-full"
         >
             <template #empty>No se encontraron alumnos pregistrados.</template>
             <template #loading>Cargando información. Por favor espera.</template>
@@ -246,8 +243,7 @@ const isMaeAssign = (asesoria) => {
                 </template>
             </Column>
 
-            <!-- Columna con el Dropdown personalizado -->
-            <Column header="Asistencia" field="asistence">
+            <Column header="Asistencia" field="asistence" class="mt-2">
                 <template #body="{ data }">
                     <Dropdown 
                         v-model="data.asistence" 
@@ -293,7 +289,7 @@ const isMaeAssign = (asesoria) => {
         <template #footer>
             <div class="flex justify-content-center mb-3">
                 <Button 
-                    label="Cancelar" 
+                    label="Cerrar" 
                     class="p-button-text" 
                     @click="closeDialogAsistence" 
                 />

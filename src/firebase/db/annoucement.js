@@ -6,8 +6,9 @@ import {
     getDocs,
     where,
     updateDoc,
-    doc, getDoc
-    
+    doc, 
+    getDoc,
+    deleteDoc
 } from 'firebase/firestore';
 import { addAnnoucement } from "../img/users";
 import { 
@@ -353,3 +354,15 @@ export async function getAnnouncementsAllGrupales() {
     }
 }
 
+export async function deleteAnnouncementById(id) {
+    try {
+        const announcementDocRef = doc(firestoreDB, "announcements", id);
+        
+        await deleteDoc(announcementDocRef);
+        
+        console.log(`Announcement with ID ${id} deleted successfully.`);
+    } catch (error) {
+        console.error(`Error deleting announcement with ID ${id}:`, error);
+        throw error;
+    }
+}

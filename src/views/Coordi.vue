@@ -46,7 +46,7 @@ const checkLocationAndAttendance = () => {
   const fixedLon = -100.289667;
 
   return new Promise((resolve, reject) => {
-    if (userInfo.value.role !== 'admin' || userInfo.value.role !== 'coordi' ) {
+    if (userInfo.value.role == 'admin' || userInfo.value.role == 'coordi' ) {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           const userLat = position.coords.latitude;
@@ -62,14 +62,14 @@ const checkLocationAndAttendance = () => {
           } else {
             console.log('El usuario está fuera del rango de 15 metros. No puede registrar asistencia.');
             console.log(distance)
-            toast.add({ 
-                severity: 'error', 
-                summary: 'Error', 
-                detail: 'No se puede poner asistencia estas fuera de rango ', 
-                life: 5000 
-            });
-            ubicacion.value = false;
-            resolve(false);
+            // toast.add({ 
+            //     severity: 'error', 
+            //     summary: 'Error', 
+            //     detail: 'No se puede poner asistencia estas fuera de rango ', 
+            //     life: 5000 
+            // });
+            ubicacion.value = true;
+            resolve(true);
           }
         }, (error) => {
           console.error("Error al obtener la ubicación: ", error);

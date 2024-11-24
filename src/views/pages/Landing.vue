@@ -1,4 +1,24 @@
 <script setup>
+import { getAnnouncements } from '@/firebase/db/annoucement'; 
+import {
+  formatDate,
+  formatTime
+} from '@/utils/AnunciosUtils';
+import { useToast } from 'primevue/usetoast';
+import { useRouter } from 'vue-router'; 
+import { onMounted, ref } from 'vue';
+
+const anuncios = ref([]);
+const currentAnuncio = ref({});
+const currentIndex = ref(-1);
+const toast = useToast();
+const router = useRouter(); 
+
+onMounted(async () => {
+  anuncios.value  = await  getAnnouncements()
+  nextAnuncio()
+  autoAdvance();
+});
 
 const scrollToSection = (id) => {
       const element = document.getElementById(id);
@@ -10,7 +30,48 @@ const scrollToSection = (id) => {
       }
     }
     
+    const nextAnuncio = () => {
+  if (currentIndex.value < anuncios.value.length - 1) {
+    currentIndex.value++;
+  } else {
+    currentIndex.value = 0;
+  }
+  currentAnuncio.value = anuncios.value[currentIndex.value];
+};
+
+const prevAnuncio = () => {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+  } else {
+    currentIndex.value = anuncios.value.length - 1; 
+  }
+  currentAnuncio.value = anuncios.value[currentIndex.value];
+};
+
+const autoAdvance = () => {
+  setInterval(() => {
+    nextAnuncio();
+  }, 5000);
+};
+
+const goToAsesoria = async (asesoria) => {
+  if (!asesoria || !asesoria.id) return; 
+
+  try {
+    toast.add({ severity: 'info', summary: 'Navegando', detail: 'Dirigiendo al inicio', life: 3000 });
     
+    await router.push({ 
+      name: 'asesoriasGrupales', 
+      query: { asesoriaId: asesoria.id }
+    });
+    
+    toast.add({ severity: 'success', summary: 'Navegación exitosa', detail: 'Recuerda iniciar sesión para ver los anuncios', life: 3000 });
+  } catch (error) {
+    console.log(error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar navegar a la asesoría' });
+  }
+};
+
 </script>
 
 
@@ -88,49 +149,82 @@ const scrollToSection = (id) => {
 
         </div>
 
-        <div class="" :style="{paddingBottom: '5em', paddingTop: '2em'}">
+        <div  :style="{paddingBottom: '5em', paddingTop: '2em'}">
             <div class="text-center pb-3" id="target-anuncios">
                 <span class="text-5xl md:text-7xl gradient-text">
                     Anuncios
                 </span>
             </div>
-
-            <div class="flex w-10 mx-auto flex-wrap border-round-3xl text-white " :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)'}">
+            <div class="flex   w-full  md:w-10 mx-auto flex-wrap border-round-3xl text-white md:h-20rem " :style="{ background: 'linear-gradient(to right, #779AC4, #29AB93)' }">
                 <div class="relative w-full md:w-4 border-round-left-3xl">
-                    <span class="overlay">
-                        <Button
-                        label="◀"
-                        class="text-xl border-none bg-transparent btn-left hidden lg:block"
-                        />
-                        <img class="w-full h-full clip-diagonal border-round-top-3xl md:border-round-left-3xl arrow" :style="{objectFit: 'cover'}" src="../../assets/img/fotos/espacio-mae.png" />
+                <span class="overlay">
+                    <Button
+                    label="◀"
+                    class="text-xl border-none bg-transparent btn-left hidden lg:block absolute top-1/2 transform -translate-y-1/2"
+                    @click="prevAnuncio"
+                    />
+                    <span v-if="currentAnuncio.imageUrl">
+                    <img
+                        class="w-full h-20rem clip-diagonal border-round-top-3xl md:border-round-left-3xl"
+                        :src="currentAnuncio.imageUrl"
+                    />
                     </span>
+                </span>
                 </div>
-                <div class="w-full md:w-8 text-center p-4 flex gap-5">
-                    <div class="w-1 grid grid-cols-1 place-content-center lg:hidden mt-1">
-                        <Button
-                        label="◀"
-                        class="m-0 p-0 text-xl border-none bg-transparent mt-1 ml-2"
-                        />
-                    </div>
-                    <div>
-                        <h2 class="text-white text-4xl md:text-5xl font-bold">
-                            Asesorías Grupales
-                        </h2>
-                        <p class="font-medium text-left ml-5 text-2xl md:text-3xl">
-                            ¿Tienes dudas? ¡Únete a nuestras asesorías grupales! Ofrecemos sesiones cada semana de las materias más populares. ¡No te quedes atrás!
-                        </p>
-                        <p class="text-white text-3xl md:text-4xl font-bold text-right">
-                            Saber más <i class="pi pi-arrow-right text-2xl font-bold"></i>
-                        </p>
-                    </div>
-                    <div class="mt-1 grid grid-cols-1 place-content-center mr-2">
-                        <Button
-                        label="▶"
-                        class="m-0 p-0 text-xl border-none bg-transparent"
-                        />
-                    </div>
+
+                <div class="w-full md:w-8 text-center p-4 flex justify-between items-center">
+                <div class="grid place-content-center lg:hidden">
+                    <Button
+                    label="◀"
+                    class="m-0 p-0 text-xl border-none bg-transparent"
+                    @click="prevAnuncio"
+                    />
+                </div>
+
+                <div class="flex-1 text-left">
+                    <h2 v-if="currentAnuncio.type === 'Asesoría'" class="text-white text-4xl font-bold text-center m-auto mb-2">Asesorías grupales</h2>
+                    <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1" >
+                    Materia: {{ currentAnuncio.subject.name }}
+                    </p>
+                    <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
+                    Fecha: {{ formatDate(currentAnuncio.dateTime) }}, {{ formatTime(currentAnuncio.startTime, false) }} - {{ formatTime(currentAnuncio.endTime, true) }}
+                    </p>
+                    <p v-if="currentAnuncio.type === 'Asesoría'" class="font-medium ml-5 text-2xl mb-1">
+                    Ubicación: {{ currentAnuncio.location }}
+                    </p>
+
+                    <h2 v-if="currentAnuncio.type !== 'Asesoría' " class="text-white text-4xl font-bold m-auto text-center mb-2">
+                    {{ currentAnuncio.title }}
+                    </h2>
+                    <p v-if="currentAnuncio.type !== 'Asesoría'" class="font-medium ml-5 text-2xl ">
+                    {{ currentAnuncio.description }}
+                    </p>
+
+                    <p v-if="currentAnuncio.type === 'Asesoría'" 
+                    class="text-white text-3xl font-bold ml-5 text-right mr-5 cursor-pointer"
+                    @click="goToAsesoria(currentAnuncio)">
+                    Pre-registro <i class="pi pi-arrow-right text-3xl font-bold"></i>
+                    </p>
+                    
+                    
+                    <a :href="`#/asesoriasGrupales`" class="no-blue-link">
+                    <p v-if="currentAnuncio.type !== 'Asesoría' && currentAnuncio.type !== 'otro'"  class="text-white text-3xl font-bold ml-5 text-right mr-5 ">
+                        Saber más <i class="pi pi-arrow-right text-3xl font-bold "></i>
+                    </p>  
+                    </a>
+                
+                </div>
+
+                <div class="grid place-content-center md:mr-2 ml-2">
+                    <Button
+                    label="▶"
+                    class="m-0 p-0 text-xl border-none bg-transparent"
+                    @click="nextAnuncio"
+                    />
+                </div>
                 </div>
             </div>
+        
             
         </div>
 
@@ -209,10 +303,7 @@ const scrollToSection = (id) => {
 </template>
 
 <style scoped>
-    img {
-        object-fit: scale-down;
-    }
-
+    
     .gradient-text {
         background: linear-gradient(to right, #779AC4, #29AB93);
         -webkit-background-clip: text;
@@ -286,6 +377,8 @@ const scrollToSection = (id) => {
             font-weight: 900;
         }
 
+    }
+    @media (min-width: 968px) {
         .btn-left {
             position: absolute;
             top: 40%;
@@ -302,11 +395,28 @@ const scrollToSection = (id) => {
             clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
             
         }
+        .botones{
+            margin-top: auto;
+        }
+    }
+        
+        
+
+    .no-blue-link {
+        color: inherit;
+        text-decoration: none;
     }
 
-    
-    
+    .no-blue-link:visited {
+        color: inherit;
+    }
 
-    
+    .no-blue-link:hover {
+        color: inherit;
+    }
+
+    .no-blue-link:active {
+        color: inherit;
+    }  
 
 </style>

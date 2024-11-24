@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router'; 
-import { getCurrentUser, getUser, startActiveSession, stopActiveSession,updatePoints } from '../firebase/db/users';
+import { getCurrentUser, getUser, startActiveSession, stopActiveSession,
+  updatePoints } from '../firebase/db/users';
 import { useToast } from 'primevue/usetoast';
 import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria,getAsesoriasByUidAndRating,
@@ -87,7 +88,7 @@ const prevAnuncio = () => {
   if (currentIndex.value > 0) {
     currentIndex.value--;
   } else {
-    currentIndex.value = anuncios.value.length - 1; // Regresa al último anuncio
+    currentIndex.value = anuncios.value.length - 1; 
   }
   currentAnuncio.value = anuncios.value[currentIndex.value];
 };
@@ -320,7 +321,7 @@ const guardarEvaluacion = async () => {
             />
           </div>
         </div>
-</div>
+      </div>
 
   </div>
 

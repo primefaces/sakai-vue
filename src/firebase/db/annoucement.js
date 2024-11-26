@@ -366,3 +366,18 @@ export async function deleteAnnouncementById(id) {
         throw error;
     }
 }
+
+export async function updateAnnouncement(announcementId, updatedData) {
+    try {
+        const docRef = doc(firestoreDB, 'announcements', announcementId);  
+
+        await updateDoc(docRef, {
+            ...updatedData,
+        });
+
+        return docRef.id;  
+    } catch (error) {
+        console.error('Error al actualizar el anuncio:', error);
+        throw error;
+    }
+}

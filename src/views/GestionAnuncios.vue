@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit,processAsistence, deleteAnnouncementById}
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence, deleteAnnouncementById,updateAnnouncement}
  from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
@@ -37,6 +37,7 @@ const maeInfo = ref(null);
 const showDialogAsesoria = ref(false);
 const showDialogDelete = ref(false);
 const maeSelect = ref([])
+const isEdit = ref(false);
 const menuItems = [
   {
     label: 'Información',
@@ -118,6 +119,14 @@ const openInfoDialog = async (anuncio) => {
   showInfoDialog.value = true;
 };
 
+const convertTimestampToDate = (timestamp) => {
+    if (timestamp && typeof timestamp.seconds === 'number') {
+        return new Date(timestamp.seconds * 1000);
+    }
+    return null;
+};
+
+
 const saveDateTime = () => {
     const today = new Date();
     const selectedDate = new Date(dateTime.value);
@@ -137,8 +146,6 @@ const saveDateTime = () => {
 };
 
 const handleSubmit = async () => {
-
-      
     if (selectedType.value === 'Asesoría') {
         if (!subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !selectedFile.value) {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
@@ -193,6 +200,7 @@ const handleSubmit = async () => {
             };
             await saveAnnouncement(announcementData, selectedFile.value);  
             reset() 
+            showDialogAsesoria.value = false
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
         } catch (error) {
             console.error('Error al guardar el anuncio:', error);
@@ -222,6 +230,11 @@ const closePreviewDialog = () => {
     displayPreviewDialog.value = false;
 };
 
+const closeInfoDialog = () => {
+    showInfoDialog.value = false
+    isEdit.value = false
+    reset()
+};
 const formatDateComplete = (date, start, end) => {
   const formattedDate = formatDate(date); 
   const formattedStartTime = formatTime(start, false); 
@@ -255,6 +268,95 @@ const handleDelete = async () => {
         });
       }
     };
+
+const isLoading = ref(false);
+
+const handleEdit = async () => {
+    isLoading.value = true;
+    try {
+        maeInfo.value = await getMaes();
+        isEdit.value = true;
+        subjectInput.value = selectedAnuncio.value.subject;
+        startTime.value = convertTimestampToDate(selectedAnuncio.value.startTime);
+        endTime.value = convertTimestampToDate(selectedAnuncio.value.endTime);
+        dateTime.value = convertTimestampToDate(selectedAnuncio.value.dateTime);
+        locationInput.value = selectedAnuncio.value.location || 'Indefinido';
+        maeSelect.value = selectedAnuncio.value.maesAsignados.map(mae =>
+            maeInfo.value.find(info => info.uid === mae.uid)
+        );
+        isLoading.value = false;
+    } catch (error) {
+        console.error("Error al cargar los datos:", error);
+    } 
+};
+
+const handleEditAnn = async () => {
+    if (selectedType.value === 'Asesoría') {
+        if (!subjectInput.value || !dateTime.value || !startTime.value || !endTime.value) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
+            return;
+        }
+        if (maeSelect.value.length === 0) {
+            toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Por favor asigna los maes y al coordinador que darán la asesoría.',
+              life: 3000
+            });
+            return;
+        }
+
+        try {
+          const selectedMaes = maeSelect.value.map(mae => ({
+            uid: mae.uid,
+            name: mae.name,
+            career: mae.career,
+            campus: mae.campus,
+            area: mae.area,
+          }));
+
+          const updatedData = {
+              subject: subjectInput.value,
+              dateTime: dateTime.value,
+              startTime: startTime.value,
+              endTime: endTime.value,
+              location: locationInput.value || 'Indefinido',
+              maesAsignados: selectedMaes
+          };
+
+          await updateAnnouncement(selectedAnuncio.value.id, updatedData);
+          
+          reset();
+          showInfoDialog.value = false
+          toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio actualizado con éxito', life: 3000 });
+        } catch (error) {
+            console.error('Error al actualizar el anuncio:', error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al actualizar el anuncio. Intenta de nuevo.', life: 3000 });
+        }
+    } else if (selectedType.value === 'Otro') {
+        if (!titleInput.value || !descriptionInput.value) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos de título, descripción.', life: 3000 });
+            return;
+        }
+        try {
+            const updatedData = {
+                title: titleInput.value,
+                description: descriptionInput.value
+            };
+
+            await updateAnnouncement(selectedAnuncio.value.id, updatedData);
+            showInfoDialog.value = false
+            reset();
+            toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio actualizado con éxito', life: 3000 });
+        } catch (error) {
+            console.error('Error al actualizar el anuncio:', error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al actualizar el anuncio. Intenta de nuevo.', life: 3000 });
+        }
+    }
+};
+
+
+
 
 </script>
 
@@ -315,11 +417,11 @@ const handleDelete = async () => {
                   <i class="pi pi-calendar"></i> 
                   </span>
                   <Button 
-                  label=" Fecha y horario" 
-                  class="p-button-outlined w-full bg-white text-black p-inputgroup-addon text-left  w-full md:w-9" 
-                  icon="pi pi-chevron-down" 
-                  iconPos="right"
-                  @click="openDateDialog"
+                    label=" Fecha y horario" 
+                    class="p-button-outlined w-full bg-white text-black p-inputgroup-addon text-left  w-full md:w-9" 
+                    icon="pi pi-chevron-down" 
+                    iconPos="right"
+                    @click="openDateDialog"
                   />
               </div>
           </span>
@@ -528,6 +630,8 @@ const handleDelete = async () => {
           :closable="true"  
           :dismissable-mask="true"
           class="mr-3 w-8"
+          @hide="closeInfoDialog"
+
         >
           <template #header>
             <Menubar v-if="selectedAnuncio?.type === 'Asesoría'" :model="menuItems" />
@@ -540,40 +644,108 @@ const handleDelete = async () => {
             <p>{{ selectedAnuncio?.title || 'No hay información disponible' }}</p>
             <p>{{ selectedAnuncio?.description || 'Sin descripción' }}</p>
           </div>
-
-          <div class="flex flex-row" v-if="selectedOption === 'informacion' && selectedAnuncio.type == 'Asesoría'">
+          <div v-if="isLoading" class="loading-indicator ">
+            <ProgressSpinner style="width: 60px; height: 60px; animation: spin-fast 0.5s linear infinite;" strokeWidth="6" fill="var(--surface-ground)" />
+            
+          </div>
+          <div class="flex flex-row" v-if="selectedOption === 'informacion' && selectedAnuncio.type == 'Asesoría' && !isLoading">
             <div class="w-8 ml-5">
               <p class="text-black text-xl font-semibold text-left ">
                 Materia
               </p>
-              <InputText 
+              <span v-if="isEdit">
+                <AutoComplete 
+                  class="w-full"
+                  v-model="subjectInput" 
+                  :suggestions="filteredSubjects" 
+                  @complete="filterSubjects" 
+                  field="name" 
+                  dropdown 
+                  :forceSelection="false"
+                  placeholder="Buscar materia..." 
+                />
+              </span>
+              <span v-else>
+                <InputText 
                 :value="selectedAnuncio?.subject.name" 
                 class="w-full text-lg" 
                 readonly 
               />
+              </span>
               <p class="text-black text-xl font-semibold text-left  mt-4">
                 Fecha y hora
               </p>
-              <InputText 
-                :value="`${formatDateComplete(selectedAnuncio?.dateTime, selectedAnuncio?.startTime, selectedAnuncio?.endTime)}`" 
-                class="w-full text-lg" 
-                readonly 
-              />
+              <span v-if="isEdit">
+                <div class="p-inputgroup w-full">
+                  <span class="p-inputgroup-addon">
+                  <i class="pi pi-calendar"></i> 
+                  </span>
+                  <Button 
+                  label=" Fecha y horario" 
+                  class="p-button-outlined w-full bg-white text-black p-inputgroup-addon text-left  w-full md:w-9" 
+                  icon="pi pi-chevron-down" 
+                  iconPos="right"
+                  @click="openDateDialog"
+                  />
+              </div>
+              </span>
+              <span v-else>
+                <InputText 
+                  :value="`${formatDateComplete(selectedAnuncio?.dateTime, selectedAnuncio?.startTime, selectedAnuncio?.endTime)}`" 
+                  class="w-full text-lg" 
+                  readonly 
+                />
+              </span> 
+              
               <p class="text-black text-xl font-semibold text-left  mt-4">
                 Ubicación
               </p>
-              <InputText 
-                :value="selectedAnuncio?.location" 
-                class="w-full text-lg" 
-                readonly 
-              />
+              <span v-if="isEdit">
+                <InputText v-model="locationInput" placeholder="Ingresa la ubicación" class="w-full" />
+              </span>
+              <span v-else>
+                <InputText 
+                  :value="selectedAnuncio?.location" 
+                  class="w-full text-lg" 
+                  readonly 
+                />
+              </span>
+
+              <span v-if="isEdit">
+                <p class="text-black text-xl font-semibold text-left  mt-4"><strong> MAEs y coordinador seleccionados:</strong></p>
+                <MultiSelect
+                  v-model="maeSelect" 
+                  :options="maeInfo"
+                  optionLabel="name"
+                  placeholder="Seleccione Maes"
+                  filter
+                  class="w-12 mb-2"
+                  showClear
+                />
+                <div v-if="maeSelect.length > 0" class="mt-4">
+                  
+                  <ul>
+                    <li v-for="mae in maeSelect" :key="mae.uid">{{ mae.name }}</li>
+                  </ul>
+                </div>
+              </span>
+              
+              <span v-else>
+                <div v-if="selectedAnuncio?.maesAsignados.length > 0" class="mt-4">
+                  <p class="text-black text-xl font-semibold text-left  mt-4"><strong> MAEs y coordinador seleccionados:</strong></p>
+                  <ul>
+                    <li v-for="mae in selectedAnuncio?.maesAsignados" :key="mae.uid">{{ mae.name }}</li>
+                  </ul>
+                </div>
+              </span> 
             </div>
+
             <div class="w-4 flex  flex-column justify-content-center align-items-center ml-5">
               <Button
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: '#4484A7' }"
-                @click="showDialogAsesoria = true"
-              
+                @click="handleEdit"
+                v-if="!isEdit"
               >
                 Editar
                 <img src="/assets/editAnun.svg" class="ml-4" alt="edit icon" style="width: 2.0rem; height: 2.0rem;" />
@@ -599,10 +771,25 @@ const handleDelete = async () => {
               <Button
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mt-6 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
-                @click="showInfoDialog= false"
+                @click="closeInfoDialog"
+                v-if="!isEdit"
               >
                 Cerrar
               </Button>
+              <Button 
+                label="Guardar" 
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mt-6 text-xl font-bold flex justify-content-center align-items-center border-none"
+                v-if="isEdit"
+                @click="handleEditAnn"
+                :style="{ background: 'linear-gradient(to right, #44A79b, #69ac51)' }"
+              />
+              <Button 
+                label="Cancelar" 
+                class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mt-3 text-xl font-bold flex justify-content-center align-items-center border-none"
+                @click="closeInfoDialog"
+                v-if="isEdit"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+              />
             </div>
           </div>
 

@@ -181,6 +181,7 @@ const handleSubmit = async () => {
                 maesAsignados: selectedMaes
             };
             await saveAnnouncement(announcementData, selectedFile.value);
+            anuncios.value = await getAnnouncementsEdit();
             reset() 
             showDialogAsesoria.value = false
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
@@ -201,6 +202,7 @@ const handleSubmit = async () => {
             };
             await saveAnnouncement(announcementData, selectedFile.value);  
             reset() 
+            anuncios.value = await getAnnouncementsEdit();
             showDialogAsesoria.value = false
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
         } catch (error) {
@@ -248,6 +250,7 @@ const handleVisible = async () => {
         if (selectedAnuncio.value?.id) {
           
           await toggleVisibilityById(selectedAnuncio.value.id); 
+          anuncios.value = await getAnnouncementsEdit();
           showDialogDelete.value = false;
           showInfoDialog.value = false;
           if(selectedAnuncio.value?.visible){
@@ -283,6 +286,7 @@ const handleDelete = async () => {
       try {
         if (selectedAnuncio.value?.id) {
           await deleteAnnouncementById(selectedAnuncio.value.id); 
+          anuncios.value = await getAnnouncementsEdit();
           showDialogDelete.value = false;
           showInfoDialog.value = false;
           toast.add({
@@ -360,7 +364,7 @@ const handleEditAnn = async () => {
           };
 
           await updateAnnouncement(selectedAnuncio.value.id, updatedData);
-          
+          anuncios.value = await getAnnouncementsEdit();
           reset();
           showInfoDialog.value = false
           toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio actualizado con éxito', life: 3000 });
@@ -380,6 +384,7 @@ const handleEditAnn = async () => {
             };
 
             await updateAnnouncement(selectedAnuncio.value.id, updatedData);
+            anuncios.value = await getAnnouncementsEdit();
             showInfoDialog.value = false
             reset();
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio actualizado con éxito', life: 3000 });
@@ -797,11 +802,17 @@ const handleEditAnn = async () => {
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: '#646464' }"
                 @click="handleVisible"
-             
               >
-                {{ selectedAnuncio?.visible ? 'Ocultar' : 'Desocultar' }}
-                <i :class="selectedAnuncio?.visible ? 'pi pi-eye-slash' : 'pi pi-eye'" class="ml-4" style="font-size: 2.0rem;"></i>
+                <span v-if="selectedAnuncio?.visible" class="flex items-center gap-2">
+                  <p class="m-0">Ocultar</p> 
+                  <i :class="'pi pi-eye'" class="ml-2" style="font-size: 2.0rem;"></i> 
+                </span>
+                <span v-else class="flex items-center gap-2"> 
+                  <p class="m-0 mr-5">Desocultar</p> 
+                  <i :class="'pi pi-eye-slash'" class="ml-7" style="font-size: 2.0rem;"></i> 
+                </span>
               </Button>
+
               <Button
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: '#C55F5F' }"

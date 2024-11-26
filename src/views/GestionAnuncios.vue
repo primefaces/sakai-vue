@@ -2,7 +2,8 @@
 import { ref, onMounted } from 'vue';
 import { getSubjects  } from '../firebase/db/subjects';
 import { normalize } from '@/utils/HorarioUtils';
-import { saveAnnouncement, getAnnouncementsEdit,processAsistence, deleteAnnouncementById,updateAnnouncement}
+import { saveAnnouncement, getAnnouncementsEdit,processAsistence, deleteAnnouncementById,
+  updateAnnouncement,toggleVisibilityById}
  from '@/firebase/db/annoucement';
 import { useToast } from 'primevue/usetoast';
 import {
@@ -242,7 +243,41 @@ const formatDateComplete = (date, start, end) => {
   return `${formattedDate}, ${formattedStartTime} - ${formattedEndTime}`;
 };
 
+const handleVisible = async () => {
+      try {
+        if (selectedAnuncio.value?.id) {
+          
+          await toggleVisibilityById(selectedAnuncio.value.id); 
+          showDialogDelete.value = false;
+          showInfoDialog.value = false;
+          if(selectedAnuncio.value?.visible){
+            toast.add({
+            severity: "success",
+            summary: "Éxito",
+            detail: "Anuncio ocultado",
+            life: 3000,
+          });
+          }else{
+            toast.add({
+            severity: "success",
+            summary: "Éxito",
+            detail: "Anuncio desocultado",
+            life: 3000,
+          });
+          }
+          
+        }
+      } catch (error) {
+        console.error("Error al ocultar el anuncio:", error);
 
+        toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "No se pudo ocultar el anuncio",
+          life: 3000,
+        });
+      }
+    };
 
 const handleDelete = async () => {
       try {
@@ -354,8 +389,6 @@ const handleEditAnn = async () => {
         }
     }
 };
-
-
 
 
 </script>
@@ -480,13 +513,22 @@ const handleEditAnn = async () => {
         </Button>
       </span>
     </div>
+
     <div class="second-column mt-2 pt-3 flex flex-column md:w-6 md:ml-3 border-round-3xl" style="max-height: 500px; overflow-y: auto;">
-      <div v-for="anuncio in anuncios" :key="anuncio.id" class="bg-white mx-4 my-2 border-round-3xl h-auto p-3 ">
+      <div
+        v-for="anuncio in anuncios"
+        :key="anuncio.id"
+        class=" mx-4 my-2 border-round-3xl h-auto p-3 relative"
+        :class="anuncio.visible ? 'bg-white' : 'bg-gray-500'"
+      >
+        <i v-if="!anuncio.visible" class="pi pi-eye-slash text-5xl text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"></i>
+
         <div class="flex flex-row justify-content-between">
           <p class="font-bold text-xl text-left mt-0 mb-1">
             {{ anuncio.type === 'Asesoría' ? (anuncio.subject.name.length > 30 ? anuncio.subject.name.slice(0, 30) + '...' : anuncio.subject.name)  : (anuncio.title.length > 30 ? anuncio.title.slice(0, 30) + '...' : anuncio.title) }}
           </p>
-          <i @click="openInfoDialog(anuncio)" class="pi pi-info-circle mr-2 text-gray-500 text-2xl cursor-pointer"></i>
+          <i @click="openInfoDialog(anuncio)" class="pi pi-info-circle mr-2 text-2xl cursor-pointer"   
+          :class="anuncio.visible ? 'text-gray-500 ' : 'text-white'"></i>
         </div>
         
         <p v-if="anuncio.type === 'Asesoría'" class="font-medium text-xl text-left mt-0 mb-1">
@@ -497,9 +539,9 @@ const handleEditAnn = async () => {
           {{ anuncio.description }}
         </p>
 
-        <Divider  v-if="anuncio.type === 'Asesoría'" class="m-0 second-column"/>
+        <Divider v-if="anuncio.type === 'Asesoría'" class="m-0 second-column"/>
 
-         <div v-if="anuncio.type === 'Asesoría'" class="flex flex-row justify-content-between mb-2 mt-2">
+        <div v-if="anuncio.type === 'Asesoría'" class="flex flex-row justify-content-between mb-2 mt-2">
           <div class="text-left text-xl">
             {{ formatTime(anuncio.startTime, false) }} - {{ formatTime(anuncio.endTime, true) }}
           </div>
@@ -509,6 +551,7 @@ const handleEditAnn = async () => {
         </div>
       </div>
     </div>
+
   </div>
 
       <Dialog 
@@ -753,11 +796,11 @@ const handleEditAnn = async () => {
               <Button
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
                 :style="{ background: '#646464' }"
-                @click="showDialogAsesoria = true"
+                @click="handleVisible"
              
               >
-                Ocultar
-                <img src="/assets/hide.svg" class="ml-4" alt="hide icon" style="width: 2.0rem; height: 2.0rem;" />
+                {{ selectedAnuncio?.visible ? 'Ocultar' : 'Desocultar' }}
+                <i :class="selectedAnuncio?.visible ? 'pi pi-eye-slash' : 'pi pi-eye'" class="ml-4" style="font-size: 2.0rem;"></i>
               </Button>
               <Button
                 class="p-button-help p-button-lg py-3 w-8 text-white border-round-3xl mb-3 text-xl font-bold flex justify-content-center align-items-center border-none"
@@ -1000,4 +1043,11 @@ const handleEditAnn = async () => {
     text-align: left;
 }
 
+.pi-eye-slash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+}
 </style>

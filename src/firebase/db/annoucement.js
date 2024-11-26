@@ -381,3 +381,27 @@ export async function updateAnnouncement(announcementId, updatedData) {
         throw error;
     }
 }
+
+export const toggleVisibilityById = async (id) => {
+  try {
+    console.log(id)
+    const dialogDocRef = doc(firestoreDB,  'announcements', id);
+
+    const docSnap = await getDoc(dialogDocRef);
+
+    if (docSnap.exists()) {
+      const currentVisibility = docSnap.data().visible
+
+      await updateDoc(dialogDocRef, {
+        visible: !currentVisibility
+      });
+
+      console.log(`Visibilidad del diálogo con ID ${id} actualizada correctamente`);
+    } else {
+      console.log("El documento no existe");
+    }
+  } catch (error) {
+    console.error(`Error al actualizar la visibilidad del diálogo con ID ${id}:`, error);
+    throw error;
+  }
+};

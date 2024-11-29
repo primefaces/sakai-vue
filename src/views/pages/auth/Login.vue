@@ -17,6 +17,7 @@ const login = async () => {
   } catch (error) {
     console.error('Login failed:', error);
     alert('Login failed. Please check your email and password.');
+    router.push('/auth/login'); // Navigate to the dashboard after successful login
   }
 };
 </script>

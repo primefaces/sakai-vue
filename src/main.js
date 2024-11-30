@@ -6,7 +6,7 @@ import Aura from '@primevue/themes/aura';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
-
+import Toast from 'primevue/toast'; // Import Toast component
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
 
@@ -23,6 +23,7 @@ app.use(PrimeVue, {
     }
 });
 app.use(ToastService);
+app.component('Toast', Toast); // Register the Toast component
 app.use(ConfirmationService);
 
 app.mount('#app');

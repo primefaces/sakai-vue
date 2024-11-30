@@ -27,6 +27,12 @@ const router = createRouter({
                     component: () => import('@/views/productManagement/CreateProduct.vue')
                 },
                 {
+                    path: '/uikit/AdminItems',
+                    name: 'adminItems',
+                    component: () => import('@/views/uikit/AdminItems.vue'),
+                    meta: { requiresAuth: true },
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')

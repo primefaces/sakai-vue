@@ -1,6 +1,6 @@
 import AppLayout from '@/layout/AppLayout.vue';
+import { authService, authState } from '@/services/authService';
 import { createRouter, createWebHistory } from 'vue-router';
-import { authService,authState } from '@/services/authService';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -13,7 +13,18 @@ const router = createRouter({
                     path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue'),
-                    meta: { requiresAuth: true },
+                    meta: { requiresAuth: true }
+                },
+                // this is gonna be product List routing
+                {
+                    path: '/productManagement/product',
+                    name: 'productList',
+                    component: () => import('@/views/productManagement/Product.vue')
+                },
+                {
+                    path: '/productManagement/createProduct',
+                    name: 'productCreate',
+                    component: () => import('@/views/productManagement/CreateProduct.vue')
                 },
                 {
                     path: '/uikit/formlayout',
@@ -141,18 +152,18 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     // Check if the route requires authentication
     if (to.matched.some((record) => record.meta.requiresAuth)) {
-      if (!authState.authChecked) {
-        // Check authentication only if it hasn't been checked
-        await authService.isAuthenticated();
-      }
-  
-      if (authState.isLoggedIn) {
-        next(); // Allow navigation if authenticated
-      } else {
-        next('/auth/login'); // Redirect to login if not authenticated
-      }
+        if (!authState.authChecked) {
+            // Check authentication only if it hasn't been checked
+            await authService.isAuthenticated();
+        }
+
+        if (authState.isLoggedIn) {
+            next(); // Allow navigation if authenticated
+        } else {
+            next('/auth/login'); // Redirect to login if not authenticated
+        }
     } else {
-      next(); // Allow navigation for non-protected routes
+        next(); // Allow navigation for non-protected routes
     }
-  });
+});
 export default router;

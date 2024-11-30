@@ -2,7 +2,9 @@ import axios from 'axios';
 import router from '@/router';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  // paladin  !important every static baseURL must be switched to a file to be imported from
+ // for now this is acceptable , in future we will make all the path inside a new file for easier management
+  baseURL: 'http://localhost:8080/api',  
   withCredentials: true, // Allow cookies to be sent with requests
 });
 

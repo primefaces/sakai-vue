@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 .layout-sidebar {
     position: fixed;
     width: 20rem;

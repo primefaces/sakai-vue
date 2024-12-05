@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.2.0 (2024-12-05)
+
+**Implemented New Features and Enhancements**
+
+-   Refactored dashboard sections to components
+-   Migrate sass from @import to @use
+
 ## 4.1.0 (2024-07-29)
 
 -   Changed menu button location at topbar

@@ -13,7 +13,6 @@ const visibleBottom = ref(false);
 const visibleFull = ref(false);
 const products = ref(null);
 const selectedProduct = ref(null);
-const op = ref(null);
 const op2 = ref(null);
 const popup = ref(null);
 
@@ -45,7 +44,7 @@ function toggleDataTable(event) {
 }
 
 function onProductSelect(event) {
-    op.value.hide();
+    op2.value.hide();
     toast.add({ severity: 'info', summary: 'Product Selected', detail: event.data.name, life: 3000 });
 }
 

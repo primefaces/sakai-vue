@@ -5,7 +5,7 @@ import Aura from '@primevue/themes/aura';
 import Lara from '@primevue/themes/lara';
 import { ref } from 'vue';
 
-const { layoutConfig, setPrimary, setSurface, setPreset, isDarkTheme, setMenuMode } = useLayout();
+const { layoutConfig, isDarkTheme } = useLayout();
 
 const presets = {
     Aura,
@@ -167,9 +167,9 @@ function getPresetExt() {
 
 function updateColors(type, color) {
     if (type === 'primary') {
-        setPrimary(color.name);
+        layoutConfig.primary = color.name;
     } else if (type === 'surface') {
-        setSurface(color.name);
+        layoutConfig.surface = color.name;
     }
 
     applyTheme(type, color);
@@ -184,7 +184,7 @@ function applyTheme(type, color) {
 }
 
 function onPresetChange() {
-    setPreset(preset.value);
+    layoutConfig.preset = preset.value;
     const presetValue = presets[preset.value];
     const surfacePalette = surfaces.value.find((s) => s.name === layoutConfig.surface)?.palette;
 
@@ -192,7 +192,7 @@ function onPresetChange() {
 }
 
 function onMenuModeChange() {
-    setMenuMode(menuMode.value);
+    layoutConfig.menuMode = menuMode.value;
 }
 </script>
 

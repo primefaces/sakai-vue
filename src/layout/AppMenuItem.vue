@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
-const { layoutState, setActiveMenuItem, onMenuToggle } = useLayout();
+const { layoutState, setActiveMenuItem, toggleMenu } = useLayout();
 
 const props = defineProps({
     item: {
@@ -51,7 +51,7 @@ function itemClick(event, item) {
     }
 
     if ((item.to || item.url) && (layoutState.staticMenuMobileActive || layoutState.overlayMenuActive)) {
-        onMenuToggle();
+        toggleMenu();
     }
 
     if (item.command) {

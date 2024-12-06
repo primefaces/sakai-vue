@@ -5,7 +5,7 @@ import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
 
-const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
+const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
 
@@ -31,7 +31,9 @@ function bindOutsideClickListener() {
     if (!outsideClickListener.value) {
         outsideClickListener.value = (event) => {
             if (isOutsideClicked(event)) {
-                resetMenu();
+                layoutState.overlayMenuActive = false;
+                layoutState.staticMenuMobileActive = false;
+                layoutState.menuHoverActive = false;
             }
         };
         document.addEventListener('click', outsideClickListener.value);

@@ -1,4 +1,4 @@
-import { computed, reactive, readonly } from 'vue';
+import { computed, reactive } from 'vue';
 
 const layoutConfig = reactive({
     preset: 'Aura',
@@ -19,24 +19,8 @@ const layoutState = reactive({
 });
 
 export function useLayout() {
-    const setPrimary = (value) => {
-        layoutConfig.primary = value;
-    };
-
-    const setSurface = (value) => {
-        layoutConfig.surface = value;
-    };
-
-    const setPreset = (value) => {
-        layoutConfig.preset = value;
-    };
-
     const setActiveMenuItem = (item) => {
         layoutState.activeMenuItem = item.value || item;
-    };
-
-    const setMenuMode = (mode) => {
-        layoutConfig.menuMode = mode;
     };
 
     const toggleDarkMode = () => {
@@ -54,7 +38,7 @@ export function useLayout() {
         document.documentElement.classList.toggle('app-dark');
     };
 
-    const onMenuToggle = () => {
+    const toggleMenu = () => {
         if (layoutConfig.menuMode === 'overlay') {
             layoutState.overlayMenuActive = !layoutState.overlayMenuActive;
         }
@@ -66,12 +50,6 @@ export function useLayout() {
         }
     };
 
-    const resetMenu = () => {
-        layoutState.overlayMenuActive = false;
-        layoutState.staticMenuMobileActive = false;
-        layoutState.menuHoverActive = false;
-    };
-
     const isSidebarActive = computed(() => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive);
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
@@ -80,5 +58,15 @@ export function useLayout() {
 
     const getSurface = computed(() => layoutConfig.surface);
 
-    return { layoutConfig: readonly(layoutConfig), layoutState: readonly(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, getPrimary, getSurface, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset, resetMenu, setMenuMode };
+    return {
+        layoutConfig,
+        layoutState,
+        toggleMenu,
+        isSidebarActive,
+        isDarkTheme,
+        getPrimary,
+        getSurface,
+        setActiveMenuItem,
+        toggleDarkMode
+    };
 }

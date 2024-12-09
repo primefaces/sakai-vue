@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.2.0 (2024-12-05)
+## 4.2.0 (2024-12-09)
 
 **Implemented New Features and Enhancements**
 

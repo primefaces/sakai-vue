@@ -45,6 +45,87 @@ npm run dev</code></pre>
             CSS variables used in the template derive their values from the PrimeVue styled mode presets, use the files under <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">assets/layout/_variables.scss</span> to customize
             according to your requirements.
         </p>
+
+        <div class="font-semibold text-xl mb-4">Add Sakai-Vue to a Nuxt Project</div>
+        <p class="text-lg mb-4">To get started, create a Nuxt project.</p>
+        <pre class="app-code">
+<code>npx nuxi@latest init sakai-nuxt</code></pre>
+
+        <p class="text-lg mb-4">Add Prime related libraries to the project.</p>
+        <pre class="app-code">
+<code>npm install primevue @primevue/themes tailwindcss-primeui primeicons
+npm install --save-dev @primevue/nuxt-module</code></pre>
+
+        <p class="text-lg mb-4">Add PrimeVue-Nuxt module to <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">nuxt.config.js</span></p>
+        <pre class="app-code">
+<code>modules: [
+    '@primevue/nuxt-module',
+]</code></pre>
+
+        <p class="text-lg mb-4">Install <a href="https://tailwindcss.com/docs/guides/nuxtjs" class="font-medium text-primary hover:underline">Tailwind CSS</a> with Nuxt using official documentation.</p>
+
+        <p class="text-lg mb-4">
+            Add <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">tailwindcss-primeui</span> package as a plugin to <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">tailwind.config.js</span>
+        </p>
+        <pre class="app-code">
+<code>plugins: [require('tailwindcss-primeui')]</code></pre>
+
+        <p class="text-lg mb-4">Add PrimeVue to in <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">nuxt.config.js</span></p>
+        <pre class="app-code">
+<code>import Aura from '@primevue/themes/aura';
+
+primevue: {
+    options: {
+        theme: {
+            preset: Aura,
+            options: {
+                darkModeSelector: '.app-dark'
+            }
+        }
+    }
+}</code></pre>
+
+        <p class="text-lg mb-4">
+            Copy <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">src/assets</span> folder and paste them to <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">assets</span> folder to your Nuxt project.
+            And add to <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">nuxt.config.js</span>
+        </p>
+        <pre class="app-code">
+<code>css: ['~/assets/tailwind.css', '~/assets/styles.scss']</code></pre>
+
+        <p class="text-lg mb-4">Change <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">app.vue</span></p>
+        <pre class="app-code">
+<code>&lt;template&gt;
+    &lt;NuxtLayout&gt;
+        &lt;NuxtPage /&gt;
+    &lt;/NuxtLayout&gt;
+&lt;/template&gt;</code></pre>
+
+        <p class="text-lg mb-4">Create <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">layouts/default.vue</span> and paste this code:</p>
+        <pre class="app-code">
+<code>&lt;script setup&gt;
+import AppLayout from './AppLayout.vue';
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;AppLayout /&gt;
+&lt;/template&gt;</code></pre>
+
+        <p class="text-lg mb-4">
+            Create <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">layouts</span> folder and copy <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">src/layout</span> folder and paste them. And then
+            create <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">composables/use-layout.vue</span> and replace it with
+            <span class="bg-highlight px-2 py-1 rounded-border not-italic text-base">src/layout/composables/layout.js</span>. Then remove this line:
+        </p>
+        <pre class="app-code">
+<code>import { useLayout } from '@/layout/composables/layout';</code></pre>
+
+        <p class="text-lg mb-4">As a final step, copy the following folders:</p>
+        <ul class="leading-normal list-disc pl-8 text-lg mb-4">
+            <li><span class="text-primary font-medium">public/demo</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">public</span></li>
+            <li><span class="text-primary font-medium">src/components</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">components</span></li>
+            <li><span class="text-primary font-medium">src/service</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">service</span></li>
+            <li><span class="text-primary font-medium">src/views/uikit</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">pages/uikit</span></li>
+            <li><span class="text-primary font-medium">src/views/pages</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">pages</span></li>
+        </ul>
     </div>
 </template>
 

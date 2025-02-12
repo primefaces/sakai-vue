@@ -11,8 +11,10 @@ import {
     checkAndUpdateUserRole,  
     updateUserToMae,
     saveScheduleSubjectsExperience,
-    updatePoints
+    updatePoints,
+    clearUsersData
 } from '../firebase/db/users';
+import { deleteOldAsesorias} from '../firebase/db/asesorias.js'
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -53,6 +55,53 @@ const confirmDelete = () => {
             } catch (error) {
                 console.error("Error al limpiar weekSchedule:", error);
                 toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar limpiar los horarios de los maes.', life: 3000 });
+            }
+        },
+        reject: () => {
+            toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
+        }
+    });
+};
+
+
+const restartMaes = () => {
+    confirm.require({
+        message: '¿Estás seguro de restablecer los datos de los maes?',
+        header: 'Confirmación ',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Sí, restablecer',
+        rejectLabel: 'Cancelar',
+        acceptClass: 'p-button-danger',
+        accept: async () => {
+            try {
+                await clearUsersData();
+                toast.add({ severity: 'success', summary: 'Éxito', detail: 'Se han restablecido los valores de los maes.', life: 3000 });
+            } catch (error) {
+                console.error("Error al restablecer valores:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al restablecer los valores de los maes.', life: 3000 });
+            }
+        },
+        reject: () => {
+            toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
+        }
+    });
+};
+
+const confirmDeleteAsesorias = () => {
+    confirm.require({
+        message: '¿Estás seguro eliminar todas las asesorías deñ año pasado?',
+        header: 'Confirmación de Eliminación',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Sí, eliminar',
+        rejectLabel: 'Cancelar',
+        acceptClass: 'p-button-danger',
+        accept: async () => {
+            try {
+                await deleteOldAsesorias();
+                toast.add({ severity: 'success', summary: 'Éxito', detail: 'Se ha limpiado correctamente las asesorías pasadas.', life: 3000 });
+            } catch (error) {
+                console.error("Error al limpiar weekSchedule:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar limpiar las asesorías pasadas.', life: 3000 });
             }
         },
         reject: () => {
@@ -257,6 +306,25 @@ const handleUpdatePoints = async () => {
                 icon="pi pi-user-edit" 
                 class="p-button-experience p-button-rounded p-button-lg w-full md:w-6"
                 @click="openUpdatePointsDialog" 
+            />
+        </div>
+
+        <div class="flex justify-content-center w-full">
+            <Button 
+                label="Eliminar las asesorías del año pasado" 
+                icon="pi pi-trash" 
+                class="p-button-danger p-button-rounded p-button-lg w-full md:w-6"
+                @click="confirmDeleteAsesorias" 
+            />
+        </div>
+
+
+        <div class="flex justify-content-center w-full">
+            <Button 
+                label="Restablecer maes" 
+                icon="pi pi-user-edit" 
+               class="p-button-info p-button-rounded p-button-lg w-full md:w-6"
+                @click="restartMaes" 
             />
         </div>
 

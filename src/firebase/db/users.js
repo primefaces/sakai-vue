@@ -407,44 +407,53 @@ export async function checkAndUpdateUserRole(file = null) {
     try {
         const usersRef = collection(firestoreDB, "users");
         const querySnapshot = await getDocs(usersRef);
-
-        // Si se subió un archivo Excel, ejecutamos la lógica relacionada con el archivo
         if (file) {
-            // Leer y procesar el archivo Excel
+            // Leer y procesar el archivo Excel acuerdate que empieza a contar desde 0
             const reader = new FileReader();
             reader.onload = async (event) => {
                 try {
                     const data = new Uint8Array(event.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheet = workbook.Sheets[workbook.SheetNames[3]];
-                    const excelData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    // console.log(sheet)
+                    const excelData = XLSX.utils.sheet_to_json(sheet, { header: 0 });
+                    console.log(excelData)
                     // Convertimos las matrículas del Excel a correos en formato lowercase@tec.mx
-                    const emailsFromExcel = excelData.slice(1)
-                        .map(row => row[1]?.toLowerCase() + '@tec.mx')
-                        .filter(email => email && !['undefined@tec.mx', 'zzzzz@tec.mx'].includes(email)); // Filtrar valores no deseados
+                    const emailsFromExcel = excelData
+                        .map(row => row["Matrícula"]?.toLowerCase() + "@tec.mx")
 
-                    //console.log(emailsFromExcel);
-                    // Procesamos cada usuario
+                    console.log(emailsFromExcel);
+     
                     const promises = querySnapshot.docs.map(async (doc) => {
                         const userRef = doc.ref;
                         const userData = doc.data();
-                        const eligibleRoles = ['mae', 'coordi', 'publi','tec']; // Roles que serán filtrados
-
+                        const eligibleRoles = ['mae', 'coordi', 'publi', 'tec', 'admin'];
+            
+                        const userEmail = userData.email?.toLowerCase();
+                        const userMatricula = userData.matricula?.toLowerCase();
+            
                         if (eligibleRoles.includes(userData.role)) {
-                            const userEmail = userData.email?.toLowerCase(); // Convertir a minúsculas para comparar
-
-                            // Si el correo no está en la lista de correos del Excel, actualizamos el rol a "exmae"
                             if (!emailsFromExcel.includes(userEmail)) {
                                 return updateDoc(userRef, { role: "exmae" });
                             }
+                        } else {
+                            // Si el usuario no tiene un rol elegible, se le asigna "mae" con estado "becario"
+                            if (emailsFromExcel.includes(userEmail)) {
+                                return updateUserToMae({
+                                    matricula: userMatricula,
+                                    role: "mae",
+                                    status: "becario",
+                                    point: 0,
+                                    useCoins: 0,
+                                });
+                            }
                         }
-
+            
                         return Promise.resolve();
                     });
-
+            
                     await Promise.all(promises);
-                   // console.log("Roles actualizados con base en el archivo Excel.");
+                    //console.log("Roles actualizados con base en el archivo Excel.");
                 } catch (error) {
                     console.error("Error al procesar el archivo Excel:", error);
                     throw error;
@@ -503,12 +512,10 @@ export async function updateUserToMae(data) {
         { "id": "18", "name": "Ups...", "description": "Pierde puntos de experiencia una vez", "image_url": "/assets/badges/18.svg", "achieved": false }
     ];
 
-    // Asegurarse de que los datos necesarios no sean nulos
     if (!role || !matricula || !status) {
         throw new Error("role, matricula, and status are required fields.");
     }
 
-    // Buscar el usuario en la base de datos usando la matricula
     try {
         const usersRef = collection(firestoreDB, "users");
         const userQuery = query(usersRef, where("email", "==", `${matricula.toLowerCase()}@tec.mx`));
@@ -524,10 +531,7 @@ export async function updateUserToMae(data) {
             const userRef = doc.ref;
             const userData = doc.data();
 
-    
-            // Condicionar la actualización según el role o status
             if (userData.role === 'user' || userData.status === 'estudiante') {
-                // Si role es "user" o status es "estudiante", actualizar todos los campos
                 return updateDoc(userRef, {
                     role: role.value,
                     status: status.value,
@@ -893,6 +897,36 @@ export async function addExtraVariables() {
         console.log("Background have been successfully added to eligible users.");
     } catch (error) {
         console.error("Error adding background to eligible users: ", error);
+        throw error;
+    }
+}
+
+
+
+export async function clearUsersData() {
+    try {
+        const querySnapshot = await getDocs(collection(firestoreDB, "users"));
+        const rolesToUpdate = ["admin", "coordi", "mae", "tec", "publi"];
+        
+        const updatePromises = [];
+        
+        querySnapshot.forEach(docSnapshot => {
+            const userData = docSnapshot.data();
+            if (rolesToUpdate.includes(userData.role)) {
+                const userRef = doc(firestoreDB, "users", docSnapshot.id);
+                updatePromises.push(updateDoc(userRef, {
+                    useCoins: userData.useCoins - userData.points,
+                    subjects: [],
+                    totalTime: 0,
+                    points: 0
+                }));
+            }
+        });
+        
+        await Promise.all(updatePromises);
+        console.log("Usuarios actualizados correctamente.");
+    } catch (error) {
+        console.error("Error al actualizar usuarios: ", error);
         throw error;
     }
 }

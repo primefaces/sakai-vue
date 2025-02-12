@@ -8,6 +8,7 @@ import {
     Timestamp,
     updateDoc, 
     doc,
+    deleteDoc,
 } from 'firebase/firestore';
 import { 
     updatePoints,
@@ -66,7 +67,6 @@ export async function getAsesoriasCountForUserInCurrentSemester(userId) {
         return 0;
     }
 }
-
 
 
 export async function getAsesorias(startDate = null, endDate = null) {
@@ -391,6 +391,31 @@ export async function getAsesoriasCountByCampus() {
         }));
     } catch (error) {
         console.error("Error al obtener el conteo de asesorías por campus: ", error);
+        throw error;
+    }
+}
+
+// Eliminar todas las asesorias pasadas 
+export async function deleteOldAsesorias() {
+    try {
+        const querySnapshot = await getDocs(collection(firestoreDB, "asesorias"));
+        const currentYear = new Date().getFullYear();
+        
+        const deletePromises = [];
+        
+        querySnapshot.forEach(docSnapshot => {
+            const asesoriasData = docSnapshot.data();
+            const asesoriasDate = asesoriasData?.date ? new Date(asesoriasData.date) : null;
+            
+            if (asesoriasDate && asesoriasDate.getFullYear() !== currentYear) {
+                deletePromises.push(deleteDoc(doc(firestoreDB, "asesorias", docSnapshot.id)));
+            }
+        });
+        
+        await Promise.all(deletePromises);
+        console.log("Asesorías antiguas eliminadas correctamente.");
+    } catch (error) {
+        console.error("Error al eliminar asesorías antiguas: ", error);
         throw error;
     }
 }

@@ -538,7 +538,9 @@ export async function updateUserToMae(data) {
                     weekSchedule: {}, 
                     subjects: [],
                     totalTime: 0,
-                    badges: badges
+                    badges: badges,
+                    point: 0,
+                     useCoins: 0,
                 });
             } else {
             

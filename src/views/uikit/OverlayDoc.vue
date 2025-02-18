@@ -14,7 +14,6 @@ const visibleFull = ref(false);
 const products = ref(null);
 const selectedProduct = ref(null);
 const op = ref(null);
-const op2 = ref(null);
 const popup = ref(null);
 
 const toast = useToast();
@@ -41,7 +40,7 @@ function closeConfirmation() {
 }
 
 function toggleDataTable(event) {
-    op2.value.toggle(event);
+    op.value.toggle(event);
 }
 
 function onProductSelect(event) {
@@ -93,7 +92,7 @@ function confirm(event) {
                 <div class="font-semibold text-xl mb-4">Popover</div>
                 <div class="flex flex-wrap gap-2">
                     <Button type="button" label="Show" @click="toggleDataTable" />
-                    <Popover ref="op2" id="overlay_panel" style="width: 450px">
+                    <Popover ref="op" id="overlay_panel" style="width: 450px">
                         <DataTable v-model:selection="selectedProduct" :value="products" selectionMode="single" :paginator="true" :rows="5" @row-select="onProductSelect">
                             <Column field="name" header="Name" sortable style="min-width: 12rem"></Column>
                             <Column header="Image">

@@ -2,7 +2,7 @@
     <div class="py-6 px-6 mx-0 mt-20 lg:mx-20">
         <div class="grid grid-cols-12 gap-4">
             <div class="col-span-12 md:col-span-2">
-                <a @click="smoothScroll('#home')" class="flex flex-wrap items-center justify-center md:justify-start md:mb-0 mb-4 cursor-pointer">
+                <a class="flex flex-wrap items-center justify-center md:justify-start md:mb-0 mb-4 cursor-pointer">
                     <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 mr-2">
                         <path
                             fill-rule="evenodd"

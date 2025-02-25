@@ -8,15 +8,16 @@
         "lint": "eslint --fix . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
     },
     "dependencies": {
-        "@primevue/themes": "^4.2.4",
+        "@primeuix/themes": "^1.0.0",
         "chart.js": "3.3.2",
         "primeicons": "^7.0.0",
-        "primevue": "^4.2.4",
+        "primevue": "^4.3.1",
+        "tailwindcss-primeui": "^0.5.0",
         "vue": "^3.4.34",
         "vue-router": "^4.4.0"
     },
     "devDependencies": {
-        "@primevue/auto-import-resolver": "^4.2.4",
+        "@primevue/auto-import-resolver": "^4.3.1",
         "@rushstack/eslint-patch": "^1.8.0",
         "@vitejs/plugin-vue": "^5.0.5",
         "@vue/eslint-config-prettier": "^9.0.0",
@@ -27,7 +28,6 @@
         "prettier": "^3.2.5",
         "sass": "^1.55.0",
         "tailwindcss": "^3.4.6",
-        "tailwindcss-primeui": "^0.3.2",
         "unplugin-vue-components": "^0.27.3",
         "vite": "^5.3.1"
     }

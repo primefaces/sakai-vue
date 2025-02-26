@@ -38,6 +38,7 @@ const daysOfWeek = [
 onMounted(() => {
     getMaes().then((data) => {
         maes.value = data;
+        console.log(maes)
         loading.value = false;
     });
 

@@ -512,6 +512,18 @@ export async function updateUserToMae(data) {
         { "id": "18", "name": "Ups...", "description": "Pierde puntos de experiencia una vez", "image_url": "/assets/badges/18.svg", "achieved": false }
     ];
 
+
+    
+    const background = [
+        { "id": "1", "image_url": "/assets/back/1.svg", "bought": true, "price": 0 },
+        { "id": "2", "image_url": "/assets/back/2.svg", "bought": false, "price": 25 },
+        { "id": "3", "image_url": "/assets/back/3.svg", "bought": false, "price": 25},
+        { "id": "4", "image_url": "/assets/back/4.svg", "bought": false, "price": 25 },
+        { "id": "5", "image_url": "/assets/back/5.svg", "bought": false, "price": 50 },
+        { "id": "6", "image_url": "/assets/back/6.svg", "bought": false, "price": 50 },
+        { "id": "7", "image_url": "/assets/back/7.svg", "bought": false, "price": 75 },
+    ];
+
     if (!role || !matricula || !status) {
         throw new Error("role, matricula, and status are required fields.");
     }
@@ -539,8 +551,9 @@ export async function updateUserToMae(data) {
                     subjects: [],
                     totalTime: 0,
                     badges: badges,
-                    point: 0,
+                    points: 0,
                      useCoins: 0,
+                     background: background,
                 });
             } else {
             

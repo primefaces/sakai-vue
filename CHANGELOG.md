@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.0 (2025-02-26)
+
+**Implemented New Features and Enhancements**
+
+-   Update PrimeVue version
+
 ## 4.2.0 (2024-12-09)
 
 **Implemented New Features and Enhancements**

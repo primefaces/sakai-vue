@@ -17,13 +17,13 @@ import {
 
 export async function saveAnnouncement(announcementData, selectedFile) {
     try {
+        console.log(announcementData.maesAsignados)
         let imageUrl = '';
 
         if (selectedFile) {
             const filePath = `announcements/${announcementData.type}/${selectedFile.name}`;
             imageUrl = await addAnnoucement(selectedFile, filePath);
         }
-
         const docRef = await addDoc(collection(firestoreDB, 'announcements'), {
             ...announcementData,
             imageUrl, 
@@ -67,34 +67,43 @@ export async function getAnnouncements() {
         const announcementsCollection = collection(firestoreDB, 'announcements');
         const querySnapshot = await getDocs(query(announcementsCollection));
         const now = new Date();
-        
-        
+        console.log(querySnapshot.docs)
         const announcements = querySnapshot.docs
             .map(doc => ({
                 id: doc.id,
                 ...doc.data(),
             }))
             .filter(announcement => {
+                // Filtrar por fecha válida
                 if (announcement.dateTime) {
-                    const dateTime = announcement.dateTime.seconds 
-                        ? new Date(announcement.dateTime.seconds * 1000) 
+                    const dateTime = announcement.dateTime.seconds
+                        ? new Date(announcement.dateTime.seconds * 1000)
                         : new Date(announcement.dateTime);
-                    return dateTime >= now || dateTime.toDateString() === now.toDateString() ;
+                    if (dateTime < now && dateTime.toDateString() !== now.toDateString()) {
+                        return false;
+                    }
                 }
-                return true; 
+
+                // Filtrar por visible o tipo Especial
+                const isVisible = announcement.visible === true;
+                const isSpecial = announcement.id === undefined;
+                console.log(announcement.type)
+                console.log(announcement.visible)
+                return isVisible || isSpecial;
             })
             .sort((a, b) => {
                 const dateA = a.createdAt.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(a.createdAt);
                 const dateB = b.createdAt.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(b.createdAt);
                 return dateA - dateB;
             });
-
+        console.log( announcements)
         return announcements;
     } catch (error) {
         console.error('Error fetching announcements:', error);
         throw error;
     }
 }
+
 
 export async function getAnnouncementsGrupales() {
     try {

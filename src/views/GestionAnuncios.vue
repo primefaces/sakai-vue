@@ -147,69 +147,90 @@ const saveDateTime = () => {
 };
 
 const handleSubmit = async () => {
-    if (selectedType.value === 'Asesoría') {
-        if (!subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !selectedFile.value) {
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos antes de guardar.', life: 3000 });
-            return;
-        }
-        if (maeSelect.value.length === 0) {
-            toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Por favor asigna los maes y al coordinador que darán la asesoría.',
-              life: 3000
-            });
-            return;
-          }
+  if (typeof subjectInput.value === 'string') {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Acuerdate que debes seleccionar la materia.',
+      life: 3000
+    });
+    return;
+  }
 
-        try {
-          const selectedMaes = maeSelect.value.map(mae => ({
-            uid: mae.uid,
-            name: mae.name,
-            career: mae.career,
-            campus: mae.campus,
-            area: mae.area,
-          }));
-
-            const announcementData = {
-                type: selectedType.value,
-                subject: subjectInput.value,
-                dateTime: dateTime.value,
-                startTime: startTime.value,
-                endTime: endTime.value,
-                location: locationInput.value || 'Indefinido',
-                maesAsignados: selectedMaes
-            };
-            await saveAnnouncement(announcementData, selectedFile.value);
-            anuncios.value = await getAnnouncementsEdit();
-            reset() 
-            showDialogAsesoria.value = false
-            toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
-        } catch (error) {
-            console.error('Error al guardar el anuncio:', error);
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
-        }
-    } else if (selectedType.value === 'Otro') {
-        if ( !titleInput.value || !descriptionInput.value || !selectedFile.value) {
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos de título,  descripción e imagen.', life: 3000 });
-            return;
-        }
-        try {
-            const announcementData = {
-                type: selectedType.value,
-                title: titleInput.value,
-                description: descriptionInput.value
-            };
-            await saveAnnouncement(announcementData, selectedFile.value);  
-            reset() 
-            anuncios.value = await getAnnouncementsEdit();
-            showDialogAsesoria.value = false
-            toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
-        } catch (error) {
-            console.error('Error al guardar el anuncio:', error);
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
-        }
+  if (selectedType.value === 'Asesoría') {
+    if (!subjectInput.value || !dateTime.value || !startTime.value || !endTime.value || !selectedFile.value) {
+      toast.add({ 
+        severity: 'error', 
+        summary: 'Error', 
+        detail: 'Por favor completa todos los campos antes de guardar.', 
+        life: 3000 
+      });
+      return;
     }
+    
+    if (maeSelect.value.length === 0) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Por favor asigna los maes y al coordinador que darán la asesoría.',
+        life: 3000
+      });
+      return;
+    }
+
+    try {
+      const selectedMaes = maeSelect.value.map(mae => ({
+        uid: mae.uid,
+        name: mae.name,
+        career: mae.career,
+        campus: mae.campus,
+        area: mae.area,
+      }));
+      const announcementData = {
+        type: selectedType.value,
+        subject: subjectInput.value,
+        dateTime: dateTime.value,
+        startTime: startTime.value,
+        endTime: endTime.value,
+        location: locationInput.value || 'Indefinido', 
+        maesAsignados: selectedMaes,
+        visible: true  
+      };
+      
+      await saveAnnouncement(announcementData, selectedFile.value);
+      anuncios.value = await getAnnouncementsEdit();
+      reset();
+      showDialogAsesoria.value = false;
+      toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
+    } catch (error) {
+      console.error('Error al guardar el anuncio:', error);
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
+    }
+  } else if (selectedType.value === 'Otro') {
+    if (!titleInput.value || !descriptionInput.value || !selectedFile.value) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos de título, descripción e imagen.', life: 3000 });
+      return;
+    }
+    try {
+      const announcementData = {
+        type: selectedType.value,
+        title: titleInput.value,
+        description: descriptionInput.value,
+        visible: true
+      };
+      
+      console.log('Data to save:', announcementData);
+      
+      await saveAnnouncement(announcementData, selectedFile.value);
+      reset();
+      anuncios.value = await getAnnouncementsEdit();
+      showDialogAsesoria.value = false;
+      toast.add({ severity: 'success', summary: 'Éxito', detail: 'Anuncio guardado con éxito', life: 3000 });
+    } catch (error) {
+      console.error('Error al guardar el anuncio:', error);
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el anuncio. Intenta de nuevo.', life: 3000 });
+    }
+  }
 };
 
 const reset = () => {
@@ -223,6 +244,8 @@ const reset = () => {
   locationInput.value = ''
   selectedFile.value = null 
   maeSelect.value = []
+  previewUrl.value = null
+  selectedFile.value = null
 }
 
 const openPreviewDialog = () => {

@@ -309,9 +309,9 @@ const handleUpdatePoints = async () => {
             />
         </div>
 
-        <div class="flex justify-content-center w-full">
+        <div class="flex justify-content-center w-full mt-4">
             <Button 
-                label="Eliminar las asesorías del año pasado" 
+                label="Eliminar las asesorías del semestre pasado" 
                 icon="pi pi-trash" 
                 class="p-button-danger p-button-rounded p-button-lg w-full md:w-6"
                 @click="confirmDeleteAsesorias" 
@@ -319,7 +319,7 @@ const handleUpdatePoints = async () => {
         </div>
 
 
-        <div class="flex justify-content-center w-full">
+        <div class="flex justify-content-center w-full mt-4">
             <Button 
                 label="Restablecer maes" 
                 icon="pi pi-user-edit" 

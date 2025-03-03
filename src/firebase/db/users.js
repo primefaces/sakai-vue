@@ -522,6 +522,7 @@ export async function updateUserToMae(data) {
         { "id": "5", "image_url": "/assets/back/5.svg", "bought": false, "price": 50 },
         { "id": "6", "image_url": "/assets/back/6.svg", "bought": false, "price": 50 },
         { "id": "7", "image_url": "/assets/back/7.svg", "bought": false, "price": 75 },
+        { "id": "8", "image_url": "/assets/back/8.svg", "bought": false, "price": 100 },
     ];
 
     if (!role || !matricula || !status) {
@@ -775,7 +776,7 @@ export async function countAchievedBadges(uid) {
     }
 }
 
-// Añadir el background a los usuarios
+// Añadir nuevos backgrounds a los usuarios sin borrar los existentes
 export async function addBackgroundUsers() {
     try {
         const usersRef = collection(firestoreDB, "users");
@@ -783,14 +784,9 @@ export async function addBackgroundUsers() {
 
         const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
 
-        const background = [
-            { "id": "1", "image_url": "/assets/back/1.svg", "bought": true, "price": 0 },
-            { "id": "2", "image_url": "/assets/back/2.svg", "bought": false, "price": 25 },
-            { "id": "3", "image_url": "/assets/back/3.svg", "bought": false, "price": 25},
-            { "id": "4", "image_url": "/assets/back/4.svg", "bought": false, "price": 25 },
-            { "id": "5", "image_url": "/assets/back/5.svg", "bought": false, "price": 50 },
-            { "id": "6", "image_url": "/assets/back/6.svg", "bought": false, "price": 50 },
-            { "id": "7", "image_url": "/assets/back/7.svg", "bought": false, "price": 75 },
+        const newBackgrounds = [
+            { id: '8', image_url: '/assets/back/8.svg', bought: false, price: 100 },
+            // Aquí puedes agregar más fondos nuevos...
         ];
 
         const promises = querySnapshot.docs.map(async (doc) => {
@@ -798,10 +794,24 @@ export async function addBackgroundUsers() {
             const userData = doc.data();
 
             if (eligibleRoles.includes(userData.role)) {
+                const currentBackgrounds = userData.background || [];
+                
+                // Crear un mapa de fondos existentes (para evitar duplicados)
+                const backgroundMap = new Map(currentBackgrounds.map(bg => [bg.id, bg]));
+
+                // Añadir los nuevos fondos solo si no existen ya
+                newBackgrounds.forEach(bg => {
+                    if (!backgroundMap.has(bg.id)) {
+                        backgroundMap.set(bg.id, bg);
+                    }
+                });
+
+                const mergedBackgrounds = Array.from(backgroundMap.values());
+
                 return updateDoc(userRef, {
-                    background:  background,
-                    myBackground: "/assets/back/1.svg",
-                    useCoins: 0,
+                    background: mergedBackgrounds,
+                    myBackground: userData.myBackground || "/assets/back/1.svg", // conservar el que ya tiene
+                    useCoins: userData.useCoins || 0, // conservar las monedas que ya tiene
                 });
             } else {
                 return Promise.resolve();
@@ -810,11 +820,11 @@ export async function addBackgroundUsers() {
 
         await Promise.all(promises);
 
-        console.log("Background have been successfully added to eligible users.");
+        console.log("Backgrounds have been merged successfully for eligible users.");
     } catch (error) {
-        console.error("Error adding background to eligible users: ", error);
+        console.error("Error merging backgrounds for eligible users: ", error);
         throw error;
-    }
+}
 }
 
 

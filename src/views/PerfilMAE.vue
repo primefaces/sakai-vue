@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
   stopActiveSession,updateUserProfilePicture,  countAchievedBadges, 
   updateUserAchievementBadge, updateUserBackground, updateUserBackgroundImage
-,updatePoints} from '../firebase/db/users';
+,updatePoints, addBackgroundUsers} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria, getAsesoriasCountForUserInCurrentSemester,getAsesoriasByUidAndRating,
   updateAsesoria
@@ -40,6 +40,7 @@ const selectedFile = ref(null);
 const showDialogLogros = ref(false);
 
 onMounted(async () => {
+ // await addBackgroundUsers();
   userInfo.value = await getCurrentUser();
   maeInfo.value = await getUser(route.params.id);
   asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
@@ -795,7 +796,7 @@ const guardarEvaluacion = async () => {
       <div
         v-for="(back) in maeInfo.background"
         :key="back.id"
-        class="col-11 ml-3 md:col-5 lg:col-3 flex flex-column align-items-center card p-0 md:mx-3 lg:mx-5 h-auto border-round shadow-2 hover:shadow-4 transition-shadow duration-200 border-round-xl">
+        class="col-11 ml-3 md:col-5 lg:col-3 flex flex-column align-items-center card p-0 md:mx-3 lg:mx-5 h-11rem border-round shadow-2 hover:shadow-4 transition-shadow duration-200 border-round-xl">
         <div class="w-full h-7rem border-round-top-xl"
             :style="{
               backgroundImage: `url(${back.image_url})`,
@@ -803,7 +804,7 @@ const guardarEvaluacion = async () => {
               backgroundPosition: 'center'
             }">
         </div>
->
+
         <div class="p-3 w-full text-center flex flex-row justify-content-between align-items-center">
 
           <div class="flex flex-row align-items-center">

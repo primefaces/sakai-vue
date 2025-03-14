@@ -1,6 +1,21 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
+import Menu from 'primevue/menu';
+import { ref } from 'vue';
 import AppConfigurator from './AppConfigurator.vue';
+
+const profileMenu = ref(null); // Corrected ref name
+const profileMenuItems = ref([
+  { label: 'Profile', icon: 'pi pi-user', command: () => { /* Handle profile action */ } },
+  { label: 'Settings', icon: 'pi pi-cog', command: () => { /* Handle settings action */ } },
+  { label: 'Calendar', icon: 'pi pi-calendar', command: () => { /* Handle calendar action */ } },
+  { label: 'Inbox', icon: 'pi pi-inbox', command: () => { /* Handle inbox action */ } },
+  { label: 'Log out', icon: 'pi pi-power-off', command: () => { /* Handle logout action */ } },
+]);
+
+const toggleProfileMenu = (event) => {
+  profileMenu.value.toggle(event);
+};
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
 </script>
@@ -68,10 +83,16 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                         <i class="pi pi-inbox"></i>
                         <span>Messages</span>
                     </button>
-                    <button type="button" class="layout-topbar-action">
+                    <button type="button" class="layout-topbar-action notification-button" @click="toggleNotifications">
+                        <span class="w-2 h-2 rounded-full bg-red-500 absolute top-2 right-2.5"></span>
+                        <i class="pi pi-bell"></i>
+                        <span>Notifications</span>
+                    </button>
+                    <button type="button" class="layout-topbar-action" @click="toggleProfileMenu">
                         <i class="pi pi-user"></i>
                         <span>Profile</span>
                     </button>
+                    <Menu ref="profileMenu" :model="profileMenuItems" :popup="true" />
                 </div>
             </div>
         </div>

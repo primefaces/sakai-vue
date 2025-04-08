@@ -26,7 +26,7 @@ onMounted(async () => {
         const adminItems = [
             
             { label: 'Usuarios', icon: 'pi pi-fw pi-users', to: '/admin/usuarios' },
-            //{ label: 'Materias', icon: 'pi pi-fw pi-book', to: '/admin/materias' },
+            { label: 'Materias', icon: 'pi pi-fw pi-pencil', to: '/admin/materias' }
         ];
 
         if (role === 'admin') {

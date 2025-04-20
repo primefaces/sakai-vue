@@ -1,67 +1,42 @@
 <script setup>
-import { ref, onMounted, computed, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 
 // Carousel data and controls
 const activeIndex = ref(0);
 const autoplayInterval = ref(null);
 const transitionActive = ref(false);
 
-// Format name function to ensure it's limited to 2 blocks
-const formatName = (name) => {
-  if (!name) return '';
-  const words = name.split(' ');
-  return words.slice(0, 2).join(' '); // Limit to two words
-};
-
-// Dummy data for honor students
+// Honor students data
 const honorStudents = ref([
-  {
-    id: 1,
-    name: 'María González López del Valle',
-    photoURL: null,
-    career: 'Ingeniería en Sistemas',
-    points: 3500,
-    achievements: ['Mejor Promedio', 'Excelencia Académica']
-  },
-  {
-    id: 2,
-    name: 'Carlos Alberto Rodríguez Hernández',
-    photoURL: null,
-    career: 'Medicina',
-    points: 3200,
-    achievements: ['Investigación Destacada']
-  },
-  {
-    id: 3,
-    name: 'Ana Martínez',
-    photoURL: null,
-    career: 'Derecho',
-    points: 3100,
-    achievements: ['Líder Estudiantil']
-  },
-  {
-    id: 4,
-    name: 'Jorge Alejandro Hernández Gutiérrez',
-    photoURL: null,
-    career: 'Arquitectura',
-    points: 2950,
-    achievements: ['Proyecto Innovador']
-  },
-  {
-    id: 5,
-    name: 'Sofía Isabela Castro Ramírez',
-    photoURL: null,
-    career: 'Psicología',
-    points: 2800,
-    achievements: ['Servicio Comunitario']
-  },
-  {
-    id: 6,
-    name: 'Luis Fernando Morales',
-    photoURL: null,
-    career: 'Economía',
-    points: 2750,
-    achievements: ['Mejor Orador']
+  { 
+    id: 1, 
+    name: 'Juan Pablo Vargas', 
+    photoURL: null, 
+    description: 'Borrego de Oro, Precursor de la antigua pagina'
+  }, 
+  { 
+    id: 2, 
+    name: 'Bernardo de la Sierra y Jinelle Flores', 
+    photoURL: '/assets/BernayJinelle.jpg', 
+    description: 'Desarrollador y diseñador de la página, Ganadores de Expoingenerias Dic 2024'
+  }, 
+  { 
+    id: 3, 
+    name: 'Luis Angel Guzmán', 
+    photoURL: null, 
+    description: 'Precursor de la página actual, Desarrolló el sistema de base de datos'
+  }, 
+  { 
+    id: 4, 
+    name: 'Rodrigo Arroyo', 
+    photoURL: '/assets/Rodri.jpg', 
+    description: 'Mejor mae 2 años seguidos, Mejor coordinador 2 años seguidos'
+  }, 
+  { 
+    id: 5, 
+    name: 'Diego Rodriguez', 
+    photoURL: null, 
+    description: 'Mejor mae de Ingenería durante varios años, Tester de la página antigua'
   }
 ]);
 
@@ -99,7 +74,7 @@ const startAutoplay = () => {
   stopAutoplay();
   autoplayInterval.value = setInterval(() => {
     nextSlide();
-  }, 4000);
+  }, 7000); // 7 seconds as requested
 };
 
 const stopAutoplay = () => {
@@ -122,110 +97,77 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="honor-hall-container">
-    <!-- Hall of Honor Content -->
-    <div class="hall-content">
-      <div class="flex flex-column md:flex-row justify-content-between align-items-center mb-4">
-        <div class="flex flex-column align-items-start">
-          <h1 class="text-black text-5xl font-bold text-center m-0 sm:text-left mb-3">Sala de Honor</h1>
-          <div class="bg-white border-round-3xl p-2 px-4 flex flex-row justify-content-center">
-            <img src="/assets/mundo.svg" class="mr-3 mt-1" alt="world icon" style="width: 1.5rem; height: 1.5rem;" />
-            <p class="text-xl">Estudiantes destacados</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Carousel -->
-      <div class="carousel-container mt-4 relative">
-        <button @click="prevSlide" class="carousel-control prev-btn">
-          <i class="pi pi-chevron-left"></i>
-        </button>
-        
-        <div class="carousel-wrapper">
+    <h2 class="hall-title">Sala de honor</h2>
+    
+    <!-- Carousel -->
+    <div class="carousel-container">
+      <button @click="prevSlide" class="carousel-control prev-btn">
+        <span class="control-icon">&lt;</span>
+      </button>
+      
+      <div class="carousel-wrapper">
+        <div 
+          class="carousel-slide-container" 
+          :style="{transform: `translateX(-${activeIndex * 100}%)`}"
+          :class="{'transition-transform': transitionActive}"
+        >
           <div 
-            class="carousel-slide-container" 
-            :style="{transform: `translateX(-${activeIndex * 100}%)`}"
-            :class="{'transition-transform': transitionActive}"
+            v-for="(group, groupIndex) in groupedStudents" 
+            :key="groupIndex"
+            class="carousel-slide"
           >
             <div 
-              v-for="(group, groupIndex) in groupedStudents" 
-              :key="groupIndex"
-              class="carousel-slide flex justify-content-center gap-6"
+              v-for="student in group" 
+              :key="student.id"
+              class="student-card"
             >
-              <div 
-                v-for="student in group" 
-                :key="student.id"
-                class="student-card surface-card p-5 border-round shadow-2 flex flex-column align-items-center"
-                :class="{'slide-enter-active': transitionActive}"
-              >
-                <div class="img-container mb-4">
-                  <img 
-                    :src="student.photoURL || '/assets/lego.jpg'"
-                    :alt="`Foto de ${student.name}`"
-                    class="border-circle border-gold" 
-                  />
-                </div>
-                <h3 class="text-2xl font-bold mb-2 text-center name-container">{{ formatName(student.name) }}</h3>
-                <p class="text-600 mb-3 text-center">{{ student.career }}</p>
-                <div class="flex align-items-center justify-content-center gap-2 mb-4">
-                  <i class="pi pi-star-fill text-yellow-500"></i>
-                  <p class="font-bold text-primary text-xl m-0">{{ student.points }} EXP</p>
-                </div>
-                
-                <div class="achievements mt-2 w-full">
-                  <span 
-                    v-for="(achievement, i) in student.achievements" 
-                    :key="i"
-                    class="achievement-badge bg-primary-100 text-primary border-round-2xl px-3 py-1 mr-2 mb-2 inline-block"
-                  >
-                    <i class="pi pi-check-circle mr-1"></i>
-                    {{ achievement }}
-                  </span>
-                </div>
+              <div class="img-container">
+                <img 
+                  :src="student.photoURL || '/assets/lego.jpg'"
+                  :alt="`Foto de ${student.name}`"
+                  class="student-photo"
+                />
+              </div>
+              <div class="student-info">
+                <h3 class="student-name">{{ student.name }}</h3>
+                <p class="student-description">{{ student.description }}</p>
               </div>
             </div>
           </div>
         </div>
-        
-        <button @click="nextSlide" class="carousel-control next-btn">
-          <i class="pi pi-chevron-right"></i>
-        </button>
       </div>
+      
+      <button @click="nextSlide" class="carousel-control next-btn">
+        <span class="control-icon">&gt;</span>
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
 .honor-hall-container {
-  padding: 2.5rem;
-  min-height: 100vh;
+  padding: 2rem;
+  width: 100%;
 }
 
-/* Name container to ensure consistent spacing */
-.name-container {
-  min-height: 4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
+.hall-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
 }
 
 /* Carousel styles */
 .carousel-container {
   position: relative;
   overflow: hidden;
-  padding: 2rem 0;
+  padding: 0.5rem 0;
 }
 
 .carousel-wrapper {
   overflow: hidden;
   width: 100%;
-  border-radius: 1rem;
 }
 
 .carousel-slide-container {
@@ -237,40 +179,59 @@ onBeforeUnmount(() => {
 
 .carousel-slide {
   flex: 0 0 100%;
-  padding: 1.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: flex-start;
 }
 
 .student-card {
-  flex: 1;
-  max-width: 320px;
-  transition: all 0.5s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.student-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 12px;
+  overflow: auto;
+  width: calc(33.33% - 1rem);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  padding: 25px;
 }
 
 .img-container {
+  width: 100%;
+  height: auto;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
   position: relative;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+
 }
 
-.img-container img {
+.student-photo {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  border-radius: 8px;
+
 }
 
-.student-card:hover .img-container img {
-  transform: scale(1.08);
+.student-info {
+  padding-top: 1rem;
+}
+
+.student-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.7rem 0;
+}
+
+.student-description {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .carousel-control {
@@ -280,8 +241,8 @@ onBeforeUnmount(() => {
   background-color: white;
   border: none;
   border-radius: 50%;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -292,21 +253,20 @@ onBeforeUnmount(() => {
 }
 
 .carousel-control:hover {
-  background-color: #3B82F6;
-  color: white;
-  transform: translateY(-50%) scale(1.1);
+  background-color: #f0f0f0;
+}
+
+.control-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .prev-btn {
-  left: 15px;
+  left: 10px;
 }
 
 .next-btn {
-  right: 15px;
-}
-
-.border-gold {
-  border: 4px solid #FFD700;
+  right: 10px;
 }
 
 /* Animation classes */
@@ -314,63 +274,15 @@ onBeforeUnmount(() => {
   transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-.slide-enter-active {
-  animation: slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.achievement-badge {
-  transition: all 0.3s ease;
-}
-
-.achievement-badge:hover {
-  background-color: #dbeafe;
-  transform: translateY(-2px);
-}
-
-@keyframes slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Add responsive styles */
 @media (max-width: 768px) {
-  .carousel-slide {
-    padding: 1rem 0;
-  }
-  
   .student-card {
-    max-width: 280px;
-  }
-  
-  .img-container {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .carousel-control {
-    width: 3rem;
-    height: 3rem;
+    width: calc(50% - 0.75rem);
   }
 }
 
 @media (max-width: 576px) {
-  .honor-hall-container {
-    padding: 1.5rem;
-  }
-  
-  .carousel-slide {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
   .student-card {
-    margin-bottom: 1.5rem;
+    width: 100%;
   }
 }
 </style>

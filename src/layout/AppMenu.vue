@@ -13,7 +13,7 @@ const model = ref([
             { label: 'Maes activos', icon: 'pi pi-fw pi-globe', to: '/maesactivos' },
             { label: 'Horarios', icon: 'pi pi-fw pi-clock', to: '/horarios' },
             { label: 'Asesorías grupales', icon: 'pi pi-fw pi-calendar', to: '/asesoriasGrupales' },
-            { label: 'Sala de honor', icon: 'pi pi-fw pi-plus', to: '/halloffame' },
+            { label: 'Sala de honor', icon: 'pi pi-fw pi-heart-fill', to: '/halloffame' },
 
         ]
     },

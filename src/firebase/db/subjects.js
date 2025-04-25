@@ -5,6 +5,7 @@ import {
     query,
     orderBy,
 } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 export async function getSubjects() {
     const subjectsRef = collection(firestoreDB, "schools/tec.mx/subjects");
@@ -19,3 +20,13 @@ export async function getSubjects() {
         return null;
     }
 }
+
+export async function addSubject(subject) {
+    const subjectRef = doc(firestoreDB, `schools/tec.mx/subjects/${subject.id}`);
+    await setDoc(subjectRef, subject);
+}
+
+export async function deleteSubject(subjectId) {
+    const subjectRef = doc(firestoreDB, `schools/tec.mx/subjects/${subjectId}`);
+    await deleteDoc(subjectRef);
+  }

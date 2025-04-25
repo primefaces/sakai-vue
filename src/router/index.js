@@ -70,6 +70,12 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/halloffame',
+                    name: 'halloffame',
+                    component: () => import('@/views/HallofFame.vue'),
+
+                },
+                {
                     path: '/misasesorias',
                     name: 'misasesorias',
                     component: () => import('@/views/Asesorias.vue'),
@@ -216,7 +222,6 @@ router.beforeEach((to, from, next) => {
         unsubscribe(); 
         if (!user) {
             if (to.path === "/asesoriasGrupales" && to.query.asesoriaId) {
-                console.log("papa")
               const asesoriaId = to.query.asesoriaId;
               return next(`/auth/login?redirect=/asesoriasGrupales&asesoriaId=${asesoriaId}`);
             }

@@ -163,9 +163,11 @@ const filterSubjects = () => {
                 <div class="p-0 w-full h-full border-round-xl bg-white shadow-1 hover:shadow-3 transition-duration-300 transition-ease-out">
                     <!-- Mostrar carta para MAEs activos -->
                     <div class="flex flex-column">
+                        <!-- Color de rol -->
                         <div class="flex border-round-top-xl h-1rem w-full" v-if="mae.role === 'admin'" style="background-color: #8358CA;"></div>
                         <div class="flex border-round-top-xl h-1rem w-full" v-if="mae.role === 'coordi'" style="background-color: #58AFCA;"></div>
                         <div class="flex border-round-top-xl bg-white h-1rem w-full" v-if="mae.role !== 'coordi' && mae.role !== 'admin'"></div>
+                        <!-- Foto de MAE -->
                         <div class="flex flex-row items-center mt-2 ml-2 p-2">
                             <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil" class="border-circle h-5rem w-5rem">
                             <Skeleton v-else shape="circle" size="5rem"></Skeleton>

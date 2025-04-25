@@ -245,7 +245,7 @@ const hasAttended = (asesoria) => {
                     <Button  
                         v-else 
                         label="Pre-registro" 
-                        class="custom-button font-bold text-black mt-2 text-md btn border-round-xl flex align-items-center" 
+                        class="custom-button font-bold text-black mt-2 text-md btn border-round-xl flex align-items-center px-4 text-lg" 
                         @click="handlePreRegistro(asesoria)"
                     >
                         <span>Pre-registro</span>

@@ -147,13 +147,14 @@ const saveDateTime = () => {
 };
 
 const handleSubmit = async () => {
-  if (typeof subjectInput.value === 'string') {
+  if (selectedType.value === 'Asesoría' && typeof subjectInput.value === 'string') {
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: 'Acuerdate que debes seleccionar la materia.',
       life: 3000
     });
+    //else if (selectedType.value === 'Otro' && typeof subjectInput.value === 'string')
     return;
   }
 

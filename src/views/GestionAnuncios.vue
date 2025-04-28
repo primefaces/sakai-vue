@@ -502,9 +502,9 @@ const handleEditAnn = async () => {
         <p class="text-black text-lg md:text-xl font-semibold text-left m-1">
           Título
         </p>
-        <InputText v-model="titleInput" maxlength="30" placeholder="Ingresa el título" class="w-full" />
+        <InputText v-model="titleInput" maxlength="80" placeholder="Ingresa el título" class="w-full" />
         <p class="text-gray-600 text-sm mt-1 ml-1">
-          {{ titleInput.length }}/30 caracteres
+          {{ titleInput.length }}/80 caracteres
         </p>
         <p class="text-black text-lg md:text-xl font-semibold text-left  m-1">
           Descripción

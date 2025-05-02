@@ -1,8 +1,16 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
+import { ref } from 'vue';
 import AppConfigurator from './AppConfigurator.vue';
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+
+const direction = ref('LTR');
+
+const toggleDirection = () => {
+    direction.value = direction.value === 'LTR' ? 'RTL' : 'LTR';
+    document.documentElement.setAttribute('dir', direction.value.toLowerCase());
+};
 </script>
 
 <template>
@@ -35,6 +43,10 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
         </div>
 
         <div class="layout-topbar-actions">
+            <button class="layout-topbar-action" @click="toggleDirection">
+                {{ direction }}
+            </button>
+
             <div class="layout-config-menu">
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
@@ -51,8 +63,7 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                 </div>
             </div>
 
-            <button
-                class="layout-topbar-menu-button layout-topbar-action"
+            <button class="layout-topbar-menu-button layout-topbar-action"
                 v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
             >
                 <i class="pi pi-ellipsis-v"></i>

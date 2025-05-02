@@ -94,6 +94,25 @@
         display: flex;
         gap: 1rem;
     }
+
+    // RTL styles
+    &:dir(rtl) {
+        padding: 0 2rem;
+
+        .layout-menu-button {
+            margin-left: 0.5rem;
+            margin-right: 0;
+        }
+
+        .layout-topbar-actions {
+            margin-left: 0;
+            margin-right: auto;
+        }
+
+        .layout-topbar-menu-content {
+            flex-direction: row-reverse;
+        }
+    }
 }
 
 @media (max-width: 991px) {
@@ -148,6 +167,20 @@
                 span {
                     font-weight: medium;
                     display: block;
+                }
+            }
+
+            &:dir(rtl) {
+                right: auto;
+                left: 2rem;
+
+                .layout-topbar-action {
+                    justify-content: flex-end;
+
+                    i {
+                        margin-right: 0;
+                        margin-left: 0.5rem;
+                    }
                 }
             }
         }

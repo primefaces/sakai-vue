@@ -67,3 +67,26 @@ export async function addRegister(userInfo, date) {
         console.error("Error updating the report: ", error);
     }
 }
+
+// Para obtener los datos de asistencia de una fecha 
+export async function getReportByDate(dateString) {
+    try {
+        // Reference with root de attendance, document es dateString del input parameter, y luego report subcollection 
+        const reportRef = collection(firestoreDB, "attendance", dateString, "report");
+        const reportSnapshot = await getDocs(reportRef); // Arreglo del reporte
+
+        let report = {}; // Objeto vacío para llenarlo de datos
+
+        // For each reportSnapshot in array, extracts the data using document id as key (so matricula) 
+        reportSnapshot.forEach((doc) => {
+            const docData = doc.data();
+            report[doc.id] = docData; // or docData.report if needed
+        });
+
+        return report;
+    // Error debug
+    } catch (error) {
+        console.error("Error fetching report", error);
+        return {};
+    }
+}

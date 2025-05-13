@@ -155,6 +155,15 @@ const router = createRouter({
                         roles: ['admin','tec']
                     }
                 },
+                /* Adding path for historial */
+                {
+                    path: '/admin/historialAsistencia',
+                    name: 'asistencia',
+                    component: () => import('@/views/AdminHistorialAsistencias.vue'),
+                    meta: {
+                        roles: ['admin','tec']
+                    }
+                },
                 /* 
                     TEMPLATE
                 */

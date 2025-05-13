@@ -183,38 +183,45 @@ const hasAttended = (asesoria) => {
         </h1>
     </div>
 
+    <!-- Mssg si no hay asesorías -->
     <div v-if="asesorias.length === 0 && !subjectsFilter" class="flex align-content-center h-full" style="min-height: 300px">
         <h1 class="flex align-items-center justify-content-center w-full text-center">
             <span>No hay asesorías grupales de momento 😔 <br> Consulta los <router-link to="horarios">horarios</router-link> para saber más ❤️</span>
         </h1>
     </div>
 
+    <!-- Asesorías activas -->
     <div class="flex flex-wrap gap-4">
+        <!-- v-for utilizado para render list of items -->
         <div v-for="asesoria in filteredAsesorias" :key="asesoria.id" 
              class="flex flex-col md:flex-row bg-white border-round-3xl w-full md:w-5 boder-gray card-container"
-             style="height: 190px;">
+             style="height: 15rem;">
+            <!-- Info de asesoría -->
             <div class="color-bar" :class="getSubjectColor(asesoria.subject.area)"></div>
             <div class="px-5 mt-4 w-full">
                 <div style="height: 50px">
-                    <p class="font-bold text-lg text-center">{{ asesoria.subject.name }}</p>
+                    <p class="font-bold text-black text-xl text-black-alpha-90 text-center">{{ asesoria.subject.name }}</p>
                 </div>
+                <!-- Location -->
                 <div class="flex align-items-center">
-                    <img src="/assets/ubicacion.svg" class="mr-2" alt="ubicacion icon" style="width: 1.4rem; height: 1.4rem;" />
-                    <p>{{ asesoria.location }}</p>
+                    <img src="/assets/ubicacion.svg" class="mr-2" alt="ubicacion icon" style="width: 2rem; height: 2rem;" />
+                    <p class="text-lg">{{ asesoria.location }}</p>
                 </div>
+                <!-- Hora -->
                 <div class="flex align-items-center mt-2">
-                    <img src="/assets/calendar.svg" class="mr-2" alt="calendar icon" style="width: 1.5rem; height: 1.5rem;" />
-                    <p class="text-md">
+                    <img src="/assets/calendar.svg" class="mr-2" alt="calendar icon" style="width: 2rem; height: 2rem;" />
+                    <p class="text-lg">
                         {{ formatDate(asesoria.dateTime) }}, 
                         {{ formatTime(asesoria.startTime, false) }} - 
                         {{ formatTime(asesoria.endTime, true) }}
                     </p>
                 </div>
+                <!-- Botón confirmación -->
                 <div class="flex justify-content-end mt-2">
                     <Button  
                         v-if="shouldShowConfirmButton(asesoria)" 
                         label="Asistencia confirmada" 
-                        class="font-bold text-black mt-2 text-md btn border-round-xl flex align-items-center" 
+                        class="font-bold text-black mt-2 text-lg btn border-round-xl flex align-items-center" 
                         @click="handleAsistence(asesoria)"
                         :style="{
                             background: 'linear-gradient(to right, #7044a7, #a551ac',
@@ -238,7 +245,7 @@ const hasAttended = (asesoria) => {
                     <Button  
                         v-else 
                         label="Pre-registro" 
-                        class="custom-button font-bold text-black mt-2 text-md btn border-round-xl flex align-items-center" 
+                        class="custom-button font-bold text-black mt-2 text-md btn border-round-xl flex align-items-center px-4 text-lg" 
                         @click="handlePreRegistro(asesoria)"
                     >
                         <span>Pre-registro</span>

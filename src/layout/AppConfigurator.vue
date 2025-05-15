@@ -199,8 +199,10 @@ function onMenuModeChange() {
 </script>
 
 <template>
-    <div
-        class="config-panel hidden absolute top-[3.25rem] right-0 w-64 p-4 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]"
+    <div class="config-panel hidden absolute top-[3.25rem] end-0 w-64 p-4
+        bg-neutral-50! dark:bg-neutral-900!
+        border border-slate-200! rounded-md origin-top
+        shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]"
     >
         <div class="flex flex-col gap-4">
             <div>
@@ -212,7 +214,10 @@ function onMenuModeChange() {
                         type="button"
                         :title="primaryColor.name"
                         @click="updateColors('primary', primaryColor)"
-                        :class="['border-none w-5 h-5 rounded-full p-0 cursor-pointer outline-none outline-offset-1', { 'outline-primary': layoutConfig.primary === primaryColor.name }]"
+                        :class="[
+                            'border-none w-5 h-5 rounded-full p-0 cursor-pointer outline-2 outline-transparent outline-offset-1',
+                            { 'outline-primary!': layoutConfig.primary === primaryColor.name }
+                        ]"
                         :style="{ backgroundColor: `${primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500']}` }"
                     ></button>
                 </div>
@@ -227,8 +232,8 @@ function onMenuModeChange() {
                         :title="surface.name"
                         @click="updateColors('surface', surface)"
                         :class="[
-                            'border-none w-5 h-5 rounded-full p-0 cursor-pointer outline-none outline-offset-1',
-                            { 'outline-primary': layoutConfig.surface ? layoutConfig.surface === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }
+                            'border-none w-5 h-5 rounded-full p-0 cursor-pointer outline-2 outline-transparent outline-offset-1',
+                            { 'outline-primary!': layoutConfig.surface ? layoutConfig.surface === surface.name : isDarkTheme ? surface.name === 'zinc' : surface.name === 'slate' }
                         ]"
                         :style="{ backgroundColor: `${surface.palette['500']}` }"
                     ></button>

@@ -13,6 +13,11 @@
     position: absolute;
     top: calc(50vh - 75px);
     left: calc(50vw - 75px);
+
+    &:dir(rtl) {
+        left: auto;
+        right: calc(50vw - 75px);
+    }
 }
 
 .preloader-content:before, .preloader-content:after{

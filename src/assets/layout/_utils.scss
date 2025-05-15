@@ -22,4 +22,16 @@
     &.p-toast-top-center {
         top: 100px;
     }
+
+    &:dir(rtl) {
+        &.p-toast-top-right {
+            right: auto;
+            left: 20px;
+        }
+
+        &.p-toast-top-left {
+            left: auto;
+            right: 20px;
+        }
+    }
 }

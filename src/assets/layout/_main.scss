@@ -5,6 +5,10 @@
     justify-content: space-between;
     padding: 6rem 2rem 0 2rem;
     transition: margin-left var(--layout-section-transition-duration);
+
+    &:dir(rtl) {
+        transition: margin-right var(--layout-section-transition-duration);
+    }
 }
 
 .layout-main {

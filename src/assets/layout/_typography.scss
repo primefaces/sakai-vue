@@ -50,6 +50,11 @@ blockquote {
     margin: 1rem 0;
     padding: 0 2rem;
     border-left: 4px solid #90a4ae;
+
+    &:dir(rtl) {
+        border-left: none;
+        border-right: 4px solid #90a4ae;
+    }
 }
 
 hr {

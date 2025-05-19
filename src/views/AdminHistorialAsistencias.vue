@@ -39,10 +39,9 @@ const loadDayReport = async (singleDate) => {
 // Function to load reports for a date range
 const loadRangeReport = async (start, end) => {
   try {
-    
-    const reportObject = await getReportByDateRange(start, end); // Fetches attendance from that date from firebase
+    const reportObjectRange = await getReportByDateRange(start, end); // Fetches attendance from that date from firebase
 
-    return Object.entries(reportObject).map(([id, data]) => ({
+    return Object.entries(reportObjectRange).map(([id, data]) => ({
       id,
       ...data
     })); // Converts obj to array to facilitate iteration
@@ -64,14 +63,12 @@ const loadRangeReport = async (start, end) => {
     <h2>{{ selectedDate }}</h2>
 
     <div v-if="loading">Cargando...</div>
-      <ul v-else>
-        <!-- Carga datos para un día -->
-        <li v-for="r in reports" :key="r.id">
-          {{ r.id }} - {{ r.email }} - {{ r.report }}
-        </li>
-
-        <!-- Carga datos para un rango de fechas -->
-      </ul>
+    <ul v-else>
+      <!-- Carga datos para un día -->
+      <li v-for="r in reports" :key="r.id">
+        {{ r.id }} - {{ r.email }} - {{ r.report }}
+      </li>
+    </ul>
   </div>
 
   <!-- Load data within range -->
@@ -81,11 +78,11 @@ const loadRangeReport = async (start, end) => {
     <p>Hasta: {{ endDate }}</p>
 
     <div v-if="loading">Cargando...</div>
-      <ul v-else>
-        <li v-for="rR in reportRange" :key="rR.id">
-          {{ rR.id }} - {{ rR.email }} - {{ rR.report }}
-        </li>
-      </ul>
+    <ul v-else>
+      <li v-for="rR in reportRange" :key="rR.id">
+        {{ rR.id }} - {{ rR.email }} - {{ rR.report }} - Fecha: {{ rR.date }}
+      </li>
+    </ul>
   </div>
      
 

@@ -97,11 +97,12 @@ export async function getReportByDateRange (startDate, endDate) {
         const start = new Date(startDate);
         const end = new Date(endDate);
 
-        const reportRef = collection(firestoreDB, "attendance");
-        const reportSnapshot = await getDocs(reportRef);
+        const attendanceRef = collection(firestoreDB, "attendance"); // Reference to the root collection
+        const attendanceSnapshot = await getDocs(reportRef); // Get all documents in the collection temporarily
 
         let report = {}; // Initialize an empty object to store the report data
 
+        /*
         // Loop through each document in the collection
         reportSnapshot.forEach((doc) => {
             const docData = doc.data(); // Stores data
@@ -112,6 +113,27 @@ export async function getReportByDateRange (startDate, endDate) {
                 report[doc.id] = docData;
             }
         });
+        */
+
+        // Uses attendanceRef date to check if it is within the range and stores the report data
+        for (const doc of attendanceRef.docs) {
+            const docDate = new Date(doc.id); // Parse the document ID as a date
+
+            // Check if the document date is within the specified range
+            if (docDate >= start && docDate <= end) {
+                const reportRef = collection(firestoreDB, "attendance", doc.id, "report"); // Full path with report date
+                const reportSnapshot = await getDocs(reportRef); // Stores full report
+
+                // Loop through each document in the "report" subcollection
+                reportSnapshot.forEach((reportDoc) => {
+                    const reportData = reportDoc.data();
+                    report[reportDoc.id] = {
+                        ...reportData,
+                        date: doc.id, // Include the date for context just in case it might be needed
+                    };
+                });
+            }
+        }
 
         return report;
     } catch (error) {

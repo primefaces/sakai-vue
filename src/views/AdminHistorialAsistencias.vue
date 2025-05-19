@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getReportByDate } from '@/firebase/db/attendance';
+import { getReportByDateRange } from '@/firebase/db/attendance';
+
 
 const loading = ref(true);
 const selectedDate = ref('2025-02-17'); // Change to dynamic later
@@ -41,10 +43,15 @@ const loadRangeReport = async (start, end) => {
   try {
     const reportObjectRange = await getReportByDateRange(start, end); // Fetches attendance from that date from firebase
 
+    /*
     return Object.entries(reportObjectRange).map(([id, data]) => ({
       id,
       ...data
     })); // Converts obj to array to facilitate iteration
+    */
+
+    return reportObjectRange;
+
   } catch (error) {
     console.error('Error loading report:', error);
     return [];
@@ -77,14 +84,14 @@ const loadRangeReport = async (start, end) => {
     <p>Desde: {{ startDate }}</p>
     <p>Hasta: {{ endDate }}</p>
 
+    <pre>{{ reportRange }}</pre>
+
     <div v-if="loading">Cargando...</div>
+    
     <ul v-else>
-      <li v-for="rR in reportRange" :key="rR.id">
-        {{ rR.id }} - {{ rR.email }} - {{ rR.report }} - Fecha: {{ rR.date }}
+      <li v-for="rR in reportRange" :key="rR.id + rR.date">
+        {{ rR.id }} - {{ rR.email }} - {{ rR.report || "No report" }} - Fecha: {{ rR.date }}
       </li>
     </ul>
   </div>
-     
-
-        
 </template>

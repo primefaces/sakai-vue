@@ -93,12 +93,17 @@ export async function getReportByDate (dateString) {
 
 // Para obtener todos los reportes de asistencia entre rango de fechas 
 export async function getReportByDateRange (startDate, endDate) {
+    console.log('Fetching report between:', startDate, 'and', endDate);
+
     try {
         const start = new Date(startDate);
         const end = new Date(endDate);
 
         const attendanceRef = collection(firestoreDB, "attendance"); // Reference to the root collection
-        const attendanceSnapshot = await getDocs(reportRef); // Get all documents in the collection temporarily
+        const attendanceSnapshot = await getDocs(attendanceRef); // Get all documents in the collection temporarily
+
+        console.log('Attendance dates found:', attendanceSnapshot.docs.map(d => d.id)); // debug to show the dates
+
 
         let report = {}; // Initialize an empty object to store the report data
 
@@ -116,7 +121,7 @@ export async function getReportByDateRange (startDate, endDate) {
         */
 
         // Uses attendanceRef date to check if it is within the range and stores the report data
-        for (const doc of attendanceRef.docs) {
+        for (const doc of attendanceSnapshot.docs) {
             const docDate = new Date(doc.id); // Parse the document ID as a date
 
             // Check if the document date is within the specified range
@@ -127,10 +132,20 @@ export async function getReportByDateRange (startDate, endDate) {
                 // Loop through each document in the "report" subcollection
                 reportSnapshot.forEach((reportDoc) => {
                     const reportData = reportDoc.data();
-                    report[reportDoc.id] = {
+                    console.log('✅ Processed date in range:', doc.id);
+
+                    
+                    // Creates array of reports
+                    report.push({
+                        id: reportDoc.id,
+                        ...reportData,
+                        date: doc.id, // string like '2025-03-14'
+                    });
+
+                    /*report[reportDoc.id] = {
                         ...reportData,
                         date: doc.id, // Include the date for context just in case it might be needed
-                    };
+                    };*/
                 });
             }
         }

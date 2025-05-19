@@ -69,7 +69,7 @@ export async function addRegister(userInfo, date) {
 }
 
 // Para obtener los datos de asistencia de una fecha 
-export async function getReportByDate(dateString) {
+export async function getReportByDate (dateString) {
     try {
         // Reference with root de attendance, document es dateString del input parameter, y luego report subcollection 
         const reportRef = collection(firestoreDB, "attendance", dateString, "report");
@@ -86,7 +86,36 @@ export async function getReportByDate(dateString) {
         return report;
     // Error debug
     } catch (error) {
-        console.error("Error fetching report", error);
+        console.error("Error fetching report: ", error);
+        return {};
+    }
+}
+
+// Para obtener todos los reportes de asistencia entre rango de fechas 
+export async function getReportByDateRange (startDate, endDate) {
+    try {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        const reportRef = collection(firestoreDB, "attendance");
+        const reportSnapshot = await getDocs(reportRef);
+
+        let report = {}; // Initialize an empty object to store the report data
+
+        // Loop through each document in the collection
+        reportSnapshot.forEach((doc) => {
+            const docData = doc.data(); // Stores data
+            const date = new Date(doc.id); // Isolates date 
+
+            // If date extracted is within range, adds that day's report data to the report object
+            if (date >= start && date <= end) {
+                report[doc.id] = docData;
+            }
+        });
+
+        return report;
+    } catch (error) {
+        console.error("Error fetching report: ", error);
         return {};
     }
 }

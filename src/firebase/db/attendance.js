@@ -50,6 +50,8 @@ export async function updateReport(userInfo, report) {
     }
 }
 
+// To get date info
+/*
 export async function addRegister(userInfo, date) {
     try {
         const year = date.getFullYear();
@@ -67,6 +69,29 @@ export async function addRegister(userInfo, date) {
         console.error("Error updating the report: ", error);
     }
 }
+*/
+export async function addRegister(userInfo, date) {
+    try {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}`;
+
+        // ✅ Ensure root date doc is created with a dummy field
+        const dateDocRef = doc(firestoreDB, "attendance", dateString);
+        await setDoc(dateDocRef, { initialized: true }, { merge: true });
+
+        const reportRef = doc(firestoreDB, "attendance", dateString, "report", userInfo.uid);
+        await setDoc(reportRef, {
+            ...userInfo,
+            report: 'RR'
+        });
+
+    } catch (error) {
+        console.error("Error updating the report: ", error);
+    }
+}
+
 
 // Para obtener los datos de asistencia de una fecha 
 export async function getReportByDate (dateString) {
@@ -91,6 +116,7 @@ export async function getReportByDate (dateString) {
     }
 }
 
+/*
 // Para obtener todos los reportes de asistencia entre rango de fechas 
 export async function getReportByDateRange (startDate, endDate) {
     console.log('Fetching report between:', startDate, 'and', endDate);
@@ -98,11 +124,16 @@ export async function getReportByDateRange (startDate, endDate) {
     try {
         const start = new Date(startDate);
         const end = new Date(endDate);
+        
+        const attendanceRef = collection(firestoreDB, "attendance");
+        //const docs = await attendanceRef.listDocuments();
+        const dateStrings = docs.map(doc => doc.id); // Use Node.JS to map all entries 
 
-        const attendanceRef = collection(firestoreDB, "attendance"); // Reference to the root collection
+        //const attendanceRef = collection(firestoreDB, "attendance"); // Reference to the root collection
         const attendanceSnapshot = await getDocs(attendanceRef); // Get all documents in the collection temporarily
 
         console.log('Attendance dates found:', attendanceSnapshot.docs.map(d => d.id)); // debug to show the dates
+        console.log('Dates: ', dateStrings);
 
 
         let report = {}; // Initialize an empty object to store the report data
@@ -118,7 +149,7 @@ export async function getReportByDateRange (startDate, endDate) {
                 report[doc.id] = docData;
             }
         });
-        */
+        // PREVIOUS CLOSING HERE 
 
         // Uses attendanceRef date to check if it is within the range and stores the report data
         for (const doc of attendanceSnapshot.docs) {
@@ -145,7 +176,7 @@ export async function getReportByDateRange (startDate, endDate) {
                     /*report[reportDoc.id] = {
                         ...reportData,
                         date: doc.id, // Include the date for context just in case it might be needed
-                    };*/
+                    };
                 });
             }
         }
@@ -155,4 +186,90 @@ export async function getReportByDateRange (startDate, endDate) {
         console.error("Error fetching report: ", error);
         return {};
     }
+}
+
+export async function getReportByDateRange(startDate, endDate) {
+    console.log('Fetching report between:', startDate, 'and', endDate);
+
+    try {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        const attendanceRef = collection(firestoreDB, "attendance");
+        const attendanceSnapshot = await getDocs(attendanceRef);
+
+        console.log('Attendance dates found:', attendanceSnapshot.docs.map(d => d.id));
+
+        const report = [];
+
+        for (const doc of attendanceSnapshot.docs) {
+            const docDate = new Date(doc.id);
+
+            if (docDate >= start && docDate <= end) {
+                const reportRef = collection(firestoreDB, "attendance", doc.id, "report");
+                const reportSnapshot = await getDocs(reportRef);
+
+                reportSnapshot.forEach((reportDoc) => {
+                    const reportData = reportDoc.data();
+                    report.push({
+                        id: reportDoc.id,
+                        ...reportData,
+                        date: doc.id,
+                    });
+                });
+            }
+        }
+
+        return report;
+    } catch (error) {
+        console.error("Error fetching report: ", error);
+        return [];
+    }
+}
+*/
+
+
+function getDateStringsBetween(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dateList = [];
+
+    while (start <= end) {
+        const year = start.getFullYear();
+        const month = String(start.getMonth() + 1).padStart(2, '0');
+        const day = String(start.getDate()).padStart(2, '0');
+        dateList.push(`${year}-${month}-${day}`);
+        start.setDate(start.getDate() + 1);
+    }
+
+    return dateList;
+}
+
+export async function getReportByDateRange(startDate, endDate) {
+    console.log('📅 Fetching report between:', startDate, 'and', endDate);
+
+    const dateStrings = getDateStringsBetween(startDate, endDate);
+    const report = [];
+
+    for (const date of dateStrings) {
+        const reportRef = collection(firestoreDB, "attendance", date, "report");
+        try {
+            const reportSnap = await getDocs(reportRef);
+
+            if (!reportSnap.empty) {
+                console.log(`✅ Found report data for ${date}`);
+                reportSnap.forEach((doc) => {
+                    report.push({
+                        id: doc.id,
+                        ...doc.data(),
+                        date,
+                    });
+                });
+            }
+        } catch (error) {
+            console.warn(`⚠️ Skipping ${date}:`, error.message);
+        }
+    }
+
+    return report;
 }

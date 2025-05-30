@@ -12,7 +12,7 @@ const maeStats = computed(() => {
     const uid = entry.id;
     const reportCode = entry.report;
 
-    // Initialize or reuse
+    // Initialize or reuse a mae
     if (!summaryMap.has(uid)) {
       summaryMap.set(uid, {
         id: uid,
@@ -39,11 +39,43 @@ const maeStats = computed(() => {
 });
 
 
+// One day
 const loading = ref(true);
 const selectedDate = ref('2025-02-17'); // Change to dynamic later
 
+// Date range 
+const rangeLoading = ref(true); // Separates loading state for range data
+
+// General de semestre 
+
 const startDate = ref('2025-02-17'); // First date in database
-const endDate = ref('2025-05-16'); // End date, update later to fetch current date
+const endDate = ref('2025-05-29'); // End date, update later to fetch current date
+
+
+// Periodo 1
+/*
+const startDate = ref('2025-02-17'); 
+const endDate = ref('2025-03-16');
+*/
+
+// Periodo 2
+// Antes de semana santa
+/*
+const startDate = ref('2025-03-24'); 
+const endDate = ref('2025-04-13'); 
+*/
+// Después de semana santa
+/*
+const startDate = ref('2025-04-21'); 
+const endDate = ref('2025-05-04');
+*/
+
+// Periodo 3
+/*
+const startDate = ref('2025-05-12'); 
+const endDate = ref('2025-05-29'); // NOT YET OVER
+*/
+
 
 // Arrays for reports
 const reports = ref([]);
@@ -51,15 +83,26 @@ const reportRange = ref([]);
 
 onMounted(async () => {
   loading.value = true;
+  loading.value = true;
+  try {
+    reports.value = await loadDayReport(selectedDate.value);
+  } catch (error) {
+    console.error('Error loading day report:', error);
+  } finally {
+    loading.value = false; 
+  }
+
+  rangeLoading.value = true; // Now retrieving this 
   reports.value = await loadDayReport(selectedDate.value); // Fetches attendance from that date from firebase
-  reportRange.value = await loadRangeReport(startDate.value, endDate.value); // Calls funct to fetch reports within date range
-
-  console.log("✅ reportRange loaded:", reportRange.value.length, "entries");
-  console.log("🧮 computed stats:", maeStats.value);
-  
-
-  loading.value = false;
-  console.log('Reports:', reports.value); // To see values just in case
+  try {
+    reportRange.value = await loadRangeReport(startDate.value, endDate.value);
+    console.log("ReportRange loaded:", reportRange.value.length, "entries");
+    console.log("Computed stats:", maeStats.value);
+  } catch (error) {
+    console.error('Error loading range report:', error);
+  } finally {
+    rangeLoading.value = false;
+  }
 });
 
 // Function to load reports for a specific date
@@ -91,8 +134,10 @@ const loadRangeReport = async (start, end) => {
 
     return reportObjectRange;
     */
-    const result = await getReportByDateRange(start, end); // ✅ this was missing
-    reportRange.value = result; 
+    const result = await getReportByDateRange(start, end); 
+    console.log("📊 Raw range data:", result);
+    //reportRange.value = result; 
+    return result; 
 
   } catch (error) {
     console.error('Error loading report:', error);
@@ -125,23 +170,22 @@ const loadRangeReport = async (start, end) => {
     <h2>Rango de fechas</h2>
     <p>Desde: {{ startDate }}</p>
     <p>Hasta: {{ endDate }}</p>
-
-    <pre>{{ reportRange }}</pre>
-
-    <div v-if="loading">Cargando...</div>
-    
  
       <!--
       <li v-for="rR in reportRange" :key="rR.id + rR.date">
         {{ rR.id }} - {{ rR.email }} - {{ rR.report || "No report" }} - Fecha: {{ rR.date }}
       </li>
     -->
-    <ol v-if="maeStats.length">
-      <li v-for="mae in maeStats" :key="mae.id">
-        {{ mae.name || mae.id }} ({{ mae.email }}) — A: {{ mae.A }}, R: {{ mae.R }}, F: {{ mae.F }}, J: {{ mae.J }}
-      </li>
-    </ol>
-
+    <div v-if="rangeLoading">Cargando datos del rango...</div>
+    <div v-else-if="maeStats.length === 0">No hay datos en este rango de fechas</div>
+    <div v-else>
+      <ol>
+        <li v-for="mae in maeStats" :key="mae.id">
+          <strong>{{ mae.id }} </strong> - A:{{ mae.A }} R:{{ mae.R }} F:{{ mae.F }} J:{{ mae.J }} <strong>Ratio: ({{mae.A}} {{ mae.count }})</strong>
+        </li>
+      </ol>
+    </div>
+    
   </div>
 </template>
 

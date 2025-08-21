@@ -38,48 +38,42 @@ const maeStats = computed(() => {
   return Array.from(summaryMap.values());
 });
 
+// Date management 
+const today = new Date();
+const yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+
+// Format it MAEs firebase format year-month-day
+const year = yesterday.getFullYear();
+const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+const day = String(yesterday.getDate()).padStart(2, '0');
+
+const formatYesterday = `${year}-${month}-${day}`;
 
 // One day
 const loading = ref(true);
-const selectedDate = ref('2025-02-17'); // Change to dynamic later
+const selectedDate = ref(formatYesterday); // Loads previous day
 
 // Date range 
 const rangeLoading = ref(true); // Separates loading state for range data
 
-// General de semestre 
-
-const startDate = ref('2025-02-17'); // First date in database
-const endDate = ref('2025-05-29'); // End date, update later to fetch current date
-
-
-// Periodo 1
-/*
-const startDate = ref('2025-02-17'); 
-const endDate = ref('2025-03-16');
-*/
-
-// Periodo 2
-// Antes de semana santa
-/*
-const startDate = ref('2025-03-24'); 
-const endDate = ref('2025-04-13'); 
-*/
-// Después de semana santa
-/*
-const startDate = ref('2025-04-21'); 
-const endDate = ref('2025-05-04');
-*/
-
-// Periodo 3
-/*
-const startDate = ref('2025-05-12'); 
-const endDate = ref('2025-05-29'); // NOT YET OVER
-*/
-
+// Temp default for semester
+const startDate = ref('2025-08-18'); 
+const endDate = ref(formatDate(today)); // Current date of semester, use aux funct
 
 // Arrays for reports
 const reports = ref([]);
 const reportRange = ref([]); 
+
+// Just to format dates year-month-day
+// Expects a unix date object, returns a string w formatted date
+function formatDate(unixDate) {
+  const year = unixDate.getFullYear();
+  const month = String(unixDate.getMonth() + 1).padStart(2, '0');
+  const day = String(unixDate.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
 
 onMounted(async () => {
   loading.value = true;
@@ -160,7 +154,7 @@ const loadRangeReport = async (start, end) => {
     <ol v-else>
       <!-- Carga datos para un día -->
       <li v-for="r in reports" :key="r.id">
-        {{ r.id }} - {{ r.email }} - {{ r.report }}
+        {{ r.id }} - {{ r.report }}
       </li>
     </ol>
   </div>

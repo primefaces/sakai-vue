@@ -35,7 +35,8 @@ onMounted(async () => {
             adminItems.push(
                 { label: 'Asesorías', icon: 'pi pi-fw pi-list', to: '/admin/asesorias' },
                 { label: 'Funciones', icon: 'pi pi-fw pi-key', to: '/admin/funciones' },
-                { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/admin/dashboard' }
+                { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/admin/dashboard' }, 
+                { label: 'Historial asistencia', icon: 'pi pi-fw pi-history', to: '/admin/historialAsistencia'}
             );
         }
 

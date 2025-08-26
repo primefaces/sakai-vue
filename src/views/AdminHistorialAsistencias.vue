@@ -76,10 +76,37 @@ function formatDate(unixDate) {
 }
 
 onMounted(async () => {
+  /*
+  // If only want one day to load, then loads just that as default
+  if (startDate == endDate) {
+    loading.value = true;
+    try {
+      reports.value = await getReportByDate(selectedDate.value);
+    } catch (error) {
+      console.error('Error loading day report:', error);
+    } finally {
+      loading.value = false; 
+    }
+  } 
+  // Else wants to see a range, get those dates 
+  else if (startDate > endDate) {
+    rangeLoading.value = true;
+    try {
+      reportRange.value = await loadRangeReport(startDate.value, endDate.value);
+      console.log("ReportRange loaded:", reportRange.value.length, "entries");
+      console.log("Computed stats:", maeStats.value);
+    } catch (error) {
+      console.error('Error loading range report:', error);
+    } finally {
+      rangeLoading.value = false;
+    }
+  }
+    */
+  
   loading.value = true;
   loading.value = true;
   try {
-    reports.value = await loadDayReport(selectedDate.value);
+    reports.value = await loadRangeReport(selectedDate.value);
   } catch (error) {
     console.error('Error loading day report:', error);
   } finally {
@@ -87,9 +114,10 @@ onMounted(async () => {
   }
 
   rangeLoading.value = true; // Now retrieving this 
-  reports.value = await loadDayReport(selectedDate.value); // Fetches attendance from that date from firebase
+  //reports.value = await loadDayReport(selectedDate.value); // Fetches attendance from that date from firebase
   try {
     reportRange.value = await loadRangeReport(startDate.value, endDate.value);
+    //reportRange.value = await loadRangeReport(selectedDate.value, selectedDate.value); // TEMP ONLY YESTERDAY
     console.log("ReportRange loaded:", reportRange.value.length, "entries");
     console.log("Computed stats:", maeStats.value);
   } catch (error) {
@@ -97,6 +125,7 @@ onMounted(async () => {
   } finally {
     rangeLoading.value = false;
   }
+    
 });
 
 // Function to load reports for a specific date
@@ -117,19 +146,9 @@ const loadDayReport = async (singleDate) => {
 // Function to load reports for a date range
 const loadRangeReport = async (start, end) => {
   try {
-    //const reportObjectRange = await getReportByDateRange(start, end); // Fetches attendance from that date from firebase
-
-    /*
-    return Object.entries(reportObjectRange).map(([id, data]) => ({
-      id,
-      ...data
-    })); // Converts obj to array to facilitate iteration
-    
-
-    return reportObjectRange;
-    */
+    // Fetches attendance from that date from firebase
     const result = await getReportByDateRange(start, end); 
-    console.log("📊 Raw range data:", result);
+    //console.log("Raw range data:", result);
     //reportRange.value = result; 
     return result; 
 
@@ -143,7 +162,41 @@ const loadRangeReport = async (start, end) => {
 
 <template>
   <div class="sm:flex sm:justify-content-between mb-2 sm:mb-5">
-        <h1 class="text-black text-6xl font-bold text-center m-0 sm:text-left">Historial de asistencia</h1>
+    <h1 class="text-black text-6xl font-bold text-center m-0 sm:text-left">Historial de asistencia</h1>
+  </div>
+
+  <!-- Table w data from attendance, default view for prev day -->
+  <!-- note that the value typed in is what it will use-->
+  <div class="card mb-0">
+    <DataTable :value="maeStats" paginator :rows="50" dataKey="id"  :loading="loading" class="border-round-xl"
+    v-model:filters="filters" filterDisplay="row" removableSort
+    responsiveLayout="stack" breakpoint="640px"
+    >
+      <!-- Default while loading info -->
+      <template #empty>No se encontró la asistencia de los Maes</template>
+      <template #loading>Cargando información</template>
+
+      <!-- MAE info -->
+      <Column header="Matrícula" field="id">
+        <template #body="{ data }">
+          <a :href="`#/mae/${data.id}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.id }}</a>
+        </template>
+      </Column>
+
+      <!--<Column header="Rol" field="rol">
+        <a :href="`#/mae/${data.rol}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.rol }}</a>
+      </Column>-->
+
+      <Column header="Asistencias" field="a">
+        <a :href="`#/mae/${data.A}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.A }}</a>
+      </Column>
+      <!--
+      <Column header="Justificados" field="id"></Column>
+      <Column header="Retrasos" field="id"></Column>
+      <Column header="Faltas" field="id"></Column>
+      <Column header="Proporción asistencia" field="id"></Column>
+      -->
+    </DataTable>
   </div>
 
   <div>
@@ -152,9 +205,12 @@ const loadRangeReport = async (start, end) => {
 
     <div v-if="loading">Cargando...</div>
     <ol v-else>
-      <!-- Carga datos para un día -->
+      <!-- Carga datos para un día 
       <li v-for="r in reports" :key="r.id">
         {{ r.id }} - {{ r.report }}
+      </li>-->
+      <li v-for="mae in maeStats" :key="mae.id">
+        <strong>{{ mae.id }} </strong> - A:{{ mae.A }} R:{{ mae.R }} F:{{ mae.F }} J:{{ mae.J }} <strong>Ratio: ({{mae.A}} {{ mae.count }})</strong>
       </li>
     </ol>
   </div>
@@ -183,3 +239,11 @@ const loadRangeReport = async (start, end) => {
   </div>
 </template>
 
+
+<!-- 
+TOOD
+* Change to table format to make data management easier
+* Make it so that it loads default w today range, and can select a date
+* Make it so that if the selected start == end date, then it only loads one date
+* Excel exporting info
+-->

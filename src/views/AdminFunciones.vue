@@ -318,7 +318,7 @@ const handleUpdatePoints = async () => {
             />
         </div>
 
-
+        <!--
         <div class="flex justify-content-center w-full mt-4">
             <Button 
                 label="Restablecer maes" 
@@ -327,6 +327,7 @@ const handleUpdatePoints = async () => {
                 @click="restartMaes" 
             />
         </div>
+        -->
 
         <!-- Diálogo para carga de archivo -->
         <Dialog 

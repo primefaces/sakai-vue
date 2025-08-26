@@ -32,40 +32,51 @@ export async function addAsesoria(maeInfo, userInfo, subject, comment, rating) {
 }
 
 export async function getAsesoriasCountForUserInCurrentSemester(userId) {
-    try {
-        const now = new Date();
-        const currentYear = now.getFullYear();
-        let startOfSemester, endOfSemester;
+  try {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    let startOfSemester, endOfSemester;
 
-        // Determine the current semester range
-        if (now.getMonth() < 6) { // January to June
-            startOfSemester = new Date(currentYear, 0, 1); // January 1st
-            endOfSemester = new Date(currentYear, 5, 30, 23, 59, 59, 999); // June 30th, end of day
-        } else { // July to December
-            startOfSemester = new Date(currentYear, 6, 1); // July 1st
-            endOfSemester = new Date(currentYear, 11, 31, 23, 59, 59, 999); // December 31st, end of day
-        }
-
-        const startTimestamp = Timestamp.fromDate(startOfSemester);
-        const endTimestamp = Timestamp.fromDate(endOfSemester);
-        const valueAsesoria = false;
-        const requestsRef = collection(firestoreDB, "asesorias");
-
-        // Realiza la consulta solo por userId
-        const q = query(requestsRef, where("peerInfo.uid", "==", userId));
-        const querySnapshot = await getDocs(q);
-
-        // Filtrar los resultados en el cliente
-        const filteredCount = querySnapshot.docs.filter(doc => {
-            const data = doc.data();
-            return data.date >= startTimestamp && data.date <= endTimestamp && data.duplicate === valueAsesoria;
-        }).length;
-
-        return filteredCount;
-    } catch (error) {
-        console.error("Error fetching request count: ", error);
-        return 0;
+    // Determine the current semester range
+    if (now.getMonth() < 6) { // January to June
+        startOfSemester = new Date(currentYear, 0, 1); // January 1st
+        endOfSemester = new Date(currentYear, 5, 30, 23, 59, 59, 999); // June 30th, end of day
+    } else { // July to December
+        startOfSemester = new Date(currentYear, 6, 1); // July 1st
+        endOfSemester = new Date(currentYear, 11, 31, 23, 59, 59, 999); // December 31st, end of day
     }
+
+    const startMs = startOfSemester.getTime();
+    const endMs = endOfSemester.getTime();
+    const requestsRef = collection(firestoreDB, "asesorias");
+
+    // Realiza la consulta solo por userId
+    const q = query(requestsRef, where("peerInfo.uid", "==", userId));
+    const querySnapshot = await getDocs(q);
+
+    const filteredCount = querySnapshot.docs.filter(doc => {
+      const data = doc.data();
+
+      // Normaliza date -> milisegundos
+      let ms;
+      const dt = data.date;
+      if (!dt) return false;
+      if (dt instanceof Timestamp) ms = dt.toMillis();
+      else if (dt.toDate) ms = dt.toDate().getTime();
+      else if (dt instanceof Date) ms = dt.getTime();
+      else if (typeof dt === "string") ms = new Date(dt).getTime();
+      else return false;
+
+      const isDuplicate = data.duplicate === true;
+
+      return ms >= startMs && ms <= endMs && !isDuplicate;
+    }).length;
+
+    return filteredCount;
+  } catch (error) {
+    console.error("Error fetching request count: ", error);
+    return 0;
+  }
 }
 
 

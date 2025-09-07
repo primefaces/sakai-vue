@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import FeaturesWidget from '@/components/landing/FeaturesWidget.vue';
 import FooterWidget from '@/components/landing/FooterWidget.vue';
 import HeroWidget from '@/components/landing/HeroWidget.vue';

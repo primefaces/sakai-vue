@@ -5,7 +5,10 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "lint": "eslint --fix . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs",
+        "lint-fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
+        "prettier": "prettier --check .",
+        "prettier-fix": "prettier --write ."
     },
     "dependencies": {
         "@primeuix/themes": "^1.0.0",
@@ -17,15 +20,20 @@
         "vue-router": "^4.4.0"
     },
     "devDependencies": {
+        "@eslint/js": "^9.35.0",
         "@primevue/auto-import-resolver": "^4.3.1",
-        "@rushstack/eslint-patch": "^1.8.0",
         "@vitejs/plugin-vue": "^5.0.5",
-        "@vue/eslint-config-prettier": "^9.0.0",
+        "@vue/eslint-config-prettier": "^10.2.0",
+        "@vue/eslint-config-standard": "^9.0.1",
         "autoprefixer": "^10.4.19",
-        "eslint": "^8.57.0",
-        "eslint-plugin-vue": "^9.23.0",
+        "eslint": "^9.35.0",
+        "eslint-config-flat-gitignore": "^2.1.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.4",
+        "eslint-plugin-tailwindcss": "^3.18.2",
+        "eslint-plugin-vue": "^10.4.0",
         "postcss": "^8.4.40",
-        "prettier": "^3.2.5",
+        "prettier": "3.6.2",
         "sass": "^1.55.0",
         "tailwindcss": "^3.4.6",
         "unplugin-vue-components": "^0.27.3",

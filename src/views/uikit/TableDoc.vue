@@ -108,7 +108,10 @@ function initFilters1() {
 }
 
 function expandAll() {
-    expandedRows.value = products.value.reduce((acc, p) => (acc[p.id] = true) && acc, {});
+    expandedRows.value = products.value.reduce((acc, p) => {
+        acc[p.id] = true;
+        return acc;
+    }, {});
 }
 
 function collapseAll() {
@@ -130,7 +133,7 @@ function formatDate(value) {
 function calculateCustomerTotal(name) {
     let total = 0;
     if (customers3.value) {
-        for (let customer of customers3.value) {
+        for (const customer of customers3.value) {
             if (customer.representative.name === name) {
                 total++;
             }
@@ -164,7 +167,7 @@ function calculateCustomerTotal(name) {
                         <InputIcon>
                             <i class="pi pi-search" />
                         </InputIcon>
-                        <InputText v-model="filters1['global'].value" placeholder="Keyword Search" />
+                        <InputText v-model="filters1.global.value" placeholder="Keyword Search" />
                     </IconField>
                 </div>
             </template>

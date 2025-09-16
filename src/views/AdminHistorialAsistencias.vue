@@ -61,6 +61,9 @@ const rangeLoading = ref(true); // Separates loading state for range data
 const startDate = ref('2025-08-18'); 
 const endDate = ref(formatDate(today)); // Current date of semester, use aux funct
 
+//const startDate = ref('2025-09-09'); 
+//const endDate = ref('2025-09-11');
+
 // Arrays for reports
 const reports = ref([]);
 const reportRange = ref([]); 
@@ -118,8 +121,8 @@ onMounted(async () => {
   try {
     reportRange.value = await loadRangeReport(startDate.value, endDate.value);
     //reportRange.value = await loadRangeReport(selectedDate.value, selectedDate.value); // TEMP ONLY YESTERDAY
-    console.log("ReportRange loaded:", reportRange.value.length, "entries");
-    console.log("Computed stats:", maeStats.value);
+    //console.log("ReportRange loaded:", reportRange.value.length, "entries");
+    //console.log("Computed stats:", maeStats.value);
   } catch (error) {
     console.error('Error loading range report:', error);
   } finally {
@@ -183,19 +186,44 @@ const loadRangeReport = async (start, end) => {
         </template>
       </Column>
 
-      <!--<Column header="Rol" field="rol">
-        <a :href="`#/mae/${data.rol}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.rol }}</a>
-      </Column>-->
-
-      <Column header="Asistencias" field="a">
-        <a :href="`#/mae/${data.A}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.A }}</a>
+      <Column header="Asistencias" field="A">
+        <template #body="{ data }">
+          <p class="text-lg font-semibold">{{ data.A }}</p>
+        </template>
       </Column>
-      <!--
-      <Column header="Justificados" field="id"></Column>
-      <Column header="Retrasos" field="id"></Column>
-      <Column header="Faltas" field="id"></Column>
-      <Column header="Proporción asistencia" field="id"></Column>
-      -->
+
+      <Column header="Justificados" field="J">
+        <template #body="{ data }">
+          <p class="text-lg font-semibold">{{ data.J }}</p>
+        </template>
+      </Column>
+
+      <Column header="Retrasos" field="R">
+        <template #body="{ data }">
+          <p class="text-lg font-semibold">{{ data.R }}</p>
+        </template>
+      </Column>
+
+      <Column header="Faltas" field="F">
+        <template #body="{ data }">
+          <p class="text-lg font-semibold">{{ data.F }}</p>
+        </template>
+      </Column>
+
+      <Column header="Proporción asistencia" field="count">
+        <template #body="{ data }">
+          <p>{{ data.A }} de {{ data.count }}</p>
+        </template>
+      </Column>
+
+      <Column header="Porcentaje cumplimiento" field="count">
+        <template #body="{ data }">
+          <p>{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
+        </template>
+      </Column>
+
+      
+      
     </DataTable>
   </div>
 

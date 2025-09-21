@@ -202,7 +202,7 @@ const guardarEvaluacion = async () => {
       </div>
 
       <div class="flex flex-column md:flex-row md:gap-4   w-full  ">
-         <Button
+         <!-- <Button
           class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-3 text-2xl font-bold flex justify-content-center align-items-center border-none	"
           :style="{ background: 'linear-gradient(to right, #CC7722, #DAA520)' }"
           @click="showDialogSolicitar = true"
@@ -210,7 +210,7 @@ const guardarEvaluacion = async () => {
         >
             Solicitar asesoría
             <img src="/assets/calendarOutline.svg" class="ml-4" alt="calendar icon" style="width: 3.0rem; height: 3.0rem;" />
-        </Button>
+        </Button> -->
 
         <Button
           class="p-button-help p-button-lg py-4 w-full md:w-5 text-white  border-round-3xl  mb-3 text-2xl font-bold flex justify-content-center align-items-center border-none	"
@@ -218,7 +218,7 @@ const guardarEvaluacion = async () => {
           @click="showDialogAsesoria = true"
           :disabled=" isSavingAsesoria" 
         >
-            Registrar asesoría <br> ya recibida
+            Registrar asesoría
             <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 3.0rem; height: 3.0rem;" />
         </Button>
 
@@ -353,6 +353,12 @@ const guardarEvaluacion = async () => {
     <p class="font-bold">Materia</p>
     <Dropdown v-model="materiaAsesoria" :options="subjects" filter optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false" class="w-12 mb-2" />
 
+    <div class="aviso__asesoria">
+      <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
+        <path d="M1.375 28.875L16.5 2.75L31.625 28.875H1.375ZM6.11875 26.125H26.8812L16.5 8.25L6.11875 26.125ZM16.5 24.75C16.8896 24.75 17.2161 24.6182 17.4797 24.3547C17.7432 24.0911 17.875 23.7646 17.875 23.375C17.875 22.9854 17.7432 22.6589 17.4797 22.3953C17.2161 22.1318 16.8896 22 16.5 22C16.1104 22 15.7839 22.1318 15.5203 22.3953C15.2568 22.6589 15.125 22.9854 15.125 23.375C15.125 23.7646 15.2568 24.0911 15.5203 24.3547C15.7839 24.6182 16.1104 24.75 16.5 24.75ZM15.125 20.625H17.875V13.75H15.125V20.625Z" fill="#8B5A00"/>
+      </svg>
+      <p>Recuerda: <br>Tu asesoría se registra al momento de recibirla.</p>
+    </div>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
       <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null)" @click="saveAsesoria"></Button>
@@ -480,5 +486,31 @@ const guardarEvaluacion = async () => {
 
 .no-blue-link:active {
     color: inherit;
+}
+
+.aviso__asesoria{
+  display: flex;
+  width: 100%;
+  min-height: 87px;
+  padding: 18px 20px;
+  align-items: center;
+  gap: 19px;
+  flex-shrink: 0;
+  background: rgba(238, 216, 138, 0.40);
+  border-radius: 12px;
+  border: 1px solid rgba(238, 216, 138, 0.6);
+  margin: 16px 0;
+}
+
+.aviso__asesoria p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #8B5A00;
+  font-weight: 500;
+}
+
+.aviso__asesoria svg {
+  flex-shrink: 0;
 }
 </style>

@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue';
 import { getReportByDate } from '@/firebase/db/attendance';
 import { getReportByDateRange } from '@/firebase/db/attendance';
+import * as XLSX from 'xlsx'; // To export to excel 
+import Dialog from 'primevue/dialog'; // To use dialog modal
 
 // To get number of mae attendances 
 import { computed } from 'vue';
@@ -61,12 +63,13 @@ const rangeLoading = ref(true); // Separates loading state for range data
 const startDate = ref('2025-08-18'); 
 const endDate = ref(formatDate(today)); // Current date of semester, use aux funct
 
-//const startDate = ref('2025-09-09'); 
-//const endDate = ref('2025-09-11');
-
 // Arrays for reports
 const reports = ref([]);
 const reportRange = ref([]); 
+
+// To work w Excel exporting
+const isFiltered = ref(false);
+const showDialog = ref(false);
 
 // Just to format dates year-month-day
 // Expects a unix date object, returns a string w formatted date
@@ -79,41 +82,18 @@ function formatDate(unixDate) {
 }
 
 onMounted(async () => {
-  /*
-  // If only want one day to load, then loads just that as default
-  if (startDate == endDate) {
-    loading.value = true;
-    try {
-      reports.value = await getReportByDate(selectedDate.value);
-    } catch (error) {
-      console.error('Error loading day report:', error);
-    } finally {
-      loading.value = false; 
-    }
-  } 
-  // Else wants to see a range, get those dates 
-  else if (startDate > endDate) {
-    rangeLoading.value = true;
-    try {
-      reportRange.value = await loadRangeReport(startDate.value, endDate.value);
-      console.log("ReportRange loaded:", reportRange.value.length, "entries");
-      console.log("Computed stats:", maeStats.value);
-    } catch (error) {
-      console.error('Error loading range report:', error);
-    } finally {
-      rangeLoading.value = false;
-    }
-  }
-    */
-  
   loading.value = true;
-  loading.value = true;
+  rangeLoading.value = true; 
+
   try {
     reports.value = await loadRangeReport(selectedDate.value);
+    isFiltered.value = true; // Did filter og info using dates
   } catch (error) {
     console.error('Error loading day report:', error);
+    isFiltered.value = false; 
   } finally {
     loading.value = false; 
+    rangeLoading.value = false; 
   }
 
   rangeLoading.value = true; // Now retrieving this 
@@ -161,12 +141,81 @@ const loadRangeReport = async (start, end) => {
   }
 };
 
+// Function to load reports within range when Filtrar button is pressed 
+// Add this function to handle filtering
+const filterByDate = async () => {
+  try {
+    loading.value = true;
+    rangeLoading.value = true;
+    
+    // Convert Date objects to strings if they're Date objects to load proper info 
+    const start = startDate.value instanceof Date ? formatDate(startDate.value) : startDate.value;
+    const end = endDate.value instanceof Date ? formatDate(endDate.value) : endDate.value;
+    
+    //console.log('Filtering from:', start, 'to:', end);
+    
+    // Update the reportRange w new data 
+    reportRange.value = await loadRangeReport(start, end);
+    isFiltered.value = true; // Added for excel to indicate when done filtering
+    
+  } catch (error) {
+    console.error('Error filtering reports:', error);
+    reportRange.value = [];
+    isFiltered.value = false; // Didn't filter it correctly
+  } finally {
+    loading.value = false;
+    rangeLoading.value = false;
+  }
+};
+
+// Function to export excel 
+const exportToExcel = () => {
+  if (!isFiltered.value) {
+    showDialog.value = true;
+    return;
+  }
+  exportData();
+};
+
+// The info that gets exported from maeStats
+const exportData = () => {
+  const formattedData = maeStats.value.map(mae => ({
+    'Matrícula': mae.id,
+    'Asistencias esperadas': mae.count,
+    'Proporción': `${mae.A} de ${mae.count}`,
+    'Porcentaje': mae.count > 0 ? Math.round((mae.A / mae.count) * 100) : 0, //If have at least one attendance, calcs the %; if no attendance at all, leaves at 0
+    'Asistencias': mae.A,
+    'Justificados': mae.J,
+    'Retrasos': mae.R,
+    'Faltas': mae.F,
+    
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(formattedData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Asistencias");
+  XLSX.writeFile(workbook, "historial_asistencias.xlsx");
+};
+
+const confirmExportAction = () => {
+  showDialog.value = false;
+  exportData();
+};
 </script>
 
 <template>
   <div class="sm:flex sm:justify-content-between mb-2 sm:mb-5">
     <h1 class="text-black text-6xl font-bold text-center m-0 sm:text-left">Historial de asistencia</h1>
   </div>
+
+  <!-- Dates to view attendance -->
+  <div class="flex md:flex-row flex-column mb-4">
+          <Calendar v-model="startDate" placeholder="Fecha de Inicio" dateFormat="yy-mm-dd" showIcon class="mb-2 mr-3 w-3" />
+          <span class="mx-3 text-4xl text-black font-bold">-</span>
+          <Calendar v-model="endDate" placeholder="Fecha de Fin" dateFormat="yy-mm-dd" showIcon class="mb-2 mx-3 w-3" />
+          <Button label="Filtrar" @click="filterByDate" class="mb-2 mx-3 w-2" /> <!-- Uses new funct to load vals -->
+          <Button label="Exportar a Excel" @click="exportToExcel" class="mb-2 mx-3 w-3" :disabled="!isFiltered" />
+      </div>
 
   <!-- Table w data from attendance, default view for prev day -->
   <!-- note that the value typed in is what it will use-->
@@ -176,13 +225,24 @@ const loadRangeReport = async (start, end) => {
     responsiveLayout="stack" breakpoint="640px"
     >
       <!-- Default while loading info -->
-      <template #empty>No se encontró la asistencia de los Maes</template>
       <template #loading>Cargando información</template>
 
       <!-- MAE info -->
       <Column header="Matrícula" field="id">
         <template #body="{ data }">
           <a :href="`#/mae/${data.id}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.id }}</a>
+        </template>
+      </Column>
+
+      <Column header="Proporción asistencia" field="count">
+        <template #body="{ data }">
+          <p>{{ data.A }} de {{ data.count }}</p>
+        </template>
+      </Column>
+
+      <Column header="Porcentaje cumplimiento" field="count">
+        <template #body="{ data }">
+          <p>{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
         </template>
       </Column>
 
@@ -209,62 +269,18 @@ const loadRangeReport = async (start, end) => {
           <p class="text-lg font-semibold">{{ data.F }}</p>
         </template>
       </Column>
-
-      <Column header="Proporción asistencia" field="count">
-        <template #body="{ data }">
-          <p>{{ data.A }} de {{ data.count }}</p>
-        </template>
-      </Column>
-
-      <Column header="Porcentaje cumplimiento" field="count">
-        <template #body="{ data }">
-          <p>{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
-        </template>
-      </Column>
-
-      
-      
     </DataTable>
   </div>
 
-  <div>
-    <!-- Ver fecha temp-->
-    <h2>{{ selectedDate }}</h2>
-
-    <div v-if="loading">Cargando...</div>
-    <ol v-else>
-      <!-- Carga datos para un día 
-      <li v-for="r in reports" :key="r.id">
-        {{ r.id }} - {{ r.report }}
-      </li>-->
-      <li v-for="mae in maeStats" :key="mae.id">
-        <strong>{{ mae.id }} </strong> - A:{{ mae.A }} R:{{ mae.R }} F:{{ mae.F }} J:{{ mae.J }} <strong>Ratio: ({{mae.A}} {{ mae.count }})</strong>
-      </li>
-    </ol>
-  </div>
-
-  <!-- Load data within range -->
-  <div>
-    <h2>Rango de fechas</h2>
-    <p>Desde: {{ startDate }}</p>
-    <p>Hasta: {{ endDate }}</p>
- 
-      <!--
-      <li v-for="rR in reportRange" :key="rR.id + rR.date">
-        {{ rR.id }} - {{ rR.email }} - {{ rR.report || "No report" }} - Fecha: {{ rR.date }}
-      </li>
-    -->
-    <div v-if="rangeLoading">Cargando datos del rango...</div>
-    <div v-else-if="maeStats.length === 0">No hay datos en este rango de fechas</div>
-    <div v-else>
-      <ol>
-        <li v-for="mae in maeStats" :key="mae.id">
-          <strong>{{ mae.id }} </strong> - A:{{ mae.A }} R:{{ mae.R }} F:{{ mae.F }} J:{{ mae.J }} <strong>Ratio: ({{mae.A}} {{ mae.count }})</strong>
-        </li>
-      </ol>
+  <!-- Modal to confirm exporting info, it's in AdminAsesorias so might as well lol -->
+  <Dialog v-model:visible="showDialog" header="Confirmar Exportación" modal>
+    <p>¿Estás seguro de que deseas exportar todas las asistencias sin aplicar filtros?</p>
+    <div class="flex justify-content-end mt-3">
+      <Button label="Cancelar" icon="pi pi-times" @click="showDialog = false" class="p-button-text" />
+      <Button label="Aceptar" icon="pi pi-check" @click="confirmExportAction" auto-focus />
     </div>
-    
-  </div>
+  </Dialog>
+
 </template>
 
 

@@ -138,17 +138,24 @@ export async function getReportByDateRange(startDate, endDate) {
     const dateStrings = getDateStringsBetween(startDate, endDate);
     const report = [];
 
+    // Checks each document date w the reports
     for (const date of dateStrings) {
         const reportRef = collection(firestoreDB, "attendance", date, "report");
         try {
             const reportSnap = await getDocs(reportRef);
-
+            // Makes sure not empty date w no attendance
             if (!reportSnap.empty) {
                 reportSnap.forEach((doc) => {
-                    report.push({
+                    /*report.push({
                         id: doc.id,
                         ...doc.data(),
                         date,
+                    });*/
+                    const data = doc.data(); 
+                    // Only keeps id and report, modify if want other fields (like name or email)
+                    report.push({
+                        id: doc.id, // Student matricula
+                        report: data.report, // (A, R, F, J)
                     });
                 });
             }

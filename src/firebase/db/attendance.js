@@ -135,8 +135,6 @@ function getDateStringsBetween(startDate, endDate) {
 
 // Gets the attendance reports for every day
 export async function getReportByDateRange(startDate, endDate) {
-    console.log('📅 Fetching report between:', startDate, 'and', endDate);
-
     const dateStrings = getDateStringsBetween(startDate, endDate);
     const report = [];
 
@@ -146,7 +144,6 @@ export async function getReportByDateRange(startDate, endDate) {
             const reportSnap = await getDocs(reportRef);
 
             if (!reportSnap.empty) {
-                console.log(`Found report data for ${date}`);
                 reportSnap.forEach((doc) => {
                     report.push({
                         id: doc.id,

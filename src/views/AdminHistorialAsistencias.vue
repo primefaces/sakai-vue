@@ -18,8 +18,8 @@ const maeStats = computed(() => {
     if (!summaryMap.has(uid)) {
       summaryMap.set(uid, {
         id: uid,
-        name: entry.name || '',
-        email: entry.email || '',
+        //name: entry.name || '',
+        //email: entry.email || '',
         A: 0,
         R: 0,
         F: 0,

@@ -2,11 +2,42 @@
 import { ref, onMounted } from 'vue';
 import { getReportByDate } from '@/firebase/db/attendance';
 import { getReportByDateRange } from '@/firebase/db/attendance';
+import { computed } from 'vue'; // To get number of mae attendances 
 import * as XLSX from 'xlsx'; // To export to excel 
 import Dialog from 'primevue/dialog'; // To use dialog modal
 
-// To get number of mae attendances 
-import { computed } from 'vue';
+// Date management 
+const today = new Date();
+const yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+
+// Format it MAEs firebase format year-month-day
+const year = yesterday.getFullYear();
+const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+const day = String(yesterday.getDate()).padStart(2, '0');
+
+const formatYesterday = `${year}-${month}-${day}`;
+
+// One day
+const loading = ref(true);
+const selectedDate = ref(formatYesterday); // Loads previous day
+
+// Date range 
+const rangeLoading = ref(true); // Separates loading state for range data
+
+// Temp default for semester
+const startDate = ref('2025-08-18'); 
+const endDate = ref(formatDate(today)); // Current date of semester, use aux funct
+
+// Arrays for reports
+const reports = ref([]);
+const reportRange = ref([]); 
+
+// To work w Excel exporting
+const isFiltered = ref(false);
+const showDialog = ref(false);
+
+// Function to calculate the mae attendances in given range
 const maeStats = computed(() => {
   const summaryMap = new Map();
 
@@ -40,37 +71,6 @@ const maeStats = computed(() => {
   return Array.from(summaryMap.values());
 });
 
-// Date management 
-const today = new Date();
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
-
-// Format it MAEs firebase format year-month-day
-const year = yesterday.getFullYear();
-const month = String(yesterday.getMonth() + 1).padStart(2, '0');
-const day = String(yesterday.getDate()).padStart(2, '0');
-
-const formatYesterday = `${year}-${month}-${day}`;
-
-// One day
-const loading = ref(true);
-const selectedDate = ref(formatYesterday); // Loads previous day
-
-// Date range 
-const rangeLoading = ref(true); // Separates loading state for range data
-
-// Temp default for semester
-const startDate = ref('2025-08-18'); 
-const endDate = ref(formatDate(today)); // Current date of semester, use aux funct
-
-// Arrays for reports
-const reports = ref([]);
-const reportRange = ref([]); 
-
-// To work w Excel exporting
-const isFiltered = ref(false);
-const showDialog = ref(false);
-
 // Just to format dates year-month-day
 // Expects a unix date object, returns a string w formatted date
 function formatDate(unixDate) {
@@ -86,7 +86,8 @@ onMounted(async () => {
   rangeLoading.value = true; 
 
   try {
-    reports.value = await loadRangeReport(selectedDate.value);
+    // reports.value = await loadRangeReport(selectedDate.value); // Single date
+    reportRange.value = await loadRangeReport(startDate.value, endDate.value);
     isFiltered.value = true; // Did filter og info using dates
   } catch (error) {
     console.error('Error loading day report:', error);
@@ -96,18 +97,6 @@ onMounted(async () => {
     rangeLoading.value = false; 
   }
 
-  rangeLoading.value = true; // Now retrieving this 
-  //reports.value = await loadDayReport(selectedDate.value); // Fetches attendance from that date from firebase
-  try {
-    reportRange.value = await loadRangeReport(startDate.value, endDate.value);
-    //reportRange.value = await loadRangeReport(selectedDate.value, selectedDate.value); // TEMP ONLY YESTERDAY
-    //console.log("ReportRange loaded:", reportRange.value.length, "entries");
-    //console.log("Computed stats:", maeStats.value);
-  } catch (error) {
-    console.error('Error loading range report:', error);
-  } finally {
-    rangeLoading.value = false;
-  }
     
 });
 
@@ -213,17 +202,16 @@ const confirmExportAction = () => {
           <Calendar v-model="startDate" placeholder="Fecha de Inicio" dateFormat="yy-mm-dd" showIcon class="mb-2 mr-3 w-3" />
           <span class="mx-3 text-4xl text-black font-bold">-</span>
           <Calendar v-model="endDate" placeholder="Fecha de Fin" dateFormat="yy-mm-dd" showIcon class="mb-2 mx-3 w-3" />
-          <Button label="Filtrar" @click="filterByDate" class="mb-2 mx-3 w-2" /> <!-- Uses new funct to load vals -->
-          <Button label="Exportar a Excel" @click="exportToExcel" class="mb-2 mx-3 w-3" :disabled="!isFiltered" />
+          <Button label="Filtrar" @click="filterByDate" class="mb-2 mx-3 w-2"></Button> <!-- Uses new funct to load vals -->
+          <Button label="Exportar a Excel" @click="exportToExcel" class="mb-2 mx-3 w-3" :disabled="!isFiltered"></Button>
       </div>
 
   <!-- Table w data from attendance, default view for prev day -->
   <!-- note that the value typed in is what it will use-->
   <div class="card mb-0">
-    <DataTable :value="maeStats" paginator :rows="50" dataKey="id"  :loading="loading" class="border-round-xl"
+    <DataTable :value="maeStats" paginator :rows="50" dataKey="id"  :loading="rangeLoading" class="border-round-xl"
     v-model:filters="filters" filterDisplay="row" removableSort
-    responsiveLayout="stack" breakpoint="640px"
-    >
+    responsiveLayout="stack" breakpoint="640px">
       <!-- Default while loading info -->
       <template #loading>Cargando información</template>
 

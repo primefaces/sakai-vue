@@ -116,18 +116,21 @@ export async function getReportByDate (dateString) {
     }
 }
 
-// Gets dates between specified start and end date
+// Helper funct, gets dates between specified start and end date 
 function getDateStringsBetween(startDate, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const dateList = [];
 
-    while (start <= end) {
-        const year = start.getFullYear();
-        const month = String(start.getMonth() + 1).padStart(2, '0');
-        const day = String(start.getDate()).padStart(2, '0');
-        dateList.push(`${year}-${month}-${day}`);
-        start.setDate(start.getDate() + 1);
+    const currDate = new Date(start); // Sets start as current 
+
+    // Fetch all days in between the range 
+    while (currDate <= end) {
+        const year = currDate.getFullYear();
+        const month = String(currDate.getMonth() + 1).padStart(2, '0'); // Gets month, adds 0 if just one digit
+        const day = String(currDate.getDate()).padStart(2, '0'); // Gets date and adds 0 if just one digit 
+        dateList.push(`${year}-${month}-${day}`); // Adds formatted date to list for firebase use 
+        currDate.setDate(currDate.getDate() + 1); // Moves to check next date
     }
 
     return dateList;

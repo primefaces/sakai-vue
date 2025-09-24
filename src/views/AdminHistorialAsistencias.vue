@@ -5,6 +5,7 @@ import { getReportByDateRange } from '@/firebase/db/attendance';
 import { computed } from 'vue'; // To get number of mae attendances 
 import * as XLSX from 'xlsx'; // To export to excel 
 import Dialog from 'primevue/dialog'; // To use dialog modal
+import { FilterMatchMode } from 'primevue/api'; // Add filtering abilities
 
 // Date management 
 const today = new Date();
@@ -36,6 +37,11 @@ const reportRange = ref([]);
 // To work w Excel exporting
 const isFiltered = ref(false);
 const showDialog = ref(false);
+
+// To work w filters
+const filters = ref({
+  id: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 
 // Function to calculate the mae attendances in given range
 const maeStats = computed(() => {
@@ -226,27 +232,31 @@ const confirmExportAction = () => {
         <template #body="{ data }">
           <a :href="`#/mae/${data.id}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.id }}</a>
         </template>
+        <!-- Adding To filter by matrícula -->
+        <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter" placeholder="Matrícula" />
+        </template>
       </Column>
 
-      <Column header="Asistencias" field="A" class="attendance-green">
+      <Column header="Asistencias" field="A" class="attendance-green" sortable>
         <template #body="{ data }">
           <p class="text-lg">{{ data.A }}</p>
         </template>
       </Column>
 
-      <Column header="Justificados" field="J" class="attendance-blue">
+      <Column header="Justificados" field="J" class="attendance-blue" sortable>
         <template #body="{ data }">
           <p class="text-lg">{{ data.J }}</p>
         </template>
       </Column>
 
-      <Column header="Retrasos" field="R" class="attendance-yellow">
+      <Column header="Retrasos" field="R" class="attendance-yellow" sortable>
         <template #body="{ data }">
           <p class="text-lg">{{ data.R }}</p>
         </template>
       </Column>
 
-      <Column header="Faltas" field="F" class="attendance-red">
+      <Column header="Faltas" field="F" class="attendance-red" sortable>
         <template #body="{ data }">
           <p class="text-lg">{{ data.F }}</p>
         </template>
@@ -259,7 +269,7 @@ const confirmExportAction = () => {
         </template>
       </Column>
 
-      <Column header="Porcentaje cumplimiento" field="count" class="col-blue">
+      <Column header="Porcentaje cumplimiento" field="count" class="col-blue" sortable>
         <template #body="{ data }">
           <p class="text-lg font-semibold">{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
         </template>
@@ -286,6 +296,7 @@ const confirmExportAction = () => {
 /* Attendance color mapping */
 .attendance-green {
     background-color: #d4edda;
+    /*border-left: 0.5rem solid #d4edda !important;*/
 }
 
 .attendance-red {

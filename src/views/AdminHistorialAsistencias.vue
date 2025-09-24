@@ -209,7 +209,7 @@ const confirmExportAction = () => {
   <!-- Table w data from attendance, default view for prev day -->
   <!-- note that the value typed in is what it will use-->
   <div class="card mb-0">
-    <DataTable :value="maeStats" paginator :rows="50" dataKey="id"  :loading="rangeLoading" class="border-round-xl"
+    <DataTable :value="maeStats" paginator :rows="50" dataKey="id"  :loading="rangeLoading" class="border-round-xl text-center"
     v-model:filters="filters" filterDisplay="row" removableSort
     responsiveLayout="stack" breakpoint="640px">
       <!-- Default while loading info -->
@@ -222,39 +222,40 @@ const confirmExportAction = () => {
         </template>
       </Column>
 
-      <Column header="Proporción asistencia" field="count">
-        <template #body="{ data }">
-          <p>{{ data.A }} de {{ data.count }}</p>
-        </template>
-      </Column>
-
-      <Column header="Porcentaje cumplimiento" field="count">
-        <template #body="{ data }">
-          <p>{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
-        </template>
-      </Column>
-
-      <Column header="Asistencias" field="A">
+      <Column header="Asistencias" field="A" class="attendance-green">
         <template #body="{ data }">
           <p class="text-lg font-semibold">{{ data.A }}</p>
         </template>
       </Column>
 
-      <Column header="Justificados" field="J">
+      <Column header="Justificados" field="J" class="attendance-blue">
         <template #body="{ data }">
           <p class="text-lg font-semibold">{{ data.J }}</p>
         </template>
       </Column>
 
-      <Column header="Retrasos" field="R">
+      <Column header="Retrasos" field="R" class="attendance-yellow">
         <template #body="{ data }">
           <p class="text-lg font-semibold">{{ data.R }}</p>
         </template>
       </Column>
 
-      <Column header="Faltas" field="F">
+      <Column header="Faltas" field="F" class="attendance-red">
         <template #body="{ data }">
           <p class="text-lg font-semibold">{{ data.F }}</p>
+        </template>
+      </Column>
+
+      <!-- Desglose de asistencia -->
+      <Column header="Proporción asistencia" field="count" class="col-blue">
+        <template #body="{ data }">
+          <p>{{ data.A }} de {{ data.count }}</p>
+        </template>
+      </Column>
+
+      <Column header="Porcentaje cumplimiento" field="count" class="col-blue">
+        <template #body="{ data }">
+          <p>{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
         </template>
       </Column>
     </DataTable>
@@ -264,18 +265,54 @@ const confirmExportAction = () => {
   <Dialog v-model:visible="showDialog" header="Confirmar Exportación" modal>
     <p>¿Estás seguro de que deseas exportar todas las asistencias sin aplicar filtros?</p>
     <div class="flex justify-content-end mt-3">
-      <Button label="Cancelar" icon="pi pi-times" @click="showDialog = false" class="p-button-text" />
-      <Button label="Aceptar" icon="pi pi-check" @click="confirmExportAction" auto-focus />
+      <Button label="Cancelar" icon="pi pi-times" @click="showDialog = false" class="p-button-text"></Button>
+      <Button label="Aceptar" icon="pi pi-check" @click="confirmExportAction" auto-focus></Button>
     </div>
   </Dialog>
 
 </template>
 
+<style>
+.col-blue {
+  background-color: #bed2ff;
+}
 
-<!-- 
-TOOD
-* Change to table format to make data management easier
-* Make it so that it loads default w today range, and can select a date
-* Make it so that if the selected start == end date, then it only loads one date
-* Excel exporting info
--->
+/* Attendance color mapping */
+.attendance-green {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.attendance-red {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.attendance-yellow {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.attendance-blue {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+/* Center all DataTable headers and content */
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center !important;
+}
+
+/* Center the content in cells */
+.p-datatable .p-datatable-tbody > tr > td p,
+.p-datatable .p-datatable-tbody > tr > td a {
+  text-align: center !important;
+  margin: 0 auto;
+  display: block;
+}
+</style>

@@ -134,6 +134,12 @@ const loadRangeReport = async (start, end) => {
 // Add this function to handle filtering
 const filterByDate = async () => {
   try {
+    // For debug
+    console.log('📅 Raw dates from calendar:', { 
+      startDate: startDate.value, 
+      endDate: endDate.value 
+    });
+
     loading.value = true;
     rangeLoading.value = true;
     
@@ -224,38 +230,38 @@ const confirmExportAction = () => {
 
       <Column header="Asistencias" field="A" class="attendance-green">
         <template #body="{ data }">
-          <p class="text-lg font-semibold">{{ data.A }}</p>
+          <p class="text-lg">{{ data.A }}</p>
         </template>
       </Column>
 
       <Column header="Justificados" field="J" class="attendance-blue">
         <template #body="{ data }">
-          <p class="text-lg font-semibold">{{ data.J }}</p>
+          <p class="text-lg">{{ data.J }}</p>
         </template>
       </Column>
 
       <Column header="Retrasos" field="R" class="attendance-yellow">
         <template #body="{ data }">
-          <p class="text-lg font-semibold">{{ data.R }}</p>
+          <p class="text-lg">{{ data.R }}</p>
         </template>
       </Column>
 
       <Column header="Faltas" field="F" class="attendance-red">
         <template #body="{ data }">
-          <p class="text-lg font-semibold">{{ data.F }}</p>
+          <p class="text-lg">{{ data.F }}</p>
         </template>
       </Column>
 
       <!-- Desglose de asistencia -->
       <Column header="Proporción asistencia" field="count" class="col-blue">
         <template #body="{ data }">
-          <p>{{ data.A }} de {{ data.count }}</p>
+          <p class="text-lg font-semibold">{{ data.A }} de {{ data.count }}</p>
         </template>
       </Column>
 
       <Column header="Porcentaje cumplimiento" field="count" class="col-blue">
         <template #body="{ data }">
-          <p>{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
+          <p class="text-lg font-semibold">{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
         </template>
       </Column>
     </DataTable>
@@ -280,22 +286,18 @@ const confirmExportAction = () => {
 /* Attendance color mapping */
 .attendance-green {
     background-color: #d4edda;
-    color: #155724;
 }
 
 .attendance-red {
     background-color: #f8d7da;
-    color: #721c24;
 }
 
 .attendance-yellow {
     background-color: #fff3cd;
-    color: #856404;
 }
 
 .attendance-blue {
     background-color: #cce5ff;
-    color: #004085;
 }
 
 .text-center {

@@ -47,12 +47,12 @@ onMounted(() => {
             >
             <template #empty>No se encontraron Maes. </template>
             <template #loading>Cargando información. Por favor espera.</template>
-            <Column header="Matricula" field="uid">
+            <Column header="Matrícula" field="uid">
                 <template #body="{ data }">
                     <a :href="`#/mae/${data.uid}`" class="text-lg uppercase cursor-pointer font-semibold underline text-primary">{{ data.uid }}</a>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter" placeholder="Matricula" />
+                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter" placeholder="Matrícula" />
                 </template>
             </Column>
             <Column header="Nombre" field="name">

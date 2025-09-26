@@ -9,7 +9,8 @@ import { getSubjects } from '../firebase/db/subjects';
 import { addAsesoria, getAsesoriasCountForUserInCurrentSemester,getAsesoriasByUidAndRating,
   updateAsesoria
  } from '../firebase/db/asesorias';
- import { formatDate } from '@/utils/AnunciosUtils';
+import { getStudentReport } from '../firebase/db/attendance';
+import { formatDate } from '@/utils/AnunciosUtils';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 import { uploadFile } from '../firebase/img/users';
@@ -38,6 +39,21 @@ const newSchedule = ref({});
 const showDialogUpload = ref(false); 
 const selectedFile = ref(null); 
 const showDialogLogros = ref(false);
+const dataAttendance = ref();
+
+const statusLabel = ref({
+  A: 'Asistencia',
+  R: 'Retraso',
+  J: 'Justificado',
+  F: 'Falta'
+});
+
+const statusSeverity = ref({
+  A: 'success',
+  R: 'warning',
+  J: 'info',
+  F: 'danger'
+});
 
 onMounted(async () => {
  // await addBackgroundUsers();
@@ -103,6 +119,7 @@ onMounted(async () => {
   
   maeInfo.value = await getUser(route.params.id);
   badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
+  dataAttendance.value = await getStudentReport(userInfo.value.uid);
 
 })
 
@@ -480,12 +497,11 @@ const guardarEvaluacion = async () => {
               lineHeight: '1.5rem',
               fontSize: '0.875rem',
             }"
-             @click="showDialogEditar = true"
+            @click="showDialogEditar = true"
           >
             Editar perfil
             <img src="/assets/edit.svg" class="ml-2 " alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
-          </Button>
-          
+    </Button>
   </div>
 
   <div v-if="maeInfo && userInfo" class="bg-white px-3 mb-0 w-full  ">
@@ -529,6 +545,12 @@ const guardarEvaluacion = async () => {
         <div class="">
           <p class="text-xl font-bold text-left "> {{ maeInfo.name }} </p>
           <p class="text-lg font-medium text-left">  {{ maeInfo.career }} | Campus {{ maeInfo.campus }}</p>  
+          <div class="flex" v-if="userInfo.uid == maeInfo.uid">
+            <Tag class="px-4 text-xl"
+              :value="dataAttendance ? statusLabel[dataAttendance] : 'Fuera de Horario'"
+              :severity="dataAttendance ? statusSeverity[dataAttendance] : 'secondary'"
+            />
+          </div>
         </div>
       </div>
       

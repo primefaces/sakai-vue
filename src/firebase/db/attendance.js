@@ -1,6 +1,7 @@
 import { firestoreDB } from "../../main";
 import {
     doc,
+    getDoc,
     getDocs,
     setDoc,
     collection,
@@ -90,6 +91,22 @@ export async function addRegister(userInfo, date) {
     } catch (error) {
         console.error("Error updating the report: ", error);
     }
+}
+
+export async function getStudentReport(uid) {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const date = `${y}-${m}-${day}`;
+  const reportRef = doc(firestoreDB, "attendance", date, "report", uid);
+  const snap = await getDoc(reportRef);
+
+  if (snap.exists()) {
+    return snap.data().report; // e.g. 'A', 'J', 'R', 'F'
+  } else {
+    return null;
+  }
 }
 
 

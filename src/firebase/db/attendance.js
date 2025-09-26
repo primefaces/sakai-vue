@@ -118,8 +118,9 @@ export async function getReportByDate (dateString) {
 
 // Helper funct, gets dates between specified start and end date 
 function getDateStringsBetween(startDate, endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    // Handle start and end differently because of time zones, shift to make them back because default at GMT-0600 so 6 hrs ahead -_-
+    const start = new Date(startDate + 'T12:00:00'); // Set to noon instead 
+    const end = new Date(endDate + 'T12:00:00');
     const dateList = [];
 
     const currDate = new Date(start); // Sets start as current 
@@ -129,10 +130,21 @@ function getDateStringsBetween(startDate, endDate) {
         const year = currDate.getFullYear();
         const month = String(currDate.getMonth() + 1).padStart(2, '0'); // Gets month, adds 0 if just one digit
         const day = String(currDate.getDate()).padStart(2, '0'); // Gets date and adds 0 if just one digit 
+
+        //console.log(`   Current date: ${currDate}, End date: ${end}`);
+        //console.log(`   Comparison result: ${currDate <= end}`);
+
+        // Save and upgrade for next iteration
         dateList.push(`${year}-${month}-${day}`); // Adds formatted date to list for firebase use 
         currDate.setDate(currDate.getDate() + 1); // Moves to check next date
+
+        //console.log(`   After increment: ${currDate}`);
+
+        
     }
 
+    //console.log('✅ Final dateList:', dateList);
+    //console.log('🔢 Total dates generated:', dateList.length);
     return dateList;
 }
 
@@ -143,11 +155,13 @@ export async function getReportByDateRange(startDate, endDate) {
 
     // Checks each document date w the reports
     for (const date of dateStrings) {
+        //console.log(`🔍 Checking date: ${date}`);
         const reportRef = collection(firestoreDB, "attendance", date, "report");
         try {
             const reportSnap = await getDocs(reportRef);
             // Makes sure not empty date w no attendance
             if (!reportSnap.empty) {
+                //console.log(`Found ${reportSnap.size} reports for ${date}`);
                 reportSnap.forEach((doc) => {
                     /*report.push({
                         id: doc.id,
@@ -161,6 +175,8 @@ export async function getReportByDateRange(startDate, endDate) {
                         report: data.report, // (A, R, F, J)
                     });
                 });
+            } else {
+                console.log(`❌ No reports found for ${date}`);
             }
         } catch (error) {
             console.warn(`Skipping ${date}:`, error.message);

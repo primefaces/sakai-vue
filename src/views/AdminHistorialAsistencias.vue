@@ -74,7 +74,11 @@ const maeStats = computed(() => {
     }
   });
 
-  return Array.from(summaryMap.values());
+  // Use attendance vals to calc attendance percentage; but if their attendance is 0, then just set it == 0
+  return Array.from(summaryMap.values()).map(mae => ({
+    ...mae, 
+    percentage: mae.count > 0 ? Math.round((mae.A / mae.count) * 100) : 0 
+  }));
 });
 
 // Just to format dates year-month-day
@@ -269,9 +273,9 @@ const confirmExportAction = () => {
         </template>
       </Column>
 
-      <Column header="Porcentaje cumplimiento" field="count" class="col-blue" sortable>
+      <Column header="Porcentaje cumplimiento" field="percentage" class="col-blue" sortable>
         <template #body="{ data }">
-          <p class="text-lg font-semibold">{{ data.count > 0 ? Math.round((data.A / data.count) * 100) : 0 }}%</p>
+          <p class="text-lg font-semibold">{{ data.percentage }}%</p>
         </template>
       </Column>
     </DataTable>
@@ -327,5 +331,43 @@ const confirmExportAction = () => {
   text-align: center !important;
   margin: 0 auto;
   display: block;
+}
+
+/* Make middle columns (2nd, 3rd, 4th, 5th) equal width with remaining space */
+.p-datatable .p-datatable-thead > tr > th:nth-child(2),
+.p-datatable .p-datatable-thead > tr > th:nth-child(3),
+.p-datatable .p-datatable-thead > tr > th:nth-child(4),
+.p-datatable .p-datatable-thead > tr > th:nth-child(5),
+.p-datatable .p-datatable-tbody > tr > td:nth-child(2),
+.p-datatable .p-datatable-tbody > tr > td:nth-child(3),
+.p-datatable .p-datatable-tbody > tr > td:nth-child(4),
+.p-datatable .p-datatable-tbody > tr > td:nth-child(5) {
+  width: calc((100% - 14rem - 12rem - 10rem) / 4); /* Remaining space divided by 4 columns */
+}
+
+/* Set fixed width for Matrícula column */
+.p-datatable .p-datatable-thead > tr > th:first-child,
+.p-datatable .p-datatable-tbody > tr > td:first-child {
+  width: 14rem;
+  min-width: 14rem;
+}
+
+/* Set fixed width for last two columns */
+.p-datatable .p-datatable-thead > tr > th:nth-child(6),
+.p-datatable .p-datatable-tbody > tr > td:nth-child(6) {
+  width: 12rem;
+  min-width: 12rem;
+}
+
+.p-datatable .p-datatable-thead > tr > th:nth-child(7),
+.p-datatable .p-datatable-tbody > tr > td:nth-child(7) {
+  width: 10rem;
+  min-width: 10rem;
+}
+
+/* Makes sure table uses full container width */
+.p-datatable .p-datatable-table {
+  table-layout: fixed;
+  width: 100%;
 }
 </style>

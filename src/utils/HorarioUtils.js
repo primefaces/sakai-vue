@@ -1,7 +1,10 @@
 import { getClosestDayAndStartTime } from "../firebase/db/users";
 
-export function normalize(day) {
-    return day.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+export function normalize(objecto) {
+    if (typeof objecto !== 'string') {
+        return ''; 
+    }
+    return objecto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 

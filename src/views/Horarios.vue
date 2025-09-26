@@ -23,6 +23,7 @@ const filters = ref({
     subjects: { value: null, matchMode: ARRAY_CONTAINS.value },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
+
 const loading = ref(true);
 const daysOfWeek = [
     { label: 'Todos los días', value: null },
@@ -37,6 +38,7 @@ const daysOfWeek = [
 onMounted(() => {
     getMaes().then((data) => {
         maes.value = data;
+        console.log(maes)
         loading.value = false;
     });
 
@@ -107,7 +109,6 @@ function getDisplayedDay(weekSchedule) {
     }
 }
 
-
 function getDisplayedSubject(subjects) {
     if (!filters.value.subjects.value) {
         return subjects.length > 0 ? subjects[0] : { name: 'Sin materia', area: '' };
@@ -152,7 +153,12 @@ function getDisplayedSubject(subjects) {
                         <span class="flex flex-row items-center">
                             <img v-if="mae.profilePictureUrl" :src="mae.profilePictureUrl" alt="Foto de perfil"
                             class="border-circle h-5rem w-5rem">
-                            <Skeleton v-else shape="circle" size="5rem"></Skeleton>
+                            <img 
+                                v-else 
+                                :src="'https://randomuser.me/api/portraits/lego/5.jpg'" 
+                                alt="Foto de perfil" 
+                                class="border-circle h-5rem w-5rem" 
+                            />
                             <div class="relative w-full pl-4 pt-3">
                                 <span class="font-bold text-lg text-black-alpha-90 truncate"
                                 style="display: block; max-width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
@@ -182,7 +188,9 @@ function getDisplayedSubject(subjects) {
 
                         <p class="font-bold text-lg mt-1 text-black-alpha-90">Materias</p>
                         <div class="flex items-center text-md">
-                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)"  style="display: block; max-width: 80%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
+                            <Tag :class="getSubjectColor(getDisplayedSubject(mae.subjects).area)"  style="display: block; max-width: 80%;
+                             overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" 
+                             :value="getDisplayedSubject(mae.subjects).name" class="mr-2 mb-2 p-2 px-3 border-round-2xl"/>
                             <div v-if="mae.subjects.length > 1">
                                 <button class="p-2 text-gray-500" >
                                     {{ subjectCountDisplay(mae.subjects) }}

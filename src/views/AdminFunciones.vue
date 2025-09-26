@@ -6,31 +6,40 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import ConfirmDialog from 'primevue/confirmdialog';
-import { clearAllUsersWeekSchedule, checkAndUpdateUserRole,  updateUserToMae} from '../firebase/db/users';
+import { 
+    clearAllUsersWeekSchedule, 
+    checkAndUpdateUserRole,  
+    updateUserToMae,
+    saveScheduleSubjectsExperience,
+    updatePoints,
+    clearUsersData
+} from '../firebase/db/users';
+import { deleteOldAsesorias} from '../firebase/db/asesorias.js'
 
 const toast = useToast();
 const confirm = useConfirm();
-
-// Estado para los diálogos
 const displayUploadDialog = ref(false);
 const displayAddUserDialog = ref(false);
+const displayUpdatePointsDialog = ref(false);
 const selectedFile = ref(null);
 
-// Estado para el formulario de agregar mae
 const newMatricula = ref('');
 const newRole = ref(null);
 const newStatus = ref(null);
+
 const roles = [
     { label: 'MAE', value: 'mae' },
     { label: 'Coordi', value: 'coordi' },
-    { label: 'Publi', value: 'publi' }
+    { label: 'Publi', value: 'publi' },
+    { label: 'Tecnología', value: 'tec' },
+    { label: 'Usuario', value: 'user' }
 ];
 const statuses = [
     { label: 'Becario', value: 'becario' },
-    { label: 'Voluntario', value: 'voluntario' }
+    { label: 'Voluntario', value: 'voluntario' },
+    { label: 'Estudiante', value: 'estudiante' }
 ];
 
-// Función para eliminar weekSchedule
 const confirmDelete = () => {
     confirm.require({
         message: '¿Estás seguro de que deseas eliminar el contenido de los horarios para todos los maes?',
@@ -54,12 +63,57 @@ const confirmDelete = () => {
     });
 };
 
-// Función para abrir el diálogo de carga de archivo
+
+const restartMaes = () => {
+    confirm.require({
+        message: '¿Estás seguro de restablecer los datos de los maes?',
+        header: 'Confirmación ',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Sí, restablecer',
+        rejectLabel: 'Cancelar',
+        acceptClass: 'p-button-danger',
+        accept: async () => {
+            try {
+                await clearUsersData();
+                toast.add({ severity: 'success', summary: 'Éxito', detail: 'Se han restablecido los valores de los maes.', life: 3000 });
+            } catch (error) {
+                console.error("Error al restablecer valores:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al restablecer los valores de los maes.', life: 3000 });
+            }
+        },
+        reject: () => {
+            toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
+        }
+    });
+};
+
+const confirmDeleteAsesorias = () => {
+    confirm.require({
+        message: '¿Estás seguro eliminar todas las asesorías deñ año pasado?',
+        header: 'Confirmación de Eliminación',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Sí, eliminar',
+        rejectLabel: 'Cancelar',
+        acceptClass: 'p-button-danger',
+        accept: async () => {
+            try {
+                await deleteOldAsesorias();
+                toast.add({ severity: 'success', summary: 'Éxito', detail: 'Se ha limpiado correctamente las asesorías pasadas.', life: 3000 });
+            } catch (error) {
+                console.error("Error al limpiar weekSchedule:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar limpiar las asesorías pasadas.', life: 3000 });
+            }
+        },
+        reject: () => {
+            toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
+        }
+    });
+};
+
 const openUploadDialog = () => {
     displayUploadDialog.value = true;
 };
 
-// Función para manejar la carga del archivo o la actualización de roles sin archivo
 const handleFileUpload = () => {
     confirm.require({
         message: '¿Estás seguro de que deseas cambiar el rol a "ex mae" para los usuarios elegibles usando el archivo Excel?',
@@ -71,14 +125,12 @@ const handleFileUpload = () => {
         accept: async () => {
             try {
                 if (selectedFile.value) {
-                    // Si hay un archivo seleccionado, actualizar roles con el archivo
                     await checkAndUpdateUserRole(selectedFile.value); 
                 } else {
-                    // Si no hay archivo, actualizar roles sin archivo
                     await checkAndUpdateUserRole(null);
                 }
                 toast.add({ severity: 'success', summary: 'Éxito', detail: 'Se han actualzado los maes inactivos a exmaes.', life: 3000 });
-                displayUploadDialog.value = false; // Cerrar el diálogo
+                displayUploadDialog.value = false; 
             } catch (error) {
                 console.error("Error al actualizar roles:", error);
                 toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar actualizar los maes inactivos.', life: 3000 });
@@ -86,29 +138,26 @@ const handleFileUpload = () => {
         },
         reject: () => {
             toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
-            displayUploadDialog.value = false; // Cerrar el diálogo
+            displayUploadDialog.value = false; 
         }
     });
 };
 
-// Manejar el cambio en el input de archivo
 const onFileChange = (event) => {
     selectedFile.value = event.target.files[0];
 };
 
-// Función para cerrar el diálogo
 const closeDialog = () => {
     toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
     displayUploadDialog.value = false;
     displayAddUserDialog.value = false;
+    displayUpdatePointsDialog.value = false;
 };
 
-// Función para abrir el diálogo de agregar mae
 const openAddUserDialog = () => {
     displayAddUserDialog.value = true;
 };
 
-// Función para manejar la adición de mae
 const handleAddUser = async () => {
     if (!newMatricula.value || !newRole.value || !newStatus.value) {
         toast.add({ severity: 'warn', summary: 'Advertencia', detail: 'Todos los campos son obligatorios.', life: 3000 });
@@ -116,10 +165,10 @@ const handleAddUser = async () => {
     }
 
     confirm.require({
-        message: '¿Estás seguro de que deseas agregar el usuario con la matrícula proporcionada como mae?',
-        header: 'Confirmación de agregar Mae',
+        message: '¿Estás seguro de que deseas agregar mae o editar el rol del usuario con esta matrícula ?',
+        header: 'Confirmación de agregar mae o editar rol',
         icon: 'pi pi-exclamation-circle',
-        acceptLabel: 'Sí, agregar mae',
+        acceptLabel: 'Sí, agregar mae o editar rol',
         rejectLabel: 'Cancelar',
         acceptClass: 'p-button-success',
         accept: async () => {
@@ -130,21 +179,85 @@ const handleAddUser = async () => {
                     status: newStatus.value
                 });
                 toast.add({ severity: 'success', summary: 'Éxito', detail: 'Mae agregado exitosamente.', life: 3000 });
-                displayAddUserDialog.value = false; // Cerrar el diálogo
+                displayAddUserDialog.value = false; 
                 newMatricula.value = '';
                 newRole.value = null;
                 newStatus.value = null;
             } catch (error) {
-                console.error("Error al agregar mae:", error);
-                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar agregar el mae.', life: 3000 });
+                console.error("Error al agregar mae o editar rol:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar agregar mae o editar el rol.', life: 3000 });
             }
         },
         reject: () => {
             toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
-            displayAddUserDialog.value = false; // Cerrar el diálogo
+            displayAddUserDialog.value = false; 
         }
     });
 };
+
+
+const confirmSaveExperience = () => {
+    confirm.require({
+        message: '¿Estás seguro de que deseas guardar la experiencia  de horario y materias para los usuarios?',
+        header: 'Confirmación de guardar experiencia',
+        icon: 'pi pi-exclamation-circle',
+        acceptLabel: 'Sí, guardar',
+        rejectLabel: 'Cancelar',
+        acceptClass: 'p-button-success',
+        accept: async () => {
+            try {
+                await saveScheduleSubjectsExperience(); 
+                toast.add({ severity: 'success', summary: 'Éxito', detail: 'Experiencia guardada exitosamente.', life: 3000 });
+            } catch (error) {
+                console.error("Error al guardar la experiencia:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar guardar la experiencia.', life: 3000 });
+            }
+        },
+        reject: () => {
+            toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
+        }
+    });
+};
+
+const userId = ref('');
+const newPoints = ref(null)
+
+const openUpdatePointsDialog = () => {
+    displayUpdatePointsDialog.value = true;
+};
+
+const handleUpdatePoints = async () => {
+    if (!userId.value || newPoints.value === null) {
+        toast.add({ severity: 'warn', summary: 'Advertencia', detail: 'Todos los campos son obligatorios.', life: 3000 });
+        return;
+    }
+
+    confirm.require({
+        message: `¿Estás seguro de que deseas actualizar los puntos de este usuario a ${newPoints.value}?`,
+        header: 'Confirmación de Actualización de Puntos',
+        icon: 'pi pi-exclamation-circle',
+        acceptLabel: 'Sí, actualizar puntos',
+        rejectLabel: 'Cancelar',
+        acceptClass: 'p-button-success',
+        accept: async () => {
+            try {
+                await updatePoints(userId.value, parseInt(newPoints.value)); 
+                toast.add({ severity: 'success', summary: 'Éxito', detail: 'Puntos actualizados exitosamente.', life: 3000 });
+                displayUpdatePointsDialog.value = false; 
+                userId.value = '';
+                newPoints.value = null; 
+            } catch (error) {
+                console.error("Error al actualizar puntos:", error);
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al intentar actualizar los puntos.', life: 3000 });
+            }
+        },
+        reject: () => {
+            toast.add({ severity: 'info', summary: 'Cancelado', detail: 'No se han realizado cambios.', life: 3000 });
+            displayUpdatePointsDialog.value = false; 
+        }
+    });
+};
+
 </script>
 
 <template>
@@ -171,12 +284,50 @@ const handleAddUser = async () => {
 
         <div class="flex justify-content-center w-full mt-4">
             <Button 
-                label="Agregar Mae" 
+                label="Agregar Mae/Editar Rol" 
                 icon="pi pi-user-plus" 
                 class="p-button-success p-button-rounded p-button-lg w-full md:w-6"
                 @click="openAddUserDialog" 
             />
         </div>
+
+        <div class="flex justify-content-center w-full mt-4">
+            <Button 
+                label="Guardar experiencia de horario/materias" 
+                icon="pi pi-save" 
+                class="p-button-info p-button-rounded p-button-lg w-full md:w-6"
+                @click="confirmSaveExperience" 
+            />
+        </div>
+
+        <div class="flex justify-content-center w-full mt-4">
+            <Button 
+                label="Actualizar Puntos" 
+                icon="pi pi-user-edit" 
+                class="p-button-experience p-button-rounded p-button-lg w-full md:w-6"
+                @click="openUpdatePointsDialog" 
+            />
+        </div>
+
+        <div class="flex justify-content-center w-full mt-4">
+            <Button 
+                label="Eliminar las asesorías del semestre pasado" 
+                icon="pi pi-trash" 
+                class="p-button-danger p-button-rounded p-button-lg w-full md:w-6"
+                @click="confirmDeleteAsesorias" 
+            />
+        </div>
+
+        <!--
+        <div class="flex justify-content-center w-full mt-4">
+            <Button 
+                label="Restablecer maes" 
+                icon="pi pi-user-edit" 
+               class="p-button-info p-button-rounded p-button-lg w-full md:w-6"
+                @click="restartMaes" 
+            />
+        </div>
+        -->
 
         <!-- Diálogo para carga de archivo -->
         <Dialog 
@@ -212,7 +363,7 @@ const handleAddUser = async () => {
         <!-- Diálogo para agregar mae -->
         <Dialog 
             v-model:visible="displayAddUserDialog" 
-            header="Agregar Mae" 
+            header="Agregar Mae o Editar Rol" 
             modal 
             :style="{ width: '50vw' }" 
             :closable="true" 
@@ -238,11 +389,48 @@ const handleAddUser = async () => {
                     placeholder="Selecciona estatus"
                     class="w-full"
                 />
+
                 <Button 
-                    label="Agregar Mae" 
+                    label="Agregar Mae o Editar Rol" 
                     icon="pi pi-check" 
                     class="p-button-success p-button-rounded"
                     @click="handleAddUser"
+                />
+
+                <Button 
+                    label="Cancelar" 
+                    icon="pi pi-times" 
+                    class="p-button-secondary p-button-rounded"
+                    @click="closeDialog"
+                />
+            </div>
+        </Dialog>
+
+        <!-- Diálogo para actualizar puntos -->
+        <Dialog 
+            v-model:visible="displayUpdatePointsDialog" 
+            header="Actualizar Puntos del Usuario" 
+            modal 
+            :style="{ width: '50vw' }" 
+            :closable="true" 
+            :dismissable-mask="true"
+        >
+            <div class="flex flex-column align-items-center gap-4">
+                <InputText 
+                    v-model="userId" 
+                    placeholder="Ingrese matricula del mae"
+                    class="w-full"
+                />
+                <InputText 
+                    v-model="newPoints" 
+                    placeholder="Ingrese nuevos puntos"
+                    class="w-full"
+                />
+                <Button 
+                    label="Actualizar Puntos" 
+                    icon="pi pi-check" 
+                    class="p-button-success p-button-rounded"
+                    @click="handleUpdatePoints"
                 />
                 <Button 
                     label="Cancelar" 
@@ -280,6 +468,11 @@ h1 {
 .p-button-success {
     background-color: #28a745;
     border-color: #28a745;
+}
+
+.p-button-experience {
+    background-color: #6f42c1; 
+    border-color: #6f42c1; 
 }
 
 .p-inputtext, .p-dropdown {

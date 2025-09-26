@@ -1,16 +1,19 @@
 <script setup>
+import { getSubjectColor, pointsRules } from '@/utils/CoordiUtils';
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { getTodaysMae, getUser, incrementTotalTime } from '@/firebase/db/users';
+import { getTodaysMae, getUser, incrementTotalTime, getCurrentUser } from '@/firebase/db/users';
 import { addRegister, getTodaysReport, updateReport } from '../firebase/db/attendance';
-import { getUsersWithActiveSession } from '@/firebase/db/users';
+import { getUsersWithActiveSession, updatePoints } from '@/firebase/db/users';
+import { nextTick } from 'vue';
 
 const toast = useToast();
-
 const loading = ref(true);
 const maes = ref(null);
 const report = ref(null);
 const selectedId = ref(null);
+const userInfo = ref(null);
+const ubicacion = ref(true);
 
 const currentDay = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
 const options = ref([
@@ -20,20 +23,125 @@ const options = ref([
     { name: 'Justificado', code: 'J' },
 ]);
 
-watch(report, (newValue, oldValue) => {
+// Calcula la distancia entre dos puntos geográficos usando la fórmula de Haversine
+const toRadians = (degree) => degree * (Math.PI / 180);
+
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371000; // Radio de la Tierra en metros
+    const φ1 = toRadians(lat1);
+    const φ2 = toRadians(lat2);
+    const Δφ = toRadians(lat2 - lat1);
+    const Δλ = toRadians(lon2 - lon1);
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+};
+
+const checkLocationAndAttendance = () => {
+  const fixedLat = 25.650472; 
+  const fixedLon = -100.289667;
+
+  return new Promise((resolve, reject) => {
+    if (userInfo.value.role == 'admin' || userInfo.value.role == 'coordi' ) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const userLat = position.coords.latitude;
+          const userLon = position.coords.longitude;
+
+          const distance = calculateDistance(userLat, userLon, fixedLat, fixedLon);
+            
+          if (distance <= 15) {
+            console.log('El usuario está dentro del rango de 15 metros. Puede registrar asistencia.');
+            console.log(distance)
+            ubicacion.value = true;
+            resolve(true);
+          } else {
+            console.log('El usuario está fuera del rango de 15 metros. No puede registrar asistencia.');
+            console.log(distance)
+            // toast.add({ 
+            //     severity: 'error', 
+            //     summary: 'Error', 
+            //     detail: 'No se puede poner asistencia estas fuera de rango ', 
+            //     life: 5000 
+            // });
+            ubicacion.value = true;
+            resolve(true);
+          }
+        }, (error) => {
+          console.error("Error al obtener la ubicación: ", error);
+          reject(error);
+        });
+      } else {
+        console.log("La geolocalización no está disponible en este navegador.");
+        reject(new Error("La geolocalización no está disponible"));
+      }
+    } else {
+      console.log('El usuario es admin y no requiere comprobación de ubicación.');
+      ubicacion.value = true;
+      console.log(ubicacion.value, "ubicacion")
+      resolve(true);
+    }
+  });
+};
+
+const handlePointsUpdate = async (uid, newAttendance) => {
+    const points = pointsRules[newAttendance] || 0;
+    await updatePoints(uid, points); 
+   
+    if (newAttendance !== "C") {
+        toast.add({ severity: 'success', summary: 'Se ha actualizado su asistencia ', detail: 'Se ha actualizo de forma correcta', life: 3000 });
+    }
+};
+
+watch(report, async (newValue, oldValue) => {
     if (oldValue) {
-        const maeInfo = maes.value.find(mae => mae['uid'] === selectedId.value);
-        updateReport(maeInfo, newValue[selectedId.value]);
+        await checkLocationAndAttendance();
+     
+        if (!ubicacion.value) {
+            console.error('No se pudo pasar asistencia');
+            return;
+        }
+
+        if (!userInfo.value) {
+            console.error('userInfo is undefined');
+            return;
+        }
+        
+        const maeInfo = maes.value.find(mae => mae.uid === selectedId.value);
+        const uidUser = userInfo.value.uid;
+
+        if (maeInfo && maeInfo.uid === uidUser && maeInfo.role === "coordi")  {
+            toast.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'No te puedes poner autoasistencia', 
+                life: 5000 
+            });
+            return;
+        } else {
+            const previousAttendance = initialReport.value[selectedId.value];
+            const newAttendanceValue = newValue[selectedId.value];
+            updateReport(maeInfo, newAttendanceValue);
+
+            if (previousAttendance === undefined) {
+                handlePointsUpdate(maeInfo.uid, newAttendanceValue);
+                handlePointsUpdate(userInfo.value.uid, "C");
+            }
+        }
     }
 }, { deep: true });
 
 const showDialogRegister = ref(false);
-
 const maeId = ref('');
 const hours = ref(0);
 const date = ref(new Date());
 const maeInfo = ref(null);
 const activeMAEs = ref([]);
+const initialReport = ref(null);
 
 watch(maeId, async (newValue) => {
     if (newValue.length === 9) {
@@ -67,9 +175,20 @@ const addReport = async () => {
 
 onMounted(async () => {
     try {
-        activeMAEs.value = await getUsersWithActiveSession(); // Obteniendo los MAEs activos
-        maes.value = await getTodaysMae(); // Obteniendo los MAEs del día de hoy
-        report.value = await getTodaysReport(); // Obteniendo el reporte del día de hoy
+        userInfo.value = await getCurrentUser();
+        activeMAEs.value = await getUsersWithActiveSession(); 
+        maes.value = await getTodaysMae(); 
+        report.value = await getTodaysReport(); 
+        initialReport.value = JSON.parse(JSON.stringify(report.value)); 
+        await checkLocationAndAttendance();
+        maes.value.forEach(mae => {
+            const scheduleToday = mae.weekSchedule[currentDay];
+            if (scheduleToday) {        
+                scheduleToday.forEach(({ start, end }) => {
+                    handleAutoMarkAbsence(start, end, mae.uid);
+                });
+            }
+        });
     } catch (error) {
         console.error('Error al cargar datos:', error);
     } finally {
@@ -77,31 +196,62 @@ onMounted(async () => {
     }
 });
 
-const getSubjectColor = (area) => {
-    console.log(area)
-    switch (area) {
-        case 'Ingeniería y Ciencias':
-            return 'bg-cyan-600';
-        case 'Negocios':
-            return 'bg-blue-600';
-        case 'Salud':
-            return 'bg-teal-600';
-        case 'Derecho, Economía y Relaciones Internacionales':
-            return 'bg-red-600';
-        case 'Ambiente Construido':
-            return 'bg-green-600';
-        case 'Estudios Creativos':
-            return 'bg-purple-600';
-        default:
-            return 'bg-yellow-600';
-    }
-}
+const handleAutoMarkAbsence = async (startTime, endTime, uid) => {
+    const now = new Date();
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+    const startDateTime = new Date();
+    const endDateTime = new Date();
+    startDateTime.setHours(startHour, startMinute, 0, 0);
+    endDateTime.setHours(endHour, endMinute, 0, 0);
+    const diffInMinutes = (now - startDateTime) / 60000;
+    const activo = activeMAEs.value.some(mae => mae.uid === uid);
 
+    if (activo && diffInMinutes > 45 && now < endDateTime && report.value[uid] === 'F') {
+        const maeInfo = maes.value.find(mae => mae.uid === uid);
+        report.value[uid] = 'R';
+        report.value = { ...report.value };
+        updateReport(maeInfo, 'R');
+        await updatePoints('jackpot', 10);
+        await updatePoints(uid, 8);
+        await nextTick();
+    }
+    if (activo && diffInMinutes > 20 && diffInMinutes < 40 && report.value[uid] !== 'A' &&
+        report.value[uid] !== 'J' &&
+        report.value[uid] !== 'R' &&
+        report.value[uid] !== 'F') {
+        const maeInfo = maes.value.find(mae => mae.uid === uid);
+        report.value[uid] = 'A';
+        report.value = { ...report.value };
+        updateReport(maeInfo, 'A');
+        await updatePoints('jackpot', 10);
+        await updatePoints(uid, 8);
+        await nextTick();
+    }
+    if (
+        diffInMinutes > 40 &&
+        report.value[uid] !== 'A' &&
+        report.value[uid] !== 'J' &&
+        report.value[uid] !== 'R' &&
+        report.value[uid] !== 'F'
+        &&
+        report.value[uid] !== 'C'
+      ) {
+        const maeInfo = maes.value.find(mae => mae.uid === uid);
+        report.value[uid] = 'F';
+        report.value = { ...report.value };
+        updateReport(maeInfo, 'F');
+        await updatePoints('jackpot', 10);
+        await updatePoints(uid, -5);
+        await nextTick();
+      } 
+  
+};
 </script>
 
 <template>
     <div class="sm:flex sm:justify-content-between mb-2 sm:mb-5">
-        <h1 class="text-black text-6xl font-bold text-center m-0 sm:text-left">Coordinador</h1>
+        <h1 class="text-black text-6xl font-bold text-center m-0 sm:text-left">Asistencia</h1>
         <Button @click="showDialogRegister = true" label="Agregar horas" icon="pi pi-pencil" size="large" class="max-h-full w-full sm:w-fit" />
     </div>
     <div class="card mb-0">
@@ -156,7 +306,7 @@ const getSubjectColor = (area) => {
             <Column header="Asistencia" style="min-width:8rem">
                 <template #body="{ data }">
                     <Dropdown 
-                        @click="selectedId = data.uid" 
+                    @click="selectedId = data.uid " 
                         v-if="report" 
                         v-model="report[data.uid]" 
                         :options="options" 
@@ -170,12 +320,14 @@ const getSubjectColor = (area) => {
                             'attendance-yellow': report[data.uid] === 'R',
                             'attendance-blue': report[data.uid] === 'J'
                         }"
+                        :disabled="!ubicacion " 
+                        
                     />
+
                 </template>
             </Column>
         </DataTable>
     </div>
-    <!-- FIX: the coordi can put himself hours  -->
     <Dialog v-model:visible="showDialogRegister" modal header="Crear registro" class="md:w-4">
         
         <p class="font-bold text-lg">Matricula del MAE</p>
@@ -231,10 +383,10 @@ const getSubjectColor = (area) => {
 }
 
 .active {
-    background-color: #28a745; /* Verde */
+    background-color: #28a745;
 }
 
 .inactive {
-    background-color: #6c757d; /* Gris */
+    background-color: #6c757d; 
 }
 </style>

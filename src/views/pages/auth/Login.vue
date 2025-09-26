@@ -1,19 +1,36 @@
 <script setup>
-import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { getCurrentUser} from '../../../firebase/db/users';
 import router from '../../../router';
-// import AppConfig from '@/layout/AppConfig.vue';
-
-const toast = useToast();
+import {  useRoute } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
 const errorMsg = ref('');
-const checked = ref(false);
+const userInfo = ref(null);
+const route = useRoute(); 
+
+
+onMounted(async () => {
+  userInfo.value = await getCurrentUser();
+  const asesoriaId = route.query.asesoriaId || '';
+  if (userInfo.value) {
+    if (asesoriaId) {
+      console.log("Redirigiendo a asesoriasGrupales con ID:", asesoriaId);
+      router.push({
+        path: 'asesoriasGrupales',
+        query: { asesoriaId: asesoriaId },
+      });
+    } else {
+      console.log("No hay Asesoria ID, redirigiendo al inicio");
+      router.push('/inicio'); // Redirige a la página 'maesActivos'
+    }
+  }
+});
+
 
 function isValidTecMxEmail(email) {
-    // Regular expression to match the pattern of (string of characters)@tec.mx
     const regex = /^[a-zA-Z0-9._%+-]+@tec\.mx$/;
     return regex.test(email);
 }
@@ -36,7 +53,18 @@ const onSignIn = () => {
     signInWithEmailAndPassword(auth, email.value, password.value)
         .then(async (data) => {
             if (auth.currentUser.emailVerified) {
-                router.push('/maesactivos');
+                const asesoriaId = route.query.asesoriaId || '';
+                console.log(asesoriaId)
+                if (asesoriaId) {
+                    console.log("Redirigiendo a asesoriasGrupales con ID:", asesoriaId);
+                    router.push({
+                        path: '/asesoriasGrupales',
+                        query: { asesoriaId: asesoriaId },
+                    });
+                } else {
+                    console.log("No hay Asesoria ID, redirigiendo al inicio");
+                    router.push('/inicio'); 
+                }
             }
             else {
                 errorMsg.value = 'Por favor verifica tu correo para continuar. Revisa tu bandeja de entrada y spam'
@@ -58,6 +86,15 @@ const onSignIn = () => {
                     break;
             }
         })
+}
+
+function handleRegisterClick() {
+  const asesoriaId = route.query.asesoriaId || ''; 
+  
+  const targetPath = `/auth/register`;
+  const targetPathWithQuery = asesoriaId ? `${targetPath}?redirect=&asesoriaId=${asesoriaId}` : targetPath;
+
+  router.push(targetPathWithQuery); 
 }
 </script>
 
@@ -97,7 +134,13 @@ const onSignIn = () => {
                         </div> -->
                         <Divider />
                         <Button @click="onSignIn" :disabled="email == '' || password == ''" label="Iniciar sesión" class="w-full p-3 mb-3 text-xl"></Button>
-                        <Button @click="router.push('/auth/register')" label="Registrarse" class="w-full p-3 text-xl" severity="secondary"></Button>
+                        <Button 
+                            @click="handleRegisterClick" 
+                            label="Registrarse" 
+                            class="w-full p-3 text-xl" 
+                            severity="secondary"
+                            />
+
                         <a href="https://firebasestorage.googleapis.com/v0/b/peer-teaching.appspot.com/o/documents%2FAvisoPrivacidadMaesMx.pdf?alt=media&token=425380a0-f154-4723-b73a-4505a8a4fae2">
                             <p class="text-center text-indigo-800 w-full mt-4 underline cursor-pointer">Aviso de privacidad</p>
                         </a>

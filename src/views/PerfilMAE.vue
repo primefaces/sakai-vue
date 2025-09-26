@@ -1,53 +1,179 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { getUser, updateUserSubjects, updateUserSchedule, getCurrentUser, startActiveSession, 
-  stopActiveSession,updateUserProfilePicture} from '../firebase/db/users';
+  stopActiveSession,updateUserProfilePicture,  countAchievedBadges, 
+  updateUserAchievementBadge, updateUserBackground, updateUserBackgroundImage
+,updatePoints, addBackgroundUsers} from '../firebase/db/users';
 import { getSubjects } from '../firebase/db/subjects';
-import { addAsesoria, getAsesoriasCountForUserInCurrentSemester } from '../firebase/db/asesorias';
+import { addAsesoria, getAsesoriasCountForUserInCurrentSemester,getAsesoriasByUidAndRating,
+  updateAsesoria
+ } from '../firebase/db/asesorias';
+import { getStudentReport } from '../firebase/db/attendance';
+import { formatDate } from '@/utils/AnunciosUtils';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 import { uploadFile } from '../firebase/img/users';
-import { enablePersistentCacheIndexAutoCreation } from 'firebase/firestore';
+import {
+    getSubjectColor,
+} from '@/utils/HorarioUtils';
+import {
+  topOptions,
+  areaOptions,
+  daysArray,
+  timeSlots,
+  timeToDecimal 
+} from '@/utils/PerfilUtils';
 
 const toast = useToast();
 const route = useRoute();
-const router = useRouter();
 const userId = ref(route.path.split('/').pop());
 const maeInfo = ref(null);
+const evalInfo = ref(null);
 const userInfo = ref(null);
-
 const asesoriasCount = ref(0);
-
+const badgesCount = ref(0);
 const selectedSubjects = ref([]);
 const subjects = ref([]);
-
 const newSchedule = ref({});
-
-//Imagen a actualizar
 const showDialogUpload = ref(false); 
 const selectedFile = ref(null); 
+const showDialogLogros = ref(false);
+const dataAttendance = ref();
+
+const statusLabel = ref({
+  A: 'Asistencia',
+  R: 'Retraso',
+  J: 'Justificado',
+  F: 'Falta'
+});
+
+const statusSeverity = ref({
+  A: 'success',
+  R: 'warning',
+  J: 'info',
+  F: 'danger'
+});
 
 onMounted(async () => {
+ // await addBackgroundUsers();
   userInfo.value = await getCurrentUser();
-
   maeInfo.value = await getUser(route.params.id);
-
   asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
   selectedSubjects.value = maeInfo.value.subjects;
   subjects.value = await getSubjects();
-
-  // JSON Parse es para que pase por valor en lugar de referencia
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
+  badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
+  evalInfo.value = await getAsesoriasByUidAndRating(userInfo.value.uid, maeInfo.value.uid);
+  if (asesoriasCount.value >= 1 && maeInfo.value.badges[0].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "1");
+  } 
+  if (asesoriasCount.value >= 10 && maeInfo.value.badges[1].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "2");
+  } 
+  if (asesoriasCount.value >= 30 && maeInfo.value.badges[2].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "3");
+  } 
+  if (asesoriasCount.value >= 50 && maeInfo.value.badges[3].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "4");
+  } 
+  if (asesoriasCount.value >= 100 && maeInfo.value.badges[4].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "5");
+  } 
+  if (asesoriasCount.value >= 200 && maeInfo.value.badges[5].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "6");
+  } 
+  if (asesoriasCount.value >= 500 && maeInfo.value.badges[6].achieved === false) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "7");
+  } 
+  if ( maeInfo.value.profilePictureUrl !== "https://randomuser.me/api/portraits/lego/5.jpg"
+  && maeInfo.value.badges[7].achieved === false
+  ){
+    await updateUserAchievementBadge(maeInfo.value.uid, "8");
+  }
+  if ((Math.round((maeInfo.value.totalTime / 60) * 100) / 100) >= 80 && maeInfo.value.badges[8].achieved === false) {
+      await updateUserAchievementBadge(maeInfo.value.uid, "9");
+  }
+  if ( maeInfo.value.badges[11].achieved === false 
+    && maeInfo.value.role == "mae" || asesoriasCount.value >= 1
+  ) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "12");
+  } 
+  if ( maeInfo.value.badges[12].achieved === false 
+    && maeInfo.value.role == "coordi" || maeInfo.value.role == "admin"
+     || maeInfo.value.role == "tec"
+  ) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "13");
+  } 
+  if ( maeInfo.value.badges[13].achieved === false 
+    &&  maeInfo.value.role == "admin"
+     || maeInfo.value.role == "tec"
+  ) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "14");
+  } 
+  if ( maeInfo.value.badges[14].achieved === false 
+    &&  maeInfo.value.role == "publi"
+  ) {
+    await updateUserAchievementBadge(maeInfo.value.uid, "15");
+  } 
+  
+  maeInfo.value = await getUser(route.params.id);
+  badgesCount.value = await countAchievedBadges(maeInfo.value.uid);
+  dataAttendance.value = await getStudentReport(userInfo.value.uid);
+
 })
+
+const getHorasHorario = () => {
+    let hours = 0;
+    for (const day of daysArray) {
+      const scheduleForDay = newSchedule.value[day.en];
+      if (scheduleForDay) {
+        for (const timeSlot of scheduleForDay) {
+          const start = timeToDecimal(timeSlot.start);
+          const end = timeToDecimal(timeSlot.end);
+          hours = hours + end - start;
+        }
+      }
+    }
+    return hours;
+  }
+
+  const formattedEvaluations = () => {
+  return evalInfo.value.map(asesoria => {
+    const peerName = asesoria.peerInfo && asesoria.peerInfo.name ? asesoria.peerInfo.name : 'Desconocido';
+    const formattedDate = asesoria.date ? formatDate(asesoria.date) : 'Fecha no disponible';
+
+    return {
+      id: asesoria.id,
+      label: `${formattedDate} - ${peerName}`,
+    };
+  });
+};
+
+
+const getHorasRequeridas = () => {
+  if (maeInfo.value.status === "becario" && 
+    ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") &&
+    (maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS"))) {
+    return 3;
+  } else if (maeInfo.value.status === "becario" && 
+           ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") && 
+           !(maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS"))) {
+    return 5;
+  } else if (maeInfo.value.status === "becario" && maeInfo.value.role === "publi") {
+    return 2;
+  } else if (maeInfo.value.status === "voluntario") {
+    return 1;
+  } else{
+    return 5;
+  }
+}
 
 watch(route, async (newroute, oldroute) => {
   maeInfo.value = await getUser(route.params.id);
   selectedSubjects.value = maeInfo.value.subjects;
   newSchedule.value = JSON.parse(JSON.stringify(maeInfo.value.weekSchedule));
 })
-
-
 
 const uploadProfilePicture = async () => {
   if (!selectedFile.value) return;
@@ -82,30 +208,14 @@ const filteredSubjects = computed(() => {
   return [];
 });
 
-const getSubjectColor = (area) => {
-    switch (area) {
-        case 'ING':
-            return 'bg-cyan-600';
-        case 'NEG':
-            return 'bg-blue-600';
-        case 'SLD':
-            return 'bg-teal-600';
-        case 'CIS':
-            return 'bg-red-600';
-        case 'AMC':
-            return 'bg-green-600';
-        case 'ART':
-            return 'bg-purple-600';
-        default:
-            return 'bg-yellow-600';
-    }
-}
-
 const searchQuery = ref('');
-
 const showDialogMaterias = ref(false);
+
 const subjectTableFilter = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  semester: { value: null, matchMode: FilterMatchMode.EQUALS },
+  area: { value: null, matchMode: FilterMatchMode.EQUALS },
+  top: { value: null, matchMode: FilterMatchMode.EQUALS }
 });
 
 const saveSubjectChanges = async () => {
@@ -120,36 +230,6 @@ const saveSubjectChanges = async () => {
   showDialogMaterias.value = false;    
 }
 
-const daysArray = [
-  { en: 'monday', es: 'Lunes' },
-  { en: 'tuesday', es: 'Martes' },
-  { en: 'wednesday', es: 'Miércoles' },
-  { en: 'thursday', es: 'Jueves' },
-  { en: 'friday', es: 'Viernes' }
-];
-
-const timeSlots = [
-  { name: '09:00 AM', code: '09:00' },
-  { name: '09:30 AM', code: '09:30' },
-  { name: '10:00 AM', code: '10:00' },
-  { name: '10:30 AM', code: '10:30' },
-  { name: '11:00 AM', code: '11:00' },
-  { name: '11:30 AM', code: '11:30' },
-  { name: '12:00 PM', code: '12:00' },
-  { name: '12:30 PM', code: '12:30' },
-  { name: '01:00 PM', code: '13:00' },
-  { name: '01:30 PM', code: '13:30' },
-  { name: '02:00 PM', code: '14:00' },
-  { name: '02:30 PM', code: '14:30' },
-  { name: '03:00 PM', code: '15:00' },
-  { name: '03:30 PM', code: '15:30' },
-  { name: '04:00 PM', code: '16:00' },
-  { name: '04:30 PM', code: '16:30' },
-  { name: '05:00 PM', code: '17:00' },
-  { name: '05:30 PM', code: '17:30' },
-  { name: '06:00 PM', code: '18:00' }
-];
-
 const showDialogHorarios = ref(false);
 
 const addTimeSlot = (day, start, end) => {
@@ -160,14 +240,7 @@ const addTimeSlot = (day, start, end) => {
   }
 }
 
-// Converitir en decimal 
-const timeToDecimal = (time) => {
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours + minutes / 60;
-};
-
 const saveScheduleChanges = async () => {
-  // Validación de horario
   let hours = 0;
 
   for (const day of daysArray) {
@@ -189,27 +262,21 @@ const saveScheduleChanges = async () => {
           return;
         }
 
-        // Verificación de solapamientos
         for (const existingSlot of intervals) {
           const existingStart = existingSlot.start;
           const existingEnd = existingSlot.end;
-          
           if ((startTime < existingEnd && endTime > existingStart)) {
             toast.add({ severity: 'error', summary: 'Error de horario', detail: `El intervalo de tiempo de ${startTime} a ${endTime} ya existe o se sobrepone con otro intervalo para el día ${day.es}`, life: 3000 });
             return;
           }
         }
-
         intervals.push({ start: startTime, end: endTime });
-
         const start = timeToDecimal(timeSlot.start);
         const end = timeToDecimal(timeSlot.end);
         hours = hours + end - start;
       }
     }
   }
-
-  // Validaciones adicionales
   if (maeInfo.value.status === "becario" && 
     ((maeInfo.value.role === "mae" || maeInfo.value.role === "coordi") &&
     (maeInfo.value.career.toUpperCase() === "MC" || maeInfo.value.career.toUpperCase() === "LBC" || maeInfo.value.career.toUpperCase() === "LPS") && 
@@ -244,17 +311,18 @@ const saveScheduleChanges = async () => {
   showDialogHorarios.value = false;  
 };
 
-
-
-
-
 const showDialogAsesoria = ref(false);
-
+const showDialogTienda = ref(false);
+const showDialogEvaluacion = ref(false);
+const showDialogEditar = ref(false);
 const ratingAsesoria = ref(null);
 const comentarioAsesoria = ref('');
 const materiaAsesoria = ref(null);
+const isSavingAsesoria = ref(false);
 
 const saveAsesoria = async () => {
+  if (isSavingAsesoria.value) return; 
+  isSavingAsesoria.value = true; 
   toast.add({ severity: 'info', summary: 'Guardando cambios', detail: 'Se está registrando la asesoría', life: 3000 });
   try {
     await addAsesoria(maeInfo.value, userInfo.value, materiaAsesoria.value, comentarioAsesoria.value, ratingAsesoria.value); 
@@ -265,53 +333,49 @@ const saveAsesoria = async () => {
     materiaAsesoria.value = null;
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al tratar de registrar la asesoría' });
+  } finally{
+    isSavingAsesoria.value = false; 
+    showDialogAsesoria.value = false;  
+    asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
   }
-  showDialogAsesoria.value = false;  
-  asesoriasCount.value = await getAsesoriasCountForUserInCurrentSemester(maeInfo.value.uid);
-  
 }
 
 const showDialogSession = ref(false);
 const location = ref('Biblioteca Piso 3')
 
 const startSession = async () => {
-  // Crea field de activeSession con id, location, peerInfo, startTime, status
   try {
     const res = await startActiveSession(userInfo.value.uid, userInfo.value, location.value);
-    toast.add({ severity: 'success', summary: 'Inicio de sesión exitoso', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Inicio de turno exitoso', life: 3000 });
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(route.params.id);
     showDialogSession.value = false;
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de iniciar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de iniciar turno', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
 }
 
 const stopSession = async () => {
-  // Borra field de activeSession, saca la diferencia en minutos de startTime y actual para agregarla a totalTime del usuario
   try {
     const res = await stopActiveSession(userInfo.value.uid);
     if (!res.activeSessionDeleted) {
       if (res.timeLimitExceded) {
-        toast.add({ severity: 'error', summary: `Excediste el limite de tiempo de tu sesión (${ Math.round((res.differenceInMinutes / 60) * 100) / 100 } horas)`, detail: 'Consulta a un coordi para reponer las horas' });
+        toast.add({ severity: 'error', summary: `Excediste el limite de tiempo de tu turno (${ Math.round((res.differenceInMinutes / 60) * 100) / 100 } horas)`, detail: 'Consulta a un coordi para reponer las horas' });
       }
       else {
         throw new Error("Active session was not deleted");
       }
     } else {
-      toast.add({ severity: 'success', summary: 'Sesión cerrada con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
+      toast.add({ severity: 'success', summary: 'Se ha cerrado el turno con éxito', detail: `${res.differenceInMinutes} minutos registrados`, life: 3000 });
     }
     userInfo.value = await getCurrentUser();
     maeInfo.value = await getUser(route.params.id);
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar sesión', detail: 'Consulta con un administrador de la página', life: 3000 });
+    toast.add({ severity: 'error', summary: 'Ocurrió un error al tratar de cerrar turno', detail: 'Consulta con un administrador de la página', life: 3000 });
   }
 }
 
-
-
 const previewUrl = ref(null);
-
 
 const handleFileChange = (event) => {
   const file = event.target.files[0];
@@ -335,11 +399,34 @@ const handleDrop = (event) => {
 
 const showError = () => {
   toast.add({ severity: 'error', summary: 'Error', detail: 'Solo puedes subir archivos JPG o PNG', life: 3000 });
-  
 };
 
 const triggerFileInput = () => {
   document.querySelector('input[type="file"]').click();
+};
+
+
+const buyThings = async (backId, price) => {
+  const availableCoins = Math.floor(maeInfo.value.points / 10) - maeInfo.value.useCoins - price;
+
+  if (availableCoins < 0) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Monedas insuficientes' });
+    return;
+  }
+
+  await updateUserBackground(maeInfo.value.uid, backId, price, maeInfo.value.useCoins);
+  maeInfo.value = await getUser(route.params.id);
+  toast.add({ severity: 'success', summary: 'Has comprado un nuevo fondo', life: 3000 });
+};
+
+const changeBackground = async (backImageUrl) => {
+        await updateUserBackgroundImage(maeInfo.value.uid, backImageUrl);
+        maeInfo.value = await getUser(route.params.id);
+        toast.add({ severity: 'success', summary: 'Has actualizado el fondo', life: 3000 });
+};
+
+const validateBackground = async () => {
+        toast.add({ severity: 'success', summary: 'Ya has equipado ese fondo', life: 3000 });
 };
 
 const validateFile = (file) => {
@@ -347,125 +434,283 @@ const validateFile = (file) => {
   return validTypes.includes(file.type);
 }
 
+const selectedAsesoria = ref(null); 
+
+const guardarEvaluacion = async () => {
+  if (!selectedAsesoria.value) {
+    toast.add({ severity: 'warn', summary: 'Asesoría no seleccionada', detail: 'Selecciona una asesoría antes de guardar', life: 3000 });
+    return;
+  }
+  if (ratingAsesoria.value === null ) {
+    toast.add({ severity: 'warn', summary: 'Debes llenar la evaluación', detail: 'Selecciona una asesoría antes de guardar', life: 3000 });
+    return;
+  }
+  
+    await updateAsesoria(selectedAsesoria.value, {
+      comment: comentarioAsesoria.value,
+      rating: ratingAsesoria.value,
+    });
+    if(ratingAsesoria.value > 3){
+      await updatePoints(maeInfo.value.uid, ratingAsesoria.value * 5)
+      if(comentarioAsesoria.value !== ""){
+        await updatePoints(maeInfo.value.uid, 25)
+      }
+    }
+
+    ratingAsesoria.value = null;
+    comentarioAsesoria.value = '';
+    selectedAsesoria.value = null;
+    evalInfo.value = await getAsesoriasByUidAndRating(userInfo.value.uid, maeInfo.value.uid);
+    toast.add({
+      severity: 'success',
+      summary: 'Guardado exitoso',
+      detail: 'La evaluación se registró con éxito',
+      life: 3000,
+    });
+  
+};
+
 </script>
 
 <template>
-  <div class="flex relative">
-    <div class="flex-1">
-      <h1 class="text-black text-6xl font-bold mb-5 text-center sm:text-left">Perfil</h1>
+  <div class="flex border-round-top-xl h-8rem w-full" v-if="maeInfo"
+      :style="{
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: `url(${maeInfo.myBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }">
+    
+    <div class="sm:flex sm:flex-1 justify-center w-full px-3">
+      <div class="relative flex align-items-center justify-content-center mr-4">
+        <img v-if="maeInfo" :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-10rem w-10rem border-3 border-white mt-8 ml-6">
+      </div>
+      
     </div>
-    <div class="justify-end hidden md:block">
-      <!-- <i class="pi pi-bell text-4xl"></i> -->
-    </div>
+    <Button 
+    v-if="userInfo.uid == userId" 
+            class="p-button-help p-button-sm font-bold flex  border-none border-round-3xl mr-4 mb-6 texto-negro bg-white border-3 border-white"
+            :style="{
+              padding: '1.2rem 1rem',
+              height: '1.5rem',
+              lineHeight: '1.5rem',
+              fontSize: '0.875rem',
+            }"
+            @click="showDialogEditar = true"
+          >
+            Editar perfil
+            <img src="/assets/edit.svg" class="ml-2 " alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
+    </Button>
   </div>
 
-  <div v-if="maeInfo && userInfo" class="card mb-0 w-full">
-    <div class="sm:flex">
-      <div class="sm:flex sm:flex-1 justify-center w-full">
-        <div class="relative flex align-items-center justify-content-center mr-4">
-            <img :src="maeInfo.profilePictureUrl" alt="Foto de perfil" class="border-circle h-16rem w-16rem">
-            <div v-if="userInfo.uid == userId" class="absolute bottom-0 right-0 p-3">            
-                <Button icon="pi pi-pencil"  class="border-3 border-white" rounded @click="showDialogUpload = true" />
-            </div>
+  <div v-if="maeInfo && userInfo" class="bg-white px-3 mb-0 w-full  ">
+    
+    <div class="sm:flex justify-content-end ">
+      <div class="mt-2 w-4 hidden md:block">
+        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2 ">
+          <Button 
+                v-if=" userInfo['activeSession']"
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
+                @click="stopSession"
+            >
+                Finalizar turno
+                <img src="/assets/end.svg" class="ml-4" alt="flag icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+            <Button 
+                v-else
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+                :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
+                @click="showDialogSession = true"
+            >
+                Iniciar turno
+                <img src="/assets/start.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+        </div>
+          <Button
+          v-if="userInfo.uid != maeInfo.uid" 
+           class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+          :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+          @click="showDialogAsesoria = true"
+          :disabled=" isSavingAsesoria" 
+        >
+            Registrar asesoría
+            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+        </Button>
+      </div>
+    </div>
+    <div class="flex flex-column md:flex-row">
+      <div class="w-8 justify-content-center md:mt-0 mt-8">
+        <div class="">
+          <p class="text-xl font-bold text-left "> {{ maeInfo.name }} </p>
+          <p class="text-lg font-medium text-left">  {{ maeInfo.career }} | Campus {{ maeInfo.campus }}</p>  
+          <div class="flex" v-if="userInfo.uid == maeInfo.uid">
+            <Tag class="px-4 text-xl"
+              :value="dataAttendance ? statusLabel[dataAttendance] : 'Fuera de Horario'"
+              :severity="dataAttendance ? statusSeverity[dataAttendance] : 'secondary'"
+            />
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-2  w-full md:w-4  md:hidden block">
+        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2 ">
+          <Button 
+                v-if=" userInfo['activeSession']"
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	"
+                :style="{ background: 'linear-gradient(to right, #4466A7, #A073BB)' }"
+                @click="stopSession"
+            >
+                Finalizar turno
+                <img src="/assets/end.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+            <Button 
+                v-else
+                class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+                :style="{ background: 'linear-gradient(to right, #A74497, #D8899C)',  }"
+                @click="showDialogSession = true"
+            >
+                Iniciar turno
+                <img src="/assets/start.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+            </Button>
+        </div>
+          <Button
+          v-if="userInfo.uid != maeInfo.uid" 
+           class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 "
+          :style="{ background: 'linear-gradient(to right, #4466A7, #51A3AC)' }"
+          @click="showDialogAsesoria = true"
+          :disabled=" isSavingAsesoria" 
+        >
+            Registrar asesoría
+            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+        </Button>
+      </div>
+
+      <div class="sm:flex justify-content-end w-full md:w-4">
+        <div class="mt-2 w-full">
+          <Button
+            v-if="userInfo.uid == maeInfo.uid" 
+            class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogTienda = true"
+            :disabled=" isSavingAsesoria" 
+          >
+            Tienda MAE
+              <img src="/assets/store.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+          </Button>
+          <Button
+            v-if="userInfo.uid != maeInfo.uid" 
+            class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none	 px-4"
+            :style="{ background: 'linear-gradient(to right, #44A79b, #69ac51)' }"
+            @click="showDialogEvaluacion = true"
+            :disabled=" isSavingAsesoria" 
+          >
+              Evaluar asesoría
+              <img src="/assets/evaluate.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+          </Button>
+        </div>
+      </div>
+    </div>
+          
+    <div class="flex flex-column md:flex-row ">
+      <div class="md:w-4 w-full  mt-2 mr-4">
+        <div class="border-round-lg border-gray-300 flex flex-row p-2 shadow-md card align-items-center justify-content-center">
+          <img src="/assets/coins.svg" class="ml-2" alt="mentoring icon" style="width: 2.5rem; height: 2.5rem;" />
+          <p class="text-lg font-bold mt-3 ml-2"> 
+            {{ Math.max(0, Math.floor(maeInfo.points / 10) - maeInfo.useCoins) }} monedas
+          </p>
+          <div class="ml-2 cursor-pointer mt-2" style="position: relative;">
+            <i class="pi pi-question-circle text-gray-500" style="font-size: 1.2rem;" v-tooltip="'Las monedas se ganan através de puntos de experiencia. Utilizas para personalizar en tu pérfil en la tienda MAE'"></i>
+          </div>
+        </div> 
+        <div class="border-round-lg border-gray-300 flex flex-row p-2 shadow-md card  flex flex-column mb-2">
+          <span class="flex flex-row justify-content-center text-center ml-2">
+            <p class="text-lg font-bold">Mis estadísticas</p>
+            <img src="/assets/est.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+          </span>
+          <span class="flex flex-row  mb-2">
+            <img src="/assets/grad.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+            <p class="text-lg font-medium  ml-2">{{ asesoriasCount }} Asesorías </p> 
+          </span>
+          <span class="flex flex-row  mb-2">
+            <img src="/assets/clock.svg" class="ml-2" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+            <p class="text-lg font-medium  ml-2">  {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas de servicio </p>
+          </span>      
+        </div>
+      </div>
+      <div class="w-8">
+        <h2 class="font-bold text-center sm:text-left"> Materias </h2>
+        <div class="mb-2">
+          <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" />
+        </div>
+        <div class="flex flex-wrap">
+            <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 3)" v-tooltip.top="subject.id" :key="index"
+             rounded class="text-base font-semibold text-white text-center sm:mx-1 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
+              {{ subject.name }}
+            </Tag>
+            <Button v-if="maeInfo.subjects.length > 3" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
+              severity="secondary" rounded class="text-base font-semibold text-white mx-1 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-column md:flex-row mb-4 ">
+      <div class="md:w-4  w-full mt-2 mr-4  mb-4">
+        <div class="border-round-lg border-gray-300 flex flex-col p-4 shadow-md card align-items-start gap-2 flex flex-column">
+          <div class="flex flex-row">
+            <img src="/assets/trophy.svg" alt="mentoring icon" style="width: 1.6rem; height: 1.6rem;" />
+            <p class="text-lg font-bold ml-2 mr-4">Logros</p>
+            <p class="text-lg font-medium ">{{ badgesCount }} / 18</p>
+            <i class="pi pi-angle-right text-xl ml-5 mt-1 cursor-pointer" @click="showDialogLogros = true"></i>
+          </div>
+          <div class="flex flex-row">
+            <img 
+                :src="maeInfo.badges[0].image_url" 
+                alt="Logro 1"
+                class="border-circle mr-4 h-4rem w-4rem p-2" 
+                :style="{ border: maeInfo.badges[0].achieved ? '3px solid #00ACC1' : '3px solid #808080', 
+                          filter: maeInfo.badges[0].achieved ? 'none' : 'grayscale(100%)' }" 
+              />
+
+              <div class="flex flex-column mt-2" v-if="maeInfo.badges && maeInfo.badges.length > 0">
+                  <p class="text-base font-bold m-0">{{ maeInfo.badges[0].name }}</p>
+                  <p class="text-md font-medium m-0">{{ maeInfo.badges[0].description }}</p>
+              </div>
+          </div>
+          <div class="flex flex-row">
+            <img 
+                :src="maeInfo.badges[1].image_url" 
+                alt="Logro 1"
+                class="border-circle mr-4 h-4rem w-4rem p-2" 
+                :style="{ border: maeInfo.badges[1].achieved ? '3px solid #00ACC1' : '3px solid #808080', 
+                          filter: maeInfo.badges[1].achieved ? 'none' : 'grayscale(100%)' }" 
+              />
+              <div class="flex flex-column mt-2" v-if="maeInfo.badges && maeInfo.badges.length > 0">
+                  <p class="text-md font-bold m-0">{{ maeInfo.badges[1].name }}</p>
+                  <p class="text-sm font-medium m-0">{{ maeInfo.badges[1].description }}</p>
+              </div>
+          </div>
         </div>
         
-        <div class="mb-2 sm:mb-0">
-          <p class="text-3xl font-bold text-center sm:text-left"> {{ maeInfo.name }} </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-envelope font-medium"></i> {{ maeInfo.email }} </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-book font-medium"></i> {{ maeInfo.career }} </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-building font-medium"></i> Campus {{ maeInfo.campus }} </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-clock font-medium"></i> {{ Math.round((maeInfo.totalTime / 60) * 100) / 100 }} Horas de servicio </p>
-          <p class="text-lg font-medium text-center sm:text-left"> <i class="pi pi-star font-medium"></i> {{ asesoriasCount }} Asesorías </p>
+      </div>
+      <div class="w-8">
+        <h2 class="font-bold text-center sm:text-left mt-2"> Horario </h2>
+        <div>
+          <div class="grid">
+            <div v-for="day in daysArray" class="md:col col-12">
+              <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
+                <div v-if="maeInfo.weekSchedule[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']]" :key="`${day['en']}-${index}`" 
+                class="text-center p-2 border-round-sm bg-green-500 text-white text-base font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
+                <div v-else class="text-center p-2 border-round-sm bg-gray-100 text-black text-base font-bold mt-2"> N/A </div>
+            </div>
         </div>
       </div>
-      <div class="sm:justify-end">
-        <div v-if="userInfo.uid == maeInfo.uid" class="mb-2">
-          <Button v-if="userInfo['activeSession']" label="Cerrar sesión" icon="pi pi-user-minus" size="large"
-            @click="stopSession" class="w-full" severity="danger"/>
-          <Button v-else label="Iniciar sesión" icon="pi pi-user-plus" size="large"
-            @click="showDialogSession = true" class="w-full"/>
-        </div>
-        <Button v-if="userInfo.uid == maeInfo.uid" label="Materias" icon="pi pi-book" size="large" severity="secondary"
-          @click="showDialogMaterias = true" class="w-full sm:w-fit sm:mr-2 mb-2 sm:mb-0"/>
-        <Button v-if="userInfo.uid == maeInfo.uid" label="Horario" icon="pi pi-clock" size="large" severity="secondary"
-          @click="showDialogHorarios = true" class="w-full sm:w-fit mb-2 sm:mb-0"/>
-        <Button v-else label="Registrar asesoría" icon="pi pi-star" size="large"
-          @click="showDialogAsesoria = true" class="w-full sm:w-fit"/>
-      </div>
     </div>
-    <h2 class="font-bold text-center sm:text-left"> Materias </h2>
-    <div class="mb-2">
-      <InputText v-model="searchQuery" placeholder="Buscar materia" class="p-mr-2 w-full" />
-    </div>
-    <div class="flex flex-wrap">
-      <!-- Mostrar las primeras dos filas de etiquetas -->
-        <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-3 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
-          {{ subject.name }}
-        </Tag>
-        <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
-          severity="secondary" rounded class="text-lg font-semibold text-white mx-1 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" />
-    </div>
-
-    <hr />
-    <h2 class="font-bold text-center sm:text-left"> Horario </h2>
-
-    <div>
-      <div class="grid">
-        <div v-for="day in daysArray" class="md:col col-12">
-          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
-            <div v-if="maeInfo.weekSchedule[day['en']]" v-for="(slot, index) in maeInfo.weekSchedule[day['en']]" :key="`${day['en']}-${index}`" class="text-center p-3 border-round-sm bg-green-500 text-white text-xl font-bold mt-2">{{ `${slot['start']} - ${slot['end']}` }}</div>
-            <div v-else class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
-        </div>
-    </div>
+    
+    
     </div>
   </div>
-  <div v-else class="card mb-0 w-full">
-    <div class="sm:flex">
-      <div class="sm:flex sm:flex-1 justify-center w-full">
-        <div class="flex">
-          <Skeleton size="16rem" shape="circle" class="mb-2 sm:mr-5"></Skeleton>
-        </div>
-        <div class="mb-2 sm:mb-0 justify-center">
-          <Skeleton height="36px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-          <Skeleton height="28px" width="20rem" class="mb-2"></Skeleton>
-        </div>
-      </div>
-    </div>
-    <h2 class="font-bold text-center sm:text-left"> Materias </h2>
-    <div class="mb-2">
-      <Skeleton height="34px" class="p-mr-2"></Skeleton>
-    </div>
-    <div class="flex">
-      <!-- Mostrar las primeras dos filas de etiquetas -->
-      <Skeleton width="20%" height="34px" borderRadius="16px" class="mr-2"></Skeleton>
-      <Skeleton width="60%" height="34px" borderRadius="16px" class="mx-2"></Skeleton>
-      <Skeleton width="40%" height="34px" borderRadius="16px" class="ml-2"></Skeleton>
-        <!-- <Tag v-for="(subject, index) in filteredSubjects.slice(0, showMoreTags ? Infinity : 12)" v-tooltip.top="subject.id" :key="index" rounded class="text-lg font-semibold text-white text-center sm:mx-1 my-1 p-2 w-full sm:w-fit mx-0" :class="getSubjectColor(subject.area)">
-          {{ subject.name }}
-        </Tag>
-        <Button v-if="maeInfo.subjects.length > 12" @click="showMoreTags = !showMoreTags" :label="showMoreTags ? 'Mostrar menos' : 'Mostrar más'" 
-          severity="secondary" rounded class="text-lg font-semibold text-white mx-2 my-1" :icon="showMoreTags ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" iconPos="right" /> -->
-    </div>
-
-    <hr />
-    <h2 class="font-bold text-center sm:text-left"> Horario </h2>
-
-    <div>
-      <div class="grid">
-        <div v-for="day in daysArray" class="md:col col-12">
-          <div class="text-center p-3 border-round-sm bg-gray-200 text-xl font-bold">{{ day['es'] }}</div>
-            <div class="text-center p-3 border-round-sm bg-gray-100 text-black text-xl font-bold mt-2"> N/A </div>
-        </div>
-    </div>
-    </div>
-  </div>
-
-  <!-- Dialogos -->
-
+  
   <Dialog v-model:visible="showDialogHorarios" modal header="Editar horario" class="w-9">
     <div class="grid">
       <div v-for="day in daysArray" class="md:col-4 col-12">
@@ -478,27 +723,34 @@ const validateFile = (file) => {
       </div>
   </div>
     <div class="flex justify-content-end gap-2">
+      <div class="bg-black">
+        {{ getHorasHorario() }}  / {{ getHorasRequeridas() }}
+        <br> Horas
+      </div>
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogHorarios = false"></Button>
       <Button type="button" label="Guardar cambios " @click="saveScheduleChanges"></Button>
     </div>
   </Dialog>
- 
-  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias"  class="custom-table md:w-9" >
+
+  <Dialog v-model:visible="showDialogMaterias" modal header="Editar materias" class="custom-table md:w-9">
+  <div class="flex flex-col gap-2 my-4">
+    <InputText v-model="subjectTableFilter['global'].value" placeholder="Buscar materia por nombre o código" class="w-full" />
+    <InputText v-model="subjectTableFilter['semester'].value"  placeholder="Semestre" class="" />
+    <Dropdown :options="areaOptions" option-label="label" option-value="value" v-model="subjectTableFilter['area'].value" placeholder="Área" class="" />
+    <Dropdown :options="topOptions" option-label="label" option-value="value" v-model="subjectTableFilter['top'].value" placeholder="Top" class="" />
+  </div>
   <DataTable :value="subjects" paginator :rows="10" :rowsPerPageOptions="[10, 25, 50, 100]"
-    v-model:filters="subjectTableFilter" :globalFilterFields="['id', 'name']"
-    v-model:selection="selectedSubjects" responsiveLayout="stack"  >
-    <template #header>
-      <InputText v-model="subjectTableFilter['global'].value" placeholder="Buscar materia" class="w-full" />
-    </template>
+    v-model:filters="subjectTableFilter" :globalFilterFields="['id', 'name', 'semester', 'area', 'top']"
+    v-model:selection="selectedSubjects" responsiveLayout="stack">
     <template #empty>No se encontraron resultados.</template>
     <Column selectionMode="multiple" headerStyle="visibility:hidden"></Column>
-    <Column field="id" header="Código" ></Column>
+    <Column field="id" header="Código"></Column>
     <Column field="name" class="text-right sm:text-left" header="Nombre"></Column>
     <Column field="semester" header="Semestre"></Column>
-    <Column field="area" header="Area"></Column>
-    <Column field="top" header="Top"   >
+    <Column field="area" header="Área"></Column>
+    <Column field="top" header="Top">
       <template #body="slotProps">
-         <i v-if="slotProps.data.top" class="pi pi-star-fill" style="color: gold;"></i>
+        <i v-if="slotProps.data.top" class="pi pi-star-fill" style="color: gold;"></i>
       </template>
     </Column>
   </DataTable>
@@ -508,39 +760,242 @@ const validateFile = (file) => {
   </div>
 </Dialog>
 
-
   <Dialog v-model:visible="showDialogAsesoria" modal header="Registrar asesoría" class="md:w-4">
-    
     <p class="font-bold">Materia</p>
     <Dropdown v-model="materiaAsesoria" :options="subjects" filter optionLabel="name" placeholder="Materia" checkmark :highlightOnSelect="false" class="w-12 mb-2" />
-
-    <p class="font-bold">Comentario</p>
-    <Textarea v-model="comentarioAsesoria" placeholder="Agrega un comentario" variant="filled" rows="5" cols="30" class="w-12" />
-
-    <p class="font-bold mt-3">Califica tu asesoría</p>
-    <Rating v-model="ratingAsesoria" :cancel="false"/>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogAsesoria = false"></Button>
       <Button type="button" label="Confirmar registro" :disabled="!(materiaAsesoria !== null)" @click="saveAsesoria"></Button>
     </div>
   </Dialog>
 
-  <Dialog v-model:visible="showDialogSession" modal header="Iniciar sesión" class="md:w-4">
+  <Dialog v-model:visible="showDialogLogros" modal class="mr-3 w-10">
+  <template #header>
+    <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+      <p class="text-2xl font-bold mr-2 mt-3">Logros</p>
+      <img src="/assets/trophy.svg" alt="trophy icon" style="width: 1.6rem; height: 1.6rem;" />
+    </div>
+  </template>
+
+  <div class="grid md:ml-8 mt-3">
+    <div
+      v-for="(badge) in maeInfo.badges"
+      :key="badge.id"
+      class="col-11 ml-3 md:col-5 lg:col-3 flex flex-row align-items-center card p-3 md:mx-3 lg:mx-5  h-10rem   border-round shadow-2 hover:shadow-4 transition-shadow duration-200 border-round-xl"
+    >
+        <img
+          :src="badge.image_url"
+          alt="Logro"
+          class="border-circle h-4rem w-4rem p-2 mb-2 mr-3"
+          :style="{ 
+            border: badge.achieved ? '3px solid #00ACC1' : '3px solid #808080', 
+            filter: badge.achieved ? 'none' : 'grayscale(100%)' 
+          }"
+        />
+        <div class="text-center ">
+          <p :class="['text-base font-bold m-0', badge.achieved ? 'text-black' : 'text-gray-500']">
+            {{ badge.name }}
+          </p>
+          <p :class="['text-md font-medium m-0', badge.achieved ? 'text-black' : 'text-gray-500']">
+            {{ badge.description }}
+          </p>
+        </div>
+    </div>
+  </div>
+</Dialog>
+
+
+
+  <Dialog v-model:visible="showDialogTienda" modal class="mr-3 w-10">
+    <template #header>
+      <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+        <p class="text-2xl font-bold mr-2 mt-3">Tienda MAE</p>
+        <img src="/assets/store.svg" alt="mentoring icon" class="icon-blue" style="width: 1.6rem; height: 1.6rem;" />
+      </div>
+    </template>
+
+    <div class="grid md:ml-8 mt-3">
+      <div
+        v-for="(back) in maeInfo.background"
+        :key="back.id"
+        class="col-11 ml-3 md:col-5 lg:col-3 flex flex-column align-items-center card p-0 md:mx-3 lg:mx-5 h-11rem border-round shadow-2 hover:shadow-4 transition-shadow duration-200 border-round-xl">
+        <div class="w-full h-7rem border-round-top-xl"
+            :style="{
+              backgroundImage: `url(${back.image_url})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }">
+        </div>
+
+        <div class="p-3 w-full text-center flex flex-row justify-content-between align-items-center">
+
+          <div class="flex flex-row align-items-center">
+            <img src="/assets/coins.svg" class="ml-2" alt="mentoring icon" style="width: 1.5rem; height: 1.5rem;" />
+            <p class="text-lg font-bold ml-2">{{ back.price }}</p>
+          </div>
+        
+          <Button 
+            v-if="back && !back.bought && maeInfo.myBackground !== back.image_url"
+            class="p-button-help p-button-sm text-white font-bold flex justify-content-center align-items-center border-none border-round-3xl"
+            :style="{
+              background: 'linear-gradient(to right, #4466a7, #51a3ac)',
+              padding: '1.2rem 1rem',
+              height: '1.5rem',
+              lineHeight: '1.5rem',
+              fontSize: '0.875rem'
+            }"
+             @click="buyThings(back.id, back.price)"
+          >
+            Comprar
+            <img src="/assets/store.svg" class="ml-2" alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
+          </Button>
+
+          <Button 
+            v-else-if="back &&  back.bought && maeInfo.myBackground !== back.image_url"
+            class="p-button-help p-button-sm text-white font-bold flex justify-content-center align-items-center border-none border-round-3xl"
+            :style="{
+              background: 'linear-gradient(to right, #7044a7, #a551ac',
+              padding: '1.2rem 1rem',
+              height: '1.5rem',
+              lineHeight: '1.5rem',
+              fontSize: '0.875rem'
+            }"
+             @click="changeBackground(back.image_url)"
+          >
+            Equipar
+            <img src="/assets/add.svg" class="ml-2" alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
+          </Button>
+
+          <Button 
+            v-else
+            class="p-button-help p-button-sm text-white font-bold flex justify-content-center align-items-center border-none border-round-3xl"
+            :style="{
+              background: 'linear-gradient(to right, #00ad11, #51ac91)',
+              padding: '1.2rem 1rem',
+              height: '1.5rem',
+              lineHeight: '1.5rem',
+              fontSize: '0.875rem'
+            }"
+            @click="validateBackground()"
+          >
+            Equipado
+            <img src="/assets/ok.svg" class="ml-2" alt="store icon" style="width: 1.2rem; height: 1.2rem;" />
+          </Button>
+          
+        </div>
+      </div>
+    </div>
+  </Dialog>
+
+
+  <Dialog v-model:visible="showDialogEditar" modal class="mr-3 w-4">
+  <template #header>
+    <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+      <p class="text-2xl font-bold mr-2 mt-3">Editar perfil </p>
+      <img src="/assets/edit.svg" alt="trophy icon" style="width: 1.6rem; height: 1.6rem;" />
+    </div>
+  </template>
+
+  <div class="flex flex-column"> 
+      <Button
+            class="p-button-help p-button-lg w-full  text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogUpload = true"
+          >
+            Editar foto
+            <img src="/assets/mentoring.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+      </Button>    
+      <Button
+            class="p-button-help p-button-lg w-full mt-3 text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogMaterias= true"
+          >
+            Materias
+            <img src="/assets/mundo.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+      </Button>     
+      <Button
+            class="p-button-help p-button-lg w-full mt-3 text-white  border-round-3xl text-xl font-bold flex justify-content-center align-items-center border-none "
+            :style="{ background: 'linear-gradient(to right, #6a44a7, #3ebee7)' }"
+            @click="showDialogHorarios= true"
+          >
+            Horarios
+          <img src="/assets/clock.svg" class="ml-4" alt="mentoring icon" style="width: 2.0rem; height: 2.0rem;" />
+      </Button>
+    </div>
+ 
+</Dialog>
+
+
+
+<Dialog v-model:visible="showDialogEvaluacion" modal class="md:w-4 border-round-lg shadow-2">
+  <template #header>
+    <div class="flex align-items-center justify-content-center text-center h-0.5rem m-auto">
+      <p class="text-2xl font-bold mr-2 mt-3">Evaluar Mae </p>
+    </div>
+  </template>
+    <div v-if="evalInfo && evalInfo.length">
+      <p class="font-bold text-2xl">Asesoría</p>
+
+      <Dropdown 
+        v-model="selectedAsesoria" 
+        :options="formattedEvaluations()"
+        optionLabel="label"
+        optionValue="id"
+        placeholder="Selecciona una asesoría"
+        class="w-full mb-3"
+      />
+
+      <p class="font-bold mt-3 text-2xl">Comentarios</p>
+      <Textarea 
+        v-model="comentarioAsesoria" 
+        placeholder="Agrega un comentario" 
+        autoResize 
+        rows="5" 
+        class="w-full border-round-lg p-inputtext-lg" 
+      />
+
+      <p class="font-bold mt-3 text-2xl">Evaluación</p>
+      <div class="flex justify-content-center  ">
+        <Rating 
+          v-model="ratingAsesoria" 
+          :cancel="false" 
+        />
+      </div>
+    </div>
+    
+    <div v-else class="text-center p-4">
+      <p class="text-gray-600 font-bold">Sin asesorías para evaluar</p>
+    </div>
+    <template #footer v-if="evalInfo && evalInfo.length">
+      <div class="flex justify-content-end mt-4">
+        <Button 
+          label="Confirmar" 
+          @click="guardarEvaluacion" 
+           :style="{ background: 'linear-gradient(to right, #44a79b, #69ac51)' }"
+        />
+        <Button 
+          label="Cancelar" 
+          class="p-button-text mr-2" 
+          @click="showDialogEvaluacion = false"
+        />
+       
+      </div>
+    </template>
+  </Dialog>
+
+  <Dialog v-model:visible="showDialogSession" modal header="Iniciar turno" class="md:w-4">
     <label for="location">Por favor indica donde te encuentras</label>
     <InputText id="text" v-model="location" placeholder="Biblioteca Piso 3" class="w-full mb-4"/>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cerrar" severity="secondary" @click="showDialogSession = false"></Button>
-      <Button type="button" label="Iniciar sesión" :disabled="location === ''" @click="startSession"></Button>
+      <Button type="button" label="Iniciar turno" :disabled="location === ''" @click="startSession"></Button>
     </div>
   </Dialog>
 
   <Dialog v-model:visible="showDialogUpload" modal header="Cambiar foto de perfil" class="md:w-4">
-    <!-- Vista previa de la imagen -->
     <div v-if="previewUrl" class="mb-3 flex justify-content-center">
       <img :src="previewUrl" alt="Vista previa" class="border-circle h-16rem w-16rem">
     </div>
-
-    <!-- Área de arrastrar y soltar y seleccionar archivo -->
     <div
       class="border-2 border-dashed p-3 text-center cursor-pointer"
       @dragover.prevent
@@ -559,33 +1014,45 @@ const validateFile = (file) => {
 </template>
 
 <style scoped>
-
-/* Horizontal spacing utility class */
 .space-x > * {
   margin-left: 1rem;
 }
-
-/* Vertical spacing utility class */
 .space-y > * {
   margin-bottom: 1rem; 
 }
-
 .border-round-lg {
   border-radius: 0.75rem;
 }
-
 .custom-table .p-datatable-tbody > tr:nth-child(even) {
-    background-color: #f2f2f2; /* Color de fondo para filas pares */
+    background-color: #f2f2f2; 
     border: 1px solid #f4f4f5a9;
 
 }
-
 .custom-table .p-datatable-tbody > tr:nth-child(odd) {
-    background-color: #ffffff; /* Color de fondo para filas impares */
+    background-color: #ffffff; 
     border: 1px solid #f4f4f5a9;
 }
 .custom-table .p-datatable-tbody > tr > td {
-    border-bottom: 2px solid #cccccc; /* Cambia el color y el grosor del borde */
-    padding: 1rem 1.5rem; /* Ajusta el padding si es necesario */
+    border-bottom: 2px solid #cccccc; 
+    padding: 1rem 1.5rem; 
 }
+
+.p-dialog .p-dialog-footer {
+    background:  #EFF2F7 ;
+}
+
+.p-dialog .p-dialog-content {
+    background:  #EFF2F7 ;
+}
+
+.p-dialog .p-dialog-header {
+    background:  #EFF2F7 ;
+}
+.icon-blue {
+  filter: hue-rotate(200deg) saturate(100%) brightness(0.5); 
+}
+.texto-negro {
+  color: black !important;
+}
+
 </style>

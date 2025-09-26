@@ -12,16 +12,20 @@ import {
     serverTimestamp,
     deleteField,
     increment,
+    getFirestore,
 } from 'firebase/firestore';
 import { getUserProfilePicture } from "../img/users";
 import * as XLSX from 'xlsx';
+
+const db = getFirestore();
+
 
 function getEmailUsername(email) {
     var atIndex = email.indexOf('@');
     if (atIndex !== -1) {
         return email.slice(0, atIndex);
     }
-    return null; // Return null if there is no "@" symbol in the email
+    return null;
 }
 
 export async function createUser(userInfo) {
@@ -60,7 +64,6 @@ export async function getCurrentUser() {
     return null;
 }
 
-// Función para obtener el día más cercano en la semana y la hora de inicio más temprana
 // Función para obtener el día más cercano en la semana y la hora de inicio más temprana
 export const getClosestDayAndStartTime = (schedules) => {
     if (typeof schedules !== 'object' || schedules === null || Array.isArray(schedules)) {
@@ -112,10 +115,9 @@ export const getClosestDayAndStartTime = (schedules) => {
 };
 
 
-
 export async function getMaes() {
     const usersRef = collection(firestoreDB, "users");
-    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi']));
+    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi','tec']));
 
     const querySnapshot = await getDocs(q);
 
@@ -166,19 +168,6 @@ export async function getMaes() {
 }
 
 
-/**
- * Retrieve users with an active session within the last 5 hours.
- *
- * This function queries the "users" collection in Firestore, filtering for users who have an 
- * 'activeSession' object that was started within the last 5 hours. If `getProfilePicture` is set 
- * to true, the function will also fetch the user's profile picture URL using the `getUserProfilePicture` 
- * function.
- *
- * @param {boolean} getProfilePicture - (Optional) Flag to determine whether to fetch profile pictures for users.
- * @returns {Promise<Array<Object>>} A promise that resolves to an array of user data objects with their active session 
- * information. If `getProfilePicture` is true, each object will also include a `profilePictureUrl` field.
- * @throws Will log an error if there is an issue with the Firestore query or data processing.
- */
 export async function getUsersWithActiveSession(getProfilePicture = false) {
     try {
         // Get a reference to the users collection
@@ -364,8 +353,7 @@ export async function incrementTotalTime(userId, time) {
 export async function updateUserProfilePicture(userId, photoURL) {
     try {
         const userRef = doc(firestoreDB, 'users', userId);
-        console.log(userId)
-        // Actualizar el documento con la nueva URL de la foto
+  
         await updateDoc(userRef, {
             photoURL: photoURL
         });
@@ -384,31 +372,28 @@ export async function updateUserProfilePicture(userId, photoURL) {
  */
 export async function clearAllUsersWeekSchedule() {
     try {
-        // Get a reference to the "users" collection
+
         const usersRef = collection(firestoreDB, "users");
 
-        // Get all user documents from the collection
         const querySnapshot = await getDocs(usersRef);
 
-        // Roles that are eligible for clearing the weekSchedule
-        const eligibleRoles = ['admin', 'coordi', 'mae'];
 
-        // Iterate through each document and update the weekSchedule field to an empty object if the role matches
+        const eligibleRoles = ['admin', 'coordi', 'mae','tec','publi'];
+
         const promises = querySnapshot.docs.map(async (doc) => {
-            const userRef = doc.ref; // Reference to the specific user document
-            const userData = doc.data(); // Get the user data
+            const userRef = doc.ref; 
+            const userData = doc.data(); 
 
-            // Check if the user's role is in the list of eligible roles
+    
             if (eligibleRoles.includes(userData.role)) {
                 return updateDoc(userRef, {
-                    weekSchedule: {} // Set weekSchedule to an empty object
+                    weekSchedule: {} 
                 });
             } else {
-                return Promise.resolve(); // Skip the update for users with other roles
+                return Promise.resolve();
             }
         });
 
-        // Wait for all promises to resolve
         await Promise.all(promises);
 
         console.log("Week schedule content has been successfully cleared for eligible users.");
@@ -418,46 +403,57 @@ export async function clearAllUsersWeekSchedule() {
     }
 }
 
-
 export async function checkAndUpdateUserRole(file = null) {
     try {
         const usersRef = collection(firestoreDB, "users");
         const querySnapshot = await getDocs(usersRef);
-
-        // Si se subió un archivo Excel, ejecutamos la lógica relacionada con el archivo
         if (file) {
-            // Leer y procesar el archivo Excel
+            // Leer y procesar el archivo Excel acuerdate que empieza a contar desde 0
             const reader = new FileReader();
             reader.onload = async (event) => {
                 try {
                     const data = new Uint8Array(event.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const excelData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
+                    // console.log(sheet)
+                    const excelData = XLSX.utils.sheet_to_json(sheet, { header: 0 });
+                    console.log(excelData)
                     // Convertimos las matrículas del Excel a correos en formato lowercase@tec.mx
-                    const emailsFromExcel = excelData.slice(1).map(row => row[1]?.toLowerCase() + '@tec.mx'); // Ajusta el índice si es necesario
+                    const emailsFromExcel = excelData
+                        .map(row => row["Matrícula"]?.toLowerCase() + "@tec.mx")
 
-                    // Procesamos cada usuario
+                    console.log(emailsFromExcel);
+     
                     const promises = querySnapshot.docs.map(async (doc) => {
                         const userRef = doc.ref;
                         const userData = doc.data();
-                        const eligibleRoles = ['mae', 'coordi', 'publi']; // Roles que serán filtrados
-
+                        const eligibleRoles = ['mae', 'coordi', 'publi', 'tec', 'admin'];
+            
+                        const userEmail = userData.email?.toLowerCase();
+                        const userMatricula = userData.matricula?.toLowerCase();
+            
                         if (eligibleRoles.includes(userData.role)) {
-                            const userEmail = userData.email?.toLowerCase(); // Convertir a minúsculas para comparar
-
-                            // Si el correo no está en la lista de correos del Excel, actualizamos el rol a "exmae"
                             if (!emailsFromExcel.includes(userEmail)) {
                                 return updateDoc(userRef, { role: "exmae" });
                             }
+                        } else {
+                            // Si el usuario no tiene un rol elegible, se le asigna "mae" con estado "becario"
+                            if (emailsFromExcel.includes(userEmail)) {
+                                return updateUserToMae({
+                                    matricula: userMatricula,
+                                    role: "mae",
+                                    status: "becario",
+                                    point: 0,
+                                    useCoins: 0,
+                                });
+                            }
                         }
-
+            
                         return Promise.resolve();
                     });
-
+            
                     await Promise.all(promises);
-                    console.log("Roles actualizados con base en el archivo Excel.");
+                    //console.log("Roles actualizados con base en el archivo Excel.");
                 } catch (error) {
                     console.error("Error al procesar el archivo Excel:", error);
                     throw error;
@@ -467,25 +463,15 @@ export async function checkAndUpdateUserRole(file = null) {
             reader.readAsArrayBuffer(file);
         } else {
             // Si no hay archivo, ejecutamos la lógica normal
-            const eligibleRoles = ['mae', 'coordi', 'publi'];
+            const eligibleRoles = ['mae', 'coordi', 'publi','tec'];
 
             const promises = querySnapshot.docs.map(async (doc) => {
                 const userRef = doc.ref;
                 const userData = doc.data();
-
-                // Verificar si el rol es "mae", "coordi" o "publi"
                 if (eligibleRoles.includes(userData.role)) {
-
-                    // Verificar si weekSchedule está vacío
                     const isWeekScheduleEmpty = Object.values(userData.weekSchedule).every(day => day.length === 0);
-
-                    // Verificar si totalTime es 0
                     const isTotalTimeEquals0 = userData.totalTime == 0;
-
-                    // Verificar si subjects está vacío
                     const hasNoSubjects = !userData.subjects || userData.subjects.length === 0;
-
-                    // Si no tiene horario, su tiempo es 0 y no tiene materias, actualizar el rol
                     if (isWeekScheduleEmpty && isTotalTimeEquals0 && hasNoSubjects) {
                         return updateDoc(userRef, { role: "exmae" });
                     }
@@ -503,22 +489,51 @@ export async function checkAndUpdateUserRole(file = null) {
     }
 }
 
-
-
 export async function updateUserToMae(data) {
     const { role, matricula, status } = data;
+    const badges = [
+        { "id": "1", "name": "Mi primera asesoría", "description": "Da tu primera asesoría", "image_url": "/assets/badges/1.svg", "achieved": false },
+        { "id": "2", "name": "MAE aprendiz", "description": "Da 10 asesorías", "image_url": "/assets/badges/2.svg", "achieved": false },
+        { "id": "3", "name": "MAE en ascenso", "description": "Da 30 asesorías", "image_url": "/assets/badges/3.svg", "achieved": false },
+        { "id": "4", "name": "MAE destacado", "description": "Da 50 asesorías", "image_url": "/assets/badges/4.svg", "achieved": false },
+        { "id": "5", "name": "Super MAE", "description": "Da 100 asesorías", "image_url": "/assets/badges/5.svg", "achieved": false },
+        { "id": "6", "name": "Leyenda MAE", "description": "Da 200 asesorías", "image_url": "/assets/badges/6.svg", "achieved": false },
+        { "id": "7", "name": "MAE de MAEs", "description": "Da 500 asesorías", "image_url": "/assets/badges/7.svg", "achieved": false },
+        { "id": "8", "name": "Cambio de look", "description": "Añade una foto de perfil", "image_url": "/assets/badges/8.svg", "achieved": false },
+        { "id": "9", "name": "Trabajo bien hecho", "description": "Completa 80 horas", "image_url": "/assets/badges/9.svg", "achieved": false },
+        { "id": "10", "name": "Siempre a tiempo", "description": "Obtén asistencia perfecta durante 1 periodo", "image_url": "/assets/badges/10.svg", "achieved": false },
+        { "id": "11", "name": "Top MAE", "description": "Se #1 en el leaderboard", "image_url": "/assets/badges/11.svg", "achieved": false },
+        { "id": "12", "name": "MAE", "description": "Obtén el rol de MAE", "image_url": "/assets/badges/12.svg", "achieved": false },
+        { "id": "13", "name": "Coordi", "description": "Obtén el rol de coordi", "image_url": "/assets/badges/13.svg", "achieved": false },
+        { "id": "14", "name": "Tecnológico", "description": "Obtén el rol de tecnología", "image_url": "/assets/badges/14.svg", "achieved": false },
+        { "id": "15", "name": "Publicista", "description": "Obtén el rol de publicidad", "image_url": "/assets/badges/15.svg", "achieved": false },
+        { "id": "16", "name": "Especialista", "description": "Mete 3 materias top", "image_url": "/assets/badges/16.svg", "achieved": false },
+        { "id": "17", "name": "Trabajo de campo", "description": "Da 5 asesorías de materias top", "image_url": "/assets/badges/17.svg", "achieved": false },
+        { "id": "18", "name": "Ups...", "description": "Pierde puntos de experiencia una vez", "image_url": "/assets/badges/18.svg", "achieved": false }
+    ];
 
-    // Asegurarse de que los datos necesarios no sean nulos
+
+    
+    const background = [
+        { "id": "1", "image_url": "/assets/back/1.svg", "bought": true, "price": 0 },
+        { "id": "2", "image_url": "/assets/back/2.svg", "bought": false, "price": 25 },
+        { "id": "3", "image_url": "/assets/back/3.svg", "bought": false, "price": 25},
+        { "id": "4", "image_url": "/assets/back/4.svg", "bought": false, "price": 25 },
+        { "id": "5", "image_url": "/assets/back/5.svg", "bought": false, "price": 50 },
+        { "id": "6", "image_url": "/assets/back/6.svg", "bought": false, "price": 50 },
+        { "id": "7", "image_url": "/assets/back/7.svg", "bought": false, "price": 75 },
+        { "id": "8", "image_url": "/assets/back/8.svg", "bought": false, "price": 100 },
+    ];
+
     if (!role || !matricula || !status) {
         throw new Error("role, matricula, and status are required fields.");
     }
 
-    // Buscar el usuario en la base de datos usando la matricula
     try {
         const usersRef = collection(firestoreDB, "users");
         const userQuery = query(usersRef, where("email", "==", `${matricula.toLowerCase()}@tec.mx`));
         const querySnapshot = await getDocs(userQuery);
-
+    
         if (querySnapshot.empty) {
             console.log("No user found with the given matricula.");
             return;
@@ -527,20 +542,416 @@ export async function updateUserToMae(data) {
         // Procesar cada usuario encontrado
         const promises = querySnapshot.docs.map(async (doc) => {
             const userRef = doc.ref;
+            const userData = doc.data();
 
-            // Actualizar el rol y el estatus del usuario
-            return updateDoc(userRef, {
-                role: role.value,
-                status: status.value,
-                weekSchedule: {}, 
-                subjects: [],
-                totalTime: 0
-            });
+            if (userData.role === 'user' || userData.status === 'estudiante') {
+                return updateDoc(userRef, {
+                    role: role.value,
+                    status: status.value,
+                    weekSchedule: {}, 
+                    subjects: [],
+                    totalTime: 0,
+                    badges: badges,
+                    points: 0,
+                     useCoins: 0,
+                     background: background,
+                });
+            } else {
+            
+                return updateDoc(userRef, {
+                    role: role.value,
+                    status: status.value
+                });
+            }
         });
 
         await Promise.all(promises);
         console.log("Usuarios actualizados exitosamente.");
     } catch (error) {
         console.error("Error al actualizar los usuarios: ", error);
+    }
+}
+
+export const saveScheduleSubjectsExperience = async () => {
+    try {
+        const usersRef = collection(db, 'users');
+        const usersSnap = await getDocs(usersRef);
+
+        if (usersSnap.empty) {
+            console.error("No se encontraron usuarios en la tabla 'users'.");
+            return;
+        }
+
+        const rolesPermitidos = ['admin', 'publi', 'mae', 'coordi', 'tec'];
+
+        const updatePromises = []; 
+        usersSnap.forEach(async (userDoc) => {
+            const user = userDoc.data();
+
+            if (!rolesPermitidos.includes(user.role)) {
+                return;
+            }
+
+            let puntos = 0;
+
+            if (user.subjects && user.subjects.length > 0) {
+                puntos += 15;
+            } else {
+                puntos -= 30;
+                await  updateUserAchievementBadge(user.uid, "18");
+            }
+
+            if (user.weekSchedule && Object.keys(user.weekSchedule).length > 0) {
+                puntos += 100;
+            } else {
+                puntos -= 500;
+                await updateUserAchievementBadge(user.uid, "18");
+            }
+
+            const userRef = doc(db, 'users', userDoc.id); 
+            updatePromises.push(
+                updateDoc(userRef, {
+                    points: (user.points || 0) + puntos
+                })
+            );
+        });
+
+        await Promise.all(updatePromises);
+    } catch (error) {
+        console.error("Error al guardar la experiencia:", error);
+    }
+};
+
+
+export async function updatePoints(uid, newPoints) {
+    const usersRef = collection(db, 'users');
+    const usersSnap = await getDocs(usersRef);
+    const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const user = users.find(user => user.uid === uid);
+
+    if (user) {
+        const userRef = doc(db, 'users', user.id); 
+        const updatedPoints = (user.points || 0) + newPoints; 
+        await updateDoc(userRef, { points: updatedPoints });
+        //console.log(`Puntos actualizados para ${user.name}: ${updatedPoints}`);
+        user.points = updatedPoints; 
+        if (newPoints < 0){
+            await updateUserAchievementBadge(uid, "18")
+        }
+    } else {
+        console.log(`Usuario con uid ${uid} no encontrado.`);
+    }
+
+    return users; 
+}
+
+export async function getExperience() {
+    const usersRef = collection(firestoreDB, "users");
+    const q = query(usersRef, where('role', 'in', ['mae', 'coordi', 'admin', 'subjectCoordi', 'publi','tec']));
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot) {
+        let data = querySnapshot.docs.map(doc => doc.data());
+
+        // Filtrar usuarios que tienen un nombre
+        data = data.filter(item => item.name);
+
+        // Ordenar por puntos de mayor a menor
+        data.sort((a, b) => b.points - a.points);
+
+        return data;
+    } else {
+        return null;
+    }
+}
+
+// Funcion especial si mas adelante quieren agregar logros
+export async function addBadgesToEligibleUsers() {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const querySnapshot = await getDocs(usersRef);
+
+        const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
+
+        const badges = [
+            { "id": "1", "name": "Mi primera asesoría", "description": "Da tu primera asesoría", "image_url": "/assets/badges/1.svg", "achieved": false },
+            { "id": "2", "name": "MAE aprendiz", "description": "Da 10 asesorías", "image_url": "/assets/badges/2.svg", "achieved": false },
+            { "id": "3", "name": "MAE en ascenso", "description": "Da 30 asesorías", "image_url": "/assets/badges/3.svg", "achieved": false },
+            { "id": "4", "name": "MAE destacado", "description": "Da 50 asesorías", "image_url": "/assets/badges/4.svg", "achieved": false },
+            { "id": "5", "name": "Super MAE", "description": "Da 100 asesorías", "image_url": "/assets/badges/5.svg", "achieved": false },
+            { "id": "6", "name": "Leyenda MAE", "description": "Da 200 asesorías", "image_url": "/assets/badges/6.svg", "achieved": false },
+            { "id": "7", "name": "MAE de MAEs", "description": "Da 500 asesorías", "image_url": "/assets/badges/7.svg", "achieved": false },
+            { "id": "8", "name": "Cambio de look", "description": "Añade una foto de perfil", "image_url": "/assets/badges/8.svg", "achieved": false },
+            { "id": "9", "name": "Trabajo bien hecho", "description": "Completa 80 horas", "image_url": "/assets/badges/9.svg", "achieved": false },
+            { "id": "10", "name": "Siempre a tiempo", "description": "Obtén asistencia perfecta durante 1 periodo", "image_url": "/assets/badges/10.svg", "achieved": false },
+            { "id": "11", "name": "Top MAE", "description": "Se #1 en el leaderboard", "image_url": "/assets/badges/11.svg", "achieved": false },
+            { "id": "12", "name": "MAE", "description": "Obtén el rol de MAE", "image_url": "/assets/badges/12.svg", "achieved": false },
+            { "id": "13", "name": "Coordi", "description": "Obtén el rol de coordi", "image_url": "/assets/badges/13.svg", "achieved": false },
+            { "id": "14", "name": "Tecnológico", "description": "Obtén el rol de tecnología", "image_url": "/assets/badges/14.svg", "achieved": false },
+            { "id": "15", "name": "Publicista", "description": "Obtén el rol de publicidad", "image_url": "/assets/badges/15.svg", "achieved": false },
+            { "id": "16", "name": "Especialista", "description": "Mete 3 materias top", "image_url": "/assets/badges/16.svg", "achieved": false },
+            { "id": "17", "name": "Trabajo de campo", "description": "Da 5 asesorías de materias top", "image_url": "/assets/badges/17.svg", "achieved": false },
+            { "id": "18", "name": "Ups...", "description": "Pierde puntos de experiencia una vez", "image_url": "/assets/badges/18.svg", "achieved": false }
+        ];
+
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref;
+            const userData = doc.data();
+
+            if (eligibleRoles.includes(userData.role)) {
+                return updateDoc(userRef, {
+                    badges: badges
+                });
+            } else {
+                return Promise.resolve();
+            }
+        });
+
+        await Promise.all(promises);
+
+        console.log("Badges have been successfully added to eligible users.");
+    } catch (error) {
+        console.error("Error adding badges to eligible users: ", error);
+        throw error;
+    }
+}
+
+
+// actualizar le achieved del usuario 
+export async function updateUserAchievementBadge(uid, badgeId) {
+    try {
+
+        const userRef = doc(firestoreDB, "users", uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            console.error("Usuario no encontrado");
+            return;
+        }
+
+        const userData = userDoc.data();
+        const badges = userData.badges || [];
+
+        const updatedBadges = badges.map((badge) => {
+            if (badge.id === badgeId) {
+                return { ...badge, achieved: true };
+            }
+            return badge;
+        });
+
+        await updateDoc(userRef, {
+            badges: updatedBadges
+        });
+
+       // console.log(`El logro con id ${badgeId} se ha actualizado correctamente para el usuario ${uid}.`);
+    } catch (error) {
+        console.error("Error al actualizar el logro del usuario:", error);
+        throw error;
+    }
+}
+
+
+// Contador de badges
+export async function countAchievedBadges(uid) {
+    try {
+        const userRef = doc(firestoreDB, "users", uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            console.error("Usuario no encontrado");
+            return 0;
+        }
+
+        const badges = userDoc.data().badges || [];
+
+        const achievedCount = badges.reduce((count, badge) => {
+            return count + (badge.achieved ? 1 : 0);
+        }, 0);
+
+        return achievedCount;
+    } catch (error) {
+        console.error("Error al contar los logros alcanzados:", error);
+        throw error;
+    }
+}
+
+// Añadir nuevos backgrounds a los usuarios sin borrar los existentes
+export async function addBackgroundUsers() {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const querySnapshot = await getDocs(usersRef);
+
+        const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
+
+        const newBackgrounds = [
+            { id: '8', image_url: '/assets/back/8.svg', bought: false, price: 100 },
+            // Aquí puedes agregar más fondos nuevos...
+        ];
+
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref;
+            const userData = doc.data();
+
+            if (eligibleRoles.includes(userData.role)) {
+                const currentBackgrounds = userData.background || [];
+                
+                // Crear un mapa de fondos existentes (para evitar duplicados)
+                const backgroundMap = new Map(currentBackgrounds.map(bg => [bg.id, bg]));
+
+                // Añadir los nuevos fondos solo si no existen ya
+                newBackgrounds.forEach(bg => {
+                    if (!backgroundMap.has(bg.id)) {
+                        backgroundMap.set(bg.id, bg);
+                    }
+                });
+
+                const mergedBackgrounds = Array.from(backgroundMap.values());
+
+                return updateDoc(userRef, {
+                    background: mergedBackgrounds,
+                    myBackground: userData.myBackground || "/assets/back/1.svg", // conservar el que ya tiene
+                    useCoins: userData.useCoins || 0, // conservar las monedas que ya tiene
+                });
+            } else {
+                return Promise.resolve();
+            }
+        });
+
+        await Promise.all(promises);
+
+        console.log("Backgrounds have been merged successfully for eligible users.");
+    } catch (error) {
+        console.error("Error merging backgrounds for eligible users: ", error);
+        throw error;
+}
+}
+
+
+
+// actualizar le achieved del usuario 
+export async function updateUserBackground(uid, backId, coins, userCoins) {
+    try {
+        const userRef = doc(firestoreDB, "users", uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            console.error("Usuario no encontrado");
+            return;
+        }
+
+        const userData = userDoc.data();
+        const background = userData.background || [];
+
+        const updatedBackground = background.map((back) => {
+            if (back.id === backId) {
+                return { ...back, bought: true };
+            }
+            return back;
+        });
+       
+        await updateDoc(userRef, {
+            background: updatedBackground,  
+            useCoins: userCoins + coins
+        });
+
+        console.log(`El fondo con id ${backId} se ha actualizado correctamente para el usuario ${uid}.`);
+    } catch (error) {
+        console.error("Error al actualizar el fondo del usuario:", error);
+        throw error;
+    }
+}
+
+// Actualizar fondo
+export async function updateUserBackgroundImage(uid, backgroundUrl) {
+    try {
+        const userRef = doc(firestoreDB, "users", uid);
+        await updateDoc(userRef, {
+            myBackground: backgroundUrl
+        });
+        console.log(`El fondo se ha actualizado a ${backgroundUrl} para el usuario ${uid}.`);
+    } catch (error) {
+        console.error("Error al actualizar el fondo del usuario:", error);
+        throw error;
+    }
+}
+
+
+export async function getTotalMaes() {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+
+        const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
+
+        const q = query(usersRef, where("role", "in", eligibleRoles));
+
+        const querySnapshot = await getDocs(q);
+
+        return querySnapshot.size -1 ; 
+    } catch (error) {
+        console.error("Error al obtener el total de MAEs: ", error);
+        throw error;
+    }
+}
+
+
+
+// Añadir nuevas variables
+export async function addExtraVariables() {
+    try {
+        const usersRef = collection(firestoreDB, "users");
+        const querySnapshot = await getDocs(usersRef);
+
+        const eligibleRoles = ['admin', 'coordi', 'mae', 'tec', 'publi'];
+
+        const promises = querySnapshot.docs.map(async (doc) => {
+            const userRef = doc.ref;
+            const userData = doc.data();
+
+            if (eligibleRoles.includes(userData.role)) {
+                return updateDoc(userRef, {
+                    asesoriasGrupales: 0,
+                });
+            } else {
+                return Promise.resolve();
+            }
+        });
+
+        await Promise.all(promises);
+
+        console.log("Background have been successfully added to eligible users.");
+    } catch (error) {
+        console.error("Error adding background to eligible users: ", error);
+        throw error;
+    }
+}
+
+
+
+export async function clearUsersData() {
+    try {
+        const querySnapshot = await getDocs(collection(firestoreDB, "users"));
+        const rolesToUpdate = ["admin", "coordi", "mae", "tec", "publi"];
+        
+        const updatePromises = [];
+        
+        querySnapshot.forEach(docSnapshot => {
+            const userData = docSnapshot.data();
+            if (rolesToUpdate.includes(userData.role)) {
+                const userRef = doc(firestoreDB, "users", docSnapshot.id);
+                updatePromises.push(updateDoc(userRef, {
+                    useCoins: userData.useCoins - userData.points,
+                    subjects: [],
+                    totalTime: 0,
+                    points: 0
+                }));
+            }
+        });
+        
+        await Promise.all(updatePromises);
+        console.log("Usuarios actualizados correctamente.");
+    } catch (error) {
+        console.error("Error al actualizar usuarios: ", error);
+        throw error;
     }
 }

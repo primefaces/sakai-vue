@@ -8,13 +8,23 @@ const router = createRouter({
     routes: [
         {
             path: '/',
+            children: [
+                {
+                    path: '/',
+                    name: 'landing',
+                    component: () => import('@/views/pages/Landing.vue')
+                }
+            ]
+        },
+        {
+            path: '/',
             component: AppLayout,
             meta: {
                 requiresAuth: true
             },
             children: [
                 {
-                    path: '/',
+                    path: '/inicio',
                     name: 'inicio',
                     component: () => import('@/views/Inicio.vue')
                 },
@@ -29,8 +39,8 @@ const router = createRouter({
                     component: () => import('@/views/Horarios.vue')
                 },
                 {
-                    path: '/asesoriasgrupales',
-                    name: 'asesoriasgrupales',
+                    path: '/asesoriasGrupales',
+                    name: 'asesoriasGrupales',
                     component: () => import('@/views/AsesoriasGrupales.vue')
                 },
                 {
@@ -48,7 +58,45 @@ const router = createRouter({
                     name: 'maeprofile',
                     component: () => import('@/views/ConfiguracionMAE.vue'),
                     meta: {
-                        roles: ['admin', 'coordi', 'mae']
+                        roles: ['admin', 'coordi', 'mae','tec']
+                    }
+                },
+                {
+                    path: '/leaderboard',
+                    name: 'leaderboard',
+                    component: () => import('@/views/Leaderboard.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae','tec']
+                    }
+                },
+                {
+                    path: '/halloffame',
+                    name: 'halloffame',
+                    component: () => import('@/views/HallofFame.vue'),
+
+                },
+                {
+                    path: '/misasesorias',
+                    name: 'misasesorias',
+                    component: () => import('@/views/Asesorias.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae','tec','publi']
+                    }
+                },
+                {
+                    path: '/misevaluaciones',
+                    name: 'misevaluaciones',
+                    component: () => import('@/views/Evaluaciones.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae','tec','publi']
+                    }
+                },
+                {
+                    path: '/asistenciaGrupales',
+                    name: 'asistenciaGrupales',
+                    component: () => import('@/views/AsistenciaGrupales.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi', 'mae','tec','publi']
                     }
                 },
                 {
@@ -56,7 +104,15 @@ const router = createRouter({
                     name: 'coordi',
                     component: () => import('@/views/Coordi.vue'),
                     meta: {
-                        roles: ['admin', 'coordi']
+                        roles: ['admin', 'coordi','tec']
+                    }
+                },
+                {
+                    path: '/gestionAnuncios',
+                    name: 'gestionAnuncios',
+                    component: () => import('@/views/GestionAnuncios.vue'),
+                    meta: {
+                        roles: ['admin', 'coordi','tec']
                     }
                 },
                 {
@@ -64,7 +120,7 @@ const router = createRouter({
                     name: 'adminasesorias',
                     component: () => import('@/views/AdminAsesorias.vue'),
                     meta: {
-                        roles: ['admin']
+                        roles: ['admin','tec']
                     }
                 },
                 {
@@ -72,7 +128,7 @@ const router = createRouter({
                     name: 'adminusuarios',
                     component: () => import('@/views/AdminUsers.vue'),
                     meta: {
-                        roles: ['admin']
+                        roles: ['admin' ,'tec']
                     }
                 },
                 {
@@ -80,13 +136,30 @@ const router = createRouter({
                     name: 'adminmaterias',
                     component: () => import('@/views/AdminSubjects.vue'),
                     meta: {
-                        roles: ['admin']
+                        roles: ['admin','tec']
                     }
                 },
                 {
                     path: '/admin/funciones',
                     name: 'adminfunciones',
                     component: () => import('@/views/AdminFunciones.vue'),
+                    meta: {
+                        roles: ['admin','tec']
+                    }
+                },
+                {
+                    path: '/admin/dashboard',
+                    name: 'dashboard',
+                    component: () => import('@/views/Dashboard.vue'),
+                    meta: {
+                        roles: ['admin','tec']
+                    }
+                },
+                /* Adding path for historial */
+                {
+                    path: '/admin/historialAsistencia',
+                    name: 'asistencia',
+                    component: () => import('@/views/AdminHistorialAsistencias.vue'),
                     meta: {
                         roles: ['admin']
                     }
@@ -101,76 +174,70 @@ const router = createRouter({
                 }
             ]
         },
-        // {
-        //     path: '/landing',
-        //     name: 'landing',
-        //     component: () => import('@/views/pages/Landing.vue')
-        // },
         {
             path: '/pages/notfound',
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
         {
-            path: '/auth/login',
-            name: 'login',
-            component: () => import('@/views/pages/auth/Login.vue')
-        },
-        {
-            path: '/auth/register',
-            name: 'register',
-            component: () => import('@/views/pages/auth/Register.vue')
-        },
-        {
-            path: '/auth/password-reset',
-            name: 'password-reset',
-            component: () => import('@/views/pages/auth/PasswordReset.vue')
-        },
-        {
-            path: '/auth/access',
-            name: 'accessDenied',
-            component: () => import('@/views/pages/auth/Access.vue')
-        },
-        {
-            path: '/auth/error',
-            name: 'error',
-            component: () => import('@/views/pages/auth/Error.vue')
+            path: '/auth',
+            children: [
+                {
+                    path: '/auth/login',
+                    name: 'login',
+                    component: () => import('@/views/pages/auth/Login.vue')
+                },
+                {
+                    path: '/auth/register',
+                    name: 'register',
+                    component: () => import('@/views/pages/auth/Register.vue')
+                },
+                {
+                    path: '/auth/password-reset',
+                    name: 'password-reset',
+                    component: () => import('@/views/pages/auth/PasswordReset.vue')
+                },
+                {
+                    path: '/auth/access',
+                    name: 'access',
+                    component: () => import('@/views/pages/auth/Access.vue')
+                },
+                {
+                    path: '/auth/error',
+                    name: 'error',
+                    component: () => import('@/views/pages/auth/Error.vue')
+                }
+            ]
         }
     ]
 });
 
 router.beforeEach((to, from, next) => {
     if (!to.matched.some((record) => record.meta.requiresAuth)) {
-        // Route does not require authentication
         return next();
     }
 
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        unsubscribe(); // Unsubscribe to avoid memory leaks
-
+        unsubscribe(); 
         if (!user) {
-            // User is not signed in
-            
-            alert("No tienes acceso a esta página. Por favor inicia sesión");
-            return next("/auth/login");
-        }
+            if (to.path === "/asesoriasGrupales" && to.query.asesoriaId) {
+              const asesoriaId = to.query.asesoriaId;
+              return next(`/auth/login?redirect=/asesoriasGrupales&asesoriaId=${asesoriaId}`);
+            }
+            return next("/auth/login"); 
+          }
 
-        // User is signed in
-        const { role } = await getCurrentUser()
+        const { role } = await getCurrentUser();
 
         if (!to.meta.roles) {
-            // Route does not require roles
             return next();
         }
 
         if (to.meta.roles.includes(role)) {
-            // User has roule privilege
             return next();
-        }
-        else {
-            // User does not have roule privilege
-            alert("No tienes acceso a esta página");
+        } else {
+            return next("/pages/notfound");
         }
     });
 });

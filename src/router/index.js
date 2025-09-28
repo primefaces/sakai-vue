@@ -1,5 +1,9 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import serviceRecordRoutes from '@/views/serviceRecords'   // 這裡會自動載入 index.js
+
+
+
 
 const router = createRouter({
     history: createWebHistory(),
@@ -13,6 +17,7 @@ const router = createRouter({
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },
+                 serviceRecordRoutes,
                 {
                     path: '/uikit/formlayout',
                     name: 'formlayout',

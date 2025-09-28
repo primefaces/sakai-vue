@@ -1,119 +1,152 @@
 <template>
-  <div class="p-4 max-w-2xl mx-auto">
-    <!-- 按鈕控制顯示表單 -->
-    <Button label="新增服務紀錄" icon="pi pi-plus" class="p-button-success mb-4" @click="toggleForm" />
+  <Dialog 
+    v-model:visible="showDialog" 
+    header="新增服務紀錄" 
+    style="width: 50vw;" 
+    :closable="false"
+  >
 
-    <!-- 浮動表單 -->
-    <div v-if="showForm" class="floating-form p-4 shadow-lg rounded-md bg-white w-96 absolute top-1/4 left-1/2 transform -translate-x-1/2">
-      <h2 class="text-xl font-bold mb-4">新增服務紀錄</h2>
-      <form @submit.prevent="save" class="flex flex-col gap-4">
-        <div>
-          <label class="block mb-1">主旨</label>
-          <InputText v-model="form.Subject" placeholder="輸入主旨" class="w-full" />
-        </div>
+    <form @submit.prevent="submitForm" class="form-container">
+      <div class="p-field">
+        <label for="subject">主旨</label>
+        <InputText id="subject" v-model="form.Subject" required />
+      </div>
 
-        <div>
-          <label class="block mb-1">公司</label>
-          <Dropdown
-            v-model="form.CompanyID"
-            :options="companies"
-            optionLabel="name"
-            optionValue="id"
-            placeholder="選擇公司"
-            class="w-full"
-          />
-        </div>
+      <div class="p-field">
+        <label for="companyId">公司ID</label>
+        <InputText id="companyId" v-model="form.CompanyID" required />
+      </div>
 
-        <div>
-          <label class="block mb-1">事件</label>
-          <Dropdown
-            v-model="form.IncidentID"
-            :options="incidents"
-            optionLabel="number"
-            optionValue="id"
-            placeholder="選擇事件"
-            class="w-full"
-          />
-        </div>
+      <div class="p-field">
+        <label for="incidentId">事件ID</label>
+        <InputText id="incidentId" v-model="form.IncidentID" required />
+      </div>
 
-        <div>
-          <label class="block mb-1">問題描述</label>
-          <Textarea v-model="form.ProblemDescription" rows="3" class="w-full" />
-        </div>
+      <div class="p-field">
+        <label for="processTime">處理時間（小時）</label>
+        <InputNumber id="processTime" v-model="form.ProcessTime" showButtons :min="0" required />
+      </div>
 
-        <div>
-          <label class="block mb-1">處理描述</label>
-          <Textarea v-model="form.WorkDescription" rows="3" class="w-full" />
-        </div>
+      <div class="p-field">
+        <label for="startTime">開始時間</label>
+        <DatePicker id="startTime" v-model="form.StartTime" showTime hourFormat="24" required />
+      </div>
 
-        <div class="flex justify-end gap-2">
-          <Button type="button" label="取消" class="p-button-text" @click="toggleForm" />
-          <Button type="submit" label="保存" class="p-button-success" />
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="p-field">
+        <label for="finishTime">結束時間</label>
+        <DatePicker id="finishTime" v-model="form.FinishTime" showTime hourFormat="24" required />
+      </div>
+
+      <div class="p-field">
+        <label for="problem">問題描述</label>
+        <Textarea id="problem" v-model="form.ProblemDescription" rows="3" :style="{ width: '100%' }"></Textarea>
+      </div>
+
+      <div class="p-field">
+        <label for="work">處理描述</label>
+        <Textarea id="work" v-model="form.WorkDescription" rows="3" :style="{ width: '100%' }"></Textarea>
+      </div>
+
+      <footer class="footer-btns">
+        <Button label="送出" icon="pi pi-check" class="p-button-success" type="submit" ></Button>
+        <Button label="關閉" icon="pi pi-times" class="p-button-secondary" @click="closeDialog"></Button>
+      </footer>
+    </form>
+  </Dialog>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import Dropdown from 'primevue/dropdown'
-import Button from 'primevue/button'
+import { ref , onMounted } from 'vue';
+import Dialog from 'primevue/dialog';
+import InputText from 'primevue/inputtext';
+import InputNumber from 'primevue/inputnumber';
+import DatePicker from 'primevue/datepicker';
+import Button from 'primevue/button';
+import Textarea from 'primevue/textarea';
 
-const apiRoot = import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
-const router = useRouter()
+
+const showDialog = ref(false);
+onMounted(() => {
+  showDialog.value = true;
+});
 
 const form = ref({
   Subject: '',
-  CompanyID: null,
-  IncidentID: null,
+  CompanyID: '',
+  IncidentID: '',
+  ProcessTime: 0,
+  StartTime: null,
+  FinishTime: null,
   ProblemDescription: '',
-  WorkDescription: '',
-  CreatorID: '1005'
-})
+  WorkDescription: '' 
+});
 
-const companies = ref([])
-const incidents = ref([])
-const showForm = ref(false)  // 控制浮動表單顯示
-
-const loadMeta = async () => {
-  try {
-    const [cRes, iRes] = await Promise.all([
-      axios.get(`${apiRoot}/companies`),
-      axios.get(`${apiRoot}/incidents`, { params: { creatorId: '1005' } })
-    ])
-    companies.value = cRes.data.map(c => ({ id: c.CompanyID, name: c.CompanyName }))
-    incidents.value = iRes.data.map(i => ({ id: i.IncidentID, number: `${i.IncidentID} - ${i.IncidentNumber}` }))
-  } catch (err) {
-    console.error('載入下拉選單失敗', err)
-  }
+function submitForm() {
+  console.log('送出表單資料', form.value);
+  showDialog.value = false;
 }
 
-const save = async () => {
-  try {
-    await axios.post(`${apiRoot}/service-records`, form.value)
-    alert('新增成功')
-    router.push('/service-records')
-  } catch (err) {
-    console.error('新增失敗', err)
-    alert('新增失敗，請稍後再試')
-  }
+function closeDialog() {
+  showDialog.value = false;
 }
-
-const toggleForm = () => {
-  showForm.value = !showForm.value  // 切換浮動表單顯示狀態
-}
-
-onMounted(loadMeta)
 </script>
 
 <style scoped>
-.floating-form {
-  z-index: 1000;  /* 確保表單在畫面上層 */
-  transition: transform 0.3s ease-in-out;
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 100%;
+}
+
+/* 每個欄位是 flex 排列 */
+.p-field {
+  display: flex;
+  align-items: center;
+}
+
+/* label 固定寬度並靠右 */
+.p-field > label {
+  width: 100px;  /* 固定寬度 */
+  text-align: right;
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+/* 新增必填欄位 label 紅星號 */
+.p-field > label[for]::after {
+  content: '*';
+  color: red;
+  margin-left: 0.25rem;
+  font-weight: bold;
+  font-size: 1.2em;
+  vertical-align: middle;
+}
+
+.p-field > .p-inputtextarea {
+  resize: vertical;         /* 允許使用者上下拉伸 */
+  flex: 1;
+  width: 100%;
+  min-width: 300px;
+}
+
+
+/* 輸入框寬度固定 */
+.p-field > .p-inputtext,
+.p-field > .p-inputnumber,
+.p-field > .p-datepicker {
+  flex: 1; /* 輸入框佔剩餘寬度 */
+  min-width: 300px;
+  min-width: 200px; /* 最小寬度，避免太窄 */
+}
+
+
+
+/* footer 按鈕靠右排列 */
+.footer-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 </style>

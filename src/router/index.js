@@ -1,7 +1,10 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+
+//設定對應資料夾注意大小寫
 import serviceRecordRoutes from '@/views/serviceRecords'   // 這裡會自動載入 index.js
 import CompanyRoutes from '@/views/Company'   // 這裡會自動載入 index.js
+import CalendarRoutes from '@/views/Calendar'   // 這裡會自動載入 index.js
 
 
 
@@ -18,8 +21,9 @@ const router = createRouter({
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },
-                 serviceRecordRoutes,
-                 CompanyRoutes,
+                serviceRecordRoutes,
+                CompanyRoutes,
+                CalendarRoutes,
                 {
                     path: '/uikit/formlayout',
                     name: 'formlayout',

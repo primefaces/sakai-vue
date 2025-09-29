@@ -1,20 +1,18 @@
-<template>
+<template> 
   <div class="p-4">
 
     <!-- 📋 公司表格 -->
-<DataTable
-  :value="companies"
-  :lazy="true"
-  :paginator="true"
-  :rows="10"
-  :totalRecords="totalRecords"
-  @lazy-load="onLazyLoad"
-  @page="onPage"
-  dataKey="CompanyID"
-  class="p-datatable-gridlines"
->
-
-
+    <DataTable
+      :value="companies"
+      :lazy="true"
+      :paginator="true"
+      :rows="10"
+      :totalRecords="totalRecords"
+      @lazy-load="onLazyLoad"
+      @page="onPage"
+      dataKey="CompanyID"
+      class="p-datatable-gridlines"
+    >
       <Column field="CompanyID" header="公司ID" />
       <Column field="CoShortName" header="公司簡稱" />
       <Column field="CoFullName" header="公司全名" />
@@ -46,13 +44,12 @@
         </div>
       </form>
     </Dialog>
-    
 
   </div>
- <Toast group="custom" position="custom" class="custom-toast-position" />
 
-
+  <Toast group="custom" position="custom" class="custom-toast-position" />
 </template>
+
 
 <script setup>
 import { ref } from 'vue';
@@ -237,6 +234,7 @@ const closeDialog = () => { showDialog.value = false; };
   margin-top: 1rem;
 }
 </style>
+
 <style>
 /* 建議加 !important 避免被覆蓋 */
 .custom-toast-position {

@@ -19,6 +19,7 @@
         "primevue": "^4.3.9",
         "tailwindcss-primeui": "^0.5.0",
         "vue": "^3.4.34",
+        "vue-cal": "^4.10.2",
         "vue-router": "^4.4.0"
     },
     "devDependencies": {

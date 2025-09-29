@@ -46,7 +46,12 @@
         </div>
       </form>
     </Dialog>
+    
+
   </div>
+ <Toast group="custom" position="custom" class="custom-toast-position" />
+
+
 </template>
 
 <script setup>
@@ -60,6 +65,12 @@ import InputTextarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import { onMounted } from 'vue';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast(); // 初始化 toast 實例
+
+
+
 
 
 
@@ -119,7 +130,7 @@ const updateCompany = async () => {
       payload[key] = updates[key];
     });
 
-   // console.log('送出的淨化資料:', payload);
+    console.log('送出的淨化資料:', payload);
 
     await axios.put(`http://localhost:4000/api/companies/${payload.CompanyID}`, payload, {
       headers: {
@@ -133,20 +144,106 @@ const updateCompany = async () => {
       companies.value[idx] = { ...companies.value[idx], ...payload };
     }
 
-    alert('更新成功');
+toast.add({
+  group: 'custom',         // ✅ 指定群組
+  severity: 'success',
+  summary: '更新成功',
+  detail: `公司資料已更新：${payload.CoShortName}`,
+  life: 3000
+});
+
+
     showDialog.value = false;
 
   } catch (err) {
     console.error("❌ 更新錯誤:", err);
-    alert('更新失敗，請稍後再試');
+
+toast.add({
+  group: 'custom',
+  severity: 'error',
+  summary: '更新失敗',
+  detail: err.message || '請稍後再試',
+  life: 5000
+});
+
+
   } finally {
     loading.value = false;
   }
 };
-
-
-
-
-
 const closeDialog = () => { showDialog.value = false; };
 </script>
+
+
+
+<style scoped>
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 100%;
+}
+
+/* 每個欄位是 flex 排列 */
+.p-field {
+  display: flex;
+  align-items: center;
+}
+
+/* label 固定寬度並靠右 */
+.p-field > label {
+  width: 100px;  /* 固定寬度 */
+  text-align: right;
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+/* 新增必填欄位 label 紅星號 */
+.p-field > label[for]::after {
+  content: '*';
+  color: red;
+  margin-left: 0.25rem;
+  font-weight: bold;
+  font-size: 1.2em;
+  vertical-align: middle;
+}
+
+.p-field > .p-inputtextarea {
+  resize: vertical;         /* 允許使用者上下拉伸 */
+  flex: 1;
+  width: 100%;
+  min-width: 300px;
+}
+
+
+/* 輸入框寬度固定 */
+.p-field > .p-inputtext,
+.p-field > .p-inputnumber,
+.p-field > .p-datepicker {
+  flex: 1; /* 輸入框佔剩餘寬度 */
+  min-width: 300px;
+  min-width: 200px; /* 最小寬度，避免太窄 */
+}
+
+
+
+
+
+/* footer 按鈕靠右排列 */
+.footer-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+</style>
+<style>
+/* 建議加 !important 避免被覆蓋 */
+.custom-toast-position {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 60px !important;  /* 底部往上偏移，可自調 */
+  transform: translateX(-50%) !important;
+  z-index: 9999 !important;
+}
+</style>

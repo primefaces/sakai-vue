@@ -13,6 +13,7 @@
         "body-parser": "^2.2.0",
         "chart.js": "3.3.2",
         "cors": "^2.8.5",
+        "dayjs": "^1.11.18",
         "express": "^5.1.0",
         "mssql": "^11.0.1",
         "primeicons": "^7.0.0",

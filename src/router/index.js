@@ -1,6 +1,7 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import serviceRecordRoutes from '@/views/serviceRecords'   // 這裡會自動載入 index.js
+import CompanyRoutes from '@/views/Company'   // 這裡會自動載入 index.js
 
 
 
@@ -18,6 +19,7 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                  serviceRecordRoutes,
+                 CompanyRoutes,
                 {
                     path: '/uikit/formlayout',
                     name: 'formlayout',

@@ -29,6 +29,23 @@ const model = ref([
         ]
     },
     {
+        label: 'Prime Blocks',
+        icon: 'pi pi-fw pi-prime',
+        items: [
+            {
+                label: 'Free Blocks',
+                icon: 'pi pi-fw pi-eye',
+                to: '/blocks'
+            },
+            {
+                label: 'All Blocks',
+                icon: 'pi pi-fw pi-globe',
+                url: 'https://blocks.primevue.org/',
+                target: '_blank'
+            }
+        ]
+    },
+    {
         label: 'Pages',
         icon: 'pi pi-fw pi-briefcase',
         to: '/pages',

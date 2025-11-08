@@ -90,6 +90,14 @@ const router = createRouter({
                     component: () => import('@/views/uikit/TimelineDoc.vue')
                 },
                 {
+                    path: '/blocks',
+                    name: 'blocks',
+                    meta: {
+                        breadcrumb: ['Prime Blocks', 'Free Blocks']
+                    },
+                    component: () => import('@/views/utilities/Blocks.vue')
+                },
+                {
                     path: '/pages/empty',
                     name: 'empty',
                     component: () => import('@/views/pages/Empty.vue')

@@ -523,8 +523,7 @@ const blocksCode = {
     <div>
         <!-- Page Hero Section -->
         <div
-            class="bg-surface-0 dark:bg-surface-900 border border-surface rounded-md p-8 bg-cover bg-no-repeat h-[440px] flex mb-8"
-            style="background-image: url('https://fqjltiegiezfetthbags.supabase.co/storage/v1/object/public/store.images/landing/landing-blocks.jpg')"
+            class="bg-surface-0 dark:bg-surface-900 border border-surface rounded-xl p-8 bg-[url('/demo/images/blocks/landing-blocks.jpg')] dark:bg-[url('/demo/images/blocks/landing-blocks-dark.jpg')] bg-cover bg-no-repeat h-[440px] flex mb-8"
         >
             <div class="flex flex-col gap-4 items-center sm:items-start justify-center sm:max-w-144">
                 <span class="bg-surface-950 text-white px-2 py-1 font-bold rounded-md text-sm">TailwindCSS v4</span>

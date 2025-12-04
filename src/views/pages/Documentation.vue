@@ -120,11 +120,11 @@ import AppLayout from './AppLayout.vue';
 
         <p class="text-lg mb-4">As a final step, copy the following folders:</p>
         <ul class="leading-normal list-disc pl-8 text-lg mb-4">
-            <li><span class="text-primary font-medium">public/demo</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">public</span></li>
-            <li><span class="text-primary font-medium">src/components</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">components</span></li>
-            <li><span class="text-primary font-medium">src/service</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">service</span></li>
-            <li><span class="text-primary font-medium">src/views/uikit</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">pages/uikit</span></li>
-            <li><span class="text-primary font-medium">src/views/pages</span> <i class="pi pi-arrow-right !text-sm mr-1"></i> <span class="text-primary font-medium">pages</span></li>
+            <li><span class="text-primary font-medium">public/demo</span> <i class="pi pi-arrow-right text-sm! mr-1"></i> <span class="text-primary font-medium">public</span></li>
+            <li><span class="text-primary font-medium">src/components</span> <i class="pi pi-arrow-right text-sm! mr-1"></i> <span class="text-primary font-medium">components</span></li>
+            <li><span class="text-primary font-medium">src/service</span> <i class="pi pi-arrow-right text-sm! mr-1"></i> <span class="text-primary font-medium">service</span></li>
+            <li><span class="text-primary font-medium">src/views/uikit</span> <i class="pi pi-arrow-right text-sm! mr-1"></i> <span class="text-primary font-medium">pages/uikit</span></li>
+            <li><span class="text-primary font-medium">src/views/pages</span> <i class="pi pi-arrow-right text-sm! mr-1"></i> <span class="text-primary font-medium">pages</span></li>
         </ul>
     </div>
 </template>

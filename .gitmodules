@@ -1,0 +1,3 @@
+[submodule "src/assets"]
+	path = src/assets
+	url = https://github.com/primefaces/sakai-assets.git

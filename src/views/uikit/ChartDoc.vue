@@ -2,7 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { onMounted, ref, watch } from 'vue';
 
-const { getPrimary, getSurface, isDarkTheme } = useLayout();
+const { layoutConfig, isDarkTheme } = useLayout();
 const lineData = ref(null);
 const pieData = ref(null);
 const polarData = ref(null);
@@ -219,7 +219,7 @@ function setColorOptions() {
 }
 
 watch(
-    [getPrimary, getSurface, isDarkTheme],
+    [() => layoutConfig.primary, () => layoutConfig.surface, isDarkTheme],
     () => {
         setColorOptions();
     },

@@ -9,20 +9,17 @@ const layoutConfig = reactive({
 });
 
 const layoutState = reactive({
-    staticMenuDesktopInactive: false,
+    staticMenuInactive: false,
     overlayMenuActive: false,
     profileSidebarVisible: false,
     configSidebarVisible: false,
-    staticMenuMobileActive: false,
+    sidebarExpanded: false,
     menuHoverActive: false,
-    activeMenuItem: null
+    activeMenuItem: null,
+    activePath: null
 });
 
 export function useLayout() {
-    const setActiveMenuItem = (item) => {
-        layoutState.activeMenuItem = item.value || item;
-    };
-
     const toggleDarkMode = () => {
         if (!document.startViewTransition) {
             executeDarkModeToggle();
@@ -39,34 +36,51 @@ export function useLayout() {
     };
 
     const toggleMenu = () => {
-        if (layoutConfig.menuMode === 'overlay') {
-            layoutState.overlayMenuActive = !layoutState.overlayMenuActive;
-        }
+        if (isDesktop()) {
+            if (layoutConfig.menuMode === 'static') {
+                layoutState.staticMenuInactive = !layoutState.staticMenuInactive;
+            }
 
-        if (window.innerWidth > 991) {
-            layoutState.staticMenuDesktopInactive = !layoutState.staticMenuDesktopInactive;
+            if (layoutConfig.menuMode === 'overlay') {
+                layoutState.overlayMenuActive = !layoutState.overlayMenuActive;
+            }
         } else {
-            layoutState.staticMenuMobileActive = !layoutState.staticMenuMobileActive;
+            layoutState.mobileMenuActive = !layoutState.mobileMenuActive;
         }
     };
 
-    const isSidebarActive = computed(() => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive);
+    const toggleConfigSidebar = () => {
+        layoutState.configSidebarVisible = !layoutState.configSidebarVisible;
+    };
+
+    const hideMobileMenu = () => {
+        layoutState.mobileMenuActive = false;
+    };
+
+    const changeMenuMode = (event) => {
+        layoutConfig.menuMode = event.value;
+        layoutState.staticMenuInactive = false;
+        layoutState.mobileMenuActive = false;
+        layoutState.sidebarExpanded = false;
+        layoutState.menuHoverActive = false;
+        layoutState.anchored = false;
+    };
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
+    const isDesktop = () => window.innerWidth > 991;
 
-    const getPrimary = computed(() => layoutConfig.primary);
-
-    const getSurface = computed(() => layoutConfig.surface);
+    const hasOpenOverlay = computed(() => layoutState.overlayMenuActive);
 
     return {
         layoutConfig,
         layoutState,
-        toggleMenu,
-        isSidebarActive,
         isDarkTheme,
-        getPrimary,
-        getSurface,
-        setActiveMenuItem,
-        toggleDarkMode
+        toggleDarkMode,
+        toggleConfigSidebar,
+        toggleMenu,
+        hideMobileMenu,
+        changeMenuMode,
+        isDesktop,
+        hasOpenOverlay
     };
 }

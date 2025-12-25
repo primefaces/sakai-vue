@@ -90,7 +90,7 @@ const router = createRouter({
                     component: () => import('@/views/uikit/TimelineDoc.vue')
                 },
                 {
-                    path: '/blocks',
+                    path: '/blocks/free',
                     name: 'blocks',
                     meta: {
                         breadcrumb: ['Prime Blocks', 'Free Blocks']
@@ -108,7 +108,7 @@ const router = createRouter({
                     component: () => import('@/views/pages/Crud.vue')
                 },
                 {
-                    path: '/documentation',
+                    path: '/start/documentation',
                     name: 'documentation',
                     component: () => import('@/views/pages/Documentation.vue')
                 }

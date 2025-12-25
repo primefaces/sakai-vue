@@ -2,7 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { onMounted, ref, watch } from 'vue';
 
-const { getPrimary, getSurface, isDarkTheme } = useLayout();
+const { layoutConfig, isDarkTheme } = useLayout();
 
 const chartData = ref(null);
 const chartOptions = ref(null);
@@ -77,7 +77,7 @@ function setChartOptions() {
     };
 }
 
-watch([getPrimary, getSurface, isDarkTheme], () => {
+watch([() => layoutConfig.primary, () => layoutConfig.surface, isDarkTheme], () => {
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
 });

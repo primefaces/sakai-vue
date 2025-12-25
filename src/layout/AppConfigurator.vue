@@ -6,7 +6,7 @@ import Lara from '@primeuix/themes/lara';
 import Nora from '@primeuix/themes/nora';
 import { ref } from 'vue';
 
-const { layoutConfig, isDarkTheme } = useLayout();
+const { layoutConfig, isDarkTheme, changeMenuMode } = useLayout();
 
 const presets = {
     Aura,
@@ -192,10 +192,6 @@ function onPresetChange() {
 
     $t().preset(presetValue).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
 }
-
-function onMenuModeChange() {
-    layoutConfig.menuMode = menuMode.value;
-}
 </script>
 
 <template>
@@ -240,7 +236,7 @@ function onMenuModeChange() {
             </div>
             <div class="flex flex-col gap-2">
                 <span class="text-sm text-muted-color font-semibold">Menu Mode</span>
-                <SelectButton v-model="menuMode" @change="onMenuModeChange" :options="menuModeOptions" :allowEmpty="false" optionLabel="label" optionValue="value" />
+                <SelectButton v-model="menuMode" @change="changeMenuMode" :options="menuModeOptions" :allowEmpty="false" optionLabel="label" optionValue="value" />
             </div>
         </div>
     </div>

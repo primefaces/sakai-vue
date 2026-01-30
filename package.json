@@ -11,7 +11,7 @@
         "@primeuix/themes": "^2.0.0",
         "chart.js": "3.3.2",
         "primeicons": "^7.0.0",
-        "primevue": "^4.5.2",
+        "primevue": "^4.5.4",
         "tailwindcss-primeui": "^0.6.0",
         "vue": "^3.4.34",
         "vue-router": "^4.4.0"
